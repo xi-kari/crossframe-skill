@@ -43,6 +43,7 @@
 5. 至少列两个机制候选，除非证据足以排除其他可能。
 6. 不把结构诊断变成人格审判、宿命判断或责任稀释。
 7. 开放断言必须包含证据、替代解释、撤回条件和行动边界。
+8. 如果使用承接/回流、开放断言、尺度转移、观测反身性、权力封闭、低条件试探行动、爱/开放行动、主体/责任链等高风险概念，先读取 `skills/crossframe/references/concept-cards/README.md` 与对应概念卡。
 
 ## 读取优先级
 
@@ -53,6 +54,7 @@
 5. 高责任场景读取 `skills/crossframe/protocols/anti-capture-protocol.md`
 6. 证据不足但紧急读取 `skills/crossframe/protocols/low-condition-action-protocol.md`
 7. 输出前读取 `skills/crossframe/templates/reasoning-outline-output.md` 与对应输出模板
+8. 高风险概念读取 `skills/crossframe/references/concept-cards/` 下的对应卡片
 
 ## 修改仓库时
 

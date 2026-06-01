@@ -10,6 +10,7 @@
 2. 对应 `skills/crossframe/protocols/` 文件
 3. `skills/crossframe/templates/reasoning-outline-output.md`
 4. `skills/crossframe/templates/user-facing-language.md`
+5. 若使用高风险概念，读取 `skills/crossframe/references/concept-cards/README.md` 与对应概念卡
 
 输出要求：
 

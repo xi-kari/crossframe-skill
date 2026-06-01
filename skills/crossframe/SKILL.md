@@ -36,7 +36,8 @@ CrossFrame 不是“把 v2.0 文本塞进上下文”的提示词包，而是一
 - 低到中等把握的判断：读 `protocols/open-assertion-protocol.md`、`worksheets/open-assertion-record.md` 和 `templates/open-assertion-output.md`。
 - 高责任、强权力密度、处分、名誉、权利、资源、公共记忆类问题：读 `protocols/anti-capture-protocol.md` 和 `worksheets/high-responsibility-check.md`。
 - 证据不足但风险紧急：读 `protocols/low-condition-action-protocol.md`。
-- 概念边界问题：只读 `references/` 中对应文件。
+- 概念边界问题：先读 `references/concepts-minimal-set.md`，再读 `references/concept-cards/README.md` 中列出的对应概念卡。
+- 如果最终输出要使用承接/回流、开放断言、尺度转移、观测反身性、权力封闭、低条件试探行动、爱/开放行动、主体/责任链等高风险概念，必须先读取对应概念卡；不能只凭最小概念集作精细判断。
 
 ## 输出规则
 
@@ -87,6 +88,20 @@ CrossFrame 不是“把 v2.0 文本塞进上下文”的提示词包，而是一
 - `references/reflexivity-and-observation.md`：观测反身性。
 - `references/power-closure-and-exit.md`：权力封闭与退出转移。
 - `references/love-as-open-action.md`：爱作为开放行动。
+- `references/concept-cards/`：高风险概念卡，处理容易被压扁或误用的概念。
+
+## 高风险概念闸
+
+以下概念不能只按字面理解；一旦它们承担判断作用，必须读取对应概念卡：
+
+- 承接 / 回流：读 `references/concept-cards/chengjie-huiliu.md`
+- 开放断言：读 `references/concept-cards/open-assertion.md`
+- 尺度转移 / 尺度升维：读 `references/concept-cards/scale-transfer.md`
+- 观测反身性：读 `references/concept-cards/reflexivity.md`
+- 权力封闭 / 反俘获：读 `references/concept-cards/power-closure.md`
+- 低条件试探行动：读 `references/concept-cards/low-condition-action.md`
+- 爱 / 开放行动 / 不浪费爱：读 `references/concept-cards/love-open-action.md`
+- 主体 / 责任链：读 `references/concept-cards/responsibility-chain.md`
 
 ## 最低合格标准
 

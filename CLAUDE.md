@@ -20,6 +20,7 @@
 - `skills/crossframe/protocols/diagnosis-protocol.md`
 - `skills/crossframe/templates/reasoning-outline-output.md`
 - `skills/crossframe/templates/user-facing-language.md`
+- `skills/crossframe/references/concept-cards/README.md`
 
 额外约束：
 
@@ -27,3 +28,4 @@
 - 默认先给推理提纲，再输出人话判断。
 - 不要把术语堆砌当成结构分析。
 - 不要把开放断言写成终局审判。
+- 使用高风险概念前，先读对应概念卡。

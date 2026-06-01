@@ -12,6 +12,7 @@
 - 新增接口只负责入口、路由和最小约束。
 - 若需要更新框架主体，优先更新 `skills/crossframe/`，再回填薄适配层。
 - 用户可见输出默认先给推理提纲，再说人话。
+- 高风险概念必须按需读取 `skills/crossframe/references/concept-cards/`，不要只按字面理解。
 
 ## 当前支持的接口
 
@@ -40,6 +41,7 @@
 2. `skills/crossframe/protocols/`
 3. `skills/crossframe/worksheets/`
 4. `skills/crossframe/templates/`
-5. `README.md`
-6. `AGENTS.md`
-7. 其他接口入口文件
+5. `skills/crossframe/references/concept-cards/`
+6. `README.md`
+7. `AGENTS.md`
+8. 其他接口入口文件
