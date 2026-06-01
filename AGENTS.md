@@ -9,6 +9,7 @@
 - `skills/crossframe/worksheets/`：intake、五闸、证据账本、机制候选等推理发动机。
 - `skills/crossframe/references/read-routing-map.md`：按请求类型决定要读哪些协议、工作表、概念卡和模板。
 - `skills/crossframe/references/v2-term-fidelity.md`：v2.0 术语保真层，防止压缩后概念失真。
+- `skills/crossframe/references/theory-backend-index.md`：长期演化、根假设、阶段、递进、多中心治理等深水区索引。
 - `skills/crossframe/templates/`：用户可见输出模板，默认包含推理提纲。
 - 适配层：`CLAUDE.md`、`.claude/skills/crossframe/SKILL.md`、`.claude/commands/crossframe.md`、`GEMINI.md`、`.cursor/rules/crossframe.mdc`、`.github/copilot-instructions.md`。
 
@@ -21,6 +22,7 @@
 - 需要开放断言，而不是强行给终局判断
 - 证据不足但风险紧急，需要低条件试探行动
 - 高权力密度、高责任场景，需要反俘获审查
+- 强判断、高反身性对象、亲密关系、疗愈转移、公共制度或长期演化问题
 - 用户希望分析复杂反复问题，但不要概念堆砌
 
 不要用于：
@@ -48,6 +50,7 @@
 7. 开放断言必须包含证据、替代解释、撤回条件和行动边界。
 8. 如果使用承接/回流、开放断言、尺度转移、观测反身性、权力封闭、低条件试探行动、爱/开放行动、主体/责任链、证据成本、机制候选、判断档位、退出转移、修复副产品等高风险概念，先读取 `skills/crossframe/references/concept-cards/README.md` 与对应概念卡。
 9. 输出前用 `skills/crossframe/worksheets/concept-fidelity-check.md` 检查概念是否读全、是否落到现实行为、是否避免压缩失真。
+10. 强判断必须走命题验证；高反身性对象必须有限收束；亲密关系先保护痛苦、安全和边界；疗愈转移不替代专业干预。
 
 ## 读取优先级
 
@@ -59,8 +62,14 @@
 6. 高责任场景读取 `skills/crossframe/protocols/anti-capture-protocol.md`
 7. 证据不足但紧急读取 `skills/crossframe/protocols/low-condition-action-protocol.md`
 8. 概念解释读取 `skills/crossframe/protocols/concept-explanation-protocol.md`
-9. 输出前读取 `skills/crossframe/templates/reasoning-outline-output.md` 与对应输出模板
-10. 高风险概念读取 `skills/crossframe/references/concept-cards/` 下的对应卡片
+9. 强判断读取 `skills/crossframe/protocols/proposition-verification-protocol.md`
+10. 高反身性读取 `skills/crossframe/protocols/high-reflexivity-protocol.md`
+11. 亲密关系读取 `skills/crossframe/protocols/intimate-relationship-protocol.md`
+12. 疗愈转移读取 `skills/crossframe/protocols/healing-transfer-protocol.md`
+13. 公共制度读取 `skills/crossframe/protocols/public-institution-protocol.md`
+14. 长期演化或理论深水区读取 `skills/crossframe/references/theory-backend-index.md`
+15. 输出前读取 `skills/crossframe/templates/reasoning-outline-output.md` 与对应输出模板
+16. 高风险概念读取 `skills/crossframe/references/concept-cards/` 下的对应卡片
 
 ## 修改仓库时
 

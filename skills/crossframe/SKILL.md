@@ -22,7 +22,7 @@ CrossFrame 不是“把 v2.0 文本塞进上下文”的提示词包，而是一
 
 ## 必须执行的顺序
 
-1. 判断用户请求类型：快速诊断、完整诊断、推演、开放断言、低条件行动、高责任反俘获审查，或概念解释。
+1. 判断用户请求类型：快速诊断、完整诊断、推演、开放断言、强判断验证、高反身性对象、亲密关系轻量入口、疗愈与转移、公共制度专项、低条件行动、高责任反俘获审查、理论后台，或概念解释。
 2. 读取 `references/read-routing-map.md`，确定本次需要加载的协议、工作表、概念卡和模板。
 3. 填写内部 intake：对象、尺度、事实、证据缺口、用户用途、受影响对象、观测影响。
 4. 通过五闸：对象闸、证据闸、尺度闸、责任闸、观测闸。
@@ -37,9 +37,15 @@ CrossFrame 不是“把 v2.0 文本塞进上下文”的提示词包，而是一
 - 推演、后续走向、路径展开、分支终点：读 `protocols/inference-protocol.md` 和 `templates/inference-output.md`。
 - 低到中等把握的判断：读 `protocols/open-assertion-protocol.md`、`worksheets/open-assertion-record.md` 和 `templates/open-assertion-output.md`。
 - 高责任、强权力密度、处分、名誉、权利、资源、公共记忆类问题：读 `protocols/anti-capture-protocol.md` 和 `worksheets/high-responsibility-check.md`。
+- 影响资格、名誉、资源、权利、处置、公共记忆的强判断：读 `protocols/proposition-verification-protocol.md`、`worksheets/proposition-verification.md`、`worksheets/prospective-registration.md` 和 `templates/strong-judgment-output.md`。
+- 会因被观察、命名、公开或处置而改变行为、身份、证据或边界的对象：读 `protocols/high-reflexivity-protocol.md`、`worksheets/reflexivity-state-transfer.md` 和 `templates/high-reflexivity-output.md`。
+- 亲密关系、家庭、朋友、照护、单方承接、解释劳动和爱被要求的场景：读 `protocols/intimate-relationship-protocol.md`、`worksheets/intimate-relationship-light-check.md` 和 `templates/intimate-relationship-output.md`。
+- 系统停滞、创伤、修复、退出转移和重建场景：读 `protocols/healing-transfer-protocol.md`、`worksheets/healing-transfer-map.md` 和 `templates/healing-transfer-output.md`。
+- 公共制度、平台治理、公共承诺和高权力密度公共议题：读 `protocols/public-institution-protocol.md`、`worksheets/public-institution-check.md` 和 `templates/public-institution-output.md`。
 - 证据不足但风险紧急：读 `protocols/low-condition-action-protocol.md`。
 - 概念解释、概念边界、思想解释类问题：读 `protocols/concept-explanation-protocol.md`、`references/concepts-minimal-set.md`、`references/v2-term-fidelity.md`，再读必要概念卡。
 - 复杂诊断或用户要求深度时：按需读 `references/diagnostic-dimensions.md` 和 `references/diagnostic-toolbox-index.md`，但不要把工具箱术语堆到前台输出。
+- 文明尺度、长期演化、制度生成、系统持续性、多中心治理或用户要求深层理论时：读 `references/theory-backend-index.md`；不要让理论后台进入普通前台输出。
 - 如果最终输出要使用承接/回流、开放断言、尺度转移、观测反身性、权力封闭、低条件试探行动、爱/开放行动、主体/责任链、证据成本、机制候选、判断档位、退出转移、修复副产品等高风险概念，必须先读取对应概念卡；不能只凭最小概念集作精细判断。
 - 输出前使用 `worksheets/concept-fidelity-check.md` 检查：本次概念是否读全、是否保留中文语义、是否落回现实行为、是否避免压缩失真。
 
@@ -57,6 +63,10 @@ CrossFrame 不是“把 v2.0 文本塞进上下文”的提示词包，而是一
 - 不得用尺度升维抹掉低尺度痛苦、压力、失职和责任链。
 - 不得把“爱”说成命令、正当性证明或单方面忍耐要求。
 - 不得把 AI 生成的合规材料、漂亮报告、自评文本当作高成本证据。
+- 不得用强判断绕开命题验证；开放断言不能作为高责任处置依据。
+- 高反身性对象不得无限递归；第三层之后没有新增高成本证据或结构变量时，必须收束或降档。
+- 亲密关系场景先保护痛苦、安全和边界，不把修复责任压回受伤者。
+- 疗愈与转移只提供结构行动边界，不替代医疗、心理、法律、安全或组织处置。
 - 如果证据不足但问题紧急，输出低风险、可撤回、可观察的小动作，而不是假装已经完成强诊断。
 
 ## 表达闸
@@ -79,6 +89,7 @@ CrossFrame 不是“把 v2.0 文本塞进上下文”的提示词包，而是一
 - 尺度窗口：
 - 机制候选：
 - 判断档位：
+- 本次读取的概念：
 - 下一步：
 
 这个提纲不是完整工作表，也不是冗长推理链。它的作用是让用户看见：本次输出确实先界定对象、检查证据、比较机制、再给判断。
@@ -92,6 +103,7 @@ CrossFrame 不是“把 v2.0 文本塞进上下文”的提示词包，而是一
 - `references/guardrails.md`：反误用规则。
 - `references/diagnostic-dimensions.md`：10 个基础诊断维度与 3 个扩展维度。
 - `references/diagnostic-toolbox-index.md`：诊断工具箱索引，复杂案例按需读取。
+- `references/theory-backend-index.md`：根假设、核心推论、全周期演化、递进模式、多中心治理等深层理论索引。
 - `references/scale-transfer-gate.md`：尺度转移检查。
 - `references/reflexivity-and-observation.md`：观测反身性。
 - `references/power-closure-and-exit.md`：权力封闭与退出转移。
@@ -124,6 +136,7 @@ CrossFrame 不是“把 v2.0 文本塞进上下文”的提示词包，而是一
 - 哪些是事实，哪些只是解释？
 - 当前处在哪个尺度窗口？
 - 至少有哪些机制候选？
+- 是否需要命题验证、高反身性处理、亲密关系轻量入口、疗愈转移或公共制度专项？
 - 谁在承担成本，谁有改变条件？
 - 本次判断依赖哪些高风险概念，是否读取了完整概念卡？
 - 这个判断能被什么证据撤回？

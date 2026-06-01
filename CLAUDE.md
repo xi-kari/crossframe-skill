@@ -19,7 +19,13 @@
 - `skills/crossframe/SKILL.md`
 - `skills/crossframe/references/read-routing-map.md`
 - `skills/crossframe/references/v2-term-fidelity.md`
+- `skills/crossframe/references/theory-backend-index.md`
 - `skills/crossframe/protocols/diagnosis-protocol.md`
+- `skills/crossframe/protocols/proposition-verification-protocol.md`
+- `skills/crossframe/protocols/high-reflexivity-protocol.md`
+- `skills/crossframe/protocols/intimate-relationship-protocol.md`
+- `skills/crossframe/protocols/healing-transfer-protocol.md`
+- `skills/crossframe/protocols/public-institution-protocol.md`
 - `skills/crossframe/templates/reasoning-outline-output.md`
 - `skills/crossframe/templates/user-facing-language.md`
 - `skills/crossframe/references/concept-cards/README.md`
@@ -31,3 +37,4 @@
 - 不要把术语堆砌当成结构分析。
 - 不要把开放断言写成终局审判。
 - 使用高风险概念前，先读对应概念卡，并用概念保真检查避免压缩失真。
+- 强判断、高反身性、亲密关系、疗愈转移、公共制度和长期演化问题，必须按 `read-routing-map.md` 进入对应深水区模块。
