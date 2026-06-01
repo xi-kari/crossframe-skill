@@ -13,6 +13,7 @@
 - 若需要更新框架主体，优先更新 `skills/crossframe/`，再回填薄适配层。
 - 用户可见输出默认先给推理提纲，再说人话。
 - 高风险概念必须按需读取 `skills/crossframe/references/concept-cards/`，不要只按字面理解。
+- 防失真材料以 `skills/crossframe/references/read-routing-map.md`、`skills/crossframe/references/v2-term-fidelity.md` 和 `skills/crossframe/worksheets/concept-fidelity-check.md` 为入口。
 
 ## 当前支持的接口
 
@@ -38,10 +39,11 @@
 ## 维护顺序
 
 1. `skills/crossframe/SKILL.md`
-2. `skills/crossframe/protocols/`
-3. `skills/crossframe/worksheets/`
-4. `skills/crossframe/templates/`
-5. `skills/crossframe/references/concept-cards/`
-6. `README.md`
-7. `AGENTS.md`
-8. 其他接口入口文件
+2. `skills/crossframe/references/read-routing-map.md` 与 `references/v2-term-fidelity.md`
+3. `skills/crossframe/protocols/`
+4. `skills/crossframe/worksheets/`
+5. `skills/crossframe/templates/`
+6. `skills/crossframe/references/concept-cards/`
+7. `README.md`
+8. `AGENTS.md`
+9. 其他接口入口文件

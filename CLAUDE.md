@@ -17,6 +17,8 @@
 
 - `README.md`
 - `skills/crossframe/SKILL.md`
+- `skills/crossframe/references/read-routing-map.md`
+- `skills/crossframe/references/v2-term-fidelity.md`
 - `skills/crossframe/protocols/diagnosis-protocol.md`
 - `skills/crossframe/templates/reasoning-outline-output.md`
 - `skills/crossframe/templates/user-facing-language.md`
@@ -28,4 +30,4 @@
 - 默认先给推理提纲，再输出人话判断。
 - 不要把术语堆砌当成结构分析。
 - 不要把开放断言写成终局审判。
-- 使用高风险概念前，先读对应概念卡。
+- 使用高风险概念前，先读对应概念卡，并用概念保真检查避免压缩失真。

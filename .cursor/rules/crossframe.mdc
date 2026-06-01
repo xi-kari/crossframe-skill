@@ -4,7 +4,7 @@ globs: **/*
 alwaysApply: false
 ---
 
-When a task involves complex relationships, teams, organizations, institutions, public disputes, structural diagnosis, 推演, 开放断言, 反俘获审查, or 低条件试探行动, read `skills/crossframe/SKILL.md` first.
+When a task involves complex relationships, teams, organizations, institutions, public disputes, structural diagnosis, 推演, 开放断言, 反俘获审查, 低条件试探行动, or concept explanation, read `skills/crossframe/SKILL.md` first, then `skills/crossframe/references/read-routing-map.md`.
 
 Use Chinese as the authoritative semantic layer. `CrossFrame` is only the传播名 / skill id.
 
@@ -15,8 +15,9 @@ Before the final answer, show a concise 推理提纲 with:
 - 尺度窗口
 - 机制候选
 - 判断档位
+- 本次读取的概念
 - 下一步
 
 Do not use concept piles as conclusions. Translate terms such as 承接, 回流, 开放断言, 责任链, 观测反身性 into concrete behavior and evidence. Do not turn structural diagnosis into personality judgment, fate prediction, responsibility dilution, or compliance theater.
 
-If any high-risk concept carries the judgment, read `skills/crossframe/references/concept-cards/README.md` and the corresponding concept card before answering.
+If any high-risk concept carries the judgment, read `skills/crossframe/references/concept-cards/README.md` and the corresponding concept card before answering. Use `skills/crossframe/worksheets/concept-fidelity-check.md` to ensure the compressed output still preserves the concept's evidence requirements, failure mechanism, and repair action.

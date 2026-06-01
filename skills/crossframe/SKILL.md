@@ -23,11 +23,13 @@ CrossFrame 不是“把 v2.0 文本塞进上下文”的提示词包，而是一
 ## 必须执行的顺序
 
 1. 判断用户请求类型：快速诊断、完整诊断、推演、开放断言、低条件行动、高责任反俘获审查，或概念解释。
-2. 填写内部 intake：对象、尺度、事实、证据缺口、用户用途、受影响对象、观测影响。
-3. 通过五闸：对象闸、证据闸、尺度闸、责任闸、观测闸。
-4. 形成至少两个机制候选；除非证据足以说明只有一个机制。
-5. 决定判断档位：轻量观察、开放断言、完整诊断、强判断、低条件试探行动、退出转移。
-6. 先输出可见推理提纲，再选择模板输出：先说现实语言，再按需要附内部映射。
+2. 读取 `references/read-routing-map.md`，确定本次需要加载的协议、工作表、概念卡和模板。
+3. 填写内部 intake：对象、尺度、事实、证据缺口、用户用途、受影响对象、观测影响。
+4. 通过五闸：对象闸、证据闸、尺度闸、责任闸、观测闸。
+5. 形成至少两个机制候选；除非证据足以说明只有一个机制。
+6. 对承担判断作用的概念做完整吸收：读取对应概念卡，并用 `worksheets/concept-fidelity-check.md` 做保真检查。
+7. 决定判断档位：轻量观察、开放断言、完整诊断、强判断、低条件试探行动、退出转移。
+8. 先输出可见推理提纲，再选择模板输出：先说现实语言，再按需要附内部映射。
 
 ## 读取规则
 
@@ -36,13 +38,15 @@ CrossFrame 不是“把 v2.0 文本塞进上下文”的提示词包，而是一
 - 低到中等把握的判断：读 `protocols/open-assertion-protocol.md`、`worksheets/open-assertion-record.md` 和 `templates/open-assertion-output.md`。
 - 高责任、强权力密度、处分、名誉、权利、资源、公共记忆类问题：读 `protocols/anti-capture-protocol.md` 和 `worksheets/high-responsibility-check.md`。
 - 证据不足但风险紧急：读 `protocols/low-condition-action-protocol.md`。
-- 概念边界问题：先读 `references/concepts-minimal-set.md`，再读 `references/concept-cards/README.md` 中列出的对应概念卡。
-- 如果最终输出要使用承接/回流、开放断言、尺度转移、观测反身性、权力封闭、低条件试探行动、爱/开放行动、主体/责任链等高风险概念，必须先读取对应概念卡；不能只凭最小概念集作精细判断。
+- 概念解释、概念边界、思想解释类问题：读 `protocols/concept-explanation-protocol.md`、`references/concepts-minimal-set.md`、`references/v2-term-fidelity.md`，再读必要概念卡。
+- 复杂诊断或用户要求深度时：按需读 `references/diagnostic-dimensions.md` 和 `references/diagnostic-toolbox-index.md`，但不要把工具箱术语堆到前台输出。
+- 如果最终输出要使用承接/回流、开放断言、尺度转移、观测反身性、权力封闭、低条件试探行动、爱/开放行动、主体/责任链、证据成本、机制候选、判断档位、退出转移、修复副产品等高风险概念，必须先读取对应概念卡；不能只凭最小概念集作精细判断。
+- 输出前使用 `worksheets/concept-fidelity-check.md` 检查：本次概念是否读全、是否保留中文语义、是否落回现实行为、是否避免压缩失真。
 
 ## 输出规则
 
 - 默认输出短而清楚。除非用户明确要求极简结论，否则先展示一个“推理提纲”；不展示完整工作表。
-- 推理提纲必须包含：诊断对象、事实边界、尺度窗口、机制候选、判断档位、下一步观察或行动。
+- 推理提纲必须包含：诊断对象、事实边界、尺度窗口、机制候选、判断档位、本次读取的概念或保真检查、下一步观察或行动。
 - 推理提纲只能写提纲，不写冗长内心推理；它用于让用户看见推理路径，也用于约束后续输出不跳步。
 - 只有用户要求“完整推理过程”“内部映射”“工作表”“审计”时，才展开完整工作表。
 - 默认先说人话，不堆术语。第一段必须让没有读过框架的人也能明白“发生了什么、为什么卡住、下一步看什么”。
@@ -83,7 +87,11 @@ CrossFrame 不是“把 v2.0 文本塞进上下文”的提示词包，而是一
 
 - `references/crossframe-v2-core.md`：v2.0 的最小执行核心。
 - `references/concepts-minimal-set.md`：最小概念集。
+- `references/v2-term-fidelity.md`：v2.0 术语保真表，防止压缩失真。
+- `references/read-routing-map.md`：按请求类型选择协议、工作表、概念卡和模板。
 - `references/guardrails.md`：反误用规则。
+- `references/diagnostic-dimensions.md`：10 个基础诊断维度与 3 个扩展维度。
+- `references/diagnostic-toolbox-index.md`：诊断工具箱索引，复杂案例按需读取。
 - `references/scale-transfer-gate.md`：尺度转移检查。
 - `references/reflexivity-and-observation.md`：观测反身性。
 - `references/power-closure-and-exit.md`：权力封闭与退出转移。
@@ -102,6 +110,11 @@ CrossFrame 不是“把 v2.0 文本塞进上下文”的提示词包，而是一
 - 低条件试探行动：读 `references/concept-cards/low-condition-action.md`
 - 爱 / 开放行动 / 不浪费爱：读 `references/concept-cards/love-open-action.md`
 - 主体 / 责任链：读 `references/concept-cards/responsibility-chain.md`
+- 证据成本 / 弱信号 / AI 合规材料：读 `references/concept-cards/evidence-cost.md`
+- 机制候选：读 `references/concept-cards/mechanism-candidates.md`
+- 判断档位：读 `references/concept-cards/judgment-grades.md`
+- 退出转移：读 `references/concept-cards/exit-transfer.md`
+- 修复副产品 / 伪修复：读 `references/concept-cards/repair-byproduct.md`
 
 ## 最低合格标准
 
@@ -112,5 +125,6 @@ CrossFrame 不是“把 v2.0 文本塞进上下文”的提示词包，而是一
 - 当前处在哪个尺度窗口？
 - 至少有哪些机制候选？
 - 谁在承担成本，谁有改变条件？
+- 本次判断依赖哪些高风险概念，是否读取了完整概念卡？
 - 这个判断能被什么证据撤回？
 - 下一步是观察、修复、试探行动，还是退出转移？
