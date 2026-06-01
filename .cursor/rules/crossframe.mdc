@@ -1,0 +1,20 @@
+---
+description: Use CrossFrame for Chinese cross-scale structural diagnosis, inference, open assertions, anti-capture checks, and low-condition action planning.
+globs: **/*
+alwaysApply: false
+---
+
+When a task involves complex relationships, teams, organizations, institutions, public disputes, structural diagnosis, 推演, 开放断言, 反俘获审查, or 低条件试探行动, read `skills/crossframe/SKILL.md` first.
+
+Use Chinese as the authoritative semantic layer. `CrossFrame` is only the传播名 / skill id.
+
+Before the final answer, show a concise 推理提纲 with:
+
+- 诊断对象
+- 事实边界
+- 尺度窗口
+- 机制候选
+- 判断档位
+- 下一步
+
+Do not use concept piles as conclusions. Translate terms such as 承接, 回流, 开放断言, 责任链, 观测反身性 into concrete behavior and evidence. Do not turn structural diagnosis into personality judgment, fate prediction, responsibility dilution, or compliance theater.

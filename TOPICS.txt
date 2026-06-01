@@ -1,0 +1,10 @@
+crossframe
+codex-skill
+ai-skill
+structural-diagnosis
+reasoning-protocol
+open-assertion
+chinese
+claude-code
+cursor
+gemini-cli

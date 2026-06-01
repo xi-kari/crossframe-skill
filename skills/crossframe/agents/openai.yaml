@@ -1,0 +1,4 @@
+interface:
+  display_name: "CrossFrame"
+  short_description: "跨尺度结构诊断框架 v2.0 的中文结构推理协议型 skill"
+  default_prompt: "使用 CrossFrame 对复杂关系、组织、制度或公共议题进行结构诊断：先抽取事实、过五闸、列机制候选，再形成开放断言、分支判断或低条件试探行动。"
