@@ -22,10 +22,16 @@
 | 接口 | 入口文件 | 说明 |
 | --- | --- | --- |
 | Codex | `skills/crossframe/` | 可直接用 skill-installer 安装 |
-| Claude Code | `.claude/skills/crossframe/SKILL.md` + `.claude/commands/crossframe.md` + `CLAUDE.md` | 仓库内直接调用 `/crossframe` |
+| Claude Code | `.claude/skills/crossframe/SKILL.md` + `.claude/commands/crossframe*.md` + `CLAUDE.md` | 自动触发 skill，也可调用 `/crossframe`、`/crossframe-explain`、`/crossframe-audit` |
 | Gemini CLI | `GEMINI.md` | 仓库级上下文入口 |
 | Cursor | `.cursor/rules/crossframe.mdc` + `AGENTS.md` | 规则文件与通用入口 |
 | GitHub Copilot | `.github/copilot-instructions.md` | 仓库级说明 |
+| Windsurf / Cascade | `.windsurf/rules/crossframe.md` + `AGENTS.md` | Workspace rule，支持手动 `@crossframe` 或自动规则场景 |
+| Cline | `.clinerules/crossframe.md` | Project rule |
+| Roo Code | `.roo/rules/crossframe.md` | Workspace-wide rule |
+| Continue | `.continue/rules/crossframe.md` | Local rule |
+| Aider | `CONVENTIONS.md` + `.aider.conf.yml` | 自动读取 conventions |
+| LLM 索引 | `llms.txt` | 机器可读入口索引 |
 | 通用 agent | `AGENTS.md` | 默认入口 |
 
 ## 迁移到别的项目
@@ -33,10 +39,15 @@
 如果要把 CrossFrame 带到另一个项目：
 
 - Codex：复制 `skills/crossframe/` 到 `$HOME/.codex/skills/crossframe`
-- Claude Code：复制 `.claude/skills/crossframe/`、`.claude/commands/crossframe.md`、`CLAUDE.md`，并保留 `skills/crossframe/`
+- Claude Code：复制 `.claude/skills/crossframe/`、`.claude/commands/`、`CLAUDE.md`，并保留 `skills/crossframe/`
 - Gemini CLI：复制 `GEMINI.md`，并保留 `skills/crossframe/`
 - Cursor：复制 `.cursor/rules/crossframe.mdc` 或 `AGENTS.md`，并保留 `skills/crossframe/`
 - GitHub Copilot：复制 `.github/copilot-instructions.md` 和 `AGENTS.md`
+- Windsurf / Cascade：复制 `.windsurf/rules/crossframe.md`，并保留 `skills/crossframe/`
+- Cline：复制 `.clinerules/crossframe.md`，并保留 `skills/crossframe/`
+- Roo Code：复制 `.roo/rules/crossframe.md`，并保留 `skills/crossframe/`
+- Continue：复制 `.continue/rules/crossframe.md`，并保留 `skills/crossframe/`
+- Aider：复制 `CONVENTIONS.md` 和 `.aider.conf.yml`，并保留 `skills/crossframe/`
 
 ## 维护顺序
 
@@ -50,4 +61,5 @@
 8. `skills/crossframe/references/concept-cards/`
 9. `README.md`
 10. `AGENTS.md`
-11. 其他接口入口文件
+11. `INTERFACES.md`
+12. 其他接口入口文件

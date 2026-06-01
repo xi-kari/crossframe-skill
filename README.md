@@ -204,10 +204,16 @@ Copy-Item -Path ".\crossframe-skill\skills\crossframe" -Destination "$HOME\.code
 | 工具 | 入口文件 |
 | --- | --- |
 | Codex | `skills/crossframe/` |
-| Claude Code | `CLAUDE.md`、`.claude/skills/crossframe/SKILL.md`、`.claude/commands/crossframe.md` |
+| Claude Code | `CLAUDE.md`、`.claude/skills/crossframe/SKILL.md`、`.claude/commands/crossframe*.md` |
 | Cursor | `.cursor/rules/crossframe.mdc`、`AGENTS.md` |
 | Gemini CLI | `GEMINI.md` |
 | GitHub Copilot | `.github/copilot-instructions.md` |
+| Windsurf / Cascade | `.windsurf/rules/crossframe.md`、`AGENTS.md` |
+| Cline | `.clinerules/crossframe.md` |
+| Roo Code | `.roo/rules/crossframe.md` |
+| Continue | `.continue/rules/crossframe.md` |
+| Aider | `CONVENTIONS.md`、`.aider.conf.yml` |
+| LLM 索引 | `llms.txt` |
 | 通用 agent | `AGENTS.md` |
 
 这些文件只是入口说明。真正的 skill 内容仍然在：
@@ -234,13 +240,19 @@ crossframe-skill/
 │     ├─ evals/
 │     └─ examples/
 ├─ .claude/
+├─ .clinerules/
+├─ .continue/
 ├─ .cursor/
 ├─ .github/
+├─ .roo/
+├─ .windsurf/
 ├─ scripts/
 ├─ AGENTS.md
 ├─ CLAUDE.md
+├─ CONVENTIONS.md
 ├─ GEMINI.md
 ├─ INTERFACES.md
+├─ llms.txt
 └─ README.md
 ```
 

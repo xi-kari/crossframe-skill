@@ -1,6 +1,6 @@
 ---
 description: Use CrossFrame for Chinese cross-scale structural diagnosis, inference, open assertions, anti-capture checks, and low-condition action planning.
-globs: **/*
+globs: "**/*"
 alwaysApply: false
 ---
 

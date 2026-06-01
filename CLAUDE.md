@@ -6,11 +6,15 @@
 
 - `.claude/skills/crossframe/SKILL.md`
 - `.claude/commands/crossframe.md`
+- `.claude/commands/crossframe-explain.md`
+- `.claude/commands/crossframe-audit.md`
 
 在仓库根目录运行 `claude` 后，可以直接使用：
 
 ```text
 /crossframe 帮我分析这个组织为什么复盘很多但没有真实修复
+/crossframe-explain 解释一下虚无主义
+/crossframe-audit 检查这个高责任判断能不能公开
 ```
 
 本文件保持轻量。若任务确实涉及 CrossFrame 使用、文档修订或适配层维护，再按需读取：

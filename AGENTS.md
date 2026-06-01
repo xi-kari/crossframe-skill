@@ -12,7 +12,7 @@
 - `skills/crossframe/references/theory-backend-index.md`：长期演化、根假设、阶段、递进、多中心治理等深水区索引。
 - `skills/crossframe/references/v2-coverage-map.md`：v2.0 重要模块到 skill 文件的覆盖地图，维护时用于查漏。
 - `skills/crossframe/templates/`：用户可见输出模板，默认包含推理提纲。
-- 适配层：`CLAUDE.md`、`.claude/skills/crossframe/SKILL.md`、`.claude/commands/crossframe.md`、`GEMINI.md`、`.cursor/rules/crossframe.mdc`、`.github/copilot-instructions.md`。
+- 适配层：`CLAUDE.md`、`.claude/skills/crossframe/SKILL.md`、`.claude/commands/crossframe*.md`、`GEMINI.md`、`.cursor/rules/crossframe.mdc`、`.github/copilot-instructions.md`、`.windsurf/rules/crossframe.md`、`.clinerules/crossframe.md`、`.roo/rules/crossframe.md`、`.continue/rules/crossframe.md`、`CONVENTIONS.md`、`.aider.conf.yml`、`llms.txt`。
 
 ## 何时调用 CrossFrame
 
@@ -84,6 +84,7 @@
 
 - 不要把 `skills/crossframe/` 的可安装入口改丢。
 - 不要把薄适配层扩写成另一份完整正文。
+- 适配层必须保持薄入口：说明触发条件、读取顺序、输出闸，不复制完整协议。
 - 新增概念前先确认它是否能进入工作表、闸门或模板，否则不要升格。
 - 防失真材料优先放在 `references/` 和概念卡中，不要把 v2.0 全文塞回 `SKILL.md`。
 - 新增或补齐 v2.0 概念时，同步更新 `skills/crossframe/references/v2-coverage-map.md`。

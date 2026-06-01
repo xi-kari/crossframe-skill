@@ -1,0 +1,25 @@
+# CrossFrame Skill
+
+CrossFrame is a Chinese cross-scale structural diagnosis skill. It helps AI analyze complex relationships, teams, organizations, institutions, public disputes, and long-term evolution by first extracting facts, routing to the right protocol, preserving high-risk concepts, then outputting a visible reasoning outline and readable Chinese judgment.
+
+## Canonical
+
+- [Skill entry](skills/crossframe/SKILL.md): canonical Codex skill instructions.
+- [Routing map](skills/crossframe/references/read-routing-map.md): choose protocols, worksheets, concept cards, and templates.
+- [Term fidelity](skills/crossframe/references/v2-term-fidelity.md): preserve v2.0 concept meaning.
+- [Coverage map](skills/crossframe/references/v2-coverage-map.md): map v2.0 modules to skill files.
+- [Smoke tests](skills/crossframe/evals/crossframe-smoke-tests.md): check that outputs actually reason instead of stacking terms.
+
+## Adapters
+
+- [AGENTS.md](AGENTS.md): generic agent and Codex-compatible entry.
+- [CLAUDE.md](CLAUDE.md): Claude Code entry.
+- [Claude skill](.claude/skills/crossframe/SKILL.md): project skill for Claude Code.
+- [Cursor rule](.cursor/rules/crossframe.mdc): Cursor rule.
+- [Gemini entry](GEMINI.md): Gemini CLI entry.
+- [Copilot instructions](.github/copilot-instructions.md): GitHub Copilot repository instructions.
+- [Interfaces](INTERFACES.md): adapter matrix and maintenance order.
+
+## Rule
+
+Do not treat CrossFrame as a concept pile. Always route, fill internal worksheets, preserve high-risk concepts, then answer in plain Chinese.
