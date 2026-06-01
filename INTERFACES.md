@@ -14,7 +14,8 @@
 - 用户可见输出默认先给推理提纲，再说人话。
 - 高风险概念必须按需读取 `skills/crossframe/references/concept-cards/`，不要只按字面理解。
 - 防失真材料以 `skills/crossframe/references/read-routing-map.md`、`skills/crossframe/references/v2-term-fidelity.md` 和 `skills/crossframe/worksheets/concept-fidelity-check.md` 为入口。
-- 深水区模块以命题验证、高反身性、亲密关系轻量入口、疗愈转移、公共制度专项和理论后台索引为入口。
+- 深水区模块以命题验证、高反身性、亲密关系轻量入口、疗愈转移、公共制度专项、框架边界、生命周期、递进闭环、势场解离、治理连续性、超大规模压力测试、表达翻译和理论后台索引为入口。
+- `skills/crossframe/references/v2-coverage-map.md` 用于维护时核对 v2.0 覆盖状态，不作为普通输出材料。
 
 ## 当前支持的接口
 
@@ -42,10 +43,11 @@
 1. `skills/crossframe/SKILL.md`
 2. `skills/crossframe/references/read-routing-map.md` 与 `references/v2-term-fidelity.md`
 3. `skills/crossframe/references/theory-backend-index.md`
-4. `skills/crossframe/protocols/`
-5. `skills/crossframe/worksheets/`
-6. `skills/crossframe/templates/`
-7. `skills/crossframe/references/concept-cards/`
-8. `README.md`
-9. `AGENTS.md`
-10. 其他接口入口文件
+4. `skills/crossframe/references/v2-coverage-map.md`
+5. `skills/crossframe/protocols/`
+6. `skills/crossframe/worksheets/`
+7. `skills/crossframe/templates/`
+8. `skills/crossframe/references/concept-cards/`
+9. `README.md`
+10. `AGENTS.md`
+11. 其他接口入口文件

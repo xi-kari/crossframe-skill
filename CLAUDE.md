@@ -20,6 +20,14 @@
 - `skills/crossframe/references/read-routing-map.md`
 - `skills/crossframe/references/v2-term-fidelity.md`
 - `skills/crossframe/references/theory-backend-index.md`
+- `skills/crossframe/references/v2-coverage-map.md`
+- `skills/crossframe/protocols/framework-boundary-protocol.md`
+- `skills/crossframe/protocols/lifecycle-diagnosis-protocol.md`
+- `skills/crossframe/protocols/progression-protocol.md`
+- `skills/crossframe/protocols/field-dissociation-protocol.md`
+- `skills/crossframe/protocols/governance-continuity-protocol.md`
+- `skills/crossframe/protocols/large-scale-stress-test-protocol.md`
+- `skills/crossframe/protocols/expression-translation-protocol.md`
 - `skills/crossframe/protocols/diagnosis-protocol.md`
 - `skills/crossframe/protocols/proposition-verification-protocol.md`
 - `skills/crossframe/protocols/high-reflexivity-protocol.md`
@@ -37,4 +45,4 @@
 - 不要把术语堆砌当成结构分析。
 - 不要把开放断言写成终局审判。
 - 使用高风险概念前，先读对应概念卡，并用概念保真检查避免压缩失真。
-- 强判断、高反身性、亲密关系、疗愈转移、公共制度和长期演化问题，必须按 `read-routing-map.md` 进入对应深水区模块。
+- 强判断、高反身性、亲密关系、疗愈转移、公共制度、框架边界、生命周期、递进、势场解离、治理连续性、超大规模压力测试和长期演化问题，必须按 `read-routing-map.md` 进入对应深水区模块。

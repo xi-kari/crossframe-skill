@@ -4,6 +4,19 @@
 
 不要把本文件当作普通输出菜单。深层理论只用于提高后台判断精度，前台仍先说人话。
 
+## 先走专项协议
+
+深层理论不再只停留在本索引。遇到以下请求时，先读取对应协议，再按需回到本文件：
+
+| 深水区 | 先读 | 再按需读 |
+| --- | --- | --- |
+| 全周期演化 | `protocols/lifecycle-diagnosis-protocol.md` | 根假设 A7、A8、A9 |
+| 递进模式 | `protocols/progression-protocol.md` | 核心推论、锚点组 |
+| 双向势场 / 自主解离 | `protocols/field-dissociation-protocol.md` | 熵增、非闭合行动推论 |
+| 治理连续性 / 多中心 | `protocols/governance-continuity-protocol.md` | 承接再生产、偿付约束推论 |
+| 超大规模圈层 | `protocols/large-scale-stress-test-protocol.md` | A1、A4、A6、A7 |
+| 框架边界 | `protocols/framework-boundary-protocol.md` | 框架本体保护 |
+
 ## 根假设 A1-A9
 
 | 根假设 | 触发场景 | 输出边界 |
@@ -36,6 +49,8 @@
 - 什么证据会推翻阶段判断。
 - 这个阶段判断会不会诱导过早行动或过度悲观。
 
+需要输出阶段判断时，使用 `worksheets/lifecycle-stage-record.md`，不要只引用本节。
+
 ## 递进模式
 
 宏观锚点不是一次实现，而是子锚点累积后涌现。每个子锚点必须形成闭环：
@@ -43,6 +58,8 @@
 选定 -> 执行 -> 验证 -> 回馈 -> 下一个。
 
 没有回馈的子锚点实现不会转化为势场抬升。
+
+需要判断递进是否成立时，使用 `worksheets/sub-anchor-progression.md`，不要只说“递进不足”。
 
 ## 多中心治理与承接者生成
 
@@ -53,8 +70,33 @@
 - 承接者是否能被生产、保护和替代。
 - 代际承接是否有语言、制度、记忆和训练通道。
 
+需要判断治理持续性时，使用 `worksheets/governance-continuity-check.md`，不要只说“多中心治理不足”。
+
+## 双向势场与自主解离
+
+当问题涉及正负锚点、沉积基本盘、保护性退出、长期抽取或自主解离时，读取 `references/field-management-and-dissociation.md` 与 `protocols/field-dissociation-protocol.md`。
+
+使用纪律：
+
+- 势场不是命运，只是选择压力。
+- 自主解离不是逃避，而是内部回流失效后的保护性转移。
+- 任何退出判断都必须写保护目标、外部承接和停止条件。
+
+## 超大规模盲区
+
+文明、国家、时代、跨制度演化等问题必须承认可判断边界。使用 `protocols/large-scale-stress-test-protocol.md`。
+
+输出必须写：
+
+- 可判断区。
+- 不可判断区。
+- 反例或边界案例。
+- 低尺度痛苦和责任链如何保留。
+- 什么证据会撤回宏观判断。
+
 ## 使用纪律
 
 - 普通关系、团队问题不默认启用理论后台。
 - 理论后台不能替代证据、机制候选和判断档位。
 - 若理论标签让输出更难懂，前台只保留白话问题。
+- 深层理论只提供后台坐标；凡是能进入行动、处置或公共判断的内容，必须回到 protocol、worksheet 和判断档位。
