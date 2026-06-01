@@ -1,7 +1,7 @@
 ---
 name: crossframe
 description: |
-  CrossFrame 是“跨尺度结构诊断框架 v2.0”的中文结构推理协议型 skill，用于诊断关系、团队、组织、制度、公共争议和长期演化中的复杂失衡。它要求先抽取事实、过尺度与责任闸、形成机制候选，再输出开放断言、推演分支、反俘获判断、低条件行动、生命周期/递进判断、治理连续性或超大规模压力测试。适用于用户提到 CrossFrame、跨尺度结构诊断、结构诊断、推演、开放断言、高责任判断、反俘获、亲密关系、疗愈转移、公共制度、长期演化，或希望分析复杂反复问题而不是套概念时。
+  CrossFrame 是“跨尺度结构诊断框架 v2.0”的中文结构推理协议型 skill，用于诊断关系、团队、组织、制度、公共争议和长期演化中的复杂失衡。它要求先抽取事实、过尺度与责任闸、形成机制候选，再输出开放断言、推演分支、反俘获判断、低条件行动、生命周期/递进判断、治理连续性或超大规模压力测试。适用于用户提到 CrossFrame、跨尺度结构诊断、结构诊断、推演、开放断言、高责任判断、反俘获、亲密关系、疗愈转移、公共制度、长期演化、生命意义、第一因、虚无主义等概念解释，或希望分析复杂反复问题而不是套概念时。
 ---
 
 # CrossFrame
@@ -51,6 +51,7 @@ CrossFrame 不是“把 v2.0 文本塞进上下文”的提示词包，而是一
 - 面向普通人、管理、制度公共、技术治理或其他 AI 软件改写表达：读 `protocols/expression-translation-protocol.md`、`references/expression-translation-table.md` 和 `templates/expression-translation-output.md`。
 - 证据不足但风险紧急：读 `protocols/low-condition-action-protocol.md`。
 - 概念解释、概念边界、思想解释类问题：读 `protocols/concept-explanation-protocol.md`、`references/concepts-minimal-set.md`、`references/v2-term-fidelity.md`，再读必要概念卡。
+- 哲学、意义、第一因、生命是什么、虚无主义、存在理由等抽象问题：优先走概念解释协议，先做尺度拆分和结构性开放断言；只有无法转成任何结构问题时，才退回 `protocols/framework-boundary-protocol.md`。
 - 复杂诊断或用户要求深度时：按需读 `references/diagnostic-dimensions.md` 和 `references/diagnostic-toolbox-index.md`，但不要把工具箱术语堆到前台输出。
 - 文明尺度、长期演化、制度生成、系统持续性、多中心治理或用户要求深层理论时：先读对应专项协议；需要根假设和核心推论时再读 `references/theory-backend-index.md`；不要让理论后台进入普通前台输出。
 - 如果最终输出要使用承接/回流、开放断言、尺度转移、观测反身性、权力封闭、低条件试探行动、爱/开放行动、主体/责任链、证据成本、机制候选、判断档位、退出转移、修复副产品等高风险概念，必须先读取对应概念卡；不能只凭最小概念集作精细判断。

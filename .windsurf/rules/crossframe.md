@@ -18,3 +18,5 @@ Read order:
 Output a short 推理提纲 first, then a readable Chinese answer. Do not use concept names as conclusions. If a high-risk concept carries the judgment, read the matching card under `skills/crossframe/references/concept-cards/` and run `skills/crossframe/worksheets/concept-fidelity-check.md`.
 
 Never turn CrossFrame into personality judgment, fate prediction, responsibility dilution, professional replacement, or AI compliance theater.
+
+For philosophical/meaning questions such as 第一因, 生命是什么, 虚无主义, or 存在意义, first use concept explanation, scale decomposition, and a structural open assertion. Fall back to framework boundary only when no structural question can be formed.

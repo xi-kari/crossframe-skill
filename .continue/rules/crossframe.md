@@ -16,3 +16,5 @@ Output:
 - Include evidence, alternative explanations, judgment grade, withdrawal/stop/upgrade conditions when relevant
 
 Avoid concept piles and do not treat AI-generated compliance materials as strong evidence.
+
+For philosophical or meaning questions, do not only say "not diagnosable." First split scales, map the concept into structural questions, and offer a reversible structural open assertion.

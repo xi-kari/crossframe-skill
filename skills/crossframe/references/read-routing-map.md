@@ -25,6 +25,7 @@
 | 超大规模圈层 / 文明尺度 / 历史尺度压力测试 | `protocols/large-scale-stress-test-protocol.md`、`worksheets/large-scale-stress-test.md`、`templates/large-scale-stress-output.md` | `references/theory-backend-index.md`、`references/concept-cards/scale-transfer.md` |
 | 对外表达 / 说人话 / 管理制度技术语境翻译 | `protocols/expression-translation-protocol.md`、`references/expression-translation-table.md`、`templates/expression-translation-output.md`、`templates/user-facing-language.md` | 对应诊断协议和概念卡 |
 | 概念解释 / 思想解释 / 某概念怎么看 | `protocols/concept-explanation-protocol.md`、`references/concepts-minimal-set.md`、`references/v2-term-fidelity.md`、`templates/concept-explanation-output.md` | 与概念相关的概念卡 |
+| 哲学 / 意义 / 第一因 / 生命是什么 / 虚无主义 | `protocols/concept-explanation-protocol.md`、`templates/concept-explanation-output.md`、`references/v2-term-fidelity.md` | `concept-cards/scale-transfer.md`、`concept-cards/open-assertion.md`、`protocols/framework-boundary-protocol.md` |
 | 爱、牺牲、照护、公共承诺 | `references/concept-cards/love-open-action.md`、`references/love-as-open-action.md` | `references/concept-cards/repair-byproduct.md`、`references/concept-cards/responsibility-chain.md` |
 | 文明尺度 / 长期演化 / 制度生成 / 多中心治理 / 深层理论 | 对应专项协议 + `references/theory-backend-index.md` | `references/diagnostic-dimensions.md`、`references/diagnostic-toolbox-index.md`、`references/v2-coverage-map.md` |
 
@@ -54,6 +55,7 @@
 | 偿付、预警、多中心、承接者生成、代际承接 | `protocols/governance-continuity-protocol.md` |
 | 文明、历史、超大规模、宏大结论、公共记忆 | `protocols/large-scale-stress-test-protocol.md` |
 | 说人话、对外发布、管理语境、技术治理语境 | `protocols/expression-translation-protocol.md` |
+| 第一因、生命是什么、存在意义、虚无主义、自由意志 | `protocols/concept-explanation-protocol.md`，并优先形成结构性开放断言 |
 
 ## 输出路由
 

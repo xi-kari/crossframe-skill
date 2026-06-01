@@ -13,3 +13,5 @@ Required flow:
 High-risk concepts require their cards in `skills/crossframe/references/concept-cards/` and the fidelity check in `skills/crossframe/worksheets/concept-fidelity-check.md`.
 
 Do not use CrossFrame as a professional substitute, personality judgment, or compliance proof.
+
+For philosophical or meaning questions such as 第一因, 生命是什么, 虚无主义, or 存在意义, do not stop at "outside scope." First use concept explanation, scale decomposition, and a structural open assertion. Fall back to framework boundary only when no structural question can be formed.
