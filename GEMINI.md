@@ -12,6 +12,8 @@
 
 常见链路：普通文章 `crossframe -> crossframe-essay -> crossframe-review`；公共评论 `crossframe -> crossframe-public -> crossframe-essay -> crossframe-review`；组织复盘文章 `crossframe -> crossframe-org -> crossframe-essay -> crossframe-review`；答读者问 `crossframe -> crossframe-dialogue -> review-lite`；读书后成文 `crossframe -> crossframe-notebook -> crossframe-essay -> crossframe-review`。不要一次读取全部 skill。
 
+默认优先考虑 `crossframe-suite`。如果用户没有指定交付物，只说“分析一下”“怎么看”“讲讲”“写一下”或“给我一个有洞察的回答”，suite 默认走 `crossframe -> crossframe-essay -> crossframe-review`，输出可读文章或文章式回答。若用户明确要评审、案例库、备忘录、表格、清单、行动方案或纯诊断，不要擅自生成文章。
+
 如果用户要求写中文文章、长文、评论、思想文章、批判性洞察文章或结构洞察文章，请读取：
 
 1. `skills/crossframe-essay/SKILL.md`

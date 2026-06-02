@@ -9,3 +9,5 @@ description: |
 Thin adapter. Read `skills/crossframe-suite/SKILL.md` first, then follow `skills/crossframe-suite/references/workflow-routing-map.md`.
 
 Default behavior: output a short dispatch outline, then read only the needed sibling skills. Do not trigger every `crossframe-*` skill at once.
+
+For open-ended analysis without a specified artifact, default to `crossframe -> crossframe-essay -> crossframe-review` and produce a readable article-style answer. Do not generate an article for review, casebook, memo, table, checklist, action plan, or pure diagnosis requests.

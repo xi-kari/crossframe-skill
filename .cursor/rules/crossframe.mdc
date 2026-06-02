@@ -8,6 +8,8 @@ When a task involves complex relationships, teams, organizations, institutions, 
 
 If the task needs multiple CrossFrame skills in sequence, such as public commentary, organization repair writing, debate-to-essay, reading-note-to-essay, or casebook plus review, read `skills/crossframe-suite/SKILL.md` first and follow `skills/crossframe-suite/references/workflow-routing-map.md`. Do not read every sibling skill at once.
 
+For open-ended analysis without a specified artifact, prefer `crossframe-suite`; it defaults to a readable article-style output through `crossframe -> crossframe-essay -> crossframe-review`.
+
 If the task asks for 中文文章、长文、评论、思想文章、批判性洞察文章, or turning CrossFrame reasoning into readable prose, use `skills/crossframe-essay/SKILL.md` and `.cursor/rules/crossframe-essay.mdc` instead of stopping at this diagnostic rule.
 
 If the task asks for review/audit, short reader reply, casebook, public issue, organization repair, concept teaching, debate analysis, or research notebook, read the matching `skills/crossframe-*/SKILL.md` first: `crossframe-review`, `crossframe-dialogue`, `crossframe-casebook`, `crossframe-public`, `crossframe-org`, `crossframe-teach`, `crossframe-debate`, or `crossframe-notebook`.

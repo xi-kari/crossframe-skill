@@ -1,7 +1,7 @@
 ---
 name: crossframe-suite
 description: |
-  CrossFrame Suite 是 CrossFrame skill family 的总调度入口。Use when the user asks for a complex CrossFrame task that may need multiple sibling skills in sequence, such as writing an essay from diagnosis, public commentary, organization repair writing, reader replies, debate-to-article, casebook extraction, teaching plus exercises, reading notes, or review after generation. It decides which CrossFrame skills to read, in what order, and where to stop, so the agent does not trigger every skill at once or skip required reasoning.
+  CrossFrame Suite 是 CrossFrame skill family 的默认总入口和调度入口。Use by default for CrossFrame-style complex analysis, especially when the user asks for an open-ended readable answer, article-like output, diagnosis-to-essay, public commentary, organization repair writing, reader replies, debate-to-article, casebook extraction, teaching plus exercises, reading notes, or review after generation. It decides which CrossFrame skills to read, in what order, when to produce a readable essay/article, and where to stop, so the agent does not trigger every skill at once or skip required reasoning.
 ---
 
 # CrossFrame Suite
@@ -14,10 +14,26 @@ description: |
 
 它不复制 `crossframe`、`crossframe-essay` 或其它平行 skill 的正文。中文为权威语义；英文只作 skill id、文件名和对外传播名。
 
+## 默认入口
+
+一般使用 CrossFrame family 时，优先从本 skill 进入。只有任务非常单一时，才直接使用对应专项 skill。
+
+当用户没有明确指定交付物，只是说“分析一下”“怎么看”“讲讲这个问题”“给我一个有洞察的回答”“写一下这个主题”时，本 skill 默认把最终输出做成**可读文章/文章式回答**：
+
+```text
+crossframe -> crossframe-essay -> crossframe-review
+```
+
+这条默认不是为了把所有回答写长，而是因为可读文章更适合把结构判断交给普通读者：先有底稿，再成文，最后过质量闸。
+
+不要在以下场景擅自生成文章：用户明确要求评审报告、案例库条目、组织修复备忘录、反馈写回方案、命题辩论表、概念教学练习、来源台账、表格、清单、一句话结论、低条件行动方案或纯诊断。此时应保留用户指定的交付物。
+
 ## 何时使用
 
 当任务不是单一诊断，而可能需要多个 CrossFrame skill 连续协作时，优先使用本 skill：
 
+- 用户希望使用 CrossFrame，但没有指定具体子 skill。
+- 用户只说“分析一下/怎么看/讲讲/写一下”，且更像想看一段可读输出。
 - 写文章、评论、思想文章、公共评论、组织复盘文章。
 - 答读者问、编辑回信、咨询式回应，但问题背后有结构诊断。
 - 把材料整理成案例，再写分析或沉淀概念。
@@ -54,6 +70,8 @@ description: |
 - 基础先行：多数复杂任务先由 `crossframe` 建立事实边界、尺度窗口、机制候选和判断档位。
 - 场景追加：只读取本次必要的专项 skill，不把全部 skill 一起触发。
 - 成文后置：写文章前先有结构洞察底稿；公共、组织、辩论、读书等专项判断先完成，再进入 `crossframe-essay`。
+- 默认成文：suite 被触发且用户未指定非文章交付物时，最终输出默认走 `crossframe-essay`，生成可读文章或文章式回答。
+- 成文边界：只有用户想看可读输出、文章、评论、思想文章、长答复或面向他人传播的内容时才生成文章；明确要备忘录、评审、案例、教学、表格或行动清单时不生成文章。
 - 评审收束：重要输出默认最后用 `crossframe-review` 做质量闸；轻量短答复可只做内部自检。
 - 查源克制：公共议题、真实机构、平台、政策、人物、公司和最新事实要查源；私人关系、哲学泛论、用户自给材料默认不查源。
 - 人话优先：最终输出先给普通人能读懂的结果，术语只做必要映射。
@@ -63,6 +81,9 @@ description: |
 ```text
 结构诊断：
 crossframe
+
+开放式可读分析：
+crossframe -> crossframe-essay -> crossframe-review
 
 普通洞察文章：
 crossframe -> crossframe-essay -> crossframe-review

@@ -7,6 +7,7 @@
 | 用户目标 | 默认工作流 | 说明 |
 |---|---|---|
 | 结构诊断 | `crossframe` | 事实、尺度、证据、机制候选、判断档位。 |
+| 开放式可读分析 | `crossframe -> crossframe-essay -> crossframe-review` | 用户只说分析、怎么看、讲讲、写一下且未指定格式时，默认输出文章式回答。 |
 | 普通洞察文章 | `crossframe -> crossframe-essay -> crossframe-review` | 先诊断，再底稿，再正文，再评审。 |
 | 公共评论文章 | `crossframe -> crossframe-public -> crossframe-essay -> crossframe-review` | 公共事实和证据边界必须在成文前完成。 |
 | 组织复盘文章 | `crossframe -> crossframe-org -> crossframe-essay -> crossframe-review` | 先看责任链、授权链、反馈写回，再成文。 |
@@ -20,6 +21,34 @@
 | 读书研究 | `crossframe -> crossframe-notebook -> crossframe-review` | 输出关联、不同、可吸收处、冲突处。 |
 | 读书后成文 | `crossframe -> crossframe-notebook -> crossframe-essay -> crossframe-review` | 研究笔记先于文章。 |
 | 只评审已有输出 | `crossframe-review` | 不强行重跑生成链。 |
+
+## 默认成文规则
+
+当 `crossframe-suite` 被触发，且用户没有指定非文章交付物时，默认把最终输出做成可读文章或文章式回答。典型信号：
+
+- “分析一下这个问题”
+- “你怎么看”
+- “讲讲这个现象”
+- “写一下这个主题”
+- “给我一个有洞察力的回答”
+- “我想看一个能给别人读的输出”
+
+此时默认链路是：
+
+```text
+crossframe -> crossframe-essay -> crossframe-review
+```
+
+不要擅自成文的信号：
+
+- “评审/审查/打分/是否合格”
+- “整理成案例库/来源台账/脱敏材料”
+- “给组织修复备忘录/反馈写回方案/低风险试点”
+- “列正反方/命题论证/隐藏前提”
+- “讲概念并出练习”
+- “只要一句话/只要表格/只要清单/只要下一步行动”
+
+这些任务要保留原交付物，而不是转成文章。
 
 ## 触发信号
 

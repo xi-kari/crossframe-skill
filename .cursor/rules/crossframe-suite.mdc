@@ -6,6 +6,8 @@ alwaysApply: false
 
 When a task asks for a complex CrossFrame workflow, such as writing after diagnosis, public commentary, organization repair writing, debate-to-essay, reading-note-to-essay, casebook extraction plus review, or "which CrossFrame skills should trigger in what order", read `skills/crossframe-suite/SKILL.md` first.
 
+Use this suite rule as the default CrossFrame entry. If the user asks for open-ended analysis without specifying a non-article artifact, route to `crossframe -> crossframe-essay -> crossframe-review` and produce a readable article-style answer. Do not generate an article when the user explicitly asks for review, casebook, memo, table, checklist, action plan, or pure diagnosis.
+
 Required flow:
 
 1. Read `skills/crossframe-suite/SKILL.md`.

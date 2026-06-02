@@ -4,6 +4,8 @@ This repository is a publishable AI skill repo. The canonical implementations li
 
 For complex tasks that need multiple CrossFrame sibling skills in sequence, read `skills/crossframe-suite/SKILL.md` first and follow `skills/crossframe-suite/references/workflow-routing-map.md`. The suite skill only routes; it must not replace the specialized skill bodies.
 
+Use `crossframe-suite` as the default CrossFrame entry. For open-ended analysis without a specified artifact, default to `crossframe -> crossframe-essay -> crossframe-review` and write a readable article-style answer. Do not generate an article for review, casebook, memo, table, checklist, action plan, or pure diagnosis requests.
+
 When a user asks for CrossFrame、跨尺度结构诊断、结构诊断、推演、开放断言、反俘获审查、低条件试探行动、强判断、高反身性、亲密关系、疗愈转移、公共制度、长期演化或概念解释:
 
 1. Read `skills/crossframe/SKILL.md`.
