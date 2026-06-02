@@ -7,9 +7,10 @@
 1. 读取 `skills/crossframe/SKILL.md`。
 2. 读取 `skills/crossframe/references/read-routing-map.md`。
 3. 必读：`skills/crossframe/protocols/anti-capture-protocol.md`、`skills/crossframe/protocols/proposition-verification-protocol.md`、`skills/crossframe/protocols/framework-boundary-protocol.md`。
-4. 若用户问 v2.0 完整度，读取 `skills/crossframe/references/v2-coverage-map.md`。
-5. 先输出审计提纲：对象、事实边界、证据成本、权力密度、申诉/复核、判断档位、保真检查、下一步。
-6. 不得把开放断言当作高责任处置依据；不得把 AI 生成报告当独立强证据。
+4. 必读 `skills/crossframe/references/continuity-bundles.md`，并用 `skills/crossframe/worksheets/source-continuity-check.md` 检查是否只读了孤立概念。
+5. 若用户问 v2.0 完整度，读取 `skills/crossframe/references/v2-coverage-map.md`、`skills/crossframe/references/v2-source-spine.md` 和 `skills/crossframe/references/v2-section-digest-index.md`。
+6. 先输出审计提纲：对象、事实边界、证据成本、权力密度、申诉/复核、判断档位、连续联读包、保真检查、下一步。
+7. 不得把开放断言当作高责任处置依据；不得把 AI 生成报告当独立强证据。
 
 用户输入：
 

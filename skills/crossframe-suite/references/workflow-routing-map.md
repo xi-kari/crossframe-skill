@@ -36,8 +36,10 @@
 此时默认链路是：
 
 ```text
-crossframe -> crossframe-essay -> crossframe-review
+crossframe -> source-continuity-check -> crossframe-essay -> crossframe-review
 ```
+
+`source-continuity-check` 不是独立 skill，而是 `crossframe` 内部的连续联读检查：读取 `continuity-bundles.md`，必要时读取 `v2-source-spine.md` 和 `v2-section-digest-index.md`。
 
 不要擅自成文的信号：
 
@@ -97,6 +99,15 @@ crossframe -> crossframe-essay -> crossframe-review
 
 - 任何正式交付、长文、公共议题、强判断、组织修复、案例沉淀、命题结论。
 - 用户要求审查、打分、验收、是否合格。
+
+### 追加连续联读包
+
+- 文章、评论、思想文章：至少触发 `diagnosis-mainline-pack` 与 `expression-article-pack`。
+- 开放断言、强判断、高责任：触发 `judgment-responsibility-pack`。
+- 公共议题、平台治理、合规材料：触发 `public-power-governance-pack`，并视情况触发 `framework-use-discipline-pack`。
+- 亲密关系、解释劳动、爱、照护、疗愈：触发 `intimate-love-care-pack`。
+- 生命周期、递进、势场、自主解离、治理连续性、文明尺度：触发 `long-evolution-deep-pack`。
+- 框架边界、专业替代、AI 合规剧场、概念武器化：触发 `framework-use-discipline-pack`。
 
 ## 不读取规则
 

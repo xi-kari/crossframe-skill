@@ -18,12 +18,14 @@ CrossFrame Essay 是 `crossframe` 的平行写作 skill，不替代 `crossframe`
    - 互动打磨：给候选开头、中心命题和文章骨架，再逐段推进。
 2. 读取 `../crossframe/SKILL.md`。
 3. 读取 `../crossframe/references/read-routing-map.md`，把主题路由到相应 CrossFrame protocol。
-4. 读取 `references/evidence-and-search-rules.md`，决定本次是否需要联网或查源。
-5. 按需读取 `references/critical-insight-principles.md`。
-6. 如果主题是思想文章、公共议题、复杂关系/组织文章，或用户要求深度、概念上升、引经据典，读取 `protocols/concept-elevation-protocol.md`、`references/reference-and-allusion-rules.md` 和 `references/concept-reference-map.md`。
-7. 如果用户要求亲切、编辑、同志口吻、报刊答复、耐心解答、给意见，或主题本身像读者提问、关系/组织困惑，读取 `protocols/editorial-comrade-voice-protocol.md` 和 `references/editorial-voice-principles.md`。
-8. 自动成文时读取 `protocols/essay-protocol.md`，互动打磨时读取 `protocols/interactive-drafting-protocol.md`。
-9. 先生成 `结构洞察底稿`，再从底稿转译出 `文章正文`。
+4. 读取 `../crossframe/references/continuity-bundles.md`，至少确认 `diagnosis-mainline-pack` 与 `expression-article-pack`；公共、亲密、长期演化或高责任主题追加对应联读包。
+5. 用 `../crossframe/worksheets/source-continuity-check.md` 检查是否只读了孤立概念卡；深度文章按需读取 `../crossframe/references/v2-source-spine.md` 或 `../crossframe/references/v2-section-digest-index.md`。
+6. 读取 `references/evidence-and-search-rules.md`，决定本次是否需要联网或查源。
+7. 按需读取 `references/critical-insight-principles.md`。
+8. 如果主题是思想文章、公共议题、复杂关系/组织文章，或用户要求深度、概念上升、引经据典，读取 `protocols/concept-elevation-protocol.md`、`references/reference-and-allusion-rules.md` 和 `references/concept-reference-map.md`。
+9. 如果用户要求亲切、编辑、同志口吻、报刊答复、耐心解答、给意见，或主题本身像读者提问、关系/组织困惑，读取 `protocols/editorial-comrade-voice-protocol.md` 和 `references/editorial-voice-principles.md`。
+10. 自动成文时读取 `protocols/essay-protocol.md`，互动打磨时读取 `protocols/interactive-drafting-protocol.md`。
+11. 先生成 `结构洞察底稿`，再从底稿转译出 `文章正文`。
 
 ## 读取规则
 
@@ -34,6 +36,7 @@ CrossFrame Essay 是 `crossframe` 的平行写作 skill，不替代 `crossframe`
 - 如果启用概念上升，先从 CrossFrame 机制抽象上位概念，再选择中西经典、历史经验、理论或文学互文，最后回落到现实判断。
 - 如果启用现代编辑同志口吻，先写 `正文声口方案`，再成文。默认是现代编辑底色；问题型主题可写成答复体，普通思想/评论文章只吸收亲切、负责、果敢的声口。
 - 如果文章判断使用高风险 CrossFrame 概念，按 `../crossframe/references/read-routing-map.md` 读取对应概念卡，并用 `../crossframe/worksheets/concept-fidelity-check.md` 做保真检查。
+- 如果文章判断触发 2.0 连续板块，按 `../crossframe/references/continuity-bundles.md` 读取对应联读包，并在底稿中写出“源结构连续性检查”。
 
 ## 硬规则
 
@@ -63,6 +66,7 @@ CrossFrame Essay 是 `crossframe` 的平行写作 skill，不替代 `crossframe`
 - 分析对象与事实边界
 - 表面现象与高成本信号
 - CrossFrame 路由与本次读取
+- 源结构连续性检查：触发的连续联读包、是否读取源脊柱/逐节摘要、是否存在读少风险
 - 尺度窗口与机制候选
 - 责任链、受益链、成本链
 - 权力、证据与弱信号检查

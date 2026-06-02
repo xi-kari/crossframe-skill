@@ -14,6 +14,8 @@ description: |
 
 它不复制 `crossframe`、`crossframe-essay` 或其它平行 skill 的正文。中文为权威语义；英文只作 skill id、文件名和对外传播名。
 
+当任务触发 CrossFrame 主体时，suite 还要把 `../crossframe/references/continuity-bundles.md` 纳入调度判断：本次是否需要按 2.0 原文连续板块联读，而不是只读单个概念卡。
+
 ## 默认入口
 
 一般使用 CrossFrame family 时，优先从本 skill 进入。只有任务非常单一时，才直接使用对应专项 skill。
@@ -72,6 +74,7 @@ crossframe -> crossframe-essay -> crossframe-review
 - 成文后置：写文章前先有结构洞察底稿；公共、组织、辩论、读书等专项判断先完成，再进入 `crossframe-essay`。
 - 默认成文：suite 被触发且用户未指定非文章交付物时，最终输出默认走 `crossframe-essay`，生成可读文章或文章式回答。
 - 成文边界：只有用户想看可读输出、文章、评论、思想文章、长答复或面向他人传播的内容时才生成文章；明确要备忘录、评审、案例、教学、表格或行动清单时不生成文章。
+- 源连续性：高责任、公共制度、亲密关系、长期演化、深度分析和文章输出，要在调度中列出本次触发的连续联读包；不要只列概念卡。
 - 评审收束：重要输出默认最后用 `crossframe-review` 做质量闸；轻量短答复可只做内部自检。
 - 查源克制：公共议题、真实机构、平台、政策、人物、公司和最新事实要查源；私人关系、哲学泛论、用户自给材料默认不查源。
 - 人话优先：最终输出先给普通人能读懂的结果，术语只做必要映射。
@@ -128,6 +131,7 @@ crossframe -> crossframe-notebook -> crossframe-essay -> crossframe-review
 - 工作流：
 - 必读 skill：
 - 按需读取：
+- 连续联读包：
 - 不读取：
 - 质量闸：
 ```

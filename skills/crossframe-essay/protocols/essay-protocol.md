@@ -20,6 +20,7 @@
 
 - `../crossframe/SKILL.md`
 - `../crossframe/references/read-routing-map.md`
+- `../crossframe/references/continuity-bundles.md`
 
 再按主题进入对应 protocol。常见路由：
 
@@ -31,6 +32,8 @@
 - 高反身性对象：`high-reflexivity-protocol.md`
 - 疗愈、退出、转移：`healing-transfer-protocol.md`
 - 长期演化、文明尺度、超大规模判断：`large-scale-stress-test-protocol.md` 与 `theory-backend-index.md`
+
+文章任务默认至少触发 `diagnosis-mainline-pack` 与 `expression-article-pack`。公共议题追加 `public-power-governance-pack`；关系/照护/爱追加 `intimate-love-care-pack`；长期演化追加 `long-evolution-deep-pack`；强判断和高责任追加 `judgment-responsibility-pack`。若主题需要深度或用户担心 2.0 失真，读取 `../crossframe/references/v2-source-spine.md` 和 `../crossframe/references/v2-section-digest-index.md`。
 
 ## 3. 判断是否查源
 
@@ -73,14 +76,15 @@
 1. 分析对象与事实边界
 2. 表面现象与高成本信号
 3. CrossFrame 路由与本次读取
-4. 尺度窗口与机制候选
-5. 责任链、受益链、成本链
-6. 权力、证据与弱信号检查
-7. 检索材料与证据边界
-8. 反向条件与证据缺口
-9. 概念上升与参照系
-10. 正文声口方案
-11. 文章转译方案
+4. 源结构连续性检查：触发的连续联读包、是否读取源脊柱/逐节摘要、是否存在读少风险
+5. 尺度窗口与机制候选
+6. 责任链、受益链、成本链
+7. 权力、证据与弱信号检查
+8. 检索材料与证据边界
+9. 反向条件与证据缺口
+10. 概念上升与参照系
+11. 正文声口方案
+12. 文章转译方案
 
 机制候选至少两个，除非证据足以说明只有一个。机制候选必须竞争，而不是同义复述。
 
@@ -107,6 +111,7 @@
 - 第一段是否没有术语也能读懂。
 - 文章命题是否来自 CrossFrame 底稿，而不是搜索结果或情绪。
 - 是否区分事实、解释、机制候选和判断档位。
+- 是否写出连续联读包，避免只读孤立概念卡。
 - 是否至少有一个反向条件或边界段。
 - 是否把批判写成结构判断，而不是人格审判。
 - 若启用概念上升，是否写出上位概念、思想参照、引用方式、回落现实和引用风险。

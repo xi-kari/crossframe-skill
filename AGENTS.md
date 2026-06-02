@@ -19,6 +19,9 @@
 - `skills/crossframe/worksheets/`：intake、五闸、证据账本、机制候选等推理发动机。
 - `skills/crossframe/references/read-routing-map.md`：按请求类型决定要读哪些协议、工作表、概念卡和模板。
 - `skills/crossframe/references/v2-term-fidelity.md`：v2.0 术语保真层，防止压缩后概念失真。
+- `skills/crossframe/references/v2-source-spine.md`：v2.0 DOCX 源结构脊柱，记录章节顺序、相邻关系和承接状态。
+- `skills/crossframe/references/v2-section-digest-index.md`：逐节保真摘要索引，防止读少或断章。
+- `skills/crossframe/references/continuity-bundles.md`：连续联读包，规定哪些概念不能只读单卡。
 - `skills/crossframe/references/theory-backend-index.md`：长期演化、根假设、阶段、递进、多中心治理等深水区索引。
 - `skills/crossframe/references/v2-coverage-map.md`：v2.0 重要模块到 skill 文件的覆盖地图，维护时用于查漏。
 - `skills/crossframe/templates/`：用户可见输出模板，默认包含推理提纲。
@@ -118,6 +121,7 @@ CrossFrame Essay 仍然必须读取 `skills/crossframe/SKILL.md` 与 `skills/cro
 7. 开放断言必须包含证据、替代解释、撤回条件和行动边界。
 8. 如果使用承接/回流、开放断言、尺度转移、观测反身性、权力封闭、低条件试探行动、爱/开放行动、主体/责任链、证据成本、机制候选、判断档位、退出转移、修复副产品等高风险概念，先读取 `skills/crossframe/references/concept-cards/README.md` 与对应概念卡。
 9. 输出前用 `skills/crossframe/worksheets/concept-fidelity-check.md` 检查概念是否读全、是否落到现实行为、是否避免压缩失真。
+9.1 输出前按需用 `skills/crossframe/worksheets/source-continuity-check.md` 检查是否触发 2.0 连续联读包；高责任、公共制度、亲密关系、长期演化、深度分析和文章输出不能只读单张概念卡。
 10. 强判断必须走命题验证；高反身性对象必须有限收束；亲密关系先保护痛苦、安全和边界；疗愈转移不替代专业干预。
 11. 框架边界问题不得把 CrossFrame 当专业替代品；生命周期不得写成命运；超大规模判断必须写不可判断区。
 12. 哲学/意义类问题不要机械退回“不可诊断”；先尝试结构化解释，只有无法结构化时才退回框架边界。
@@ -127,6 +131,7 @@ CrossFrame Essay 仍然必须读取 `skills/crossframe/SKILL.md` 与 `skills/cro
 0. 复杂多交付任务先读 [skills/crossframe-suite/SKILL.md](skills/crossframe-suite/SKILL.md) 与 `skills/crossframe-suite/references/workflow-routing-map.md`
 1. [skills/crossframe/SKILL.md](skills/crossframe/SKILL.md)
 2. 先读取 `skills/crossframe/references/read-routing-map.md` 确定本次路由
+2.1 需要连续保真时读取 `skills/crossframe/references/continuity-bundles.md`、`skills/crossframe/references/v2-source-spine.md`、`skills/crossframe/references/v2-section-digest-index.md` 与 `skills/crossframe/worksheets/source-continuity-check.md`
 3. 普通诊断读取 `skills/crossframe/protocols/diagnosis-protocol.md`
 4. 推演读取 `skills/crossframe/protocols/inference-protocol.md`
 5. 开放断言读取 `skills/crossframe/protocols/open-assertion-protocol.md`

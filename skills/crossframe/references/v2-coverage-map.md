@@ -2,12 +2,22 @@
 
 本文件用于回答“CrossFrame 相较 v2.0 是否还有遗漏”。它不替代 v2.0 原文，而是记录每个重要模块在 skill 中的承接位置。
 
+章节级覆盖现在以三份文件共同维护：
+
+- `v2-source-spine.md`：从 DOCX 的 Word 标题层级生成，记录 258 个源章节节点、相邻关系、联读包和承接状态。
+- `v2-section-digest-index.md`：逐节保真摘要索引，记录每节的用途摘要、不可误读边界和相邻联读提醒。
+- `continuity-bundles.md`：规定哪些原文板块不能只读单张概念卡，必须作为连续板块联读。
+
+因此，本文件负责“模块级覆盖判断”；逐节状态以 `v2-source-spine.md` 为准。
+
 ## 覆盖状态
 
 - 已协议化：有 protocol、worksheet 或 template，可直接进入推理流程。
 - 已概念卡化：有完整概念边界、误用、证据要求和修复动作，按需读取。
 - 已索引化：保留触发条件和判断边界，只在深层理论或教学场景读取。
 - 不前台化：保留后台约束，不作为普通用户输出术语。
+- 已联读约束：该章节或概念已进入 `continuity-bundles.md`，触发时必须同读相邻板块，不能孤立使用。
+- 源结构节点：目录、章节骨架或过渡节点，用于保持 2.0 原文顺序，不单独承担判断。
 
 ## 章节映射
 
@@ -32,13 +42,23 @@
 | 输出扩展与压力测试 | `large-scale-stress-test-protocol.md`、`crossframe-smoke-tests.md` | 已协议化 | 高责任、公共、文明尺度或用户要求审计时启用 |
 | 对外表达与语境翻译 | `expression-translation-protocol.md`、`expression-translation-table.md`、`user-facing-language.md` | 已协议化 | 面向普通读者、管理语境、制度语境或跨平台适配时启用 |
 
+## 章节级覆盖入口
+
+| 覆盖层 | 文件 | 作用 | 维护要求 |
+| --- | --- | --- | --- |
+| 源结构脊柱 | `v2-source-spine.md` | 记录 2.0 DOCX 的标题顺序、相邻章节、联读包和承接状态 | DOCX 标题变化时重新生成 |
+| 逐节保真摘要 | `v2-section-digest-index.md` | 记录每节核心用途、不可误读边界和相邻联读提醒 | 新增章节必须补摘要和边界 |
+| 连续联读规则 | `continuity-bundles.md` | 规定哪些概念/章节不能单独读取 | 新增高风险概念必须归入至少一个联读包 |
+| 输出前检查 | `worksheets/source-continuity-check.md` | 检查是否只读孤立概念卡、是否需要补读或降档 | 深度、审计、高责任、公共制度、亲密关系、长期演化和文章场景必须启用 |
+
 ## 判定结论
 
 当前 CrossFrame 的补全标准不是“复制 v2.0 全文”，而是让 v2.0 每个重要模块都有可追踪入口：
 
 - 普通使用走轻流程。
 - 高风险概念走概念卡和保真检查。
+- 涉及连续板块的高风险概念走联读包和源结构连续性检查。
 - 深水区问题走专项 protocol 与 worksheet。
 - 理论后台默认不前台化。
 
-如果未来新增 v2.0 概念，必须先更新本覆盖地图，再决定它进入 protocol、worksheet、concept card、index 还是 guardrail。
+如果未来新增 v2.0 概念，必须先更新 `v2-source-spine.md`、`v2-section-digest-index.md` 和本覆盖地图，再决定它进入 protocol、worksheet、concept card、index、guardrail 还是 continuity bundle。

@@ -7,11 +7,13 @@
 1. 读取 `skills/crossframe-essay/SKILL.md`。
 2. 读取 `skills/crossframe/SKILL.md` 与 `skills/crossframe/references/read-routing-map.md`。
 3. 按主题进入对应 CrossFrame protocol，形成结构判断。
-4. 读取 `skills/crossframe-essay/references/evidence-and-search-rules.md`，判断是否需要查源。
-5. 如果主题需要深度、思想文章、概念上升、引经据典或理论参照，读取 `skills/crossframe-essay/protocols/concept-elevation-protocol.md`、`skills/crossframe-essay/references/reference-and-allusion-rules.md` 和 `skills/crossframe-essay/references/concept-reference-map.md`。
-6. 如果用户要求亲切、编辑、同志口吻、报刊答复、耐心解答或给意见，读取 `skills/crossframe-essay/protocols/editorial-comrade-voice-protocol.md` 与 `skills/crossframe-essay/references/editorial-voice-principles.md`。
-7. 先输出 `结构洞察底稿`，再输出 `文章正文`。
-8. 如果用户要求互动打磨，只给候选开头、文章骨架和下一步，不一次性写完整文。
+4. 读取 `skills/crossframe/references/continuity-bundles.md`，至少确认 `diagnosis-mainline-pack` 与 `expression-article-pack`；公共、亲密、长期演化或高责任主题追加对应联读包。
+5. 用 `skills/crossframe/worksheets/source-continuity-check.md` 检查是否只读了孤立概念卡。
+6. 读取 `skills/crossframe-essay/references/evidence-and-search-rules.md`，判断是否需要查源。
+7. 如果主题需要深度、思想文章、概念上升、引经据典或理论参照，读取 `skills/crossframe-essay/protocols/concept-elevation-protocol.md`、`skills/crossframe-essay/references/reference-and-allusion-rules.md` 和 `skills/crossframe-essay/references/concept-reference-map.md`。
+8. 如果用户要求亲切、编辑、同志口吻、报刊答复、耐心解答或给意见，读取 `skills/crossframe-essay/protocols/editorial-comrade-voice-protocol.md` 与 `skills/crossframe-essay/references/editorial-voice-principles.md`。
+9. 先输出 `结构洞察底稿`，再输出 `文章正文`。
+10. 如果用户要求互动打磨，只给候选开头、文章骨架和下一步，不一次性写完整文。
 
 引用要求：直接引用必须可核验；不确定原句时只做意译或思想映射；经典/理论参照必须回到现实责任链。
 

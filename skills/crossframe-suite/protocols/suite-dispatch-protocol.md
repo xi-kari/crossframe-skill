@@ -38,6 +38,7 @@
 - 尺度窗口
 - 至少两个机制候选，或说明为何只有一个
 - 判断档位
+- 本次连续联读包；深度、审计、高责任、公共制度、亲密关系、长期演化和文章输出场景必须从 `../crossframe/references/continuity-bundles.md` 中选择
 - 需要追加的专项 skill
 
 ## 3. 加专项 skill
@@ -60,8 +61,9 @@
 
 1. 结构事实层：`crossframe`
 2. 场景专项层：`public` / `org` / `debate` / `notebook` / `casebook` / `teach` / `dialogue`
-3. 表达生成层：`essay` 或 `dialogue`
-4. 质量闸：`review`
+3. 源连续性层：确认是否已读取 `continuity-bundles.md`、`v2-source-spine.md`、`v2-section-digest-index.md` 和 `source-continuity-check.md`
+4. 表达生成层：`essay` 或 `dialogue`
+5. 质量闸：`review`
 
 例外：
 
@@ -72,6 +74,7 @@
 - 公共评论必须在 `essay` 前完成 `public` 证据边界。
 - 组织修复文章必须在 `essay` 前完成 `org` 责任/授权/回流判断。
 - 读书后成文必须在 `essay` 前完成 `notebook` 的关联、不同、可吸收处和冲突处。
+- 任何成文任务必须在 `essay` 前完成源结构连续性检查；如果只读了孤立概念卡，先补读或在底稿中降档。
 
 ## 5. 质量闸
 

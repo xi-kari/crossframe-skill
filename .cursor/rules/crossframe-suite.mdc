@@ -16,4 +16,6 @@ Required flow:
 4. Output a concise `调度提纲`.
 5. Read only the sibling skills selected by the workflow.
 
+For high-responsibility, public, intimate, long-evolution, deep-analysis, or article workflows, ensure the underlying `crossframe` step reads `skills/crossframe/references/continuity-bundles.md` and performs `skills/crossframe/worksheets/source-continuity-check.md`.
+
 Do not trigger every `crossframe-*` skill at once. Use `crossframe-review` as a quality gate for formal, public, long-form, strong-judgment, or high-responsibility outputs.

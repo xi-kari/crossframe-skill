@@ -16,10 +16,12 @@ description: |
 
 1. 读取 `../crossframe/SKILL.md`。
 2. 读取 `../crossframe/references/read-routing-map.md`。
-3. 若评审对象是文章、长文、评论、思想文章、报刊答复或“现代编辑同志口吻”输出，按需读取 `../crossframe-essay/SKILL.md`。
-4. 读取本目录的 `protocols/review-protocol.md` 和 `templates/review-report.md`。
-5. 若涉及文章底稿、引用、检索材料或声口，追加读取 `protocols/article-review-protocol.md`。
-6. 按需读取本目录 `references/` 中的评分表、失败类型表和证据边界清单。
+3. 读取 `../crossframe/references/continuity-bundles.md`，判断本应触发哪些连续联读包。
+4. 若评审对象是深度、审计、高责任、公共制度、亲密关系、长期演化或文章类输出，按需读取 `../crossframe/worksheets/source-continuity-check.md`。
+5. 若评审对象是文章、长文、评论、思想文章、报刊答复或“现代编辑同志口吻”输出，按需读取 `../crossframe-essay/SKILL.md`。
+6. 读取本目录的 `protocols/review-protocol.md` 和 `templates/review-report.md`。
+7. 若涉及文章底稿、引用、检索材料或声口，追加读取 `protocols/article-review-protocol.md`。
+8. 按需读取本目录 `references/` 中的评分表、失败类型表和证据边界清单。
 
 不要把 CrossFrame 主 skill 或文章 skill 的完整内容复制到本 skill 输出中。评审时只引用必要规则名、触发点和证据位置。
 
@@ -32,6 +34,7 @@ description: |
 - 经过对象闸、证据闸、尺度闸、责任闸、观测闸。
 - 至少形成两个机制候选，或说明为什么只能有一个。
 - 对承担判断作用的高风险概念做保真检查，而不是把术语当结论。
+- 对属于 2.0 连续板块的高风险概念做源结构连续性检查，而不是只读单张概念卡。
 - 给出可撤回条件、下一步观察或低条件行动边界。
 - 文章类输出必须先有结构洞察底稿，再写正文。
 
@@ -49,6 +52,7 @@ description: |
 - 强判断越级：处分、名誉、权利、资源、公共记忆类判断没有命题验证和申诉/反证入口。
 - 尺度洗白：用宏观叙事取消低尺度痛苦、责任链或具体失职。
 - AI 合规剧场：把 AI 生成材料、漂亮报告或自评文本当作独立强证据。
+- 连续性保真失败：本应触发 `continuity-bundles.md` 的联读包，却只读单个概念卡、单个 protocol 或单个摘录就下判断。
 
 ## 输出协议
 
@@ -75,7 +79,7 @@ description: |
 - D：40-59，不合格，需要重做主要推理。
 - F：0-39 或触发硬失败，高风险失败。
 
-触发人格审判、伪造引用、跳过文章底稿、强判断越级、证据边界完全缺失时，即使文字流畅，也不能判为合格。
+触发人格审判、伪造引用、跳过文章底稿、强判断越级、证据边界完全缺失、连续性保真失败时，即使文字流畅，也不能判为合格。
 
 ## 修复原则
 

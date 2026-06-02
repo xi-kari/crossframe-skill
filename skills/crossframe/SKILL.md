@@ -30,8 +30,9 @@ CrossFrame 不是“把 v2.0 文本塞进上下文”的提示词包，而是一
 4. 通过五闸：对象闸、证据闸、尺度闸、责任闸、观测闸。
 5. 形成至少两个机制候选；除非证据足以说明只有一个机制。
 6. 对承担判断作用的概念做完整吸收：读取对应概念卡，并用 `worksheets/concept-fidelity-check.md` 做保真检查。
-7. 决定判断档位：轻量观察、开放断言、完整诊断、强判断、低条件试探行动、退出转移。
-8. 先输出可见推理提纲，再选择模板输出：先说现实语言，再按需要附内部映射。
+7. 做源结构连续性检查：读取 `references/continuity-bundles.md`，必要时读取 `references/v2-source-spine.md` 和 `references/v2-section-digest-index.md`，再用 `worksheets/source-continuity-check.md` 判断是否只读了孤立概念卡。
+8. 决定判断档位：轻量观察、开放断言、完整诊断、强判断、低条件试探行动、退出转移。若必须联读但未联读，不能维持强判断。
+9. 先输出可见推理提纲，再选择模板输出：先说现实语言，再按需要附内部映射。
 
 ## 读取规则
 
@@ -57,12 +58,15 @@ CrossFrame 不是“把 v2.0 文本塞进上下文”的提示词包，而是一
 - 复杂诊断或用户要求深度时：按需读 `references/diagnostic-dimensions.md` 和 `references/diagnostic-toolbox-index.md`，但不要把工具箱术语堆到前台输出。
 - 文明尺度、长期演化、制度生成、系统持续性、多中心治理或用户要求深层理论时：先读对应专项协议；需要根假设和核心推论时再读 `references/theory-backend-index.md`；不要让理论后台进入普通前台输出。
 - 如果最终输出要使用承接/回流、开放断言、尺度转移、观测反身性、权力封闭、低条件试探行动、爱/开放行动、主体/责任链、证据成本、机制候选、判断档位、退出转移、修复副产品等高风险概念，必须先读取对应概念卡；不能只凭最小概念集作精细判断。
+- 如果高风险概念属于 2.0 原文连续板块，必须按 `references/continuity-bundles.md` 读取对应联读包；不能只读单张概念卡就下结论。
 - 输出前使用 `worksheets/concept-fidelity-check.md` 检查：本次概念是否读全、是否保留中文语义、是否落回现实行为、是否避免压缩失真。
+- 输出前使用 `worksheets/source-continuity-check.md` 检查：本次判断是否漏读原文相邻约束、是否触发必须联读包、是否需要降档。
 
 ## 输出规则
 
 - 默认输出短而清楚。除非用户明确要求极简结论，否则先展示一个“推理提纲”；不展示完整工作表。
 - 推理提纲必须包含：诊断对象、事实边界、尺度窗口、机制候选、判断档位、本次读取的概念或保真检查、下一步观察或行动。
+- 深度、审计、高责任、公共制度、亲密关系、长期演化和文章输出场景，推理提纲还要包含“本次连续联读包”短行；普通轻量问题可以省略。
 - 推理提纲只能写提纲，不写冗长内心推理；它用于让用户看见推理路径，也用于约束后续输出不跳步。
 - 只有用户要求“完整推理过程”“内部映射”“工作表”“审计”时，才展开完整工作表。
 - 默认先说人话，不堆术语。第一段必须让没有读过框架的人也能明白“发生了什么、为什么卡住、下一步看什么”。
@@ -108,6 +112,9 @@ CrossFrame 不是“把 v2.0 文本塞进上下文”的提示词包，而是一
 
 - `references/crossframe-v2-core.md`：v2.0 的最小执行核心。
 - `references/v2-coverage-map.md`：v2.0 章节到 skill 模块的覆盖地图。
+- `references/v2-source-spine.md`：v2.0 原文标题层级、章节顺序、相邻关系和承接状态。
+- `references/v2-section-digest-index.md`：v2.0 逐节保真摘要、不可误读边界和相邻联读提醒。
+- `references/continuity-bundles.md`：2.0 原文中不能拆散读取的连续联读包。
 - `references/concepts-minimal-set.md`：最小概念集。
 - `references/v2-term-fidelity.md`：v2.0 术语保真表，防止压缩失真。
 - `references/read-routing-map.md`：按请求类型选择协议、工作表、概念卡和模板。
@@ -123,6 +130,7 @@ CrossFrame 不是“把 v2.0 文本塞进上下文”的提示词包，而是一
 - `references/power-closure-and-exit.md`：权力封闭与退出转移。
 - `references/love-as-open-action.md`：爱作为开放行动。
 - `references/concept-cards/`：高风险概念卡，处理容易被压扁或误用的概念。
+- `worksheets/source-continuity-check.md`：输出前检查是否读少、断章或漏掉原文连续约束。
 
 ## 高风险概念闸
 
@@ -159,3 +167,4 @@ CrossFrame 不是“把 v2.0 文本塞进上下文”的提示词包，而是一
 - 这个判断能被什么证据撤回？
 - 下一步是观察、修复、试探行动，还是退出转移？
 - 是否触发了框架边界、生命周期、递进、势场解离、治理连续性或超大规模压力测试？
+- 本次是否触发 2.0 连续联读包，是否避免了只读孤立概念卡？

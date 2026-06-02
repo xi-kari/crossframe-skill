@@ -8,6 +8,7 @@
 - 工作流：
 - 必读 skill：
 - 按需读取：
+- 连续联读包：
 - 不读取：
 - 质量闸：
 ```
@@ -18,6 +19,7 @@
 - `工作流`：写 skill id 链路，例如 `crossframe -> crossframe-public -> crossframe-essay -> crossframe-review`。
 - `必读 skill`：本次必须读取的 skill。
 - `按需读取`：只列触发了条件的概念卡、专项协议或模板。
+- `连续联读包`：只列 `continuity-bundles.md` 中本次触发的包名；未触发时写“未触发”。
 - `不读取`：列 1-3 个容易误触发但本次不需要的 skill，防止全量加载。
 - `质量闸`：完整评审、轻量自检或无需评审，并写原因。
 
@@ -28,7 +30,7 @@
 当用户只要最终结果：
 
 ```text
-本次按 `crossframe -> crossframe-essay -> crossframe-review` 处理：先诊断，再成文，最后过质量闸。
+本次按 `crossframe -> crossframe-essay -> crossframe-review` 处理：先诊断，再确认连续联读包，再成文，最后过质量闸。
 ```
 
 ## 禁止写法
