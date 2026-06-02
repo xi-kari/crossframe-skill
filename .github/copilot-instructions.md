@@ -7,11 +7,13 @@
 - 结构诊断、推演、开放断言、反俘获审查或低条件行动任务请遵循 `AGENTS.md`。
 - 中文文章、长文、评论、思想文章、批判性洞察文章和结构洞察文章任务请遵循 `skills/crossframe-essay/SKILL.md`。
 - 文章任务需要深度、概念上升、引经据典、理论参照或文学互文时，按需读取 `skills/crossframe-essay/protocols/concept-elevation-protocol.md` 与 `skills/crossframe-essay/references/reference-and-allusion-rules.md`。
+- 文章任务需要亲切、编辑、同志口吻、报刊答复、耐心解答或给意见时，按需读取 `skills/crossframe-essay/protocols/editorial-comrade-voice-protocol.md` 与 `skills/crossframe-essay/references/editorial-voice-principles.md`。
 - 概念解释或思想解释任务也应进入 CrossFrame，但先读 `skills/crossframe/protocols/concept-explanation-protocol.md`。
 - 强判断、高反身性、亲密关系、疗愈转移、公共制度、框架边界、生命周期、递进、势场解离、治理连续性、超大规模压力测试和长期演化任务必须按 `skills/crossframe/references/read-routing-map.md` 读取深水区模块。
 - 默认先展示简短推理提纲，再输出普通用户能读懂的判断。
 - 文章任务默认先输出 `结构洞察底稿`，再输出 `文章正文`。
 - 直接引用必须可核验；不确定原句时只做意译或思想映射；经典/理论参照不能接管文章命题。
+- 现代编辑同志口吻只负责前台表达：亲切但不和稀泥，果敢但不人格审判，不复古口号化。
 - 输出必须区分事实、解释、机制候选、判断档位和本次读取的概念。
 - 高风险概念如承接/回流、开放断言、尺度转移、观测反身性、权力封闭、低条件行动、爱/开放行动、责任链、证据成本、机制候选、判断档位、退出转移、修复副产品，必须先读 `skills/crossframe/references/concept-cards/` 对应卡片。
 - 输出前用 `skills/crossframe/worksheets/concept-fidelity-check.md` 避免概念压缩失真。

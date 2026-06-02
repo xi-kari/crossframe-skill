@@ -8,6 +8,8 @@ CrossFrame is a Chinese cross-scale structural diagnosis skill. It helps AI anal
 - [Essay skill entry](skills/crossframe-essay/SKILL.md): CrossFrame-based Chinese critical insight essay writing skill.
 - [Concept elevation protocol](skills/crossframe-essay/protocols/concept-elevation-protocol.md): elevate structure judgments into concepts, references, and allusions.
 - [Reference and allusion rules](skills/crossframe-essay/references/reference-and-allusion-rules.md): safe quote, paraphrase, allusion, and theory mapping rules.
+- [Editorial comrade voice protocol](skills/crossframe-essay/protocols/editorial-comrade-voice-protocol.md): modern editor-style answer voice for patient, humble, serious, decisive Chinese essays.
+- [Editorial voice principles](skills/crossframe-essay/references/editorial-voice-principles.md): tone, address, criticism, and closing rules for editor-comrade prose.
 - [Routing map](skills/crossframe/references/read-routing-map.md): choose protocols, worksheets, concept cards, and templates.
 - [Term fidelity](skills/crossframe/references/v2-term-fidelity.md): preserve v2.0 concept meaning.
 - [Coverage map](skills/crossframe/references/v2-coverage-map.md): map v2.0 modules to skill files.
@@ -30,4 +32,4 @@ CrossFrame is a Chinese cross-scale structural diagnosis skill. It helps AI anal
 
 Do not treat CrossFrame as a concept pile. Always route, fill internal worksheets, preserve high-risk concepts, then answer in plain Chinese.
 
-For article tasks, do not write only prose. Use CrossFrame Essay to produce `结构洞察底稿` first, then `文章正文`. When depth is needed, add concept elevation and classic/theory references, but direct quotes must be verifiable and references must return to concrete reality.
+For article tasks, do not write only prose. Use CrossFrame Essay to produce `结构洞察底稿` first, then `文章正文`. When depth is needed, add concept elevation and classic/theory references, but direct quotes must be verifiable and references must return to concrete reality. When the user asks for a warmer answer, use the modern editor-comrade voice: patient and friendly, but still decisive about responsibility and evidence.

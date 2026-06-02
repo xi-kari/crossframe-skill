@@ -1,11 +1,11 @@
 ---
 name: crossframe-essay
-description: CrossFrame Essay 是基于 CrossFrame 的中文批判性洞察文章写作 skill。Use when the user asks to write or shape a 中文文章、长文、评论、思想文章、批判性洞察文章、结构洞察文章，或想把关系、团队、组织、制度、公共议题、哲学概念和复杂现实问题写成面向普通读者、先推理后表达、可按需概念上升并引入中西经典/理论参照的文章。默认先输出结构洞察底稿，再输出文章正文；也支持互动打磨、候选开头、逐段推进和保留用户编辑。
+description: CrossFrame Essay 是基于 CrossFrame 的中文批判性洞察文章写作 skill。Use when the user asks to write or shape a 中文文章、长文、评论、思想文章、批判性洞察文章、结构洞察文章，或想把关系、团队、组织、制度、公共议题、哲学概念和复杂现实问题写成面向普通读者、先推理后表达、可按需概念上升并引入中西经典/理论参照的文章。也适合用户要求亲切、编辑、同志口吻、报刊答复、耐心解答或给出意见的中文洞察文章。默认先输出结构洞察底稿，再输出文章正文；也支持互动打磨、候选开头、逐段推进和保留用户编辑。
 ---
 
 # CrossFrame Essay
 
-CrossFrame Essay 是 `crossframe` 的平行写作 skill，不替代 `crossframe`。它把 CrossFrame 的结构诊断、概念保真、尺度拆分和证据边界，转成面向普通中文读者的批判性洞察文章；当主题需要更深表达时，再把结构判断提升为上位概念、思想参照和经典互文。
+CrossFrame Essay 是 `crossframe` 的平行写作 skill，不替代 `crossframe`。它把 CrossFrame 的结构诊断、概念保真、尺度拆分和证据边界，转成面向普通中文读者的批判性洞察文章；当主题需要更深表达时，再把结构判断提升为上位概念、思想参照和经典互文；当用户需要更有人味的回答时，再使用现代编辑同志口吻，把文章写得耐心、谦逊、认真、果敢。
 
 核心原则：先形成结构洞察底稿，再写文章正文。不要跳过推理直接成文。
 
@@ -19,8 +19,9 @@ CrossFrame Essay 是 `crossframe` 的平行写作 skill，不替代 `crossframe`
 4. 读取 `references/evidence-and-search-rules.md`，决定本次是否需要联网或查源。
 5. 按需读取 `references/critical-insight-principles.md`。
 6. 如果主题是思想文章、公共议题、复杂关系/组织文章，或用户要求深度、概念上升、引经据典，读取 `protocols/concept-elevation-protocol.md`、`references/reference-and-allusion-rules.md` 和 `references/concept-reference-map.md`。
-7. 自动成文时读取 `protocols/essay-protocol.md`，互动打磨时读取 `protocols/interactive-drafting-protocol.md`。
-8. 先生成 `结构洞察底稿`，再从底稿转译出 `文章正文`。
+7. 如果用户要求亲切、编辑、同志口吻、报刊答复、耐心解答、给意见，或主题本身像读者提问、关系/组织困惑，读取 `protocols/editorial-comrade-voice-protocol.md` 和 `references/editorial-voice-principles.md`。
+8. 自动成文时读取 `protocols/essay-protocol.md`，互动打磨时读取 `protocols/interactive-drafting-protocol.md`。
+9. 先生成 `结构洞察底稿`，再从底稿转译出 `文章正文`。
 
 ## 读取规则
 
@@ -29,6 +30,7 @@ CrossFrame Essay 是 `crossframe` 的平行写作 skill，不替代 `crossframe`
 - 如果主题涉及公共议题、最新事实、真实组织、平台、政策、公司、人物、法律、技术标准或数据，必须查源；来源只进入证据边界、反例、现实案例和事实限制，不接管文章命题。
 - 如果主题是私人关系、泛论随笔、哲学概念或用户给出的虚构/概括性材料，默认不联网，除非用户要求或文章需要现实来源来避免误导。
 - 如果启用概念上升，先从 CrossFrame 机制抽象上位概念，再选择中西经典、历史经验、理论或文学互文，最后回落到现实判断。
+- 如果启用现代编辑同志口吻，先写 `正文声口方案`，再成文。默认是现代编辑底色；问题型主题可写成答复体，普通思想/评论文章只吸收亲切、负责、果敢的声口。
 - 如果文章判断使用高风险 CrossFrame 概念，按 `../crossframe/references/read-routing-map.md` 读取对应概念卡，并用 `../crossframe/worksheets/concept-fidelity-check.md` 做保真检查。
 
 ## 硬规则
@@ -39,6 +41,7 @@ CrossFrame Essay 是 `crossframe` 的平行写作 skill，不替代 `crossframe`
 - 不准把术语当结论。前台说人话，后台保留概念链。
 - 不准伪造原文、出处、页码、作者观点；不确定原句时只能意译或写思想映射。
 - 不准让经典参照接管文章命题；引用只能照亮现实机制，不能压过证据。
+- 不准把亲切写成和稀泥，不准把严厉写成人格审判，不准用“同志”称呼和口号替代分析。
 - 不准把 CrossFrame 写成万能解释机器；超出结构判断能力时要写边界。
 - 不准把文章写成新闻综述、资料拼贴或百科解释，除非用户明确要这种体裁。
 - 文章的段落顺序必须服从信息依赖：读者先需要知道什么，后面的判断才能成立。
@@ -64,6 +67,7 @@ CrossFrame Essay 是 `crossframe` 的平行写作 skill，不替代 `crossframe`
 - 检索材料与证据边界
 - 反向条件与证据缺口
 - 概念上升与参照系：上位概念、思想参照、引用方式、回落到现实的句子、引用风险
+- 正文声口方案：是否启用答复体、读者处境、情绪入口、批评对象、劝告边界、结尾姿态
 - 文章中心命题、开头入口、递进顺序、结尾余味
 
 `文章正文` 至少包含：
@@ -72,6 +76,7 @@ CrossFrame Essay 是 `crossframe` 的平行写作 skill，不替代 `crossframe`
 - 一个清楚的中心命题
 - 3-5 个递进段落或小节
 - 按需加入概念上升、经典/理论参照和回落现实的段落
+- 按题切换答复体或评论体；使用现代编辑口吻时先接住问题，再给判断、批评和意见
 - 至少一个边界、反例、撤回条件或证据缺口
 - 一个不喊口号、不把问题封死的结尾
 
@@ -81,4 +86,5 @@ CrossFrame Essay 是 `crossframe` 的平行写作 skill，不替代 `crossframe`
 - 有批判性，但保留证据边界和反向条件。
 - 能指出责任链，但不把复杂问题压成某个人的坏。
 - 面向普通读者，第一段删掉所有术语后仍能读懂。
+- 可以像一位现代编辑同志那样耐心回应读者：亲切但不和稀泥，果敢但不审判人。
 - 结尾要有余味，不用宏大口号替代思考。

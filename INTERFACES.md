@@ -14,8 +14,9 @@
 - 若需要更新框架主体，优先更新 `skills/crossframe/`，再回填薄适配层。
 - 若需要更新文章写作主体，优先更新 `skills/crossframe-essay/`，并确认它仍通过相对路径读取 `skills/crossframe/`。
 - 用户可见输出默认先给推理提纲，再说人话。
-- 文章输出默认先给 `结构洞察底稿`，再给 `文章正文`；需要深度时可按需加入概念上升和中西经典/理论参照。
+- 文章输出默认先给 `结构洞察底稿`，再给 `文章正文`；需要深度时可按需加入概念上升和中西经典/理论参照；需要亲切解答时可按需使用现代编辑同志口吻。
 - 直接引用必须可核验；不确定原句时只做意译、典故或思想映射。
+- 现代编辑同志口吻是前台声口层，不改变结构判断；亲切不能和稀泥，严厉不能人格审判。
 - 高风险概念必须按需读取 `skills/crossframe/references/concept-cards/`，不要只按字面理解。
 - 防失真材料以 `skills/crossframe/references/read-routing-map.md`、`skills/crossframe/references/v2-term-fidelity.md` 和 `skills/crossframe/worksheets/concept-fidelity-check.md` 为入口。
 - 深水区模块以命题验证、高反身性、亲密关系轻量入口、疗愈转移、公共制度专项、框架边界、生命周期、递进闭环、势场解离、治理连续性、超大规模压力测试、表达翻译和理论后台索引为入口。

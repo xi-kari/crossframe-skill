@@ -7,6 +7,7 @@ reasoning-protocol
 critical-essay
 concept-elevation
 classic-references
+editor-comrade-voice
 chinese-writing
 open-assertion
 chinese

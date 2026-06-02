@@ -1,1 +1,1 @@
-CrossFrame: 跨尺度结构诊断框架 v2.0 的中文结构推理协议型 skill，并提供 crossframe-essay 平行 skill，把结构诊断转成可按需概念上升、引入经典/理论参照的中文批判性洞察文章；支持 Codex、Claude Code、Cursor、Gemini CLI 与 GitHub Copilot 薄适配。
+CrossFrame: 跨尺度结构诊断框架 v2.0 的中文结构推理协议型 skill，并提供 crossframe-essay 平行 skill，把结构诊断转成可按需概念上升、引入经典/理论参照、采用现代编辑同志口吻的中文批判性洞察文章；支持 Codex、Claude Code、Cursor、Gemini CLI 与 GitHub Copilot 薄适配。

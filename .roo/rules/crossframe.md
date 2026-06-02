@@ -2,7 +2,7 @@
 
 When a task mentions CrossFrame, 跨尺度结构诊断, 结构诊断, 推演, 开放断言, 反俘获, 低条件试探行动, 强判断, 高反身性, 亲密关系, 疗愈转移, 公共制度, 生命周期, 递进闭环, 势场解离, 治理连续性, 超大规模压力测试, or concept explanation, use the CrossFrame skill.
 
-When a task asks for 中文文章、长文、评论、思想文章、批判性洞察文章, or asks to turn CrossFrame reasoning into prose, use `skills/crossframe-essay/SKILL.md`. It must produce `结构洞察底稿` before `文章正文`. If the article needs concept elevation, classic references, theory, or allusion, read `skills/crossframe-essay/protocols/concept-elevation-protocol.md` and require verifiable direct quotes.
+When a task asks for 中文文章、长文、评论、思想文章、批判性洞察文章, or asks to turn CrossFrame reasoning into prose, use `skills/crossframe-essay/SKILL.md`. It must produce `结构洞察底稿` before `文章正文`. If the article needs concept elevation, classic references, theory, or allusion, read `skills/crossframe-essay/protocols/concept-elevation-protocol.md` and require verifiable direct quotes. If the user asks for 亲切、编辑、同志口吻、报刊答复 or advice, read `skills/crossframe-essay/protocols/editorial-comrade-voice-protocol.md`; do not let the voice become empty comfort, slogan, or personality judgment.
 
 Start from:
 
