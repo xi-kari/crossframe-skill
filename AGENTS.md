@@ -41,10 +41,13 @@
 
 - 用户要求写中文文章、长文、评论、思想文章、批判性洞察文章或结构洞察文章
 - 用户想把 CrossFrame 分析结果转成普通读者能读的文章
+- 用户希望文章上升概念、引经据典、加入理论参照、历史经验或文学互文
 - 用户给出零散素材，希望整理成有中心命题、有递进、有边界的长文
 - 主题是关系、团队、组织、制度、公共议题或哲学概念，但目标是“成文”而不是只要诊断
 
 CrossFrame Essay 仍然必须读取 `skills/crossframe/SKILL.md` 与 `skills/crossframe/references/read-routing-map.md`。默认输出顺序是 `结构洞察底稿` -> `文章正文`。
+
+如果启用概念上升，先从结构机制抽象上位概念，再选择中西经典、历史经验、理论或文学互文，最后回落到现实责任链。直接引用必须可核验；不确定原句时只做意译或思想映射。
 
 ## 必须遵守
 
@@ -100,8 +103,9 @@ CrossFrame Essay 仍然必须读取 `skills/crossframe/SKILL.md` 与 `skills/cro
 2. `skills/crossframe-essay/protocols/essay-protocol.md` 或 `interactive-drafting-protocol.md`
 3. `skills/crossframe-essay/references/evidence-and-search-rules.md`
 4. `skills/crossframe-essay/references/critical-insight-principles.md`
-5. `skills/crossframe-essay/templates/insight-dossier-template.md`
-6. `skills/crossframe-essay/templates/essay-output-template.md` 或 `interactive-session-template.md`
+5. 概念上升读取 `skills/crossframe-essay/protocols/concept-elevation-protocol.md`、`references/reference-and-allusion-rules.md`、`references/concept-reference-map.md`
+6. `skills/crossframe-essay/templates/insight-dossier-template.md`
+7. `skills/crossframe-essay/templates/essay-output-template.md` 或 `interactive-session-template.md`
 
 ## 修改仓库时
 

@@ -49,6 +49,9 @@
 - `skills/crossframe-essay/protocols/interactive-drafting-protocol.md`
 - `skills/crossframe-essay/references/evidence-and-search-rules.md`
 - `skills/crossframe-essay/references/critical-insight-principles.md`
+- `skills/crossframe-essay/protocols/concept-elevation-protocol.md`
+- `skills/crossframe-essay/references/reference-and-allusion-rules.md`
+- `skills/crossframe-essay/references/concept-reference-map.md`
 - `skills/crossframe-essay/templates/insight-dossier-template.md`
 - `skills/crossframe-essay/templates/essay-output-template.md`
 
@@ -60,4 +63,4 @@
 - 不要把开放断言写成终局审判。
 - 使用高风险概念前，先读对应概念卡，并用概念保真检查避免压缩失真。
 - 强判断、高反身性、亲密关系、疗愈转移、公共制度、框架边界、生命周期、递进、势场解离、治理连续性、超大规模压力测试和长期演化问题，必须按 `read-routing-map.md` 进入对应深水区模块。
-- 当用户要写文章、长文、评论、思想文章或批判性洞察文章时，使用 `crossframe-essay`：先形成 `结构洞察底稿`，再写 `文章正文`。
+- 当用户要写文章、长文、评论、思想文章或批判性洞察文章时，使用 `crossframe-essay`：先形成 `结构洞察底稿`，再写 `文章正文`；需要深度时按需概念上升和引入中西经典/理论参照，但引用必须可核验并回到现实责任链。

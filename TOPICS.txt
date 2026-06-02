@@ -5,6 +5,8 @@ ai-skill
 structural-diagnosis
 reasoning-protocol
 critical-essay
+concept-elevation
+classic-references
 chinese-writing
 open-assertion
 chinese
