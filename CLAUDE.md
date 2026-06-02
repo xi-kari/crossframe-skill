@@ -5,9 +5,11 @@
 这个仓库提供 Claude Code 项目级 skill：
 
 - `.claude/skills/crossframe/SKILL.md`
+- `.claude/skills/crossframe-essay/SKILL.md`
 - `.claude/commands/crossframe.md`
 - `.claude/commands/crossframe-explain.md`
 - `.claude/commands/crossframe-audit.md`
+- `.claude/commands/crossframe-essay.md`
 
 在仓库根目录运行 `claude` 后，可以直接使用：
 
@@ -15,12 +17,14 @@
 /crossframe 帮我分析这个组织为什么复盘很多但没有真实修复
 /crossframe-explain 解释一下虚无主义
 /crossframe-audit 检查这个高责任判断能不能公开
+/crossframe-essay 写一篇“团队越复盘越失真”的批判性洞察文章
 ```
 
 本文件保持轻量。若任务确实涉及 CrossFrame 使用、文档修订或适配层维护，再按需读取：
 
 - `README.md`
 - `skills/crossframe/SKILL.md`
+- `skills/crossframe-essay/SKILL.md`
 - `skills/crossframe/references/read-routing-map.md`
 - `skills/crossframe/references/v2-term-fidelity.md`
 - `skills/crossframe/references/theory-backend-index.md`
@@ -41,6 +45,12 @@
 - `skills/crossframe/templates/reasoning-outline-output.md`
 - `skills/crossframe/templates/user-facing-language.md`
 - `skills/crossframe/references/concept-cards/README.md`
+- `skills/crossframe-essay/protocols/essay-protocol.md`
+- `skills/crossframe-essay/protocols/interactive-drafting-protocol.md`
+- `skills/crossframe-essay/references/evidence-and-search-rules.md`
+- `skills/crossframe-essay/references/critical-insight-principles.md`
+- `skills/crossframe-essay/templates/insight-dossier-template.md`
+- `skills/crossframe-essay/templates/essay-output-template.md`
 
 额外约束：
 
@@ -50,3 +60,4 @@
 - 不要把开放断言写成终局审判。
 - 使用高风险概念前，先读对应概念卡，并用概念保真检查避免压缩失真。
 - 强判断、高反身性、亲密关系、疗愈转移、公共制度、框架边界、生命周期、递进、势场解离、治理连续性、超大规模压力测试和长期演化问题，必须按 `read-routing-map.md` 进入对应深水区模块。
+- 当用户要写文章、长文、评论、思想文章或批判性洞察文章时，使用 `crossframe-essay`：先形成 `结构洞察底稿`，再写 `文章正文`。

@@ -1,10 +1,11 @@
 # CrossFrame / Agent Adapter
 
-本文件是给通用 AI agent 的仓库级入口说明。仓库主体仍以 [README.md](README.md) 与 [skills/crossframe/SKILL.md](skills/crossframe/SKILL.md) 为准。
+本文件是给通用 AI agent 的仓库级入口说明。仓库主体仍以 [README.md](README.md)、[skills/crossframe/SKILL.md](skills/crossframe/SKILL.md) 与 [skills/crossframe-essay/SKILL.md](skills/crossframe-essay/SKILL.md) 为准。
 
 ## 仓库怎么理解
 
 - `skills/crossframe/`：真正可安装的 Codex skill 主体。
+- `skills/crossframe-essay/`：平行文章写作 skill，把 CrossFrame 结构判断转成中文批判性洞察文章。
 - `skills/crossframe/protocols/`：诊断、推演、开放断言、反俘获、低条件行动协议。
 - `skills/crossframe/worksheets/`：intake、五闸、证据账本、机制候选等推理发动机。
 - `skills/crossframe/references/read-routing-map.md`：按请求类型决定要读哪些协议、工作表、概念卡和模板。
@@ -12,7 +13,7 @@
 - `skills/crossframe/references/theory-backend-index.md`：长期演化、根假设、阶段、递进、多中心治理等深水区索引。
 - `skills/crossframe/references/v2-coverage-map.md`：v2.0 重要模块到 skill 文件的覆盖地图，维护时用于查漏。
 - `skills/crossframe/templates/`：用户可见输出模板，默认包含推理提纲。
-- 适配层：`CLAUDE.md`、`.claude/skills/crossframe/SKILL.md`、`.claude/commands/crossframe*.md`、`GEMINI.md`、`.cursor/rules/crossframe.mdc`、`.github/copilot-instructions.md`、`.windsurf/rules/crossframe.md`、`.clinerules/crossframe.md`、`.roo/rules/crossframe.md`、`.continue/rules/crossframe.md`、`CONVENTIONS.md`、`.aider.conf.yml`、`llms.txt`。
+- 适配层：`CLAUDE.md`、`.claude/skills/crossframe*/SKILL.md`、`.claude/commands/crossframe*.md`、`GEMINI.md`、`.cursor/rules/crossframe*.mdc`、`.github/copilot-instructions.md`、`.windsurf/rules/crossframe.md`、`.clinerules/crossframe.md`、`.roo/rules/crossframe.md`、`.continue/rules/crossframe.md`、`CONVENTIONS.md`、`.aider.conf.yml`、`llms.txt`。
 
 ## 何时调用 CrossFrame
 
@@ -33,6 +34,17 @@
 - 代码实现、算术、工具操作等非结构诊断任务
 - 医疗、法律、金融等需要专业资质的最终判断
 - 用户只是需要安慰，不需要诊断分析的对话
+
+## 何时调用 CrossFrame Essay
+
+当任务涉及以下内容时使用 `skills/crossframe-essay/SKILL.md`：
+
+- 用户要求写中文文章、长文、评论、思想文章、批判性洞察文章或结构洞察文章
+- 用户想把 CrossFrame 分析结果转成普通读者能读的文章
+- 用户给出零散素材，希望整理成有中心命题、有递进、有边界的长文
+- 主题是关系、团队、组织、制度、公共议题或哲学概念，但目标是“成文”而不是只要诊断
+
+CrossFrame Essay 仍然必须读取 `skills/crossframe/SKILL.md` 与 `skills/crossframe/references/read-routing-map.md`。默认输出顺序是 `结构洞察底稿` -> `文章正文`。
 
 ## 必须遵守
 
@@ -82,6 +94,15 @@
 22. 输出前读取 `skills/crossframe/templates/reasoning-outline-output.md` 与对应输出模板
 23. 高风险概念读取 `skills/crossframe/references/concept-cards/` 下的对应卡片
 
+文章写作额外读取：
+
+1. `skills/crossframe-essay/SKILL.md`
+2. `skills/crossframe-essay/protocols/essay-protocol.md` 或 `interactive-drafting-protocol.md`
+3. `skills/crossframe-essay/references/evidence-and-search-rules.md`
+4. `skills/crossframe-essay/references/critical-insight-principles.md`
+5. `skills/crossframe-essay/templates/insight-dossier-template.md`
+6. `skills/crossframe-essay/templates/essay-output-template.md` 或 `interactive-session-template.md`
+
 ## 修改仓库时
 
 - 不要把 `skills/crossframe/` 的可安装入口改丢。
@@ -90,4 +111,5 @@
 - 新增概念前先确认它是否能进入工作表、闸门或模板，否则不要升格。
 - 防失真材料优先放在 `references/` 和概念卡中，不要把 v2.0 全文塞回 `SKILL.md`。
 - 新增或补齐 v2.0 概念时，同步更新 `skills/crossframe/references/v2-coverage-map.md`。
+- 新增文章写作规则时，优先更新 `skills/crossframe-essay/`，不要把文章协议复制到根适配层。
 - 改完后运行 skill 验证，并确认本地安装目录需要同步时已同步。

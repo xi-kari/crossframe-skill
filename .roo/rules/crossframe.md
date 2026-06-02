@@ -2,6 +2,8 @@
 
 When a task mentions CrossFrame, 跨尺度结构诊断, 结构诊断, 推演, 开放断言, 反俘获, 低条件试探行动, 强判断, 高反身性, 亲密关系, 疗愈转移, 公共制度, 生命周期, 递进闭环, 势场解离, 治理连续性, 超大规模压力测试, or concept explanation, use the CrossFrame skill.
 
+When a task asks for 中文文章、长文、评论、思想文章、批判性洞察文章, or asks to turn CrossFrame reasoning into prose, use `skills/crossframe-essay/SKILL.md`. It must produce `结构洞察底稿` before `文章正文`.
+
 Start from:
 
 - `skills/crossframe/SKILL.md`

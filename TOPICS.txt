@@ -1,8 +1,11 @@
 crossframe
+crossframe-essay
 codex-skill
 ai-skill
 structural-diagnosis
 reasoning-protocol
+critical-essay
+chinese-writing
 open-assertion
 chinese
 claude-code

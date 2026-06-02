@@ -4,6 +4,19 @@
 
 本文件是 Gemini CLI 的仓库级上下文入口。
 
+如果用户要求写中文文章、长文、评论、思想文章、批判性洞察文章或结构洞察文章，请读取：
+
+1. `skills/crossframe-essay/SKILL.md`
+2. `skills/crossframe/SKILL.md`
+3. `skills/crossframe/references/read-routing-map.md`
+4. 对应 `skills/crossframe/protocols/` 文件
+5. `skills/crossframe-essay/references/evidence-and-search-rules.md`
+6. `skills/crossframe-essay/protocols/essay-protocol.md` 或 `interactive-drafting-protocol.md`
+7. `skills/crossframe-essay/templates/insight-dossier-template.md`
+8. `skills/crossframe-essay/templates/essay-output-template.md` 或 `interactive-session-template.md`
+
+文章输出默认先给 `结构洞察底稿`，再给 `文章正文`。公共议题、最新事实、真实组织/平台/人物/政策/公司相关内容必须查源；私人关系、哲学概念和泛论随笔默认不查源，除非用户要求。
+
 如果用户要求结构诊断、推演、开放断言、高责任审查或低条件行动，请读取：
 
 1. `skills/crossframe/SKILL.md`

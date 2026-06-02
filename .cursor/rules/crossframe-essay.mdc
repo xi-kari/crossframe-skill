@@ -1,0 +1,20 @@
+---
+description: Use CrossFrame Essay for Chinese critical insight articles that must start with a CrossFrame structural dossier before the article body.
+globs: "**/*"
+alwaysApply: false
+---
+
+When the user asks to write a 中文文章、长文、评论、思想文章、批判性洞察文章、结构洞察文章, or wants CrossFrame reasoning turned into readable prose, read `skills/crossframe-essay/SKILL.md` first.
+
+Required flow:
+
+1. Read `skills/crossframe-essay/SKILL.md`.
+2. Read `skills/crossframe/SKILL.md`.
+3. Read `skills/crossframe/references/read-routing-map.md`.
+4. Route the topic through the appropriate CrossFrame protocol.
+5. Decide whether to search using `skills/crossframe-essay/references/evidence-and-search-rules.md`.
+6. Output `结构洞察底稿` before `文章正文`.
+
+Do not write only the article body. Do not let sources decide the thesis. Public/current/real-world topics require sources and evidence boundaries; private relationship, philosophical, and general essay topics do not browse by default unless requested.
+
+Use plain Chinese for ordinary readers. Keep terms like 承接, 回流, 开放断言, 责任链, 证据成本, 修复副产品 as backend mapping unless they genuinely help the article.

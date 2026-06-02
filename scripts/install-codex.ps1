@@ -10,11 +10,19 @@ if (-not (Test-Path -LiteralPath $installer)) {
   throw "Codex skill installer not found: $installer"
 }
 
-py -3 $installer --repo $Repo --path skills/crossframe
+$skills = @(
+  "skills/crossframe",
+  "skills/crossframe-essay"
+)
 
-$installed = Join-Path $HOME ".codex\skills\crossframe\SKILL.md"
-if (-not (Test-Path -LiteralPath $installed)) {
-  throw "Install did not create expected file: $installed"
+foreach ($skillPath in $skills) {
+  py -3 $installer --repo $Repo --path $skillPath
+
+  $skillName = Split-Path -Leaf $skillPath
+  $installed = Join-Path $HOME ".codex\skills\$skillName\SKILL.md"
+  if (-not (Test-Path -LiteralPath $installed)) {
+    throw "Install did not create expected file: $installed"
+  }
+
+  Write-Host "Installed $skillName skill to $installed"
 }
-
-Write-Host "Installed crossframe skill to $installed"

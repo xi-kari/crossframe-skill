@@ -1,16 +1,17 @@
 <div align="center">
 
-# CrossFrame Skill
+# CrossFrame Skill Suite
 
-### 让 AI 分析复杂问题时，先想清楚，再说人话。
+### 让 AI 分析复杂问题时，先想清楚，再说人话；写文章时，先有洞察底稿，再成文。
 
-**适合关系、团队、组织、制度和公共争议里的复杂问题。**
+**适合复杂问题分析，也适合把结构判断写成有批判性洞察力的中文文章。**
 
 <br>
 
 ![许可证](https://img.shields.io/badge/许可证-MIT-f3d7e6?style=flat-square&labelColor=fff7fb&color=f3d7e6)
 ![用途](https://img.shields.io/badge/用途-复杂问题分析-d8ebff?style=flat-square&labelColor=fafcff&color=d8ebff)
 ![输出](https://img.shields.io/badge/输出-推理提纲%20%2B%20人话判断-e4ddff?style=flat-square&labelColor=fffaff&color=e4ddff)
+![文章](https://img.shields.io/badge/文章-洞察底稿%20%2B%20正文-d9f2df?style=flat-square&labelColor=fbfffb&color=d9f2df)
 ![语言](https://img.shields.io/badge/语言-中文为主-f8efcf?style=flat-square&labelColor=fffdf6&color=f8efcf)
 
 <p align="center">
@@ -23,6 +24,8 @@
   <a href="#adapters"><strong>其他 AI 软件</strong></a>
   ·
   <a href="skills/crossframe/SKILL.md"><strong>Skill 文件</strong></a>
+  ·
+  <a href="skills/crossframe-essay/SKILL.md"><strong>Essay Skill</strong></a>
 </p>
 
 </div>
@@ -31,9 +34,14 @@
 
 ## 一句话说明
 
-CrossFrame 是一个给 AI 用的中文 skill。
+CrossFrame 是一组给 AI 用的中文 skills。
 
-它的作用很简单：**不要让 AI 一上来就套概念，而是先读取必要概念、把问题拆清楚，再给一个普通人能读懂的判断。**
+它们的作用很简单：**不要让 AI 一上来就套概念，而是先读取必要概念、把问题拆清楚，再给一个普通人能读懂的判断或文章。**
+
+仓库里现在有两个平行 skill：
+
+- `crossframe`：用于结构诊断、推演、开放断言、反俘获和低条件行动。
+- `crossframe-essay`：用于写中文批判性洞察文章，默认先给 `结构洞察底稿`，再给 `文章正文`。
 
 比如，不要这样回答：
 
@@ -61,6 +69,14 @@ CrossFrame 适合这类问题：
 
 它更像一个分析助手：先帮你分清事实、猜测、责任、风险和下一步。
 
+CrossFrame Essay 适合这类写作：
+
+- 写一篇“团队越复盘越失真”的组织洞察文章。
+- 写一篇“解释劳动为什么会耗竭”的关系文章。
+- 写一篇“平台申诉为什么可能只是表面治理”的公共议题评论。
+- 写一篇“生命第一因”的思想文章，但先拆清科学起源、结构定义和意义问题。
+- 把零散素材整理成一篇有递进、有边界、不堆术语的长文。
+
 ---
 
 <a id="how"></a>
@@ -87,6 +103,8 @@ CrossFrame 适合这类问题：
 对更复杂的场景，它会进入更深的后台模块：强判断要做命题验证，高反身对象要区分诊断前后反应，亲密关系要先保护痛苦和边界，疗愈场景要区分抢救、修复、重建和退出转移，公共制度要检查证据通道、申诉有效性和低权力主体保护。
 
 这一版还补了 v2.0 里更容易失真的深水区：什么时候不能把 CrossFrame 当万能理论，长期演化怎么判断阶段，忙了很久为什么没有积累，什么时候退出不是逃避，公共承诺为什么必须有偿付，宏大判断哪里必须承认可判断边界。普通输出不会把这些术语全倒出来，它们主要在后台帮助 AI 不乱判。
+
+写文章时，`crossframe-essay` 会多做一步：先把判断整理成一份 `结构洞察底稿`，包括事实边界、机制候选、责任链、成本链、证据缺口和文章递进顺序；然后才写正文。这样文章不是靠气势推进，而是有一个能回头检查的判断底座。
 
 ---
 
@@ -173,12 +191,14 @@ CrossFrame 不应该只说：
 
 ```powershell
 py -3 "$HOME/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py" --repo xixilove486/crossframe-skill --path skills/crossframe
+py -3 "$HOME/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py" --repo xixilove486/crossframe-skill --path skills/crossframe-essay
 ```
 
 安装后，本地 Codex 应显示：
 
 ```text
 crossframe
+crossframe-essay
 ```
 
 ### 手动安装
@@ -186,6 +206,7 @@ crossframe
 ```powershell
 git clone https://github.com/xixilove486/crossframe-skill.git
 Copy-Item -Path ".\crossframe-skill\skills\crossframe" -Destination "$HOME\.codex\skills\crossframe" -Recurse -Force
+Copy-Item -Path ".\crossframe-skill\skills\crossframe-essay" -Destination "$HOME\.codex\skills\crossframe-essay" -Recurse -Force
 ```
 
 ### 仓库内快速安装
@@ -203,9 +224,9 @@ Copy-Item -Path ".\crossframe-skill\skills\crossframe" -Destination "$HOME\.code
 
 | 工具 | 入口文件 |
 | --- | --- |
-| Codex | `skills/crossframe/` |
-| Claude Code | `CLAUDE.md`、`.claude/skills/crossframe/SKILL.md`、`.claude/commands/crossframe*.md` |
-| Cursor | `.cursor/rules/crossframe.mdc`、`AGENTS.md` |
+| Codex | `skills/crossframe/`、`skills/crossframe-essay/` |
+| Claude Code | `CLAUDE.md`、`.claude/skills/crossframe*/SKILL.md`、`.claude/commands/crossframe*.md` |
+| Cursor | `.cursor/rules/crossframe.mdc`、`.cursor/rules/crossframe-essay.mdc`、`AGENTS.md` |
 | Gemini CLI | `GEMINI.md` |
 | GitHub Copilot | `.github/copilot-instructions.md` |
 | Windsurf / Cascade | `.windsurf/rules/crossframe.md`、`AGENTS.md` |
@@ -220,6 +241,7 @@ Copy-Item -Path ".\crossframe-skill\skills\crossframe" -Destination "$HOME\.code
 
 ```text
 skills/crossframe/
+skills/crossframe-essay/
 ```
 
 更多说明见 [INTERFACES.md](INTERFACES.md)。
@@ -231,10 +253,17 @@ skills/crossframe/
 ```text
 crossframe-skill/
 ├─ skills/
-│  └─ crossframe/
+│  ├─ crossframe/
+│  │  ├─ SKILL.md
+│  │  ├─ protocols/
+│  │  ├─ worksheets/
+│  │  ├─ references/
+│  │  ├─ templates/
+│  │  ├─ evals/
+│  │  └─ examples/
+│  └─ crossframe-essay/
 │     ├─ SKILL.md
 │     ├─ protocols/
-│     ├─ worksheets/
 │     ├─ references/
 │     ├─ templates/
 │     ├─ evals/

@@ -2,6 +2,8 @@
 
 Use CrossFrame for Chinese cross-scale structural diagnosis of relationships, teams, organizations, institutions, public disputes, long-term evolution, concept explanation, inference, open assertions, anti-capture checks, strong-judgment verification, and low-condition action planning.
 
+For Chinese critical insight articles, long-form essays, commentary, 思想文章, or structure-to-essay writing, use `skills/crossframe-essay/SKILL.md`. It must read `skills/crossframe/SKILL.md` and `skills/crossframe/references/read-routing-map.md`, then output `结构洞察底稿` before `文章正文`.
+
 Required flow:
 
 1. Read `skills/crossframe/SKILL.md`.

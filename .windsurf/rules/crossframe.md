@@ -7,6 +7,8 @@ description: Use CrossFrame for Chinese cross-scale structural diagnosis, infere
 
 Use this rule when the user asks for CrossFrame、跨尺度结构诊断、结构诊断、推演、开放断言、反俘获审查、低条件试探行动、强判断、高反身性、亲密关系、疗愈转移、公共制度、长期演化、概念解释，或复杂关系/团队/组织/制度/公共争议分析。
 
+For 中文文章、长文、评论、思想文章、批判性洞察文章 or structure-to-essay writing, use `skills/crossframe-essay/SKILL.md` first, then read `skills/crossframe/SKILL.md` and `skills/crossframe/references/read-routing-map.md`. Output `结构洞察底稿` before `文章正文`.
+
 Read order:
 
 1. `skills/crossframe/SKILL.md`
