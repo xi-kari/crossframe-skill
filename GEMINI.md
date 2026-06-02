@@ -4,6 +4,14 @@
 
 本文件是 Gemini CLI 的仓库级上下文入口。
 
+如果用户要求一个复杂任务需要多个 CrossFrame skill 连续协作，先读取：
+
+1. `skills/crossframe-suite/SKILL.md`
+2. `skills/crossframe-suite/references/workflow-routing-map.md`
+3. `skills/crossframe-suite/protocols/suite-dispatch-protocol.md`
+
+常见链路：普通文章 `crossframe -> crossframe-essay -> crossframe-review`；公共评论 `crossframe -> crossframe-public -> crossframe-essay -> crossframe-review`；组织复盘文章 `crossframe -> crossframe-org -> crossframe-essay -> crossframe-review`；答读者问 `crossframe -> crossframe-dialogue -> review-lite`；读书后成文 `crossframe -> crossframe-notebook -> crossframe-essay -> crossframe-review`。不要一次读取全部 skill。
+
 如果用户要求写中文文章、长文、评论、思想文章、批判性洞察文章或结构洞察文章，请读取：
 
 1. `skills/crossframe-essay/SKILL.md`

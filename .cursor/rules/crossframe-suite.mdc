@@ -1,0 +1,17 @@
+---
+description: Use CrossFrame Suite when a task requires multiple CrossFrame sibling skills in sequence.
+globs: "**/*"
+alwaysApply: false
+---
+
+When a task asks for a complex CrossFrame workflow, such as writing after diagnosis, public commentary, organization repair writing, debate-to-essay, reading-note-to-essay, casebook extraction plus review, or "which CrossFrame skills should trigger in what order", read `skills/crossframe-suite/SKILL.md` first.
+
+Required flow:
+
+1. Read `skills/crossframe-suite/SKILL.md`.
+2. Read `skills/crossframe-suite/references/workflow-routing-map.md`.
+3. Read `skills/crossframe-suite/protocols/suite-dispatch-protocol.md`.
+4. Output a concise `调度提纲`.
+5. Read only the sibling skills selected by the workflow.
+
+Do not trigger every `crossframe-*` skill at once. Use `crossframe-review` as a quality gate for formal, public, long-form, strong-judgment, or high-responsibility outputs.

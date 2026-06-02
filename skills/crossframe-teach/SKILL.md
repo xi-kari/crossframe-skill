@@ -6,6 +6,8 @@ description: |
 
 # CrossFrame Teach
 
+如果概念教学要连接文章写作、案例沉淀、读书研究或输出评审，先读取 `../crossframe-suite/SKILL.md` 做总调度；本 skill 只负责教学解释、误读边界和练习。
+
 ## 轻入口原则
 
 中文是权威语义。`CrossFrame Teach` 只是教学入口，不重写、不替代、不压缩 canonical CrossFrame。

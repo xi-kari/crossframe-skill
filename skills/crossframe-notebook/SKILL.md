@@ -6,6 +6,8 @@ description: |
 
 # CrossFrame Notebook
 
+如果读书研究之后要成文、教学、辩论或评审，先读取 `../crossframe-suite/SKILL.md` 做总调度；本 skill 只负责读书/理论/文章研究笔记。
+
 本 skill 是 `crossframe` 的平行研究笔记入口，不替代 `crossframe` 做现实诊断，也不替代 `crossframe-essay` 写文章。中文为权威语义；英文只用于 skill id、文件名、接口和必要对外说明。
 
 ## 轻入口读取

@@ -1,6 +1,8 @@
 # CrossFrame Agent Conventions
 
-This repository is a publishable AI skill repo. The canonical implementations live in `skills/crossframe/` and `skills/crossframe-essay/`.
+This repository is a publishable AI skill repo. The canonical implementations live in `skills/crossframe-suite/`, `skills/crossframe/`, and `skills/crossframe-essay/`.
+
+For complex tasks that need multiple CrossFrame sibling skills in sequence, read `skills/crossframe-suite/SKILL.md` first and follow `skills/crossframe-suite/references/workflow-routing-map.md`. The suite skill only routes; it must not replace the specialized skill bodies.
 
 When a user asks for CrossFrame、跨尺度结构诊断、结构诊断、推演、开放断言、反俘获审查、低条件试探行动、强判断、高反身性、亲密关系、疗愈转移、公共制度、长期演化或概念解释:
 

@@ -6,6 +6,8 @@ description: |
 
 # CrossFrame
 
+如果用户任务需要多个 CrossFrame 平行 skill 连续协作，先读取 `../crossframe-suite/SKILL.md` 做总调度；本 skill 负责其中的结构诊断、事实边界、尺度窗口、机制候选和判断档位。
+
 ## 语言原则
 
 本 skill 的权威语义是中文。`CrossFrame` 只是英文传播名与 skill id，不承担概念解释权。

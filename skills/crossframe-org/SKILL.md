@@ -6,6 +6,8 @@ description: |
 
 # CrossFrame Org
 
+如果组织修复判断之后要写文章、沉淀案例、做辩论或评审输出，先读取 `../crossframe-suite/SKILL.md` 做总调度；本 skill 只负责团队、项目和组织修复专项。
+
 CrossFrame Org 是 `crossframe` 的平行组织修复 skill，不替代 canonical `crossframe`，也不复制 CrossFrame 全文。它把 CrossFrame 的事实闸、尺度闸、责任闸、机制候选和概念保真，转成团队、项目、组织场景里的可执行修复备忘录。
 
 中文是权威语义。英文只用于 skill id、文件名或必要的外部接口；不要把“承接、回流、责任链、授权链、修复副产品、停止错误加速”翻译后再反向理解。

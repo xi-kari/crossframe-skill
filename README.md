@@ -23,6 +23,8 @@
   ·
   <a href="#adapters"><strong>其他 AI 软件</strong></a>
   ·
+  <a href="skills/crossframe-suite/SKILL.md"><strong>Suite 总入口</strong></a>
+  ·
   <a href="skills/crossframe/SKILL.md"><strong>Skill 文件</strong></a>
   ·
   <a href="skills/crossframe-essay/SKILL.md"><strong>Essay Skill</strong></a>
@@ -38,8 +40,9 @@ CrossFrame 是一组给 AI 用的中文 skills。
 
 它们的作用很简单：**不要让 AI 一上来就套概念，而是先读取必要概念、把问题拆清楚，再给一个普通人能读懂的判断或文章。**
 
-仓库里现在是一组平行 skill：
+仓库里现在是一组平行 skill，复杂任务先由 `crossframe-suite` 调度：
 
+- `crossframe-suite`：总入口，用于判断一个任务应该连续触发哪些 skill，以及按什么顺序触发。它不替代任何专项 skill，只负责路由和质量闸。
 - `crossframe`：用于结构诊断、推演、开放断言、反俘获和低条件行动。
 - `crossframe-essay`：用于写中文批判性洞察文章，默认先给 `结构洞察底稿`，再给 `文章正文`；需要深度时可按需概念上升、引入中西经典或理论参照；需要更有人味时可写成现代编辑同志口吻，像一位耐心、谦逊、认真、果敢的编辑回应读者问题。
 - `crossframe-review`：用于审查输出有没有真的推理，抓概念堆砌、伪推理、证据边界缺失和跳过底稿。
@@ -88,6 +91,7 @@ CrossFrame Essay 适合这类写作：
 
 其它平行 skill 适合这类任务：
 
+- “写公共评论文章，顺便检查输出质量。” -> `crossframe-suite`
 - “帮我评审这段 CrossFrame 输出是否合格。” -> `crossframe-review`
 - “像编辑回信一样回答这个读者问题。” -> `crossframe-dialogue`
 - “把这些聊天记录整理成案例库。” -> `crossframe-casebook`
@@ -125,6 +129,30 @@ CrossFrame Essay 适合这类写作：
 这一版还补了 v2.0 里更容易失真的深水区：什么时候不能把 CrossFrame 当万能理论，长期演化怎么判断阶段，忙了很久为什么没有积累，什么时候退出不是逃避，公共承诺为什么必须有偿付，宏大判断哪里必须承认可判断边界。普通输出不会把这些术语全倒出来，它们主要在后台帮助 AI 不乱判。
 
 写文章时，`crossframe-essay` 会多做一步：先把判断整理成一份 `结构洞察底稿`，包括事实边界、机制候选、责任链、成本链、证据缺口和文章递进顺序；然后才写正文。这样文章不是靠气势推进，而是有一个能回头检查的判断底座。
+
+如果一个任务要连续使用多个 skill，`crossframe-suite` 会先给出调度提纲。常见链路是：
+
+```text
+普通洞察文章：
+crossframe -> crossframe-essay -> crossframe-review
+
+公共评论文章：
+crossframe -> crossframe-public -> crossframe-essay -> crossframe-review
+
+组织复盘/修复文章：
+crossframe -> crossframe-org -> crossframe-essay -> crossframe-review
+
+答读者问：
+crossframe -> crossframe-dialogue -> review-lite
+
+读书后成文：
+crossframe -> crossframe-notebook -> crossframe-essay -> crossframe-review
+
+辩论后成文：
+crossframe -> crossframe-debate -> crossframe-essay -> crossframe-review
+```
+
+它不会把所有 skill 一起触发；没用到的 skill 会明确写在“不读取”里，防止上下文变重和判断跑偏。
 
 如果文章需要更深，它还会再加一层：从现实机制里抽象出上位概念，再选择贴切的经典、理论、历史经验或文学互文，最后回到现实责任链。它不会为了显得高级而堆名人名言；直接引用必须能核验，不确定原句时只做意译或思想映射。
 
@@ -214,6 +242,7 @@ CrossFrame 不应该只说：
 ### Codex 安装
 
 ```powershell
+py -3 "$HOME/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py" --repo xixilove486/crossframe-skill --path skills/crossframe-suite
 py -3 "$HOME/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py" --repo xixilove486/crossframe-skill --path skills/crossframe
 py -3 "$HOME/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py" --repo xixilove486/crossframe-skill --path skills/crossframe-essay
 py -3 "$HOME/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py" --repo xixilove486/crossframe-skill --path skills/crossframe-review
@@ -229,6 +258,7 @@ py -3 "$HOME/.codex/skills/.system/skill-installer/scripts/install-skill-from-gi
 安装后，本地 Codex 应显示：
 
 ```text
+crossframe-suite
 crossframe
 crossframe-essay
 crossframe-review
@@ -245,6 +275,7 @@ crossframe-notebook
 
 ```powershell
 git clone https://github.com/xixilove486/crossframe-skill.git
+Copy-Item -Path ".\crossframe-skill\skills\crossframe-suite" -Destination "$HOME\.codex\skills\crossframe-suite" -Recurse -Force
 Copy-Item -Path ".\crossframe-skill\skills\crossframe" -Destination "$HOME\.codex\skills\crossframe" -Recurse -Force
 Copy-Item -Path ".\crossframe-skill\skills\crossframe-essay" -Destination "$HOME\.codex\skills\crossframe-essay" -Recurse -Force
 Copy-Item -Path ".\crossframe-skill\skills\crossframe-review" -Destination "$HOME\.codex\skills\crossframe-review" -Recurse -Force
@@ -274,7 +305,7 @@ Copy-Item -Path ".\crossframe-skill\skills\crossframe-notebook" -Destination "$H
 | --- | --- |
 | Codex | `skills/crossframe*/` 全部可安装 skill |
 | Claude Code | `CLAUDE.md`、`.claude/skills/crossframe*/SKILL.md`、`.claude/commands/crossframe*.md` |
-| Cursor | `.cursor/rules/crossframe.mdc`、`.cursor/rules/crossframe-essay.mdc`、`AGENTS.md` |
+| Cursor | `.cursor/rules/crossframe-suite.mdc`、`.cursor/rules/crossframe.mdc`、`.cursor/rules/crossframe-essay.mdc`、`AGENTS.md` |
 | Gemini CLI | `GEMINI.md` |
 | GitHub Copilot | `.github/copilot-instructions.md` |
 | Windsurf / Cascade | `.windsurf/rules/crossframe.md`、`AGENTS.md` |
@@ -288,6 +319,7 @@ Copy-Item -Path ".\crossframe-skill\skills\crossframe-notebook" -Destination "$H
 这些文件只是入口说明。真正的 skill 内容仍然在：
 
 ```text
+skills/crossframe-suite/
 skills/crossframe/
 skills/crossframe-essay/
 skills/crossframe-review/
@@ -309,6 +341,13 @@ skills/crossframe-notebook/
 ```text
 crossframe-skill/
 ├─ skills/
+│  ├─ crossframe-suite/
+│  │  ├─ SKILL.md
+│  │  ├─ protocols/
+│  │  ├─ references/
+│  │  ├─ templates/
+│  │  ├─ evals/
+│  │  └─ examples/
 │  ├─ crossframe/
 │  │  ├─ SKILL.md
 │  │  ├─ protocols/
@@ -318,12 +357,12 @@ crossframe-skill/
 │  │  ├─ evals/
 │  │  └─ examples/
 │  ├─ crossframe-essay/
-│     ├─ SKILL.md
-│     ├─ protocols/
-│     ├─ references/
-│     ├─ templates/
-│     ├─ evals/
-│     └─ examples/
+│  │  ├─ SKILL.md
+│  │  ├─ protocols/
+│  │  ├─ references/
+│  │  ├─ templates/
+│  │  ├─ evals/
+│  │  └─ examples/
 │  └─ crossframe-*/
 │     ├─ SKILL.md
 │     ├─ protocols/

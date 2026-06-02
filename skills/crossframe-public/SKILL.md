@@ -6,6 +6,8 @@ description: |
 
 # CrossFrame Public
 
+如果公共议题分析之后要写评论文章、组织建议、辩论论证或质量评审，先读取 `../crossframe-suite/SKILL.md` 做总调度；本 skill 只负责公共事实、证据边界、程序与制度专项判断。
+
 CrossFrame Public 是 `crossframe` 的公共议题/制度评论专项轻入口，不复制 canonical CrossFrame 全文。中文是权威语义；英文只作为 skill id、文件名或对外简介。
 
 ## 必须读取

@@ -5,6 +5,8 @@ CrossFrame is a Chinese cross-scale structural diagnosis skill. It helps AI anal
 ## Canonical
 
 - [Skill entry](skills/crossframe/SKILL.md): canonical Codex skill instructions.
+- [Suite skill](skills/crossframe-suite/SKILL.md): route complex multi-skill CrossFrame workflows.
+- [Suite routing map](skills/crossframe-suite/references/workflow-routing-map.md): choose continuous skill chains and avoid overtriggering.
 - [Essay skill entry](skills/crossframe-essay/SKILL.md): CrossFrame-based Chinese critical insight essay writing skill.
 - [Review skill](skills/crossframe-review/SKILL.md): audit CrossFrame outputs for reasoning fidelity, evidence boundaries, citations, and repair steps.
 - [Dialogue skill](skills/crossframe-dialogue/SKILL.md): short reader replies, editor responses, and consultation-style structural answers.
@@ -29,8 +31,10 @@ CrossFrame is a Chinese cross-scale structural diagnosis skill. It helps AI anal
 - [AGENTS.md](AGENTS.md): generic agent and Codex-compatible entry.
 - [CLAUDE.md](CLAUDE.md): Claude Code entry.
 - [Claude skill](.claude/skills/crossframe/SKILL.md): project skill for Claude Code.
+- [Claude suite skill](.claude/skills/crossframe-suite/SKILL.md): project skill for multi-skill workflow routing.
 - [Claude essay skill](.claude/skills/crossframe-essay/SKILL.md): project skill for CrossFrame Essay.
 - [Cursor rule](.cursor/rules/crossframe.mdc): Cursor rule.
+- [Cursor suite rule](.cursor/rules/crossframe-suite.mdc): Cursor rule for multi-skill workflow routing.
 - [Cursor essay rule](.cursor/rules/crossframe-essay.mdc): Cursor rule for essay writing.
 - [Gemini entry](GEMINI.md): Gemini CLI entry.
 - [Copilot instructions](.github/copilot-instructions.md): GitHub Copilot repository instructions.
@@ -40,4 +44,4 @@ CrossFrame is a Chinese cross-scale structural diagnosis skill. It helps AI anal
 
 Do not treat CrossFrame as a concept pile. Always route, fill internal worksheets, preserve high-risk concepts, then answer in plain Chinese.
 
-For article tasks, do not write only prose. Use CrossFrame Essay to produce `结构洞察底稿` first, then `文章正文`. When depth is needed, add concept elevation and classic/theory references, but direct quotes must be verifiable and references must return to concrete reality. When the user asks for a warmer answer, use the modern editor-comrade voice: patient and friendly, but still decisive about responsibility and evidence. For specialized workflows, use the matching sibling skill and keep it as a light wrapper over the canonical CrossFrame routing map.
+For complex tasks that need multiple outputs or multiple sibling skills, use CrossFrame Suite first to choose the chain and avoid reading every skill. For article tasks, do not write only prose. Use CrossFrame Essay to produce `结构洞察底稿` first, then `文章正文`. When depth is needed, add concept elevation and classic/theory references, but direct quotes must be verifiable and references must return to concrete reality. When the user asks for a warmer answer, use the modern editor-comrade voice: patient and friendly, but still decisive about responsibility and evidence. For specialized workflows, use the matching sibling skill and keep it as a light wrapper over the canonical CrossFrame routing map.

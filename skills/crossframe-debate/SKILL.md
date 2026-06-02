@@ -6,6 +6,8 @@ description: |
 
 # CrossFrame Debate
 
+如果命题论证之后要写文章、公共评论、读书笔记或案例沉淀，先读取 `../crossframe-suite/SKILL.md` 做总调度；本 skill 只负责命题拆解、正反结构、证据要求和撤回条件。
+
 `crossframe-debate` 是 `crossframe` 的平行轻入口，用于把一个命题拆成可检验论证，而不是帮助某一方赢辩论。
 
 中文为权威语义；英文只用于 skill id、文件名和接口说明。遇到中英文理解冲突时，以中文术语和中文判断为准。

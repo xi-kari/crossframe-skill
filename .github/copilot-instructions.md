@@ -2,12 +2,14 @@
 
 - 本仓库主体内容以中文为主；`CrossFrame` 只是英文传播名与 skill id。
 - 实际可安装的 Codex skill 位于 `skills/crossframe/`。
+- 总调度 skill 位于 `skills/crossframe-suite/`；复杂任务先用它决定连续触发顺序。
 - 平行文章写作 skill 位于 `skills/crossframe-essay/`。
 - 其它平行专项 skill 位于 `skills/crossframe-review/`、`skills/crossframe-dialogue/`、`skills/crossframe-casebook/`、`skills/crossframe-public/`、`skills/crossframe-org/`、`skills/crossframe-teach/`、`skills/crossframe-debate/`、`skills/crossframe-notebook/`。
 - `README.md` 与 `skills/crossframe/SKILL.md` 是原始说明来源；新增适配优先薄封装，不要复制出多套漂移正文。
 - 结构诊断、推演、开放断言、反俘获审查或低条件行动任务请遵循 `AGENTS.md`。
 - 中文文章、长文、评论、思想文章、批判性洞察文章和结构洞察文章任务请遵循 `skills/crossframe-essay/SKILL.md`。
 - 评审、短答复、案例库、公共议题、组织修复、概念教学、命题辩论、研究笔记任务请遵循对应 `skills/crossframe-*/SKILL.md`。
+- 多 skill 连续任务请先遵循 `skills/crossframe-suite/SKILL.md`，例如公共评论文章走 `crossframe -> crossframe-public -> crossframe-essay -> crossframe-review`，组织复盘文章走 `crossframe -> crossframe-org -> crossframe-essay -> crossframe-review`；不要一次读取全部 skill。
 - 文章任务需要深度、概念上升、引经据典、理论参照或文学互文时，按需读取 `skills/crossframe-essay/protocols/concept-elevation-protocol.md` 与 `skills/crossframe-essay/references/reference-and-allusion-rules.md`。
 - 文章任务需要亲切、编辑、同志口吻、报刊答复、耐心解答或给意见时，按需读取 `skills/crossframe-essay/protocols/editorial-comrade-voice-protocol.md` 与 `skills/crossframe-essay/references/editorial-voice-principles.md`。
 - 概念解释或思想解释任务也应进入 CrossFrame，但先读 `skills/crossframe/protocols/concept-explanation-protocol.md`。

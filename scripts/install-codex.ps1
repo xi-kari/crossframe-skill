@@ -11,6 +11,7 @@ if (-not (Test-Path -LiteralPath $installer)) {
 }
 
 $skills = @(
+  "skills/crossframe-suite",
   "skills/crossframe",
   "skills/crossframe-essay",
   "skills/crossframe-review",

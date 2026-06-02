@@ -1,9 +1,10 @@
 # CrossFrame / Agent Adapter
 
-本文件是给通用 AI agent 的仓库级入口说明。仓库主体仍以 [README.md](README.md)、[skills/crossframe/SKILL.md](skills/crossframe/SKILL.md) 与 [skills/crossframe-essay/SKILL.md](skills/crossframe-essay/SKILL.md) 为准。
+本文件是给通用 AI agent 的仓库级入口说明。仓库主体仍以 [README.md](README.md)、[skills/crossframe-suite/SKILL.md](skills/crossframe-suite/SKILL.md)、[skills/crossframe/SKILL.md](skills/crossframe/SKILL.md) 与 [skills/crossframe-essay/SKILL.md](skills/crossframe-essay/SKILL.md) 为准。
 
 ## 仓库怎么理解
 
+- `skills/crossframe-suite/`：CrossFrame skill family 总调度入口，负责连续触发顺序和质量闸。
 - `skills/crossframe/`：真正可安装的 Codex skill 主体。
 - `skills/crossframe-essay/`：平行文章写作 skill，把 CrossFrame 结构判断转成中文批判性洞察文章。
 - `skills/crossframe-review/`：评审 CrossFrame 输出是否真推理、守证据和边界。
@@ -25,6 +26,8 @@
 
 ## 何时调用 CrossFrame
 
+复杂任务先判断是否需要 `skills/crossframe-suite/SKILL.md`。当用户要文章、公共评论、组织复盘文章、读书后成文、辩论后成文、案例沉淀再输出、或要求多个 CrossFrame skill 连续协作时，先读 suite，再按它的 `workflow-routing-map.md` 进入专项 skill。
+
 当任务涉及以下内容时使用：
 
 - 关系、团队、项目、组织、制度、公共争议中的复杂失衡
@@ -44,6 +47,8 @@
 - 用户只是需要安慰，不需要诊断分析的对话
 
 ## 何时调用 CrossFrame Essay
+
+若写作任务还涉及公共事实、组织修复、命题辩论、读书研究、案例沉淀或最后评审，先使用 `skills/crossframe-suite/SKILL.md` 决定链路；不要直接只触发 essay。
 
 当任务涉及以下内容时使用 `skills/crossframe-essay/SKILL.md`：
 
@@ -73,6 +78,24 @@ CrossFrame Essay 仍然必须读取 `skills/crossframe/SKILL.md` 与 `skills/cro
 
 这些平行 skill 都必须保持轻入口：先读取各自 `SKILL.md`，再按其说明读取 `skills/crossframe/SKILL.md` 和 `skills/crossframe/references/read-routing-map.md`；不得复制 CrossFrame 全文。
 
+## 连续触发规则
+
+默认链路：
+
+- 结构诊断：`crossframe`
+- 普通洞察文章：`crossframe -> crossframe-essay -> crossframe-review`
+- 公共评论文章：`crossframe -> crossframe-public -> crossframe-essay -> crossframe-review`
+- 组织复盘/修复文章：`crossframe -> crossframe-org -> crossframe-essay -> crossframe-review`
+- 答读者问：`crossframe -> crossframe-dialogue -> review-lite`
+- 案例沉淀：`crossframe -> crossframe-casebook -> crossframe-review`
+- 概念教学：`crossframe -> crossframe-teach -> review-lite`
+- 命题辩论：`crossframe -> crossframe-debate -> crossframe-review`
+- 辩论后成文：`crossframe -> crossframe-debate -> crossframe-essay -> crossframe-review`
+- 读书研究：`crossframe -> crossframe-notebook -> crossframe-review`
+- 读书后成文：`crossframe -> crossframe-notebook -> crossframe-essay -> crossframe-review`
+
+连续触发时先给短 `调度提纲`：任务类型、工作流、必读 skill、按需读取、不读取、质量闸。不要为了完整而读取全部 skill。
+
 ## 必须遵守
 
 1. 中文为权威语义，英文只作传播名或文件名。
@@ -97,6 +120,7 @@ CrossFrame Essay 仍然必须读取 `skills/crossframe/SKILL.md` 与 `skills/cro
 
 ## 读取优先级
 
+0. 复杂多交付任务先读 [skills/crossframe-suite/SKILL.md](skills/crossframe-suite/SKILL.md) 与 `skills/crossframe-suite/references/workflow-routing-map.md`
 1. [skills/crossframe/SKILL.md](skills/crossframe/SKILL.md)
 2. 先读取 `skills/crossframe/references/read-routing-map.md` 确定本次路由
 3. 普通诊断读取 `skills/crossframe/protocols/diagnosis-protocol.md`
