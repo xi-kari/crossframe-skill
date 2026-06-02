@@ -1,5 +1,13 @@
 crossframe
 crossframe-essay
+crossframe-review
+crossframe-dialogue
+crossframe-casebook
+crossframe-public
+crossframe-org
+crossframe-teach
+crossframe-debate
+crossframe-notebook
 codex-skill
 ai-skill
 structural-diagnosis
@@ -9,6 +17,12 @@ concept-elevation
 classic-references
 editor-comrade-voice
 chinese-writing
+casebook
+public-issue
+organization-repair
+concept-teaching
+debate-analysis
+research-notebook
 open-assertion
 chinese
 claude-code

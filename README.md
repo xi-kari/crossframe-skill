@@ -38,10 +38,18 @@ CrossFrame 是一组给 AI 用的中文 skills。
 
 它们的作用很简单：**不要让 AI 一上来就套概念，而是先读取必要概念、把问题拆清楚，再给一个普通人能读懂的判断或文章。**
 
-仓库里现在有两个平行 skill：
+仓库里现在是一组平行 skill：
 
 - `crossframe`：用于结构诊断、推演、开放断言、反俘获和低条件行动。
 - `crossframe-essay`：用于写中文批判性洞察文章，默认先给 `结构洞察底稿`，再给 `文章正文`；需要深度时可按需概念上升、引入中西经典或理论参照；需要更有人味时可写成现代编辑同志口吻，像一位耐心、谦逊、认真、果敢的编辑回应读者问题。
+- `crossframe-review`：用于审查输出有没有真的推理，抓概念堆砌、伪推理、证据边界缺失和跳过底稿。
+- `crossframe-dialogue`：用于答读者问、编辑回信和咨询式短答复。
+- `crossframe-casebook`：用于把聊天记录、组织材料、项目复盘和公共争议整理成可复用案例库。
+- `crossframe-public`：用于公共议题、平台申诉、制度评论和合规材料的证据边界诊断。
+- `crossframe-org`：用于团队、项目、组织修复，输出备忘录、反馈写回方案、复盘改造和低风险试点。
+- `crossframe-teach`：用于把 CrossFrame 概念讲给普通人，带误读边界、现实信号和练习。
+- `crossframe-debate`：用于把命题拆成正反结构、隐藏前提、证据要求和撤回条件。
+- `crossframe-notebook`：用于读书、理论和文章研究笔记，强调与 CrossFrame 的关联、不同、冲突和可吸收处。
 
 比如，不要这样回答：
 
@@ -77,6 +85,17 @@ CrossFrame Essay 适合这类写作：
 - 写一篇“生命第一因”的思想文章，但先拆清科学起源、结构定义和意义问题。
 - 用亲切的编辑同志口吻，回答“为什么我总是在关系里解释到筋疲力尽”。
 - 把零散素材整理成一篇有递进、有边界、不堆术语的长文。
+
+其它平行 skill 适合这类任务：
+
+- “帮我评审这段 CrossFrame 输出是否合格。” -> `crossframe-review`
+- “像编辑回信一样回答这个读者问题。” -> `crossframe-dialogue`
+- “把这些聊天记录整理成案例库。” -> `crossframe-casebook`
+- “分析这个平台申诉机制是否只是表面治理。” -> `crossframe-public`
+- “给这个项目失败写组织修复备忘录。” -> `crossframe-org`
+- “把开放断言讲给普通人听，并给练习。” -> `crossframe-teach`
+- “检验这个命题的正反双方和撤回条件。” -> `crossframe-debate`
+- “读这篇文章，写与 CrossFrame 的关联与不同。” -> `crossframe-notebook`
 
 ---
 
@@ -197,6 +216,14 @@ CrossFrame 不应该只说：
 ```powershell
 py -3 "$HOME/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py" --repo xixilove486/crossframe-skill --path skills/crossframe
 py -3 "$HOME/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py" --repo xixilove486/crossframe-skill --path skills/crossframe-essay
+py -3 "$HOME/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py" --repo xixilove486/crossframe-skill --path skills/crossframe-review
+py -3 "$HOME/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py" --repo xixilove486/crossframe-skill --path skills/crossframe-dialogue
+py -3 "$HOME/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py" --repo xixilove486/crossframe-skill --path skills/crossframe-casebook
+py -3 "$HOME/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py" --repo xixilove486/crossframe-skill --path skills/crossframe-public
+py -3 "$HOME/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py" --repo xixilove486/crossframe-skill --path skills/crossframe-org
+py -3 "$HOME/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py" --repo xixilove486/crossframe-skill --path skills/crossframe-teach
+py -3 "$HOME/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py" --repo xixilove486/crossframe-skill --path skills/crossframe-debate
+py -3 "$HOME/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py" --repo xixilove486/crossframe-skill --path skills/crossframe-notebook
 ```
 
 安装后，本地 Codex 应显示：
@@ -204,6 +231,14 @@ py -3 "$HOME/.codex/skills/.system/skill-installer/scripts/install-skill-from-gi
 ```text
 crossframe
 crossframe-essay
+crossframe-review
+crossframe-dialogue
+crossframe-casebook
+crossframe-public
+crossframe-org
+crossframe-teach
+crossframe-debate
+crossframe-notebook
 ```
 
 ### 手动安装
@@ -212,6 +247,14 @@ crossframe-essay
 git clone https://github.com/xixilove486/crossframe-skill.git
 Copy-Item -Path ".\crossframe-skill\skills\crossframe" -Destination "$HOME\.codex\skills\crossframe" -Recurse -Force
 Copy-Item -Path ".\crossframe-skill\skills\crossframe-essay" -Destination "$HOME\.codex\skills\crossframe-essay" -Recurse -Force
+Copy-Item -Path ".\crossframe-skill\skills\crossframe-review" -Destination "$HOME\.codex\skills\crossframe-review" -Recurse -Force
+Copy-Item -Path ".\crossframe-skill\skills\crossframe-dialogue" -Destination "$HOME\.codex\skills\crossframe-dialogue" -Recurse -Force
+Copy-Item -Path ".\crossframe-skill\skills\crossframe-casebook" -Destination "$HOME\.codex\skills\crossframe-casebook" -Recurse -Force
+Copy-Item -Path ".\crossframe-skill\skills\crossframe-public" -Destination "$HOME\.codex\skills\crossframe-public" -Recurse -Force
+Copy-Item -Path ".\crossframe-skill\skills\crossframe-org" -Destination "$HOME\.codex\skills\crossframe-org" -Recurse -Force
+Copy-Item -Path ".\crossframe-skill\skills\crossframe-teach" -Destination "$HOME\.codex\skills\crossframe-teach" -Recurse -Force
+Copy-Item -Path ".\crossframe-skill\skills\crossframe-debate" -Destination "$HOME\.codex\skills\crossframe-debate" -Recurse -Force
+Copy-Item -Path ".\crossframe-skill\skills\crossframe-notebook" -Destination "$HOME\.codex\skills\crossframe-notebook" -Recurse -Force
 ```
 
 ### 仓库内快速安装
@@ -229,7 +272,7 @@ Copy-Item -Path ".\crossframe-skill\skills\crossframe-essay" -Destination "$HOME
 
 | 工具 | 入口文件 |
 | --- | --- |
-| Codex | `skills/crossframe/`、`skills/crossframe-essay/` |
+| Codex | `skills/crossframe*/` 全部可安装 skill |
 | Claude Code | `CLAUDE.md`、`.claude/skills/crossframe*/SKILL.md`、`.claude/commands/crossframe*.md` |
 | Cursor | `.cursor/rules/crossframe.mdc`、`.cursor/rules/crossframe-essay.mdc`、`AGENTS.md` |
 | Gemini CLI | `GEMINI.md` |
@@ -247,6 +290,14 @@ Copy-Item -Path ".\crossframe-skill\skills\crossframe-essay" -Destination "$HOME
 ```text
 skills/crossframe/
 skills/crossframe-essay/
+skills/crossframe-review/
+skills/crossframe-dialogue/
+skills/crossframe-casebook/
+skills/crossframe-public/
+skills/crossframe-org/
+skills/crossframe-teach/
+skills/crossframe-debate/
+skills/crossframe-notebook/
 ```
 
 更多说明见 [INTERFACES.md](INTERFACES.md)。
@@ -266,7 +317,14 @@ crossframe-skill/
 │  │  ├─ templates/
 │  │  ├─ evals/
 │  │  └─ examples/
-│  └─ crossframe-essay/
+│  ├─ crossframe-essay/
+│     ├─ SKILL.md
+│     ├─ protocols/
+│     ├─ references/
+│     ├─ templates/
+│     ├─ evals/
+│     └─ examples/
+│  └─ crossframe-*/
 │     ├─ SKILL.md
 │     ├─ protocols/
 │     ├─ references/

@@ -4,8 +4,16 @@
 
 - `skills/crossframe/SKILL.md`
 - `skills/crossframe-essay/SKILL.md`
+- `skills/crossframe-review/SKILL.md`
+- `skills/crossframe-dialogue/SKILL.md`
+- `skills/crossframe-casebook/SKILL.md`
+- `skills/crossframe-public/SKILL.md`
+- `skills/crossframe-org/SKILL.md`
+- `skills/crossframe-teach/SKILL.md`
+- `skills/crossframe-debate/SKILL.md`
+- `skills/crossframe-notebook/SKILL.md`
 
-`crossframe` 负责结构诊断；`crossframe-essay` 负责把结构诊断转成中文批判性洞察文章。其他接口文件只是薄适配层，用来告诉不同 AI 工具如何读取与调用这两个 skill。不要把完整协议复制成多份，以免内容漂移。
+`crossframe` 负责结构诊断；`crossframe-essay` 负责把结构诊断转成中文批判性洞察文章；其它 `crossframe-*` 负责评审、答复、案例、公共议题、组织修复、教学、辩论和研究笔记。其他接口文件只是薄适配层，用来告诉不同 AI 工具如何读取与调用这些 skill。不要把完整协议复制成多份，以免内容漂移。
 
 ## 适配原则
 
@@ -13,6 +21,7 @@
 - 新增接口只负责入口、路由和最小约束。
 - 若需要更新框架主体，优先更新 `skills/crossframe/`，再回填薄适配层。
 - 若需要更新文章写作主体，优先更新 `skills/crossframe-essay/`，并确认它仍通过相对路径读取 `skills/crossframe/`。
+- 若需要更新平行专项主体，优先更新对应 `skills/crossframe-*/`，并确认它仍通过相对路径读取 `skills/crossframe/`。
 - 用户可见输出默认先给推理提纲，再说人话。
 - 文章输出默认先给 `结构洞察底稿`，再给 `文章正文`；需要深度时可按需加入概念上升和中西经典/理论参照；需要亲切解答时可按需使用现代编辑同志口吻。
 - 直接引用必须可核验；不确定原句时只做意译、典故或思想映射。
@@ -26,7 +35,7 @@
 
 | 接口 | 入口文件 | 说明 |
 | --- | --- | --- |
-| Codex | `skills/crossframe/` + `skills/crossframe-essay/` | 可直接用 skill-installer 安装 |
+| Codex | `skills/crossframe*/` | 可直接用 skill-installer 安装 |
 | Claude Code | `.claude/skills/crossframe*/SKILL.md` + `.claude/commands/crossframe*.md` + `CLAUDE.md` | 自动触发 skill，也可调用 `/crossframe`、`/crossframe-explain`、`/crossframe-audit`、`/crossframe-essay` |
 | Gemini CLI | `GEMINI.md` | 仓库级上下文入口 |
 | Cursor | `.cursor/rules/crossframe.mdc` + `.cursor/rules/crossframe-essay.mdc` + `AGENTS.md` | 规则文件与通用入口 |
@@ -43,7 +52,7 @@
 
 如果要把 CrossFrame 带到另一个项目：
 
-- Codex：复制 `skills/crossframe/` 到 `$HOME/.codex/skills/crossframe`，复制 `skills/crossframe-essay/` 到 `$HOME/.codex/skills/crossframe-essay`
+- Codex：复制所有 `skills/crossframe*/` 到 `$HOME/.codex/skills/`
 - Claude Code：复制 `.claude/skills/crossframe*/`、`.claude/commands/`、`CLAUDE.md`，并保留 `skills/crossframe/` 与 `skills/crossframe-essay/`
 - Gemini CLI：复制 `GEMINI.md`，并保留两个 skill 目录
 - Cursor：复制 `.cursor/rules/crossframe*.mdc` 或 `AGENTS.md`，并保留两个 skill 目录
@@ -59,8 +68,8 @@
 1. `skills/crossframe/SKILL.md`
 2. `skills/crossframe/references/read-routing-map.md` 与 `references/v2-term-fidelity.md`
 3. `skills/crossframe-essay/SKILL.md`
-4. `skills/crossframe-essay/protocols/`
-5. `skills/crossframe-essay/references/`
+4. 各 `skills/crossframe-*/SKILL.md`
+5. 各 `skills/crossframe-*/protocols/` 与 `references/`
 6. `skills/crossframe/references/theory-backend-index.md`
 7. `skills/crossframe/references/v2-coverage-map.md`
 8. `skills/crossframe/protocols/`

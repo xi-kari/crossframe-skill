@@ -6,6 +6,14 @@
 
 - `skills/crossframe/`：真正可安装的 Codex skill 主体。
 - `skills/crossframe-essay/`：平行文章写作 skill，把 CrossFrame 结构判断转成中文批判性洞察文章。
+- `skills/crossframe-review/`：评审 CrossFrame 输出是否真推理、守证据和边界。
+- `skills/crossframe-dialogue/`：答读者问、编辑回信和咨询式短答复。
+- `skills/crossframe-casebook/`：把材料整理成可复用案例库。
+- `skills/crossframe-public/`：公共议题、平台申诉、制度评论和合规材料专项。
+- `skills/crossframe-org/`：团队、项目、组织修复专项。
+- `skills/crossframe-teach/`：CrossFrame 概念教学解释专项。
+- `skills/crossframe-debate/`：命题辩论与论证检验专项。
+- `skills/crossframe-notebook/`：读书、理论和文章研究笔记专项。
 - `skills/crossframe/protocols/`：诊断、推演、开放断言、反俘获、低条件行动协议。
 - `skills/crossframe/worksheets/`：intake、五闸、证据账本、机制候选等推理发动机。
 - `skills/crossframe/references/read-routing-map.md`：按请求类型决定要读哪些协议、工作表、概念卡和模板。
@@ -51,6 +59,19 @@ CrossFrame Essay 仍然必须读取 `skills/crossframe/SKILL.md` 与 `skills/cro
 如果启用概念上升，先从结构机制抽象上位概念，再选择中西经典、历史经验、理论或文学互文，最后回落到现实责任链。直接引用必须可核验；不确定原句时只做意译或思想映射。
 
 如果启用现代编辑同志口吻，先在底稿中写出 `正文声口方案`，再成文。问题型主题可用答复体，普通思想/评论文章只吸收亲切、负责、果敢的声口。不要复古口号化，不要把亲切写成和稀泥，也不要把严厉写成人格审判。
+
+## 何时调用其它平行 skill
+
+- 审查、评审、打分、抓坏输出、判断是否真的推理：`skills/crossframe-review/SKILL.md`
+- 答读者问、编辑回信、咨询式短答复、我该怎么看/怎么办：`skills/crossframe-dialogue/SKILL.md`
+- 整理聊天记录、组织材料、项目复盘、公共争议为案例库：`skills/crossframe-casebook/SKILL.md`
+- 公共议题、平台申诉、制度评论、机构合规材料、公共承诺兑现：`skills/crossframe-public/SKILL.md`
+- 团队、项目、组织修复、复盘改造、反馈写回、低风险试点：`skills/crossframe-org/SKILL.md`
+- CrossFrame 概念教学、误读纠偏、现实信号、练习题：`skills/crossframe-teach/SKILL.md`
+- 命题、争论、正反双方、隐藏前提、证据要求、撤回条件：`skills/crossframe-debate/SKILL.md`
+- 读书、理论、文章、摘录研究笔记，比较关联与不同：`skills/crossframe-notebook/SKILL.md`
+
+这些平行 skill 都必须保持轻入口：先读取各自 `SKILL.md`，再按其说明读取 `skills/crossframe/SKILL.md` 和 `skills/crossframe/references/read-routing-map.md`；不得复制 CrossFrame 全文。
 
 ## 必须遵守
 
@@ -110,6 +131,13 @@ CrossFrame Essay 仍然必须读取 `skills/crossframe/SKILL.md` 与 `skills/cro
 6. 亲切、编辑、同志口吻、报刊答复或给意见时读取 `skills/crossframe-essay/protocols/editorial-comrade-voice-protocol.md` 与 `references/editorial-voice-principles.md`
 7. `skills/crossframe-essay/templates/insight-dossier-template.md`
 8. `skills/crossframe-essay/templates/essay-output-template.md` 或 `interactive-session-template.md`
+
+平行专项 skill 读取：
+
+1. 先读对应 `skills/crossframe-*/SKILL.md`
+2. 再读 `skills/crossframe/SKILL.md` 与 `skills/crossframe/references/read-routing-map.md`
+3. 按专项 `protocols/`、`references/`、`templates/` 输出
+4. 需要成文时才按需读 `skills/crossframe-essay/SKILL.md`
 
 ## 修改仓库时
 

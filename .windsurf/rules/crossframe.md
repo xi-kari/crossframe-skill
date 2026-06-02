@@ -9,6 +9,8 @@ Use this rule when the user asks for CrossFrame、跨尺度结构诊断、结构
 
 For 中文文章、长文、评论、思想文章、批判性洞察文章 or structure-to-essay writing, use `skills/crossframe-essay/SKILL.md` first, then read `skills/crossframe/SKILL.md` and `skills/crossframe/references/read-routing-map.md`. Output `结构洞察底稿` before `文章正文`. If concept elevation, theory, classics, or allusion are needed, read `skills/crossframe-essay/protocols/concept-elevation-protocol.md` and keep references verifiable and tied back to reality. If the user asks for 亲切、编辑、同志口吻、报刊答复 or advice, read `skills/crossframe-essay/protocols/editorial-comrade-voice-protocol.md`; use a modern editor voice, not retro slogans or personality judgment.
 
+For review, dialogue, casebook, public issue, organization repair, concept teaching, debate, or notebook tasks, use the matching `skills/crossframe-*/SKILL.md` sibling skill before falling back to the generic CrossFrame rule.
+
 Read order:
 
 1. `skills/crossframe/SKILL.md`

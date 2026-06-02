@@ -6,10 +6,26 @@
 
 - `.claude/skills/crossframe/SKILL.md`
 - `.claude/skills/crossframe-essay/SKILL.md`
+- `.claude/skills/crossframe-review/SKILL.md`
+- `.claude/skills/crossframe-dialogue/SKILL.md`
+- `.claude/skills/crossframe-casebook/SKILL.md`
+- `.claude/skills/crossframe-public/SKILL.md`
+- `.claude/skills/crossframe-org/SKILL.md`
+- `.claude/skills/crossframe-teach/SKILL.md`
+- `.claude/skills/crossframe-debate/SKILL.md`
+- `.claude/skills/crossframe-notebook/SKILL.md`
 - `.claude/commands/crossframe.md`
 - `.claude/commands/crossframe-explain.md`
 - `.claude/commands/crossframe-audit.md`
 - `.claude/commands/crossframe-essay.md`
+- `.claude/commands/crossframe-review.md`
+- `.claude/commands/crossframe-dialogue.md`
+- `.claude/commands/crossframe-casebook.md`
+- `.claude/commands/crossframe-public.md`
+- `.claude/commands/crossframe-org.md`
+- `.claude/commands/crossframe-teach.md`
+- `.claude/commands/crossframe-debate.md`
+- `.claude/commands/crossframe-notebook.md`
 
 在仓库根目录运行 `claude` 后，可以直接使用：
 
@@ -18,6 +34,14 @@
 /crossframe-explain 解释一下虚无主义
 /crossframe-audit 检查这个高责任判断能不能公开
 /crossframe-essay 写一篇“团队越复盘越失真”的批判性洞察文章
+/crossframe-review 评审这段输出有没有真的推理
+/crossframe-dialogue 像编辑回信一样回答这个读者问题
+/crossframe-casebook 把这些复盘材料整理成案例库
+/crossframe-public 分析这个平台申诉机制是否只是表面治理
+/crossframe-org 给这个项目失败写组织修复备忘录
+/crossframe-teach 用人话解释开放断言
+/crossframe-debate 检验这个命题的正反结构和撤回条件
+/crossframe-notebook 读这篇文章，写与 CrossFrame 的关联与不同
 ```
 
 本文件保持轻量。若任务确实涉及 CrossFrame 使用、文档修订或适配层维护，再按需读取：
@@ -56,6 +80,14 @@
 - `skills/crossframe-essay/references/editorial-voice-principles.md`
 - `skills/crossframe-essay/templates/insight-dossier-template.md`
 - `skills/crossframe-essay/templates/essay-output-template.md`
+- `skills/crossframe-review/SKILL.md`
+- `skills/crossframe-dialogue/SKILL.md`
+- `skills/crossframe-casebook/SKILL.md`
+- `skills/crossframe-public/SKILL.md`
+- `skills/crossframe-org/SKILL.md`
+- `skills/crossframe-teach/SKILL.md`
+- `skills/crossframe-debate/SKILL.md`
+- `skills/crossframe-notebook/SKILL.md`
 
 额外约束：
 
@@ -67,3 +99,4 @@
 - 强判断、高反身性、亲密关系、疗愈转移、公共制度、框架边界、生命周期、递进、势场解离、治理连续性、超大规模压力测试和长期演化问题，必须按 `read-routing-map.md` 进入对应深水区模块。
 - 当用户要写文章、长文、评论、思想文章或批判性洞察文章时，使用 `crossframe-essay`：先形成 `结构洞察底稿`，再写 `文章正文`；需要深度时按需概念上升和引入中西经典/理论参照，但引用必须可核验并回到现实责任链。
 - 当用户要求亲切、编辑、同志口吻、报刊答复、耐心解答或给意见时，`crossframe-essay` 还要读取现代编辑口吻协议：问题型主题可用答复体，普通评论只吸收亲切、负责、果敢的声口；不要口号化，不要把亲切写成和稀泥，也不要把严厉写成人格审判。
+- 当用户要求评审、短答复、案例库、公共议题、组织修复、概念教学、命题辩论或研究笔记时，优先使用对应 `crossframe-*` 平行 skill；所有平行 skill 仍须读取 `skills/crossframe/SKILL.md` 与 `skills/crossframe/references/read-routing-map.md`。

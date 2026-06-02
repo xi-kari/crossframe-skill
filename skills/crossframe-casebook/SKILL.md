@@ -1,0 +1,70 @@
+---
+name: crossframe-casebook
+description: CrossFrame Casebook 是把聊天记录、组织材料、项目复盘和公共争议材料整理成可复用案例库的中文案例沉淀 skill。Use when the user asks to build, clean, summarize, index, compare, reuse, anonymize, audit, or maintain a casebook from relationship, team, organization, project review, public dispute, platform governance, or long-running CrossFrame diagnostic materials.
+---
+
+# CrossFrame Casebook
+
+CrossFrame Casebook 是 `crossframe` 的平行案例库 skill，不替代 `crossframe`。它只负责把材料整理成可复用案例条目：先守住事实、来源和隐私边界，再抽取尺度窗口、机制链、责任链、反向条件、可复用概念和后续观察。
+
+中文为权威语义。英文只用于 skill id、文件名、字段名或对外简介；遇到中英文冲突，以中文术语为准。
+
+## 必须执行的顺序
+
+1. 读取 `../crossframe/SKILL.md`，确认本次材料应遵守的 CrossFrame 基本闸门与表达边界。
+2. 读取 `../crossframe/references/read-routing-map.md`，按材料主题选择需要对齐的 CrossFrame protocol、概念卡和判断档位。
+3. 读取 `protocols/material-boundary-protocol.md`，先做来源、事实、推测、隐私和可公开性分层。
+4. 读取 `protocols/casebook-build-protocol.md`，决定本次是新建案例、清洗旧案例、批量索引、比较案例，还是把复盘转成案例库。
+5. 读取 `references/casebook-field-guide.md`，保证每个案例至少沉淀九项：案例摘要、事实边界、材料来源、尺度窗口、机制链、责任链、反向条件、可复用概念、后续观察。
+6. 读取 `references/privacy-and-redaction-rules.md`，对个人、组织、地名、时间、聊天原文、截图、链接和可识别细节做脱敏。
+7. 读取 `protocols/mechanism-extraction-protocol.md`，从故事叙述中抽出机制链与责任链，避免只写剧情或堆概念。
+8. 按任务读取模板：单案例读 `templates/casebook-entry-template.md`；批量案例读 `templates/casebook-index-template.md`；需要来源审计读 `templates/redacted-source-ledger-template.md`。
+9. 输出前做 smoke check：不得把猜测当事实、不得泄露隐私、不得只写故事不抽机制、不得概念堆砌。
+
+## 输入处理
+
+- 聊天记录：保留互动结构、角色关系、可观察行为和时间顺序；删除或泛化姓名、账号、联系方式、精确位置和无关私密细节。
+- 组织材料：区分正式制度、口头惯例、会议纪要、项目记录、个人感受和二手转述。
+- 项目复盘：区分结果事实、过程事实、解释、责任归因、补救动作和未验证假设。
+- 公共争议：区分公开来源、当事人说法、媒体报道、平台规则、法律事实、舆论解释和模型推测；涉及最新事实或真实人物组织时必须查源。
+
+## 默认输出
+
+默认输出一个或多个 `案例库条目`。每个条目至少包含：
+
+- 案例摘要
+- 事实边界
+- 材料来源
+- 尺度窗口
+- 机制链
+- 责任链
+- 反向条件
+- 可复用概念
+- 后续观察
+
+如用户要求可维护案例库，再追加 `案例索引`、`标签`、`相似案例`、`复用场景` 和 `更新记录`。
+
+## 硬规则
+
+- 不准复制 `crossframe` 全文；只通过相对路径读取 canonical skill 与路由图。
+- 不准把聊天原文或个人信息直接沉淀为案例资产，除非用户明确要求且已确认可公开范围。
+- 不准把猜测、动机推断、二手评价写成事实。
+- 不准只讲故事；每个案例必须抽出至少一条机制链和一条责任链。
+- 不准用 CrossFrame 术语替代案例事实；概念必须服务于复用，而不是装饰输出。
+- 不准把案例库写成人格审判、组织定罪、舆论宣判或合规背书。
+- 不准用公共尺度抹掉个人伤害、组织失职、证据缺口或责任链。
+- 证据不足但风险紧急时，只能给低风险、可撤回、可观察的后续观察项。
+
+## 质量门
+
+一次合格的 casebook 输出必须能回答：
+
+- 这个案例可以复用来识别什么结构问题？
+- 哪些材料是事实，哪些只是解释或猜测？
+- 这个案例的来源是否可追溯、可脱敏、可公开？
+- 当前使用的是哪一个尺度窗口，是否发生了不当尺度转移？
+- 机制链如何从条件、行为、反馈走向结果？
+- 责任链中谁有改变条件的权力，谁在承担成本？
+- 什么反向条件会推翻或降档本案例判断？
+- 哪些概念真正提高复用性，哪些只是术语堆砌？
+- 下一次遇到相似材料时，应该观察什么信号？

@@ -12,7 +12,15 @@ if (-not (Test-Path -LiteralPath $installer)) {
 
 $skills = @(
   "skills/crossframe",
-  "skills/crossframe-essay"
+  "skills/crossframe-essay",
+  "skills/crossframe-review",
+  "skills/crossframe-dialogue",
+  "skills/crossframe-casebook",
+  "skills/crossframe-public",
+  "skills/crossframe-org",
+  "skills/crossframe-teach",
+  "skills/crossframe-debate",
+  "skills/crossframe-notebook"
 )
 
 foreach ($skillPath in $skills) {

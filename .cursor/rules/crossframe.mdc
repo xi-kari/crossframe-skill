@@ -8,6 +8,8 @@ When a task involves complex relationships, teams, organizations, institutions, 
 
 If the task asks for 中文文章、长文、评论、思想文章、批判性洞察文章, or turning CrossFrame reasoning into readable prose, use `skills/crossframe-essay/SKILL.md` and `.cursor/rules/crossframe-essay.mdc` instead of stopping at this diagnostic rule.
 
+If the task asks for review/audit, short reader reply, casebook, public issue, organization repair, concept teaching, debate analysis, or research notebook, read the matching `skills/crossframe-*/SKILL.md` first: `crossframe-review`, `crossframe-dialogue`, `crossframe-casebook`, `crossframe-public`, `crossframe-org`, `crossframe-teach`, `crossframe-debate`, or `crossframe-notebook`.
+
 Use Chinese as the authoritative semantic layer. `CrossFrame` is only the传播名 / skill id.
 
 Before the final answer, show a concise 推理提纲 with:

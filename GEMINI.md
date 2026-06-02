@@ -37,3 +37,14 @@
 - 中文概念不强行英文化。
 - 前台少术语，后台不能少读必要概念。
 - 强判断、高反身性、亲密关系、疗愈转移、公共制度、框架边界、生命周期、递进、势场解离、治理连续性、超大规模压力测试和长期演化问题，按 `read-routing-map.md` 读取对应深水区模块。
+
+如果用户要求以下专项任务，优先读取对应平行 skill，再按该 skill 的说明读取 `skills/crossframe/SKILL.md` 与路由图：
+
+- 评审、审查、打分、抓坏输出：`skills/crossframe-review/SKILL.md`
+- 答读者问、编辑回信、咨询式短答复：`skills/crossframe-dialogue/SKILL.md`
+- 案例库、材料沉淀、复盘转案例：`skills/crossframe-casebook/SKILL.md`
+- 公共议题、平台申诉、制度评论、合规材料：`skills/crossframe-public/SKILL.md`
+- 组织修复、反馈写回、复盘改造、低风险试点：`skills/crossframe-org/SKILL.md`
+- 概念教学、误读纠偏、练习题：`skills/crossframe-teach/SKILL.md`
+- 命题辩论、正反结构、撤回条件：`skills/crossframe-debate/SKILL.md`
+- 读书、理论、文章研究笔记，关联与不同：`skills/crossframe-notebook/SKILL.md`

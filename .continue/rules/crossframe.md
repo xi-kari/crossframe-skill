@@ -4,6 +4,8 @@ Use this rule for CrossFrame / 跨尺度结构诊断 requests: structural diagno
 
 For 中文文章、长文、评论、思想文章、批判性洞察文章, or turning CrossFrame analysis into readable prose, use `skills/crossframe-essay/SKILL.md`. Read the CrossFrame routing map, then output `结构洞察底稿` before `文章正文`. When using concept elevation or 引经据典, read `skills/crossframe-essay/protocols/concept-elevation-protocol.md`; references must not replace evidence or responsibility chains. When the user asks for 亲切、编辑、同志口吻、报刊答复 or advice, read `skills/crossframe-essay/protocols/editorial-comrade-voice-protocol.md`; keep the voice warm, serious, and bounded by evidence.
 
+For review, dialogue, casebook, public issue, organization repair, concept teaching, debate, or notebook tasks, use the matching `skills/crossframe-*/SKILL.md` sibling skill before falling back to the generic CrossFrame rule.
+
 Read:
 
 1. `skills/crossframe/SKILL.md`

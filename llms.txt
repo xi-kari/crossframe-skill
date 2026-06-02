@@ -6,6 +6,14 @@ CrossFrame is a Chinese cross-scale structural diagnosis skill. It helps AI anal
 
 - [Skill entry](skills/crossframe/SKILL.md): canonical Codex skill instructions.
 - [Essay skill entry](skills/crossframe-essay/SKILL.md): CrossFrame-based Chinese critical insight essay writing skill.
+- [Review skill](skills/crossframe-review/SKILL.md): audit CrossFrame outputs for reasoning fidelity, evidence boundaries, citations, and repair steps.
+- [Dialogue skill](skills/crossframe-dialogue/SKILL.md): short reader replies, editor responses, and consultation-style structural answers.
+- [Casebook skill](skills/crossframe-casebook/SKILL.md): turn materials into reusable CrossFrame casebook entries.
+- [Public skill](skills/crossframe-public/SKILL.md): public issues, platform appeals, institutions, policy, and compliance evidence boundaries.
+- [Org skill](skills/crossframe-org/SKILL.md): team, project, and organization repair memos and feedback write-back plans.
+- [Teach skill](skills/crossframe-teach/SKILL.md): plain-language CrossFrame concept lessons with boundaries, signals, and exercises.
+- [Debate skill](skills/crossframe-debate/SKILL.md): proposition testing through both sides, premises, evidence, rebuttals, and withdrawal conditions.
+- [Notebook skill](skills/crossframe-notebook/SKILL.md): bidirectional reading notes for books, theories, articles, and excerpts.
 - [Concept elevation protocol](skills/crossframe-essay/protocols/concept-elevation-protocol.md): elevate structure judgments into concepts, references, and allusions.
 - [Reference and allusion rules](skills/crossframe-essay/references/reference-and-allusion-rules.md): safe quote, paraphrase, allusion, and theory mapping rules.
 - [Editorial comrade voice protocol](skills/crossframe-essay/protocols/editorial-comrade-voice-protocol.md): modern editor-style answer voice for patient, humble, serious, decisive Chinese essays.
@@ -32,4 +40,4 @@ CrossFrame is a Chinese cross-scale structural diagnosis skill. It helps AI anal
 
 Do not treat CrossFrame as a concept pile. Always route, fill internal worksheets, preserve high-risk concepts, then answer in plain Chinese.
 
-For article tasks, do not write only prose. Use CrossFrame Essay to produce `结构洞察底稿` first, then `文章正文`. When depth is needed, add concept elevation and classic/theory references, but direct quotes must be verifiable and references must return to concrete reality. When the user asks for a warmer answer, use the modern editor-comrade voice: patient and friendly, but still decisive about responsibility and evidence.
+For article tasks, do not write only prose. Use CrossFrame Essay to produce `结构洞察底稿` first, then `文章正文`. When depth is needed, add concept elevation and classic/theory references, but direct quotes must be verifiable and references must return to concrete reality. When the user asks for a warmer answer, use the modern editor-comrade voice: patient and friendly, but still decisive about responsibility and evidence. For specialized workflows, use the matching sibling skill and keep it as a light wrapper over the canonical CrossFrame routing map.
