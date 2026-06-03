@@ -10,7 +10,7 @@
 2. `skills/crossframe-suite/references/workflow-routing-map.md`
 3. `skills/crossframe-suite/protocols/suite-dispatch-protocol.md`
 
-常见链路：普通文章 `crossframe -> crossframe-essay -> crossframe-review`；公共评论 `crossframe -> crossframe-public -> crossframe-essay -> crossframe-review`；组织复盘文章 `crossframe -> crossframe-org -> crossframe-essay -> crossframe-review`；答读者问 `crossframe -> crossframe-dialogue -> review-lite`；读书后成文 `crossframe -> crossframe-notebook -> crossframe-essay -> crossframe-review`。不要一次读取全部 skill。
+常见链路：普通文章 `crossframe -> crossframe-essay -> crossframe-review`；公共评论 `crossframe -> crossframe-public -> crossframe-essay -> crossframe-review`；组织复盘文章 `crossframe -> crossframe-org -> crossframe-essay -> crossframe-review`；答读者问 `crossframe -> crossframe-dialogue -> crossframe-essay(full-visible-v3-longform) -> crossframe-review`；读书研究 `crossframe -> crossframe-notebook -> crossframe-essay(full-visible-v3-longform) -> crossframe-review`。不要一次读取全部 skill。
 
 默认优先考虑 `crossframe-suite`。只要用户从 suite 总入口进入任何 CrossFrame 内容任务，默认先完成必要专项 skill，再追加 `crossframe-essay -> crossframe-review`，输出 `full-visible-v3-longform / 3.0混合长文`，包含完整可见底稿和完整长文正文。只有用户明确说“只要/不要文章/短答/表格/清单/纯诊断/仅行动方案”时，才关闭默认文章层。
 

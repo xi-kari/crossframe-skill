@@ -87,15 +87,14 @@ CrossFrame Essay 仍然必须读取 `skills/crossframe/SKILL.md` 与 `skills/cro
 
 默认链路：
 
-- 结构诊断：`crossframe`
+- 结构诊断：`crossframe -> crossframe-essay(full-visible-v3-longform) -> crossframe-review`
 - 普通洞察文章：`crossframe -> crossframe-essay -> crossframe-review`
 - 公共评论文章：`crossframe -> crossframe-public -> crossframe-essay -> crossframe-review`
 - 组织复盘/修复文章：`crossframe -> crossframe-org -> crossframe-essay -> crossframe-review`
-- 答读者问：`crossframe -> crossframe-dialogue -> review-lite`
-- 案例沉淀：`crossframe -> crossframe-casebook -> crossframe-review`
-- 概念教学：`crossframe -> crossframe-teach -> review-lite`
-- 命题辩论：`crossframe -> crossframe-debate -> crossframe-review`
-- 辩论后成文：`crossframe -> crossframe-debate -> crossframe-essay -> crossframe-review`
+- 答读者问：`crossframe -> crossframe-dialogue -> crossframe-essay(full-visible-v3-longform) -> crossframe-review`
+- 案例沉淀：`crossframe -> crossframe-casebook -> crossframe-essay(full-visible-v3-longform) -> crossframe-review`
+- 概念教学：`crossframe -> crossframe-teach -> crossframe-essay(full-visible-v3-longform) -> crossframe-review`
+- 命题辩论：`crossframe -> crossframe-debate -> crossframe-essay(full-visible-v3-longform) -> crossframe-review`
 - 读书研究：`crossframe -> crossframe-notebook -> crossframe-review`
 - 读书后成文：`crossframe -> crossframe-notebook -> crossframe-essay -> crossframe-review`
 

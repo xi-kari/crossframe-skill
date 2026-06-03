@@ -167,7 +167,7 @@ crossframe -> crossframe-public -> crossframe-essay -> crossframe-review
 crossframe -> crossframe-org -> crossframe-essay -> crossframe-review
 
 答读者问：
-crossframe -> crossframe-dialogue -> review-lite
+crossframe -> crossframe-dialogue -> crossframe-essay(full-visible-v3-longform) -> crossframe-review
 
 读书后成文：
 crossframe -> crossframe-notebook -> crossframe-essay -> crossframe-review
@@ -178,7 +178,7 @@ crossframe -> crossframe-debate -> crossframe-essay -> crossframe-review
 
 它不会把所有 skill 一起触发；没用到的 skill 会明确写在“不读取”里，防止上下文变重和判断跑偏。
 
-如果你明确说“只要评审/只要案例库/只要表格/不要文章/短答/纯诊断”，它会保留原交付物，不再默认追加文章。否则总入口默认都会让内容更丰富，走完整文章链路。
+如果你明确说“只要评审/只要案例库/只要表格/不要文章/短答/纯诊断”，总入口会把这理解为“关闭文章层”，停在你指定的交付物上。否则总入口默认都会让内容更丰富，走完整文章链路。
 
 如果文章需要更深，它还会再加一层：从现实机制里抽象出上位概念，再选择贴切的经典、理论、历史经验或文学互文，最后回到现实责任链。它不会为了显得高级而堆名人名言；直接引用必须能核验，不确定原句时只做意译或思想映射。
 
