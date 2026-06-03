@@ -33,7 +33,7 @@
 - 疗愈、退出、转移：`healing-transfer-protocol.md`
 - 长期演化、文明尺度、超大规模判断：`large-scale-stress-test-protocol.md` 与 `theory-backend-index.md`
 
-文章任务默认至少触发 `diagnosis-mainline-pack` 与 `expression-article-pack`。公共议题追加 `public-power-governance-pack`；关系/照护/爱追加 `intimate-love-care-pack`；长期演化追加 `long-evolution-deep-pack`；强判断和高责任追加 `judgment-responsibility-pack`。若主题需要深度或用户担心 2.0 失真，读取 `../crossframe/references/v2-source-spine.md` 和 `../crossframe/references/v2-section-digest-index.md`。
+文章任务默认至少触发 `diagnosis-mainline-pack` 与 `expression-article-pack`。公共议题追加 `public-power-governance-pack`；关系/照护/爱追加 `intimate-love-care-pack`；长期演化追加 `long-evolution-deep-pack`；强判断和高责任追加 `judgment-responsibility-pack`。若主题需要深度或用户担心 v3.0 失真，读取 `../crossframe/references/v3-source-spine.md`、`../crossframe/references/v3-section-digest-index.md` 和 `../crossframe/references/v3-term-fidelity.md`。
 
 ## 3. 判断是否查源
 

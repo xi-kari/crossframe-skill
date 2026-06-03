@@ -61,7 +61,7 @@
 
 1. 结构事实层：`crossframe`
 2. 场景专项层：`public` / `org` / `debate` / `notebook` / `casebook` / `teach` / `dialogue`
-3. 源连续性层：确认是否已读取 `continuity-bundles.md`、`v2-source-spine.md`、`v2-section-digest-index.md` 和 `source-continuity-check.md`
+3. 源连续性层：确认是否已读取 `continuity-bundles.md`、`v3-source-spine.md`、`v3-section-digest-index.md`、`v3-term-fidelity.md` 和 `source-continuity-check.md`
 4. 表达生成层：`essay` 或 `dialogue`
 5. 质量闸：`review`
 

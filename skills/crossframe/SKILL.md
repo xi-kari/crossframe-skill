@@ -1,7 +1,7 @@
 ---
 name: crossframe
 description: |
-  CrossFrame 是“跨尺度结构诊断框架 v2.0”的中文结构推理协议型 skill，用于诊断关系、团队、组织、制度、公共争议和长期演化中的复杂失衡。它要求先抽取事实、过尺度与责任闸、形成机制候选，再输出开放断言、推演分支、反俘获判断、低条件行动、生命周期/递进判断、治理连续性或超大规模压力测试。适用于用户提到 CrossFrame、跨尺度结构诊断、结构诊断、推演、开放断言、高责任判断、反俘获、亲密关系、疗愈转移、公共制度、长期演化、生命意义、第一因、虚无主义等概念解释，或希望分析复杂反复问题而不是套概念时。
+  CrossFrame 是“跨尺度结构诊断框架 v3.0”的中文结构推理协议型 skill，用于诊断关系、团队、组织、制度、公共争议和长期演化中的复杂失衡。它要求先抽取事实、过尺度与责任闸、形成机制候选，再输出开放断言、推演分支、反俘获判断、低条件行动、生命周期/递进判断、治理连续性、框架治理/证伪、AI 现实验证、弱信号保护、无法退出主体保护或超大规模压力测试。适用于用户提到 CrossFrame、跨尺度结构诊断、结构诊断、推演、开放断言、高责任判断、反俘获、亲密关系、疗愈转移、公共制度、长期演化、生命意义、第一因、虚无主义等概念解释，或希望分析复杂反复问题而不是套概念时。
 ---
 
 # CrossFrame
@@ -18,19 +18,19 @@ description: |
 
 ## 核心定位
 
-CrossFrame 不是“把 v2.0 文本塞进上下文”的提示词包，而是一个可执行的结构推理协议。
+CrossFrame 不是“把 v3.0 文本塞进上下文”的提示词包，而是一个可执行的结构推理协议。
 
 每次使用都必须先形成内部推理产物，再输出结论。结论可以很短，但不能跳过事实抽取、闸门检查、机制候选和判断档位。
 
 ## 必须执行的顺序
 
-1. 判断用户请求类型：快速诊断、完整诊断、推演、开放断言、强判断验证、高反身性对象、亲密关系轻量入口、疗愈与转移、公共制度专项、低条件行动、高责任反俘获审查、框架边界、生命周期、递进闭环、势场/自主解离、治理连续性、超大规模压力测试、表达翻译、理论后台，或概念解释。
+1. 判断用户请求类型：快速诊断、完整诊断、推演、开放断言、强判断验证、高反身性对象、亲密关系轻量入口、疗愈与转移、公共制度专项、低条件行动、高责任反俘获审查、框架边界、生命周期、递进闭环、势场/自主解离、治理连续性、框架治理与证伪、AI 现实验证、弱信号/不透明检查、无制度基础设施中间路径、无法退出主体保护、隐喻/来源透明、工具化可及性、观测收束、超大规模压力测试、表达翻译、理论后台，或概念解释。
 2. 读取 `references/read-routing-map.md`，确定本次需要加载的协议、工作表、概念卡和模板。
 3. 填写内部 intake：对象、尺度、事实、证据缺口、用户用途、受影响对象、观测影响。
 4. 通过五闸：对象闸、证据闸、尺度闸、责任闸、观测闸。
 5. 形成至少两个机制候选；除非证据足以说明只有一个机制。
 6. 对承担判断作用的概念做完整吸收：读取对应概念卡，并用 `worksheets/concept-fidelity-check.md` 做保真检查。
-7. 做源结构连续性检查：读取 `references/continuity-bundles.md`，必要时读取 `references/v2-source-spine.md` 和 `references/v2-section-digest-index.md`，再用 `worksheets/source-continuity-check.md` 判断是否只读了孤立概念卡。
+7. 做源结构连续性检查：读取 `references/continuity-bundles.md`，必要时读取 `references/v3-source-spine.md` 和 `references/v3-section-digest-index.md`，再用 `worksheets/source-continuity-check.md` 判断是否只读了孤立概念卡；需要版本演化对照时再读取 v2 历史基线。
 8. 决定判断档位：轻量观察、开放断言、完整诊断、强判断、低条件试探行动、退出转移。若必须联读但未联读，不能维持强判断。
 9. 先输出可见推理提纲，再选择模板输出：先说现实语言，再按需要附内部映射。
 
@@ -53,12 +53,12 @@ CrossFrame 不是“把 v2.0 文本塞进上下文”的提示词包，而是一
 - 文明尺度、历史尺度、超大规模圈层或宏大公共判断：读 `protocols/large-scale-stress-test-protocol.md`、`worksheets/large-scale-stress-test.md` 和 `templates/large-scale-stress-output.md`。
 - 面向普通人、管理、制度公共、技术治理或其他 AI 软件改写表达：读 `protocols/expression-translation-protocol.md`、`references/expression-translation-table.md` 和 `templates/expression-translation-output.md`。
 - 证据不足但风险紧急：读 `protocols/low-condition-action-protocol.md`。
-- 概念解释、概念边界、思想解释类问题：读 `protocols/concept-explanation-protocol.md`、`references/concepts-minimal-set.md`、`references/v2-term-fidelity.md`，再读必要概念卡。
+- 概念解释、概念边界、思想解释类问题：读 `protocols/concept-explanation-protocol.md`、`references/concepts-minimal-set.md`、`references/v3-term-fidelity.md`，再按需读 `references/v2-term-fidelity.md` 和必要概念卡。
 - 哲学、意义、第一因、生命是什么、虚无主义、存在理由等抽象问题：优先走概念解释协议，先做尺度拆分和结构性开放断言；只有无法转成任何结构问题时，才退回 `protocols/framework-boundary-protocol.md`。
 - 复杂诊断或用户要求深度时：按需读 `references/diagnostic-dimensions.md` 和 `references/diagnostic-toolbox-index.md`，但不要把工具箱术语堆到前台输出。
 - 文明尺度、长期演化、制度生成、系统持续性、多中心治理或用户要求深层理论时：先读对应专项协议；需要根假设和核心推论时再读 `references/theory-backend-index.md`；不要让理论后台进入普通前台输出。
 - 如果最终输出要使用承接/回流、开放断言、尺度转移、观测反身性、权力封闭、低条件试探行动、爱/开放行动、主体/责任链、证据成本、机制候选、判断档位、退出转移、修复副产品等高风险概念，必须先读取对应概念卡；不能只凭最小概念集作精细判断。
-- 如果高风险概念属于 2.0 原文连续板块，必须按 `references/continuity-bundles.md` 读取对应联读包；不能只读单张概念卡就下结论。
+- 如果高风险概念属于 v3.0 原文连续板块，必须按 `references/continuity-bundles.md` 读取对应联读包；不能只读单张概念卡就下结论。
 - 输出前使用 `worksheets/concept-fidelity-check.md` 检查：本次概念是否读全、是否保留中文语义、是否落回现实行为、是否避免压缩失真。
 - 输出前使用 `worksheets/source-continuity-check.md` 检查：本次判断是否漏读原文相邻约束、是否触发必须联读包、是否需要降档。
 
@@ -110,13 +110,15 @@ CrossFrame 不是“把 v2.0 文本塞进上下文”的提示词包，而是一
 
 ## 核心资料
 
-- `references/crossframe-v2-core.md`：v2.0 的最小执行核心。
-- `references/v2-coverage-map.md`：v2.0 章节到 skill 模块的覆盖地图。
-- `references/v2-source-spine.md`：v2.0 原文标题层级、章节顺序、相邻关系和承接状态。
-- `references/v2-section-digest-index.md`：v2.0 逐节保真摘要、不可误读边界和相邻联读提醒。
-- `references/continuity-bundles.md`：2.0 原文中不能拆散读取的连续联读包。
+- `references/crossframe-v2-core.md`：v2.0 的历史最小执行核心，用于对照。
+- `references/v3-coverage-map.md`：v3.0 章节到 skill 模块的覆盖地图。
+- `references/v3-source-spine.md`：v3.0 原文标题层级、章节顺序、相邻关系和承接状态。
+- `references/v3-section-digest-index.md`：v3.0 逐节保真摘要、不可误读边界和相邻联读提醒。
+- `references/v3-change-rationale-from-patch.md`：补丁稿到 v3.0 新增模块的承接说明。
+- `references/continuity-bundles.md`：v3.0 原文中不能拆散读取的连续联读包。
 - `references/concepts-minimal-set.md`：最小概念集。
-- `references/v2-term-fidelity.md`：v2.0 术语保真表，防止压缩失真。
+- `references/v3-term-fidelity.md`：v3.0 新增术语保真表，防止压缩失真。
+- `references/v2-term-fidelity.md`：v2.0 核心术语保真表，作为历史基线保留。
 - `references/read-routing-map.md`：按请求类型选择协议、工作表、概念卡和模板。
 - `references/framework-ontology-protection.md`：框架本体保护、反领域殖民、反模型殖民和概念改动规则。
 - `references/guardrails.md`：反误用规则。
@@ -152,6 +154,16 @@ CrossFrame 不是“把 v2.0 文本塞进上下文”的提示词包，而是一
 - 锚点组 / 多层锚结构 / 跨域互操作：读 `references/concept-cards/anchor-group.md`
 - 动力组 / 转译 / 支撑通道 / 条件场：读 `references/concept-cards/dynamics-group.md`
 - 结构组与过程组 / 行动承接 / 结构负荷：读 `references/concept-cards/structure-process-group.md`
+- 框架治理 / 证伪 / 良性消亡：读 `references/concept-cards/framework-governance-falsification.md`
+- 程序与判断责任 / 开放断言退场：读 `references/concept-cards/procedural-judgment-responsibility.md`
+- 可见性 / 不透明 / 弱信号：读 `references/concept-cards/visibility-opacity-weak-signals.md`
+- 恶意合规 / AI 现实验证：读 `references/concept-cards/malicious-compliance-ai-validation.md`
+- 无制度基础设施中间路径：读 `references/concept-cards/no-institution-middle-path.md`
+- 无法退出主体 / 复杂创伤 / 无健康基准：读 `references/concept-cards/trapped-subject-trauma-baseline.md`
+- 爱的生成事件：读 `references/concept-cards/love-generative-action.md`
+- 隐喻漂移 / 来源透明 / 规范性前提：读 `references/concept-cards/metaphor-source-transparency.md`
+- 使用门槛债 / 工具化 / 分裂协议：读 `references/concept-cards/accessibility-toolization-split.md`
+- 观测收束 / 熵增边界：读 `references/concept-cards/observation-entropy-contraction.md`
 
 ## 最低合格标准
 
@@ -167,4 +179,4 @@ CrossFrame 不是“把 v2.0 文本塞进上下文”的提示词包，而是一
 - 这个判断能被什么证据撤回？
 - 下一步是观察、修复、试探行动，还是退出转移？
 - 是否触发了框架边界、生命周期、递进、势场解离、治理连续性或超大规模压力测试？
-- 本次是否触发 2.0 连续联读包，是否避免了只读孤立概念卡？
+- 本次是否触发 v3.0 连续联读包，是否避免了只读孤立概念卡？

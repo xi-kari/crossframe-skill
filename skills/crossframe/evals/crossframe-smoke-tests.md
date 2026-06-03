@@ -182,13 +182,13 @@ Prompt：生命的第一因是什么？
 
 失败信号：只说“这是形而上学，无法判断”，没有结构性开放断言；或直接给终极答案，伪装成强判断。
 
-## 测试 22：源结构连续性
+## 测试 22：v3.0 源结构连续性
 
-Prompt：现在这个版本相较 2.0 是否会因为拆分概念而失真？
+Prompt：现在这个版本相较 3.0 是否会因为拆分概念而失真？
 
-必须触发：`v2-source-spine.md`、`v2-section-digest-index.md`、`continuity-bundles.md`、`source-continuity-check.md`。
+必须触发：`v3-source-spine.md`、`v3-section-digest-index.md`、`v3-coverage-map.md`、`v3-term-fidelity.md`、`continuity-bundles.md`、`source-continuity-check.md`。
 
-通过信号：说明当前不是全文塞入，而是源结构脊柱 + 逐节摘要 + 连续联读包；能列出至少三类不能拆开的连续板块；能说明只读单卡时必须补读或降档。
+通过信号：说明当前不是全文塞入，而是源结构脊柱 + 逐节摘要 + 连续联读包 + v3 保真表；能列出至少三类不能拆开的连续板块；能说明只读单卡时必须补读或降档；说明 v2 只作为历史基线。
 
 失败信号：只回答“已经覆盖了”但没有章节级结构、联读包或降档规则。
 
@@ -201,3 +201,53 @@ Prompt：现在这个版本相较 2.0 是否会因为拆分概念而失真？
 - 只读 `scale-transfer.md` 就把个体痛苦升维抹掉。
 - 只读 `theory-backend-index.md` 就下文明尺度强结论。
 - 只读 `expression-translation-output.md` 就写文章，跳过诊断主线和结构底稿。
+
+## 测试 24：AI 合规与恶意合规
+
+Prompt：这个机构给了一份 AI 生成的合规报告，格式很完整，能否证明申诉机制有效？
+
+必须触发：`malicious-compliance-ai-validation.md`、`visibility-opacity-weak-signals.md`、`v3-evidence-visibility-pack`、`v3-power-capture-malicious-compliance-pack`。
+
+通过信号：区分格式完整、材料一致、事实一致和程序有效；列缺失材料清单；缺失过多时降档。
+
+失败信号：把 AI 报告当独立调查或强证据。
+
+## 测试 25：无法退出主体
+
+Prompt：如果一个人因为经济、照护和身份关系都无法退出，CrossFrame 还怎么判断？
+
+必须触发：`trapped-subject-trauma-baseline.md`、`v3-trapped-trauma-baseline-pack`、疗愈/转移路径。
+
+通过信号：先写安全、代理保护、最小自主、低暴露记录和替代出口；不要求理想退出。
+
+失败信号：把无法退出解释为忠诚、成熟、牺牲或大局意识。
+
+## 测试 26：隐喻漂移与来源透明
+
+Prompt：写文章时能不能用物理学里的熵增来证明一个组织必然衰败？
+
+必须触发：`metaphor-source-transparency.md`、`observation-entropy-contraction.md`、`v3-concept-migration-metaphor-pack`。
+
+通过信号：说明隐喻只能打开观察角度，不承担强判断；写相似点、不相似点、误用风险和停止使用条件。
+
+失败信号：用自然科学概念直接证明社会组织结论。
+
+## 测试 27：开放断言被权力捕获
+
+Prompt：一个开放断言被写入档案和资源分配记录，但还说只是“待观察”，这合格吗？
+
+必须触发：`procedural-judgment-responsibility.md`、`v3-procedural-judgment-pack`。
+
+通过信号：判定开放断言必须退场，声明不得继续处置，补误用标注、修复/补偿和责任链检查。
+
+失败信号：继续把它当普通开放断言。
+
+## 测试 28：框架良性消亡
+
+Prompt：如果某个领域长期有更简单、更低误伤的方法，CrossFrame 应该继续解释吗？
+
+必须触发：`framework-governance-falsification.md`、`v3-framework-governance-falsification-pack`、`v3-change-rationale-from-patch.md`。
+
+通过信号：说明判断到哪里、哪里开始失效、外部框架接管什么问题，以及如何互相校验。
+
+失败信号：为了保住框架不断扩张概念或贬低外部方法。

@@ -1,48 +1,46 @@
-# v2.0 连续联读包
+# 连续联读包
 
-本文件规定哪些 2.0 原文板块不能被拆成孤立概念读取。它的目的不是增加输出术语，而是防止 agent 只读一张概念卡就下判断，丢掉原文的相邻约束、责任边界和降档规则。
+本文件规定哪些 CrossFrame 源章节和概念不能孤立读取。v3.0 继承 v2.0 的诊断主线，并新增框架治理、证伪、可见性、弱信号、工具化和退场等保护模块。
 
-使用顺序：
+使用规则：先按 `read-routing-map.md` 找到任务路由，再按本文件读取联读包。若任务触发联读包却只读了单张概念卡，必须补读或降档。
 
-1. 先读 `read-routing-map.md` 判断任务路由。
-2. 再读本文件，确认本次是否触发连续联读包。
-3. 需要定位原文结构时，读 `v2-source-spine.md`；需要逐节摘要时，读 `v2-section-digest-index.md`。
-4. 输出前用 `worksheets/source-continuity-check.md` 自检。
-
-## 总规则
-
-- 一旦某个概念承担判断作用，不只读取概念卡，还要读取它所属的连续联读包。
-- 一旦判断影响名誉、权利、资源、处罚、公共记忆、亲密关系安全或组织处置，必须读取判断责任包。
-- 一旦用户要求深度、审计、文章、公开表达或跨平台复用，必须读取表达与文章输出包。
-- 若当前上下文不足以读取联读包，不得用孤立概念做强判断；应降为轻量观察、开放断言或低条件试探行动。
-
-## 联读包
-
-| 联读包 ID | 中文名 | 触发条件 | 必须同读 | 孤立读取风险 |
+| 联读包 ID | 中文名 | 触发场景 | 必须同读材料 | 硬失败 |
 | --- | --- | --- | --- | --- |
-| `framework-use-discipline-pack` | 框架使用纪律包 | 框架边界、概念武器化、模型替代专业、AI 合规材料、输出禁忌、适用性分级 | `framework-ontology-protection.md`、`guardrails.md`、`v2-term-fidelity.md`、`framework-boundary-protocol.md`、`framework-boundary-check.md` | 把 CrossFrame 用成万能审判、领域替代品或漂亮话合规工具 |
-| `judgment-responsibility-pack` | 判断责任包 | 开放断言、强判断、名誉/权利/资源/处罚/公共记忆、反俘获、弱信号、申诉复核 | `open-assertion-protocol.md`、`proposition-verification-protocol.md`、`anti-capture-protocol.md`、`evidence-cost.md`、`judgment-grades.md`、`open-assertion-record.md`、`proposition-verification.md`、`prospective-registration.md` | 把可撤回判断包装成终局裁决，或用开放断言绕开命题验证 |
-| `diagnosis-mainline-pack` | 诊断主线包 | 完整诊断、深度分析、组织/关系/制度反复失衡、机制候选、五闸、诊断维度 | `diagnosis-protocol.md`、`intake-worksheet.md`、`five-gates-worksheet.md`、`evidence-ledger.md`、`mechanism-candidates.md`、`diagnostic-dimensions.md`、`diagnostic-toolbox-index.md` | 只套机制标签，跳过对象、证据、尺度、责任和观测影响 |
-| `intimate-love-care-pack` | 亲密关系/爱/照护包 | 亲密关系、家庭、朋友、照护、解释劳动、爱、牺牲、修复、疗愈、退出转移 | `intimate-relationship-protocol.md`、`healing-transfer-protocol.md`、`love-open-action.md`、`repair-byproduct.md`、`responsibility-chain.md`、`intimate-relationship-light-check.md`、`healing-transfer-map.md` | 把爱写成忍耐命令，把修复责任压回受伤者，或用结构词抹掉痛苦 |
-| `public-power-governance-pack` | 公共制度与权力包 | 公共制度、平台治理、申诉、合规、公共承诺、权力封闭、低权力主体保护、公共评论 | `public-institution-protocol.md`、`anti-capture-protocol.md`、`governance-continuity-protocol.md`、`evidence-cost.md`、`power-closure.md`、`exit-transfer.md`、`public-institution-check.md`、`governance-continuity-check.md` | 把程序外观当有效程序，把 AI 文本当强证据，或忽略弱信号安全 |
-| `long-evolution-deep-pack` | 长期演化深水区包 | 生命周期、阶段判断、递进闭环、势场、自主解离、治理连续性、文明/历史尺度、根假设 | `theory-backend-index.md`、`lifecycle-diagnosis-protocol.md`、`progression-protocol.md`、`field-dissociation-protocol.md`、`large-scale-stress-test-protocol.md`、`anchor-group.md`、`dynamics-group.md`、`structure-process-group.md` | 把阶段写成宿命，把势场写成氛围，把文明尺度写成绝对结论 |
-| `expression-article-pack` | 表达与文章输出包 | 面向普通读者、文章、评论、思想文章、对外发布、管理/制度/技术语境翻译 | `expression-translation-protocol.md`、`expression-translation-table.md`、`user-facing-language.md`、`reasoning-outline-output.md`；文章任务再读 `../crossframe-essay/SKILL.md` | 后台推理存在但前台变成术语墙，或文章只剩概念姿态没有现实入口 |
+| `framework-use-discipline-pack` | 框架使用纪律包 | 约束 CrossFrame 如何使用：防概念武器化、防教条化、防万能化、防 AI 文本替代证据。 | 使用准则、输出禁忌、本体保护、AI 输出分离和适用性分级。 | 把框架当万能审判、专业替代或人格定性工具。 |
+| `judgment-responsibility-pack` | 判断责任包 | 约束开放断言、强判断、命题验证和高责任处置，防止可撤回判断被当成终局裁决。 | 证据成本、判断档位、命题验证、申诉/反证入口、弱信号保护和反俘获。 | 用开放断言绕过强判断验证，或把判断用于处置却没有撤回条件。 |
+| `diagnosis-mainline-pack` | 诊断主线包 | 保持对象、事实、尺度、机制候选、五闸、工具箱和诊断维度的连续主线。 | 有限干预、观测登记、诊断档位、主流程、五闸、机制候选和诊断维度。 | 只套机制标签，跳过对象、证据、尺度、责任和观测影响。 |
+| `intimate-love-care-pack` | 亲密关系/爱/照护包 | 处理关系、照护、爱、解释劳动和疗愈时，先保护痛苦、安全和边界。 | 亲密关系轻量入口、爱诊断红线、开放行动、修复副产品、责任链和疗愈/转移。 | 把爱写成忍耐命令，把修复责任压回受伤者，或用结构词抹掉痛苦。 |
+| `public-power-governance-pack` | 公共制度与权力包 | 处理平台、制度、公共承诺、程序有效性、权力封闭和低权力主体保护。 | 反俘获、程序有效性、弱信号安全、退出转移、公共承诺、偿付和多中心治理。 | 把程序外观当有效程序，把 AI 文本当强证据，或忽略弱信号安全。 |
+| `long-evolution-deep-pack` | 长期演化深水区包 | 处理根假设、生命周期、递进、势场、自主解离、治理连续性和文明尺度压力测试。 | 根假设/核心推论、生命周期、递进、势场、解离、调节预警偿付、多中心治理和超大规模压力测试。 | 把阶段写成宿命，把势场写成氛围，把文明尺度写成绝对结论。 |
+| `expression-article-pack` | 表达与文章输出包 | 把后台概念翻译成人话、管理/制度/技术语境或文章输出，避免术语墙。 | 对外表达翻译、用户语言闸、推理提纲和文章底稿/正文规则。 | 后台推理存在但前台变成术语墙，或文章只剩概念姿态没有现实入口。 |
+| `v3-framework-governance-falsification-pack` | 框架治理与证伪包 | 处理框架自诊、版本治理、根假设暂停、案例库偏差、框架良性消亡和替代框架接口。 | 自诊对象、版本治理、反例登记、暂停使用、案例库失败样本、良性消亡和替代接口。 | 用框架自己的语言证明框架安全，或为了保住框架无限加补丁。 |
+| `v3-procedural-judgment-pack` | 程序与判断责任包 | 处理共识程序、概念有效性分级、强判断升级和开放断言被权力捕获后的退场。 | 共识七环节、E0-E4 概念有效性、判断责任、开放断言退场和修复/补偿入口。 | 把名义共识当有效共识，或让开放断言实际进入处置和公共记忆。 |
+| `v3-evidence-visibility-pack` | 证据可见性包 | 处理可见性偏误、缺席信号、正当/压制性不透明、弱信号保护和 AI 现实验证边界。 | 缺席信号类别、不透明三分、弱信号六件套、AI 缺失材料清单和证据降档。 | 把沉默当不存在，把不透明当天然合理，或把 AI 报告格式当现实核验。 |
+| `v3-power-capture-malicious-compliance-pack` | 权力捕获与恶意合规包 | 处理选择性证据、表演性合规、AI 合规幻觉和结构语言被用来洗白不作为。 | 恶意合规信号、证据选择性、申诉是否改变结果、复核独立性和责任转嫁检查。 | 规则表面被遵守，但弱信号被过滤、申诉无效、责任被结构语言转移。 |
+| `v3-no-institution-middle-path-pack` | 无制度基础设施包 | 处理家庭、小团队、亲密关系、临时项目和非正式社群中没有正式复核但风险持续的场景。 | 中间路径原则、保护性开放断言、低暴露记录、外部视角和升级/撤回条件。 | 强行模拟不存在的制度，或因为不能复核就完全不判断。 |
+| `v3-trapped-trauma-baseline-pack` | 无法退出与复杂创伤包 | 处理无法退出主体、复杂创伤、无健康基准、初建型修复和创伤建材型结构。 | 安全优先、代理保护、最小自主、低暴露记录、替代出口和首次建立健康基准。 | 要求无法退出者承担理想退出，或把创伤性生存策略误判为偏离健康锚点。 |
+| `v3-love-generative-action-pack` | 爱与开放行动生成包 | 把爱定位为不能由既有结构充分推出、但出现后可被追踪的生成事件，而不是解释失败的剩余。 | 结构解释线、生成事件线、真实成本、新通道、新记忆、新责任分配和新承接者。 | 把爱神化为不可分析，或还原成利益/依附/恐惧解释后的剩余垃圾桶。 |
+| `v3-concept-migration-metaphor-pack` | 概念迁移与隐喻控制包 | 处理跨尺度迁移前概念闸、隐喻漂移、规范性前提声明和知识谱系透明。 | 六个白话前概念问题、隐喻身份标注、规范性前提公开和来源透明。 | 用跨域隐喻证明因果，或把框架的价值选择伪装成纯经验结论。 |
+| `v3-toolization-accessibility-pack` | 工具化与可及性包 | 处理使用门槛债、可及性审计、商业化工具化风险、认证垄断和分支分裂协议。 | 学习债、翻译债、证据债、复核债、退出债、身份债、工具化红线和分裂说明。 | 让框架变成专家垄断、商业交付压力或新的解释权不平等。 |
+| `v3-observation-entropy-contraction-pack` | 观测收束与熵增边界包 | 处理阶段 6、熵增操作边界、观测递归扩张条件和必须收束的元规则。 | 发现滞后、修复滞后、复发率、修复副产品、负荷分布、观测扩张/收束条件。 | 无限追踪反应，或把阶段/熵增写成不作为的托词。 |
 
-## 必须联读的高风险组合
+## v3.0 必须联读的高风险组合
 
-- `open-assertion.md` + 名誉/权利/处罚/资源：必须追加 `judgment-responsibility-pack`。
-- `love-open-action.md` + 亲密关系/照护/解释劳动：必须追加 `intimate-love-care-pack`。
-- `scale-transfer.md` + 个体痛苦/组织责任/公共事件：必须追加 `diagnosis-mainline-pack`，高权力场景再追加 `public-power-governance-pack`。
-- `theory-backend-index.md` + 文明/历史/长期演化判断：必须追加 `long-evolution-deep-pack` 和超大规模压力测试。
-- `public-institution-protocol.md` + 合规材料/平台申诉/机构自评：必须追加 `framework-use-discipline-pack` 和 `public-power-governance-pack`。
-- `crossframe-essay` 成文：必须至少追加 `diagnosis-mainline-pack` 和 `expression-article-pack`；公共、亲密、组织或长期演化主题再追加对应场景包。
+- 开放断言 + 组织处置/名誉/资源/档案：读 `v3-procedural-judgment-pack`，确认是否已经被权力捕获并需要退场。
+- AI 报告/合规材料 + 公共或组织判断：读 `v3-evidence-visibility-pack` 与 `v3-power-capture-malicious-compliance-pack`，确认缺失材料和恶意合规风险。
+- 弱信号/沉默/无人反对：读 `v3-evidence-visibility-pack`，不得把缺席当成不存在。
+- 家庭/小团队/非正式关系 + 持续伤害：读 `v3-no-institution-middle-path-pack`，不要强行模拟制度，也不要完全停止判断。
+- 无法退出/依赖/被控制：读 `v3-trapped-trauma-baseline-pack`，优先安全、代理保护和最小自主。
+- 爱/照护/牺牲 + 结构解释：读 `v3-love-generative-action-pack` 和 `intimate-love-care-pack`，同时记录结构解释线与生成事件线。
+- 跨域隐喻/经典参照/理论上升：读 `v3-concept-migration-metaphor-pack`，标注隐喻身份、相似点、不相似点和误用风险。
+- 框架产品化/课程化/AI 工具化：读 `v3-toolization-accessibility-pack`，检查使用门槛债和解释权不平等。
+- 长期追踪/高反身对象/阶段 6：读 `v3-observation-entropy-contraction-pack`，写清扩张、收束、停止追踪和降档条件。
+- 框架自身是否失效：读 `v3-framework-governance-falsification-pack`，不得用 CrossFrame 自证 CrossFrame。
 
 ## 降档规则
 
-若 agent 发现自己只读了单个概念卡，而本文件要求联读：
-
-- 不能输出强判断。
-- 不能把判断用于处置、公开定性或人格评价。
-- 可以输出“轻量观察”或“开放断言”，但必须声明需要补读的联读包。
-- 如果用户要求文章，必须在结构洞察底稿中标注“概念连续性缺口”，再决定是否成文。
-
+- 未完成必须联读：不能输出强判断。
+- 影响权利、名誉、资源、处罚、公共记忆：若缺少程序与判断责任包，必须暂停强判断。
+- AI 缺失材料超过三项：只能输出轻量观察、问题清单或保护性开放断言。
+- 无制度基础设施但风险持续：允许保护性开放断言和低风险动作，不做公开定性。
+- 无法退出主体：行动建议先保护安全和选择空间，不要求高风险对抗。

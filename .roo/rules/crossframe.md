@@ -17,6 +17,9 @@ Start from:
 
 Then load the specific routed files. Always produce a short visible 推理提纲 before the user-facing answer. Use plain Chinese; do not dump concepts. For high-risk concepts, read the corresponding concept card and run the concept-fidelity check.
 
+
+For v3.0 source fidelity, high-responsibility, public institution, intimate relationship, long-term evolution, deep analysis, AI compliance, weak-signal, no-institution, trapped-subject, toolization, or essay/article tasks must read `skills/crossframe/references/continuity-bundles.md`; when needed, read `skills/crossframe/references/v3-source-spine.md`, `skills/crossframe/references/v3-section-digest-index.md`, `skills/crossframe/references/v3-term-fidelity.md`, and run `skills/crossframe/worksheets/source-continuity-check.md`. Do not rely on one isolated concept card for these cases.
+
 Hard limits: no personality judgment, no fate prediction, no responsibility dilution, no professional replacement, no AI compliance theater.
 
 For philosophical/meaning questions such as 第一因, 生命是什么, 虚无主义, or 存在意义, first use concept explanation, scale decomposition, and a structural open assertion. Use framework boundary only as a fallback.

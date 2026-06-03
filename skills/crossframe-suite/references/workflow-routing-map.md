@@ -39,7 +39,7 @@
 crossframe -> source-continuity-check -> crossframe-essay -> crossframe-review
 ```
 
-`source-continuity-check` 不是独立 skill，而是 `crossframe` 内部的连续联读检查：读取 `continuity-bundles.md`，必要时读取 `v2-source-spine.md` 和 `v2-section-digest-index.md`。
+`source-continuity-check` 不是独立 skill，而是 `crossframe` 内部的连续联读检查：读取 `continuity-bundles.md`，必要时读取 `v3-source-spine.md`、`v3-section-digest-index.md` 和 `v3-term-fidelity.md`。v2 文件只在需要历史版本对照时读取。
 
 不要擅自成文的信号：
 
@@ -59,6 +59,7 @@ crossframe -> source-continuity-check -> crossframe-essay -> crossframe-review
 - 平台、政策、公共制度、公共承诺、申诉、封禁、处罚、合规、机构声明。
 - 最新事实、真实人物、真实公司、真实组织、公共争议。
 - 需要查源、证据边界、弱信号保护或反俘获。
+- 涉及 AI 合规文本、机构自评、恶意合规、可见性偏误或开放断言被处置化时，必须追加 v3.0 证据可见性包和权力捕获包。
 
 ### 追加 `crossframe-org`
 
@@ -78,6 +79,17 @@ crossframe -> source-continuity-check -> crossframe-essay -> crossframe-review
 ### 追加 `crossframe-casebook`
 
 - 聊天记录、项目材料、复盘材料、事件链、案例库、可复用案例。
+
+### 追加 v3.0 源连续性保护
+
+- 框架是否失效、是否应降级/转接/退场：触发 `v3-framework-governance-falsification-pack`。
+- 共识程序、强判断、开放断言被长期引用：触发 `v3-procedural-judgment-pack`。
+- 沉默、缺席、不透明、弱信号、AI 缺失材料：触发 `v3-evidence-visibility-pack`。
+- 家庭、小团队、非正式关系中没有制度却风险持续：触发 `v3-no-institution-middle-path-pack`。
+- 无法退出、复杂创伤、无健康基准：触发 `v3-trapped-trauma-baseline-pack`。
+- 引经据典、隐喻、知识谱系、规范性前提：触发 `v3-concept-migration-metaphor-pack`。
+- 课程、咨询、AI 工具、认证、商业化：触发 `v3-toolization-accessibility-pack`。
+- 高反身追踪、阶段 6、熵增、必须停止观察：触发 `v3-observation-entropy-contraction-pack`。
 - 用户要沉淀，而不是只要一次性答案。
 
 ### 追加 `crossframe-dialogue`

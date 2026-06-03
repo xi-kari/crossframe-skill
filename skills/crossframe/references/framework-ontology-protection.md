@@ -55,6 +55,6 @@
 - 它和相邻概念有什么区别？
 - 它需要什么证据才能承担判断作用？
 - 它最容易被怎样误用？
-- 它是否必须进入 `v2-term-fidelity.md` 或 `v2-coverage-map.md`？
+- 它是否必须进入 `v3-term-fidelity.md` 或 `v3-coverage-map.md`？
 
 无法回答以上问题时，只能作为普通表达，不得升格为 CrossFrame 概念。

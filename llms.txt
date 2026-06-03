@@ -21,8 +21,8 @@ CrossFrame is a Chinese cross-scale structural diagnosis skill. It helps AI anal
 - [Editorial comrade voice protocol](skills/crossframe-essay/protocols/editorial-comrade-voice-protocol.md): modern editor-style answer voice for patient, humble, serious, decisive Chinese essays.
 - [Editorial voice principles](skills/crossframe-essay/references/editorial-voice-principles.md): tone, address, criticism, and closing rules for editor-comrade prose.
 - [Routing map](skills/crossframe/references/read-routing-map.md): choose protocols, worksheets, concept cards, and templates.
-- [Term fidelity](skills/crossframe/references/v2-term-fidelity.md): preserve v2.0 concept meaning.
-- [Coverage map](skills/crossframe/references/v2-coverage-map.md): map v2.0 modules to skill files.
+- [Term fidelity](skills/crossframe/references/v3-term-fidelity.md): preserve v3.0 concept meaning.
+- [Coverage map](skills/crossframe/references/v3-coverage-map.md): map v3.0 modules to skill files.
 - [Smoke tests](skills/crossframe/evals/crossframe-smoke-tests.md): check that outputs actually reason instead of stacking terms.
 - [Essay smoke tests](skills/crossframe-essay/evals/crossframe-essay-smoke-tests.md): check dossier-first article outputs.
 

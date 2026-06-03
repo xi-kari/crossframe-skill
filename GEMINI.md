@@ -20,7 +20,7 @@
 2. `skills/crossframe/SKILL.md`
 3. `skills/crossframe/references/read-routing-map.md`
 4. 对应 `skills/crossframe/protocols/` 文件
-5. 高责任、公共制度、亲密关系、长期演化、深度分析和文章输出，读取 `skills/crossframe/references/continuity-bundles.md`，按需读取 `skills/crossframe/references/v2-source-spine.md` 与 `skills/crossframe/references/v2-section-digest-index.md`
+5. 高责任、公共制度、亲密关系、长期演化、深度分析和文章输出，读取 `skills/crossframe/references/continuity-bundles.md`，按需读取 `skills/crossframe/references/v3-source-spine.md` 与 `skills/crossframe/references/v3-section-digest-index.md`
 6. `skills/crossframe-essay/references/evidence-and-search-rules.md`
 7. 若需要概念上升、引经据典、理论参照或文学互文，读取 `skills/crossframe-essay/protocols/concept-elevation-protocol.md`、`skills/crossframe-essay/references/reference-and-allusion-rules.md`、`skills/crossframe-essay/references/concept-reference-map.md`
 8. 若用户要求亲切、编辑、同志口吻、报刊答复、耐心解答或给意见，读取 `skills/crossframe-essay/protocols/editorial-comrade-voice-protocol.md` 与 `skills/crossframe-essay/references/editorial-voice-principles.md`
@@ -38,7 +38,7 @@
 4. `skills/crossframe/templates/reasoning-outline-output.md`
 5. `skills/crossframe/templates/user-facing-language.md`
 6. 若使用高风险概念，读取 `skills/crossframe/references/concept-cards/README.md` 与对应概念卡
-7. 高责任、公共制度、亲密关系、长期演化、深度分析和文章输出，读取 `skills/crossframe/references/continuity-bundles.md`，按需读取 `skills/crossframe/references/v2-source-spine.md` 与 `skills/crossframe/references/v2-section-digest-index.md`
+7. 高责任、公共制度、亲密关系、长期演化、深度分析和文章输出，读取 `skills/crossframe/references/continuity-bundles.md`，按需读取 `skills/crossframe/references/v3-source-spine.md` 与 `skills/crossframe/references/v3-section-digest-index.md`
 8. 输出前用 `skills/crossframe/worksheets/concept-fidelity-check.md` 和 `skills/crossframe/worksheets/source-continuity-check.md` 做保真检查
 
 输出要求：
@@ -49,7 +49,7 @@
 - 中文概念不强行英文化。
 - 前台少术语，后台不能少读必要概念。
 - 强判断、高反身性、亲密关系、疗愈转移、公共制度、框架边界、生命周期、递进、势场解离、治理连续性、超大规模压力测试和长期演化问题，按 `read-routing-map.md` 读取对应深水区模块。
-- 需要连续保真的场景，必须检查 2.0 连续联读包，避免只读单概念卡导致失真。
+- 需要连续保真的场景，必须检查 3.0 连续联读包，避免只读单概念卡导致失真。
 
 如果用户要求以下专项任务，优先读取对应平行 skill，再按该 skill 的说明读取 `skills/crossframe/SKILL.md` 与路由图：
 

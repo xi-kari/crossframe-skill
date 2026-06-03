@@ -18,6 +18,9 @@ Required flow:
 4. Show a concise 推理提纲 before the answer.
 5. Answer in plain Chinese first; keep framework terms as optional mapping.
 
+
+For v3.0 source fidelity, high-responsibility, public institution, intimate relationship, long-term evolution, deep analysis, AI compliance, weak-signal, no-institution, trapped-subject, toolization, or essay/article tasks must read `skills/crossframe/references/continuity-bundles.md`; when needed, read `skills/crossframe/references/v3-source-spine.md`, `skills/crossframe/references/v3-section-digest-index.md`, `skills/crossframe/references/v3-term-fidelity.md`, and run `skills/crossframe/worksheets/source-continuity-check.md`. Do not rely on one isolated concept card for these cases.
+
 High-risk concepts require their cards in `skills/crossframe/references/concept-cards/` and the fidelity check in `skills/crossframe/worksheets/concept-fidelity-check.md`.
 
 Do not use CrossFrame as a professional substitute, personality judgment, or compliance proof.

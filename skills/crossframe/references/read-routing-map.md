@@ -1,50 +1,56 @@
 # 读取路由图
 
-本文件决定一次 CrossFrame 调用应该读取哪些材料。默认先读最少必要内容；当概念承担判断作用时，再加载完整概念卡和保真材料。
+本文件决定一次 CrossFrame 调用应该读取哪些材料。默认先读最少必要内容；当概念承担判断作用时，再加载完整概念卡、保真材料和必要的连续联读包。
 
-本文件现在同时承担“连续联读”路由：当某个概念属于 2.0 原文连续板块时，不得只读单个 protocol 或 concept card，必须按 `continuity-bundles.md` 读取对应联读包，并在输出前使用 `worksheets/source-continuity-check.md` 检查是否读少。
+当前权威源为 `v3.0`。`v2.0` 文件保留为历史基线；默认连续性检查读取 `v3-source-spine.md`、`v3-section-digest-index.md`、`v3-coverage-map.md` 与 `v3-term-fidelity.md`。当某个概念属于 v3.0 连续板块时，不得只读单个 protocol 或 concept card。
 
-## 基础路由
+## 联读包索引
 
 | 联读包 ID | 中文名 | 何时强制读取 |
 | --- | --- | --- |
 | `framework-use-discipline-pack` | 框架使用纪律包 | 约束 CrossFrame 如何使用：防概念武器化、防教条化、防万能化、防 AI 文本替代证据。 |
-| `judgment-responsibility-pack` | 判断责任包 | 约束开放断言、强判断、命题验证和高责任处置，防止把可撤回判断当终局裁决。 |
+| `judgment-responsibility-pack` | 判断责任包 | 约束开放断言、强判断、命题验证和高责任处置，防止可撤回判断被当成终局裁决。 |
 | `diagnosis-mainline-pack` | 诊断主线包 | 保持对象、事实、尺度、机制候选、五闸、工具箱和诊断维度的连续主线。 |
 | `intimate-love-care-pack` | 亲密关系/爱/照护包 | 处理关系、照护、爱、解释劳动和疗愈时，先保护痛苦、安全和边界。 |
 | `public-power-governance-pack` | 公共制度与权力包 | 处理平台、制度、公共承诺、程序有效性、权力封闭和低权力主体保护。 |
 | `long-evolution-deep-pack` | 长期演化深水区包 | 处理根假设、生命周期、递进、势场、自主解离、治理连续性和文明尺度压力测试。 |
 | `expression-article-pack` | 表达与文章输出包 | 把后台概念翻译成人话、管理/制度/技术语境或文章输出，避免术语墙。 |
+| `v3-framework-governance-falsification-pack` | 框架治理与证伪包 | 处理框架自诊、版本治理、根假设暂停、案例库偏差、框架良性消亡和替代框架接口。 |
+| `v3-procedural-judgment-pack` | 程序与判断责任包 | 处理共识程序、概念有效性分级、强判断升级和开放断言被权力捕获后的退场。 |
+| `v3-evidence-visibility-pack` | 证据可见性包 | 处理可见性偏误、缺席信号、正当/压制性不透明、弱信号保护和 AI 现实验证边界。 |
+| `v3-power-capture-malicious-compliance-pack` | 权力捕获与恶意合规包 | 处理选择性证据、表演性合规、AI 合规幻觉和结构语言被用来洗白不作为。 |
+| `v3-no-institution-middle-path-pack` | 无制度基础设施包 | 处理家庭、小团队、亲密关系、临时项目和非正式社群中没有正式复核但风险持续的场景。 |
+| `v3-trapped-trauma-baseline-pack` | 无法退出与复杂创伤包 | 处理无法退出主体、复杂创伤、无健康基准、初建型修复和创伤建材型结构。 |
+| `v3-love-generative-action-pack` | 爱与开放行动生成包 | 把爱定位为不能由既有结构充分推出、但出现后可被追踪的生成事件，而不是解释失败的剩余。 |
+| `v3-concept-migration-metaphor-pack` | 概念迁移与隐喻控制包 | 处理跨尺度迁移前概念闸、隐喻漂移、规范性前提声明和知识谱系透明。 |
+| `v3-toolization-accessibility-pack` | 工具化与可及性包 | 处理使用门槛债、可及性审计、商业化工具化风险、认证垄断和分支分裂协议。 |
+| `v3-observation-entropy-contraction-pack` | 观测收束与熵增边界包 | 处理阶段 6、熵增操作边界、观测递归扩张条件和必须收束的元规则。 |
+
+## 基础路由
 
 | 用户请求 | 必读 | 按需追加 | 连续联读包 |
 | --- | --- | --- | --- |
-| 快速诊断 | `protocols/diagnosis-protocol.md`、`worksheets/intake-worksheet.md`、`worksheets/five-gates-worksheet.md`、`templates/quick-diagnosis-output.md` | 涉及高风险概念时读对应概念卡 | `diagnosis-mainline-pack` |
-| 完整诊断 / 审计 / 深度分析 | `protocols/diagnosis-protocol.md`、全部核心 worksheets、`templates/full-diagnosis-output.md`、`references/v2-term-fidelity.md` | `references/diagnostic-dimensions.md`、`references/diagnostic-toolbox-index.md`、`references/v2-source-spine.md`、`references/v2-section-digest-index.md` | `diagnosis-mainline-pack`、`framework-use-discipline-pack` |
-| 推演 / 后续走向 / 分支终点 | `protocols/inference-protocol.md`、`templates/inference-output.md`、`references/concept-cards/mechanism-candidates.md` | 尺度、反身性、权力封闭相关概念卡 | `diagnosis-mainline-pack` |
-| 开放断言 | `protocols/open-assertion-protocol.md`、`worksheets/open-assertion-record.md`、`templates/open-assertion-output.md`、`references/concept-cards/open-assertion.md` | `references/concept-cards/evidence-cost.md`、`references/concept-cards/judgment-grades.md` | `judgment-responsibility-pack` |
-| 低条件行动 | `protocols/low-condition-action-protocol.md`、`references/concept-cards/low-condition-action.md` | `references/concept-cards/evidence-cost.md`、`references/concept-cards/judgment-grades.md` | `judgment-responsibility-pack` |
-| 高责任 / 权力密度 / 处分 / 名誉 / 权利 / 公共记忆 | `protocols/anti-capture-protocol.md`、`worksheets/high-responsibility-check.md`、`references/concept-cards/power-closure.md`、`references/concept-cards/evidence-cost.md`、`references/concept-cards/judgment-grades.md` | `references/concept-cards/exit-transfer.md`、`references/diagnostic-toolbox-index.md`、`references/v2-source-spine.md` | `judgment-responsibility-pack`、`public-power-governance-pack`、`framework-use-discipline-pack` |
-| 强判断 / 处置依据 / 资格名誉资源权利 | `protocols/proposition-verification-protocol.md`、`worksheets/proposition-verification.md`、`worksheets/prospective-registration.md`、`templates/strong-judgment-output.md` | `protocols/anti-capture-protocol.md`、`references/concept-cards/judgment-grades.md` | `judgment-responsibility-pack`、`framework-use-discipline-pack` |
-| 高反身性 / 表演 / 反制 / 研究诊断规则 | `protocols/high-reflexivity-protocol.md`、`worksheets/reflexivity-state-transfer.md`、`templates/high-reflexivity-output.md` | `references/concept-cards/reflexivity.md`、`references/concept-cards/evidence-cost.md` | `judgment-responsibility-pack`、`framework-use-discipline-pack` |
-| 亲密关系 / 家庭 / 照护 / 解释劳动 / 单方承接 | `protocols/intimate-relationship-protocol.md`、`worksheets/intimate-relationship-light-check.md`、`templates/intimate-relationship-output.md` | `references/concept-cards/love-open-action.md`、`references/concept-cards/repair-byproduct.md`、`references/concept-cards/responsibility-chain.md`、`references/v2-section-digest-index.md` | `intimate-love-care-pack`、`diagnosis-mainline-pack` |
-| 疗愈 / 修复路线 / 退出转移 / 长期重建 | `protocols/healing-transfer-protocol.md`、`worksheets/healing-transfer-map.md`、`templates/healing-transfer-output.md` | `references/concept-cards/exit-transfer.md`、`references/concept-cards/repair-byproduct.md` | `intimate-love-care-pack`、`diagnosis-mainline-pack` |
-| 公共制度 / 平台治理 / 公共承诺 / 高权力公共议题 | `protocols/public-institution-protocol.md`、`worksheets/public-institution-check.md`、`templates/public-institution-output.md` | `protocols/anti-capture-protocol.md`、`references/concept-cards/evidence-cost.md`、`references/concept-cards/power-closure.md`、`references/v2-source-spine.md` | `public-power-governance-pack`、`judgment-responsibility-pack`、`framework-use-discipline-pack` |
-| 框架边界 / 万能理论 / 专业替代 / 概念武器化 | `protocols/framework-boundary-protocol.md`、`worksheets/framework-boundary-check.md`、`references/framework-ontology-protection.md`、`templates/framework-boundary-output.md` | `references/concept-cards/evidence-cost.md`、`protocols/anti-capture-protocol.md` | `framework-use-discipline-pack` |
-| 生命周期 / 阶段判断 / 长期演化过程 | `protocols/lifecycle-diagnosis-protocol.md`、`worksheets/lifecycle-stage-record.md`、`templates/lifecycle-output.md` | `references/theory-backend-index.md`、`references/concept-cards/structure-process-group.md`、`references/v2-section-digest-index.md` | `long-evolution-deep-pack`、`diagnosis-mainline-pack` |
-| 递进模式 / 子锚点闭环 / 忙但没积累 | `protocols/progression-protocol.md`、`worksheets/sub-anchor-progression.md`、`templates/progression-output.md` | `references/concept-cards/anchor-group.md`、`references/concept-cards/structure-process-group.md` | `long-evolution-deep-pack`、`diagnosis-mainline-pack` |
-| 势场 / 沉积基本盘 / 自主解离 | `protocols/field-dissociation-protocol.md`、`worksheets/field-dissociation-check.md`、`references/field-management-and-dissociation.md`、`templates/field-dissociation-output.md` | `references/concept-cards/exit-transfer.md`、`references/concept-cards/repair-byproduct.md` | `long-evolution-deep-pack` |
-| 治理连续性 / 偿付约束 / 多中心治理 / 承接者生成 | `protocols/governance-continuity-protocol.md`、`worksheets/governance-continuity-check.md`、`templates/governance-continuity-output.md` | `protocols/public-institution-protocol.md`、`references/theory-backend-index.md` | `public-power-governance-pack`、`long-evolution-deep-pack` |
-| 超大规模圈层 / 文明尺度 / 历史尺度压力测试 | `protocols/large-scale-stress-test-protocol.md`、`worksheets/large-scale-stress-test.md`、`templates/large-scale-stress-output.md` | `references/theory-backend-index.md`、`references/concept-cards/scale-transfer.md`、`references/v2-source-spine.md` | `long-evolution-deep-pack`、`public-power-governance-pack`、`framework-use-discipline-pack` |
-| 对外表达 / 说人话 / 管理制度技术语境翻译 | `protocols/expression-translation-protocol.md`、`references/expression-translation-table.md`、`templates/expression-translation-output.md`、`templates/user-facing-language.md` | 对应诊断协议和概念卡 | `expression-article-pack` |
-| 概念解释 / 思想解释 / 某概念怎么看 | `protocols/concept-explanation-protocol.md`、`references/concepts-minimal-set.md`、`references/v2-term-fidelity.md`、`templates/concept-explanation-output.md` | 与概念相关的概念卡；深度解释读 `v2-section-digest-index.md` | `framework-use-discipline-pack`、`expression-article-pack` |
-| 哲学 / 意义 / 第一因 / 生命是什么 / 虚无主义 | `protocols/concept-explanation-protocol.md`、`templates/concept-explanation-output.md`、`references/v2-term-fidelity.md` | `concept-cards/scale-transfer.md`、`concept-cards/open-assertion.md`、`protocols/framework-boundary-protocol.md` | `framework-use-discipline-pack`、`judgment-responsibility-pack`、`expression-article-pack` |
-| 爱、牺牲、照护、公共承诺 | `references/concept-cards/love-open-action.md`、`references/love-as-open-action.md` | `references/concept-cards/repair-byproduct.md`、`references/concept-cards/responsibility-chain.md` | `intimate-love-care-pack` |
-| 文明尺度 / 长期演化 / 制度生成 / 多中心治理 / 深层理论 | 对应专项协议 + `references/theory-backend-index.md` | `references/diagnostic-dimensions.md`、`references/diagnostic-toolbox-index.md`、`references/v2-coverage-map.md`、`references/v2-source-spine.md` | `long-evolution-deep-pack`、`public-power-governance-pack` |
+| 快速诊断 | `protocols/diagnosis-protocol.md`、核心 worksheets、`templates/quick-diagnosis-output.md` | 涉及高风险概念时读对应概念卡 | `diagnosis-mainline-pack` |
+| 完整诊断 / 审计 / 深度分析 | `protocols/diagnosis-protocol.md`、全部核心 worksheets、`templates/full-diagnosis-output.md`、`references/v3-term-fidelity.md` | `references/diagnostic-dimensions.md`、`references/diagnostic-toolbox-index.md`、`references/v3-source-spine.md`、`references/v3-section-digest-index.md` | `diagnosis-mainline-pack`、`framework-use-discipline-pack` |
+| 开放断言 | `protocols/open-assertion-protocol.md`、`worksheets/open-assertion-record.md`、`references/concept-cards/open-assertion.md` | `references/concept-cards/procedural-judgment-responsibility.md` | `judgment-responsibility-pack`、`v3-procedural-judgment-pack` |
+| 强判断 / 资格名誉资源权利 | `protocols/proposition-verification-protocol.md`、`worksheets/proposition-verification.md`、`worksheets/prospective-registration.md` | `protocols/anti-capture-protocol.md`、`references/concept-cards/procedural-judgment-responsibility.md` | `judgment-responsibility-pack`、`v3-procedural-judgment-pack`、`v3-evidence-visibility-pack` |
+| AI 合规 / 漂亮报告 / 机构自评 | `references/concept-cards/malicious-compliance-ai-validation.md`、`references/concept-cards/visibility-opacity-weak-signals.md` | `protocols/anti-capture-protocol.md`、`references/concept-cards/evidence-cost.md` | `v3-power-capture-malicious-compliance-pack`、`v3-evidence-visibility-pack`、`framework-use-discipline-pack` |
+| 弱信号 / 沉默 / 缺席 / 不透明 | `references/concept-cards/visibility-opacity-weak-signals.md`、`references/concept-cards/evidence-cost.md` | `protocols/public-institution-protocol.md` 或 `protocols/intimate-relationship-protocol.md` | `v3-evidence-visibility-pack` |
+| 无制度基础设施 / 家庭小团队 / 非正式关系 | `references/concept-cards/no-institution-middle-path.md`、`protocols/low-condition-action-protocol.md` | `protocols/intimate-relationship-protocol.md`、`templates/open-assertion-output.md` | `v3-no-institution-middle-path-pack`、`intimate-love-care-pack` |
+| 无法退出 / 复杂创伤 / 无健康基准 | `references/concept-cards/trapped-subject-trauma-baseline.md`、`protocols/healing-transfer-protocol.md` | `references/concept-cards/exit-transfer.md`、`references/concept-cards/repair-byproduct.md` | `v3-trapped-trauma-baseline-pack`、`intimate-love-care-pack` |
+| 爱 / 照护 / 牺牲 / 开放行动 | `references/concept-cards/love-generative-action.md`、`references/concept-cards/love-open-action.md` | `references/concept-cards/responsibility-chain.md`、`references/concept-cards/repair-byproduct.md` | `v3-love-generative-action-pack`、`intimate-love-care-pack` |
+| 隐喻 / 引经据典 / 来源透明 / 规范性前提 | `references/concept-cards/metaphor-source-transparency.md`、`references/v3-term-fidelity.md` | `../crossframe-essay/protocols/concept-elevation-protocol.md` | `v3-concept-migration-metaphor-pack`、`expression-article-pack` |
+| 工具化 / 商业化 / 课程 / AI 工具 / 认证 | `references/concept-cards/accessibility-toolization-split.md`、`references/framework-ontology-protection.md` | `references/v3-change-rationale-from-patch.md` | `v3-toolization-accessibility-pack`、`framework-use-discipline-pack` |
+| 阶段 6 / 熵增 / 观测递归 / 高反身追踪 | `references/concept-cards/observation-entropy-contraction.md`、`protocols/high-reflexivity-protocol.md` | `protocols/lifecycle-diagnosis-protocol.md`、`references/theory-backend-index.md` | `v3-observation-entropy-contraction-pack`、`long-evolution-deep-pack` |
+| 框架是否失效 / 证伪 / 良性消亡 | `references/concept-cards/framework-governance-falsification.md`、`references/v3-change-rationale-from-patch.md` | `references/v3-coverage-map.md`、`references/framework-ontology-protection.md` | `v3-framework-governance-falsification-pack` |
+| 公共制度 / 平台治理 / 公共承诺 | `protocols/public-institution-protocol.md`、`worksheets/public-institution-check.md` | `references/concept-cards/malicious-compliance-ai-validation.md`、`references/concept-cards/visibility-opacity-weak-signals.md` | `public-power-governance-pack`、`v3-evidence-visibility-pack`、`v3-power-capture-malicious-compliance-pack` |
+| 文章 / 评论 / 可读输出 | `../crossframe-essay/SKILL.md`、`templates/user-facing-language.md` | `references/v3-section-digest-index.md`、对应场景概念卡 | `expression-article-pack`、对应场景联读包 |
 
 ## 连续联读执行规则
 
-- 只要上表的“连续联读包”不是空，就先读 `references/continuity-bundles.md`，确认该包的同读材料和降档规则。
-- 深度、审计、高责任、公共制度、亲密关系、长期演化和文章输出场景，必须按需读 `references/v2-source-spine.md` 或 `references/v2-section-digest-index.md`，确认原文相邻章节。
+- 只要上表的“连续联读包”不是空，就先读 `references/continuity-bundles.md`，确认同读材料和降档规则。
+- 深度、审计、高责任、公共制度、亲密关系、长期演化、框架治理和文章输出场景，必须按需读 `references/v3-source-spine.md` 或 `references/v3-section-digest-index.md`，确认原文相邻章节。
+- 若 v3.0 与 v2.0 的理解冲突，以 v3.0 为准；若需要追踪演化，再读取 `v2-source-spine.md`、`v2-section-digest-index.md` 和 `v3-change-rationale-from-patch.md`。
 - 输出前使用 `worksheets/source-continuity-check.md`：若发现只读了单张概念卡，且本文件要求联读，必须补读或降档。
 - `templates/reasoning-outline-output.md` 中的“本次连续联读包”只列包名，不展开完整工作表。
 

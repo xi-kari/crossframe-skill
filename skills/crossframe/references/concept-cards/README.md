@@ -1,6 +1,6 @@
 # 高风险概念卡索引
 
-这些概念在 v2.0 中承担关键判断作用，不能只按日常词义理解。使用前按需读取对应卡片。
+这些概念在 v3.0 中承担关键判断作用，不能只按日常词义理解。使用前按需读取对应卡片。
 
 | 概念 | 读取文件 | 触发场景 |
 | --- | --- | --- |
@@ -20,6 +20,17 @@
 | 锚点组 / 多层锚 / 跨域互操作 | `anchor-group.md` | 判断关键支撑、保护变量、重锚定和跨域迁移 |
 | 动力组 / 转译 / 支撑通道 | `dynamics-group.md` | 判断行动能否启动、职责是否被让渡、条件场是否足够 |
 | 结构组与过程组 / 结构负荷 | `structure-process-group.md` | 判断行动承接、中层耗竭、反武器化边界和维护债 |
+
+| 框架治理 / 证伪 / 良性消亡 | `framework-governance-falsification.md` | 判断框架是否失效、是否需要暂停、降级、转接或退场 |
+| 程序与判断责任 / 开放断言退场 | `procedural-judgment-responsibility.md` | 共识程序、强判断、开放断言被实际处置化 |
+| 可见性 / 不透明 / 弱信号 | `visibility-opacity-weak-signals.md` | 沉默、缺席、匿名反馈、不透明材料、弱信号安全 |
+| 恶意合规 / AI 现实验证 | `malicious-compliance-ai-validation.md` | 漂亮报告、AI 合规文本、选择性证据、机构自评 |
+| 无制度基础设施中间路径 | `no-institution-middle-path.md` | 家庭、小团队、非正式关系中无正式复核但风险持续 |
+| 无法退出主体 / 复杂创伤 / 无健康基准 | `trapped-subject-trauma-baseline.md` | 儿童、依赖者、不可退出主体、初建型修复 |
+| 爱的生成事件 | `love-generative-action.md` | 爱不是解释失败的剩余，而是可追踪的新结构事件 |
+| 隐喻漂移 / 来源透明 / 规范性前提 | `metaphor-source-transparency.md` | 概念上升、引经据典、跨域隐喻、知识谱系说明 |
+| 使用门槛债 / 工具化 / 分裂协议 | `accessibility-toolization-split.md` | 课程、咨询、AI 工具、认证、商业化和分支分歧 |
+| 观测收束 / 熵增边界 | `observation-entropy-contraction.md` | 高反身性追踪、阶段 6、熵增和必须停止追踪的场景 |
 
 ## 固定阅读顺序
 

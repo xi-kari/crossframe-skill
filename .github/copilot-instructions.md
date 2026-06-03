@@ -22,7 +22,7 @@
 - 输出必须区分事实、解释、机制候选、判断档位和本次读取的概念。
 - 高风险概念如承接/回流、开放断言、尺度转移、观测反身性、权力封闭、低条件行动、爱/开放行动、责任链、证据成本、机制候选、判断档位、退出转移、修复副产品，必须先读 `skills/crossframe/references/concept-cards/` 对应卡片。
 - 输出前用 `skills/crossframe/worksheets/concept-fidelity-check.md` 避免概念压缩失真。
-- 高责任、公共制度、亲密关系、长期演化、深度分析和文章输出，还要读取 `skills/crossframe/references/continuity-bundles.md`，按需读取 `skills/crossframe/references/v2-source-spine.md`、`skills/crossframe/references/v2-section-digest-index.md` 和 `skills/crossframe/worksheets/source-continuity-check.md`，避免只读单概念卡导致 2.0 连续性失真。
+- 高责任、公共制度、亲密关系、长期演化、深度分析和文章输出，还要读取 `skills/crossframe/references/continuity-bundles.md`，按需读取 `skills/crossframe/references/v3-source-spine.md`、`skills/crossframe/references/v3-section-digest-index.md` 和 `skills/crossframe/worksheets/source-continuity-check.md`，避免只读单概念卡导致 3.0 连续性失真。
 - 强判断不得绕开命题验证；高反身性不得无限递归；亲密关系不得把爱变成忍耐义务。
 - 框架边界不得把 CrossFrame 当专业替代品；生命周期不得写成命运；超大规模判断必须承认可判断边界。
 - 不要把结构诊断变成人格审判、命运预言、责任稀释或概念堆砌。

@@ -19,7 +19,7 @@ CrossFrame Essay 是 `crossframe` 的平行写作 skill，不替代 `crossframe`
 2. 读取 `../crossframe/SKILL.md`。
 3. 读取 `../crossframe/references/read-routing-map.md`，把主题路由到相应 CrossFrame protocol。
 4. 读取 `../crossframe/references/continuity-bundles.md`，至少确认 `diagnosis-mainline-pack` 与 `expression-article-pack`；公共、亲密、长期演化或高责任主题追加对应联读包。
-5. 用 `../crossframe/worksheets/source-continuity-check.md` 检查是否只读了孤立概念卡；深度文章按需读取 `../crossframe/references/v2-source-spine.md` 或 `../crossframe/references/v2-section-digest-index.md`。
+5. 用 `../crossframe/worksheets/source-continuity-check.md` 检查是否只读了孤立概念卡；深度文章按需读取 `../crossframe/references/v3-source-spine.md`、`../crossframe/references/v3-section-digest-index.md` 或 `../crossframe/references/v3-term-fidelity.md`。
 6. 读取 `references/evidence-and-search-rules.md`，决定本次是否需要联网或查源。
 7. 按需读取 `references/critical-insight-principles.md`。
 8. 如果主题是思想文章、公共议题、复杂关系/组织文章，或用户要求深度、概念上升、引经据典，读取 `protocols/concept-elevation-protocol.md`、`references/reference-and-allusion-rules.md` 和 `references/concept-reference-map.md`。
@@ -36,7 +36,9 @@ CrossFrame Essay 是 `crossframe` 的平行写作 skill，不替代 `crossframe`
 - 如果启用概念上升，先从 CrossFrame 机制抽象上位概念，再选择中西经典、历史经验、理论或文学互文，最后回落到现实判断。
 - 如果启用现代编辑同志口吻，先写 `正文声口方案`，再成文。默认是现代编辑底色；问题型主题可写成答复体，普通思想/评论文章只吸收亲切、负责、果敢的声口。
 - 如果文章判断使用高风险 CrossFrame 概念，按 `../crossframe/references/read-routing-map.md` 读取对应概念卡，并用 `../crossframe/worksheets/concept-fidelity-check.md` 做保真检查。
-- 如果文章判断触发 2.0 连续板块，按 `../crossframe/references/continuity-bundles.md` 读取对应联读包，并在底稿中写出“源结构连续性检查”。
+- 如果文章判断触发 v3.0 连续板块，按 `../crossframe/references/continuity-bundles.md` 读取对应联读包，并在底稿中写出“源结构连续性检查”。
+- 如果文章使用引经据典、概念上升、隐喻、来源谱系或规范性前提，读取 `../crossframe/references/concept-cards/metaphor-source-transparency.md`；直接引用必须可核验，不确定时只做意译或思想映射。
+- 如果文章涉及 AI 合规、弱信号、无法退出、无制度基础设施、工具化或开放断言退场，必须按 v3.0 对应联读包先完成现实保护检查，再成文。
 
 ## 硬规则
 

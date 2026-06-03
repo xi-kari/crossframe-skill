@@ -31,10 +31,10 @@
 - 直接引用必须可核验；不确定原句时只做意译、典故或思想映射。
 - 现代编辑同志口吻是前台声口层，不改变结构判断；亲切不能和稀泥，严厉不能人格审判。
 - 高风险概念必须按需读取 `skills/crossframe/references/concept-cards/`，不要只按字面理解。
-- 防失真材料以 `skills/crossframe/references/read-routing-map.md`、`skills/crossframe/references/v2-term-fidelity.md`、`skills/crossframe/references/continuity-bundles.md`、`skills/crossframe/references/v2-source-spine.md`、`skills/crossframe/references/v2-section-digest-index.md`、`skills/crossframe/worksheets/concept-fidelity-check.md` 和 `skills/crossframe/worksheets/source-continuity-check.md` 为入口。
-- 高责任、公共制度、亲密关系、长期演化、深度分析和文章输出场景，不能只读单张概念卡；必须检查对应 2.0 连续联读包。
+- 防失真材料以 `skills/crossframe/references/read-routing-map.md`、`skills/crossframe/references/v3-term-fidelity.md`、`skills/crossframe/references/continuity-bundles.md`、`skills/crossframe/references/v3-source-spine.md`、`skills/crossframe/references/v3-section-digest-index.md`、`skills/crossframe/worksheets/concept-fidelity-check.md` 和 `skills/crossframe/worksheets/source-continuity-check.md` 为入口。
+- 高责任、公共制度、亲密关系、长期演化、深度分析和文章输出场景，不能只读单张概念卡；必须检查对应 3.0 连续联读包。
 - 深水区模块以命题验证、高反身性、亲密关系轻量入口、疗愈转移、公共制度专项、框架边界、生命周期、递进闭环、势场解离、治理连续性、超大规模压力测试、表达翻译和理论后台索引为入口。
-- `skills/crossframe/references/v2-coverage-map.md` 用于维护时核对 v2.0 覆盖状态，不作为普通输出材料。
+- `skills/crossframe/references/v3-coverage-map.md` 用于维护时核对 v3.0 覆盖状态，不作为普通输出材料。
 
 ## 当前支持的接口
 
@@ -72,12 +72,12 @@
 
 1. `skills/crossframe-suite/SKILL.md` 与 `skills/crossframe-suite/references/workflow-routing-map.md`
 2. `skills/crossframe/SKILL.md`
-3. `skills/crossframe/references/read-routing-map.md`、`references/v2-term-fidelity.md`、`references/continuity-bundles.md`、`references/v2-source-spine.md`
+3. `skills/crossframe/references/read-routing-map.md`、`references/v3-term-fidelity.md`、`references/continuity-bundles.md`、`references/v3-source-spine.md`
 4. `skills/crossframe-essay/SKILL.md`
 5. 各 `skills/crossframe-*/SKILL.md`
 6. 各 `skills/crossframe-*/protocols/` 与 `references/`
 7. `skills/crossframe/references/theory-backend-index.md`
-8. `skills/crossframe/references/v2-coverage-map.md`
+8. `skills/crossframe/references/v3-coverage-map.md`
 9. `skills/crossframe/protocols/`
 10. `skills/crossframe/worksheets/`
 11. `skills/crossframe/templates/`

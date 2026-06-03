@@ -16,7 +16,7 @@ description: |
 
 1. 读取 `../crossframe/SKILL.md`。
 2. 读取 `../crossframe/references/read-routing-map.md`。
-3. 读取 `../crossframe/references/continuity-bundles.md`，判断本应触发哪些连续联读包。
+3. 读取 `../crossframe/references/continuity-bundles.md`，判断本应触发哪些 v3.0 连续联读包。
 4. 若评审对象是深度、审计、高责任、公共制度、亲密关系、长期演化或文章类输出，按需读取 `../crossframe/worksheets/source-continuity-check.md`。
 5. 若评审对象是文章、长文、评论、思想文章、报刊答复或“现代编辑同志口吻”输出，按需读取 `../crossframe-essay/SKILL.md`。
 6. 读取本目录的 `protocols/review-protocol.md` 和 `templates/review-report.md`。
@@ -34,7 +34,7 @@ description: |
 - 经过对象闸、证据闸、尺度闸、责任闸、观测闸。
 - 至少形成两个机制候选，或说明为什么只能有一个。
 - 对承担判断作用的高风险概念做保真检查，而不是把术语当结论。
-- 对属于 2.0 连续板块的高风险概念做源结构连续性检查，而不是只读单张概念卡。
+- 对属于 3.0 连续板块的高风险概念做源结构连续性检查，而不是只读单张概念卡。
 - 给出可撤回条件、下一步观察或低条件行动边界。
 - 文章类输出必须先有结构洞察底稿，再写正文。
 
@@ -53,6 +53,7 @@ description: |
 - 尺度洗白：用宏观叙事取消低尺度痛苦、责任链或具体失职。
 - AI 合规剧场：把 AI 生成材料、漂亮报告或自评文本当作独立强证据。
 - 连续性保真失败：本应触发 `continuity-bundles.md` 的联读包，却只读单个概念卡、单个 protocol 或单个摘录就下判断。
+- v3 现实保护失败：涉及 AI 现实验证、弱信号、不透明、无制度基础设施、无法退出、恶意合规、隐喻漂移、工具化或开放断言退场，却没有读取对应 v3 概念卡和联读包。
 
 ## 输出协议
 
