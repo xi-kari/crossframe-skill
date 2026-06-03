@@ -20,15 +20,17 @@ description: |
 
 一般使用 CrossFrame family 时，优先从本 skill 进入。只有任务非常单一时，才直接使用对应专项 skill。
 
-当用户没有明确指定交付物，只是说“分析一下”“怎么看”“讲讲这个问题”“给我一个有洞察的回答”“写一下这个主题”时，本 skill 默认把最终输出做成**可读文章/文章式回答**：
+当用户没有明确指定交付物，只是说“分析一下”“怎么看”“讲讲这个问题”“给我一个有洞察的回答”“写一下这个主题”时，本 skill 默认把最终输出做成**3.0 混合长文**，输出档位为 `full-visible-v3-longform`：完整可见底稿 + 完整长文正文。
 
 ```text
-crossframe -> crossframe-essay -> crossframe-review
+crossframe -> crossframe-essay(full-visible-v3-longform) -> crossframe-review
 ```
 
 这条默认不是为了把所有回答写长，而是因为可读文章更适合把结构判断交给普通读者：先有底稿，再成文，最后过质量闸。
 
 这条默认同时默认启用 `crossframe-essay` 的现代编辑底色：像一位耐心、谦逊、认真、果敢的中文编辑在回应读者问题。除非用户明确要求中性报告、备忘录、表格、清单、纯诊断或学术摘要，否则不要把最终输出写成冷冰冰的诊断说明。
+
+`full-visible-v3-longform` 的意思是：v3.0 连续联读包、源结构保真、概念风险和反向条件要在底稿中可见；但这些后台检查不能吞掉正文。正文仍必须写成完整文章，有标题、铺陈、概念上升、现实回落、边界和余味。
 
 不要在以下场景擅自生成文章：用户明确要求评审报告、案例库条目、组织修复备忘录、反馈写回方案、命题辩论表、概念教学练习、来源台账、表格、清单、一句话结论、低条件行动方案或纯诊断。此时应保留用户指定的交付物。
 
@@ -74,8 +76,9 @@ crossframe -> crossframe-essay -> crossframe-review
 - 基础先行：多数复杂任务先由 `crossframe` 建立事实边界、尺度窗口、机制候选和判断档位。
 - 场景追加：只读取本次必要的专项 skill，不把全部 skill 一起触发。
 - 成文后置：写文章前先有结构洞察底稿；公共、组织、辩论、读书等专项判断先完成，再进入 `crossframe-essay`。
-- 默认成文：suite 被触发且用户未指定非文章交付物时，最终输出默认走 `crossframe-essay`，生成可读文章或文章式回答。
+- 默认成文：suite 被触发且用户未指定非文章交付物时，最终输出默认走 `crossframe-essay`，输出档位固定为 `full-visible-v3-longform`。
 - 默认声口：suite 默认成文时，必须把“现代编辑底色”传给 `crossframe-essay`。问题型主题用答复体；公共评论、思想文章和概念文章用评论体；只有用户显式要求中性报告/备忘录/表格/纯诊断时才关闭文章声口。
+- 长文契约：开放式分析、哲学概念、思想文章、关系/组织/公共评论默认不是短答，不得用项目符号诊断、摘要式回答或“如果只要一句话”替代完整正文。
 - 成文边界：只有用户想看可读输出、文章、评论、思想文章、长答复或面向他人传播的内容时才生成文章；明确要备忘录、评审、案例、教学、表格或行动清单时不生成文章。
 - 源连续性：高责任、公共制度、亲密关系、长期演化、深度分析、框架治理、AI 现实验证、弱信号/不透明、无法退出和文章输出，要在调度中列出本次触发的 v3.0 连续联读包；不要只列概念卡。
 - 评审收束：重要输出默认最后用 `crossframe-review` 做质量闸；轻量短答复可只做内部自检。
@@ -89,10 +92,10 @@ crossframe -> crossframe-essay -> crossframe-review
 crossframe
 
 开放式可读分析：
-crossframe -> crossframe-essay -> crossframe-review
+crossframe -> crossframe-essay(full-visible-v3-longform) -> crossframe-review
 
 普通洞察文章：
-crossframe -> crossframe-essay -> crossframe-review
+crossframe -> crossframe-essay(full-visible-v3-longform) -> crossframe-review
 
 公共评论文章：
 crossframe -> crossframe-public -> crossframe-essay -> crossframe-review
@@ -136,6 +139,7 @@ crossframe -> crossframe-notebook -> crossframe-essay -> crossframe-review
 - 按需读取：
 - 连续联读包：
 - 正文声口：
+- 输出档位：
 - 不读取：
 - 质量闸：
 ```

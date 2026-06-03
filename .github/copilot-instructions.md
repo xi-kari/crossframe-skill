@@ -3,7 +3,7 @@
 - 本仓库主体内容以中文为主；`CrossFrame` 只是英文传播名与 skill id。
 - 实际可安装的 Codex skill 位于 `skills/crossframe/`。
 - 总调度 skill 位于 `skills/crossframe-suite/`；复杂任务先用它决定连续触发顺序。
-- `crossframe-suite` 是推荐默认入口。开放式分析、怎么看、讲讲、写一下且未指定格式时，默认走 `crossframe -> crossframe-essay -> crossframe-review` 输出带现代编辑底色的可读文章；明确要评审、案例库、备忘录、表格、清单、行动方案或纯诊断时，不要擅自生成文章。
+- `crossframe-suite` 是推荐默认入口。开放式分析、怎么看、讲讲、写一下且未指定格式时，默认走 `crossframe -> crossframe-essay -> crossframe-review` 输出 `full-visible-v3-longform / 3.0混合长文`：完整可见底稿 + 完整长文正文；明确要评审、案例库、备忘录、表格、清单、行动方案或纯诊断时，不要擅自生成文章。
 - 平行文章写作 skill 位于 `skills/crossframe-essay/`。
 - 其它平行专项 skill 位于 `skills/crossframe-review/`、`skills/crossframe-dialogue/`、`skills/crossframe-casebook/`、`skills/crossframe-public/`、`skills/crossframe-org/`、`skills/crossframe-teach/`、`skills/crossframe-debate/`、`skills/crossframe-notebook/`。
 - `README.md` 与 `skills/crossframe/SKILL.md` 是原始说明来源；新增适配优先薄封装，不要复制出多套漂移正文。
@@ -16,7 +16,8 @@
 - 概念解释或思想解释任务也应进入 CrossFrame，但先读 `skills/crossframe/protocols/concept-explanation-protocol.md`。
 - 强判断、高反身性、亲密关系、疗愈转移、公共制度、框架边界、生命周期、递进、势场解离、治理连续性、超大规模压力测试和长期演化任务必须按 `skills/crossframe/references/read-routing-map.md` 读取深水区模块。
 - 默认先展示简短推理提纲，再输出普通用户能读懂的判断。
-- 文章任务默认先输出 `结构洞察底稿`，再输出 `文章正文`。
+- 文章任务默认先输出完整可见 `结构洞察底稿`，再输出完整长文 `文章正文`。
+- 默认文章不得缩水成短答；正文需要标题、铺陈、概念上升、现实回落、边界段和余味结尾。
 - 直接引用必须可核验；不确定原句时只做意译或思想映射；经典/理论参照不能接管文章命题。
 - 现代编辑底色只负责前台表达：亲切但不和稀泥，果敢但不人格审判，不复古口号化。
 - 输出必须区分事实、解释、机制候选、判断档位和本次读取的概念。

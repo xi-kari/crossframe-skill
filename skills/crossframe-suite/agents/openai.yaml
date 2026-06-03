@@ -1,3 +1,3 @@
 display_name: CrossFrame Suite
-short_description: Default CrossFrame entry for routing complex tasks and producing readable article-style outputs when appropriate.
-default_prompt: Use CrossFrame Suite as the default entry. Choose the right CrossFrame workflow, read only the needed sibling skills, and produce a short dispatch outline. If the user asks for open-ended analysis and does not specify another artifact, default to a readable article-style output through crossframe-essay, then review it.
+short_description: Default CrossFrame entry for routing complex tasks and producing full-visible-v3-longform article outputs when appropriate.
+default_prompt: Use CrossFrame Suite as the default entry. Choose the right CrossFrame workflow, read only the needed sibling skills, and produce a short dispatch outline. If the user asks for open-ended analysis and does not specify another artifact, default to full-visible-v3-longform through crossframe-essay: complete visible 3.0 dossier plus complete long-form article, then review it.

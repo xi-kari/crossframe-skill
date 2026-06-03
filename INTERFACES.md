@@ -21,13 +21,13 @@
 - 中文为权威语义；`CrossFrame` 只是英文传播名与 skill id。
 - 新增接口只负责入口、路由和最小约束。
 - 多 skill 连续任务先读取 `skills/crossframe-suite/SKILL.md`；suite 只调度，不替代专项 skill。
-- `crossframe-suite` 是推荐默认入口；开放式分析且未指定交付物时，默认走 `crossframe -> crossframe-essay -> crossframe-review` 输出可读文章。
+- `crossframe-suite` 是推荐默认入口；开放式分析且未指定交付物时，默认走 `crossframe -> crossframe-essay -> crossframe-review`，输出档位为 `full-visible-v3-longform / 3.0混合长文`。
 - 明确要求评审、案例库、组织备忘录、反馈写回方案、命题辩论表、概念教学练习、来源台账、表格、清单、一句话结论、低条件行动方案或纯诊断时，不要擅自生成文章。
 - 若需要更新框架主体，优先更新 `skills/crossframe/`，再回填薄适配层。
 - 若需要更新文章写作主体，优先更新 `skills/crossframe-essay/`，并确认它仍通过相对路径读取 `skills/crossframe/`。
 - 若需要更新平行专项主体，优先更新对应 `skills/crossframe-*/`，并确认它仍通过相对路径读取 `skills/crossframe/`。
 - 用户可见输出默认先给推理提纲，再说人话。
-- 文章输出默认先给 `结构洞察底稿`，再给 `文章正文`；从 `crossframe-suite` 默认成文时默认启用现代编辑底色；需要深度时可按需加入概念上升和中西经典/理论参照。
+- 文章输出默认先给完整可见 `结构洞察底稿`，再给完整长文 `文章正文`；从 `crossframe-suite` 默认成文时默认启用现代编辑底色；需要深度时可按需加入概念上升和中西经典/理论参照。
 - 直接引用必须可核验；不确定原句时只做意译、典故或思想映射。
 - 现代编辑同志口吻是前台声口层，不改变结构判断；亲切不能和稀泥，严厉不能人格审判。
 - 高风险概念必须按需读取 `skills/crossframe/references/concept-cards/`，不要只按字面理解。

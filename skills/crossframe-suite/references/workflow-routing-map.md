@@ -7,8 +7,8 @@
 | 用户目标 | 默认工作流 | 说明 |
 |---|---|---|
 | 结构诊断 | `crossframe` | 事实、尺度、证据、机制候选、判断档位。 |
-| 开放式可读分析 | `crossframe -> crossframe-essay(editorial-base) -> crossframe-review` | 用户只说分析、怎么看、讲讲、写一下且未指定格式时，默认输出有现代编辑底色的文章式回答。 |
-| 普通洞察文章 | `crossframe -> crossframe-essay(editorial-base) -> crossframe-review` | 先诊断，再底稿，再正文，再评审；默认不是冷诊断腔。 |
+| 开放式可读分析 | `crossframe -> crossframe-essay(full-visible-v3-longform, editorial-base) -> crossframe-review` | 用户只说分析、怎么看、讲讲、写一下且未指定格式时，默认输出完整可见底稿 + 完整长文正文。 |
+| 普通洞察文章 | `crossframe -> crossframe-essay(full-visible-v3-longform, editorial-base) -> crossframe-review` | 先诊断，再完整底稿，再长文正文，再评审；默认不是短答或冷诊断腔。 |
 | 公共评论文章 | `crossframe -> crossframe-public -> crossframe-essay -> crossframe-review` | 公共事实和证据边界必须在成文前完成。 |
 | 组织复盘文章 | `crossframe -> crossframe-org -> crossframe-essay -> crossframe-review` | 先看责任链、授权链、反馈写回，再成文。 |
 | 答读者问 | `crossframe -> crossframe-dialogue -> review-lite` | 短答复可以不输出完整评审报告。 |
@@ -24,7 +24,7 @@
 
 ## 默认成文规则
 
-当 `crossframe-suite` 被触发，且用户没有指定非文章交付物时，默认把最终输出做成可读文章或文章式回答。典型信号：
+当 `crossframe-suite` 被触发，且用户没有指定非文章交付物时，默认把最终输出做成 `full-visible-v3-longform`：3.0 混合长文，包含完整可见底稿和完整长文正文。典型信号：
 
 - “分析一下这个问题”
 - “你怎么看”
@@ -36,12 +36,14 @@
 此时默认链路是：
 
 ```text
-crossframe -> source-continuity-check -> crossframe-essay(editorial-base) -> crossframe-review
+crossframe -> source-continuity-check -> crossframe-essay(full-visible-v3-longform, editorial-base) -> crossframe-review
 ```
 
 `source-continuity-check` 不是独立 skill，而是 `crossframe` 内部的连续联读检查：读取 `continuity-bundles.md`，必要时读取 `v3-source-spine.md`、`v3-section-digest-index.md` 和 `v3-term-fidelity.md`。v2 文件只在需要历史版本对照时读取。
 
 `editorial-base` 表示自动成文默认启用 `crossframe-essay` 的现代编辑底色：先接住问题，再共同分析结构，必要时严厉批评不当做法，最后给出清醒、有分寸的意见。问题型主题用答复体；公共评论、思想文章、概念文章用评论体。只有用户明确要求中性报告、备忘录、表格、清单、纯诊断或学术摘要时，才关闭这一声口。
+
+`full-visible-v3-longform` 表示底稿完整可见，至少展示对象、事实边界、尺度窗口、机制候选、v3 连续联读包、源结构保真、概念风险、反向条件、声口方案和文章转译方案；正文默认 1200-2200 中文字，有标题、铺陈、概念上升、经典/理论参照或思想映射、现实回落、边界段和余味结尾。
 
 不要擅自成文的信号：
 
@@ -109,6 +111,7 @@ crossframe -> source-continuity-check -> crossframe-essay(editorial-base) -> cro
 - 写文章、长文、评论、随笔、思想文章、洞察文章、报刊答复体。
 - 用户要求概念上升、引经据典、现代编辑同志口吻。
 - suite 默认成文也追加，并默认传入 `editorial-base` 声口要求；不要等用户再次说“请用编辑口吻”。
+- suite 默认成文必须同时传入 `full-visible-v3-longform` 输出档位；不要把开放式分析压缩成短答。
 
 ### 追加 `crossframe-review`
 
