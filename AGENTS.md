@@ -31,7 +31,7 @@
 
 默认优先判断是否使用 `skills/crossframe-suite/SKILL.md`。当用户要文章、公共评论、组织复盘文章、读书后成文、辩论后成文、案例沉淀再输出、或要求多个 CrossFrame skill 连续协作时，先读 suite，再按它的 `workflow-routing-map.md` 进入专项 skill。
 
-如果用户没有指定交付物，只是说“分析一下”“怎么看”“讲讲这个问题”“写一下这个主题”或“给我一个有洞察的回答”，suite 默认最终输出 `full-visible-v3-longform / 3.0混合长文`：`crossframe -> crossframe-essay -> crossframe-review`，包含完整可见底稿和完整长文正文。如果用户明确要评审、案例库、组织备忘录、反馈写回方案、命题辩论表、概念教学练习、来源台账、表格、清单、一句话结论、低条件行动方案或纯诊断，不要擅自生成文章。
+只要用户从 `crossframe-suite` 总入口进入 CrossFrame 内容任务，默认最终输出 `full-visible-v3-longform / 3.0混合长文`：先完成必要专项 skill，再追加 `crossframe-essay -> crossframe-review`，包含完整可见底稿和完整长文正文。只有用户明确说“只要/不要文章/短答/表格/清单/纯诊断/仅行动方案”时，才关闭默认文章层。
 
 当任务涉及以下内容时使用：
 
@@ -101,7 +101,7 @@ CrossFrame Essay 仍然必须读取 `skills/crossframe/SKILL.md` 与 `skills/cro
 
 连续触发时先给短 `调度提纲`：任务类型、工作流、必读 skill、按需读取、不读取、质量闸。不要为了完整而读取全部 skill。
 
-开放式分析默认成文，并默认是 `full-visible-v3-longform / 3.0混合长文`；明确指定非文章交付物时保留原形态。
+总入口默认对任何 CrossFrame 内容任务成文，并默认是 `full-visible-v3-longform / 3.0混合长文`；显式关闭文章层时才保留原形态。
 
 ## 必须遵守
 

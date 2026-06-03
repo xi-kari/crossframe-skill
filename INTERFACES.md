@@ -21,8 +21,8 @@
 - 中文为权威语义；`CrossFrame` 只是英文传播名与 skill id。
 - 新增接口只负责入口、路由和最小约束。
 - 多 skill 连续任务先读取 `skills/crossframe-suite/SKILL.md`；suite 只调度，不替代专项 skill。
-- `crossframe-suite` 是推荐默认入口；开放式分析且未指定交付物时，默认走 `crossframe -> crossframe-essay -> crossframe-review`，输出档位为 `full-visible-v3-longform / 3.0混合长文`。
-- 明确要求评审、案例库、组织备忘录、反馈写回方案、命题辩论表、概念教学练习、来源台账、表格、清单、一句话结论、低条件行动方案或纯诊断时，不要擅自生成文章。
+- `crossframe-suite` 是推荐默认入口；只要从总入口进入，默认在必要专项 skill 后追加 `crossframe-essay -> crossframe-review`，输出档位为 `full-visible-v3-longform / 3.0混合长文`。
+- 只有用户明确说“只要/不要文章/短答/表格/清单/纯诊断/仅行动方案”时，才关闭默认文章层。
 - 若需要更新框架主体，优先更新 `skills/crossframe/`，再回填薄适配层。
 - 若需要更新文章写作主体，优先更新 `skills/crossframe-essay/`，并确认它仍通过相对路径读取 `skills/crossframe/`。
 - 若需要更新平行专项主体，优先更新对应 `skills/crossframe-*/`，并确认它仍通过相对路径读取 `skills/crossframe/`。

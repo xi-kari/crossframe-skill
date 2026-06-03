@@ -10,6 +10,6 @@ Thin adapter. Read `skills/crossframe-suite/SKILL.md` first, then follow `skills
 
 Default behavior: output a short dispatch outline, then read only the needed sibling skills. Do not trigger every `crossframe-*` skill at once.
 
-For open-ended analysis without a specified artifact, default to `crossframe -> crossframe-essay -> crossframe-review` and use `full-visible-v3-longform`: complete visible 3.0 dossier plus complete long-form article with the modern editor-comrade base voice. Do not generate an article for review, casebook, memo, table, checklist, action plan, or pure diagnosis requests.
+For any CrossFrame content task through Suite, finish the needed sibling skills first, then append `crossframe-essay -> crossframe-review` and use `full-visible-v3-longform`: complete visible 3.0 dossier plus complete long-form article with the modern editor-comrade base voice. Only skip the article layer when the user explicitly says only/no article/short answer/table/checklist/pure diagnosis/action plan only.
 
 For high-responsibility, public, intimate, long-evolution, deep-analysis, or article workflows, ensure the underlying `crossframe` step reads `skills/crossframe/references/continuity-bundles.md` and performs `skills/crossframe/worksheets/source-continuity-check.md` before generation or review.

@@ -110,4 +110,4 @@
 - `crossframe-essay` 自动成文默认读取现代编辑口吻协议：问题型主题用答复体，公共评论、思想文章和概念文章用评论体；只有用户明确要求中性报告、备忘录、表格、清单、纯诊断或学术摘要时才关闭。不要口号化，不要把亲切写成和稀泥，也不要把严厉写成人格审判。
 - 当用户要求评审、短答复、案例库、公共议题、组织修复、概念教学、命题辩论或研究笔记时，优先使用对应 `crossframe-*` 平行 skill；所有平行 skill 仍须读取 `skills/crossframe/SKILL.md` 与 `skills/crossframe/references/read-routing-map.md`。
 - 默认优先考虑 `crossframe-suite` 作为总入口。当用户任务需要多个 CrossFrame skill 连续协作时，先用 `crossframe-suite` 决定顺序；常见链路包括 `crossframe -> crossframe-public -> crossframe-essay -> crossframe-review`、`crossframe -> crossframe-org -> crossframe-essay -> crossframe-review`、`crossframe -> crossframe-notebook -> crossframe-essay -> crossframe-review`。不要一次读取全部 skill。
-- 当用户没有指定交付物，只是要求开放式分析、怎么看、讲讲或写一下时，suite 默认输出 `full-visible-v3-longform / 3.0混合长文`：`crossframe -> crossframe-essay -> crossframe-review`，包含完整可见底稿和完整长文正文。用户明确要评审、案例库、备忘录、表格、清单、行动方案或纯诊断时，不要擅自生成文章。
+- 当用户从 suite 总入口进入任何 CrossFrame 内容任务时，默认输出 `full-visible-v3-longform / 3.0混合长文`：先完成必要专项 skill，再追加 `crossframe-essay -> crossframe-review`，包含完整可见底稿和完整长文正文。只有用户明确说“只要/不要文章/短答/表格/清单/纯诊断/仅行动方案”时，才关闭默认文章层。

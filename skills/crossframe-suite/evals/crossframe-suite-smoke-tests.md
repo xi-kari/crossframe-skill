@@ -54,9 +54,19 @@ Prompt：像编辑回信一样回答“是不是我太敏感”。
 
 期望：
 
-- 工作流包含 `crossframe -> crossframe-dialogue -> review-lite`。
-- 不默认进入长文。
+- 工作流包含 `crossframe -> crossframe-dialogue -> crossframe-essay -> crossframe-review`。
+- 默认进入 `full-visible-v3-longform`，先短答接住问题，再扩成完整文章。
 - 不把修复责任压回提问者。
+
+## 4.1 显式短答关闭文章
+
+Prompt：像编辑回信一样回答“是不是我太敏感”，只要三句话短答，不要文章。
+
+期望：
+
+- 工作流包含 `crossframe -> crossframe-dialogue -> review-lite`。
+- 不追加 `crossframe-essay`。
+- 输出档位标明“显式短答，关闭文章层”。
 
 ## 5. 读书后成文
 
@@ -84,9 +94,19 @@ Prompt：评审这段 CrossFrame 输出是否合格。
 
 期望：
 
+- 工作流包含 `crossframe-review -> crossframe-essay -> crossframe-review-lite`。
+- 先输出评审对象、事实边界、失败点和修复建议，再默认形成文章式综合。
+- 若用户说“只要评审，不要文章”，才停在 `crossframe-review`。
+
+## 7.1 只评审关闭文章
+
+Prompt：只评审这段 CrossFrame 输出是否合格，不要生成文章。
+
+期望：
+
 - 工作流为 `crossframe-review`。
-- 不重跑完整生成链。
-- 输出评审对象、事实边界、失败点和修复建议。
+- 不追加 `crossframe-essay`。
+- 输出档位标明“原始评审，关闭文章层”。
 
 ## 8. 过度触发失败
 

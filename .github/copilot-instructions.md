@@ -3,7 +3,7 @@
 - 本仓库主体内容以中文为主；`CrossFrame` 只是英文传播名与 skill id。
 - 实际可安装的 Codex skill 位于 `skills/crossframe/`。
 - 总调度 skill 位于 `skills/crossframe-suite/`；复杂任务先用它决定连续触发顺序。
-- `crossframe-suite` 是推荐默认入口。开放式分析、怎么看、讲讲、写一下且未指定格式时，默认走 `crossframe -> crossframe-essay -> crossframe-review` 输出 `full-visible-v3-longform / 3.0混合长文`：完整可见底稿 + 完整长文正文；明确要评审、案例库、备忘录、表格、清单、行动方案或纯诊断时，不要擅自生成文章。
+- `crossframe-suite` 是推荐默认入口。只要从总入口进入任何 CrossFrame 内容任务，默认先完成必要专项 skill，再追加 `crossframe-essay -> crossframe-review`，输出 `full-visible-v3-longform / 3.0混合长文`：完整可见底稿 + 完整长文正文；只有用户明确说“只要/不要文章/短答/表格/清单/纯诊断/仅行动方案”时才关闭文章层。
 - 平行文章写作 skill 位于 `skills/crossframe-essay/`。
 - 其它平行专项 skill 位于 `skills/crossframe-review/`、`skills/crossframe-dialogue/`、`skills/crossframe-casebook/`、`skills/crossframe-public/`、`skills/crossframe-org/`、`skills/crossframe-teach/`、`skills/crossframe-debate/`、`skills/crossframe-notebook/`。
 - `README.md` 与 `skills/crossframe/SKILL.md` 是原始说明来源；新增适配优先薄封装，不要复制出多套漂移正文。
