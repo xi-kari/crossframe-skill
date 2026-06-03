@@ -19,7 +19,7 @@
 
 如果用户同时要求多个目标，确定一个最终交付物，再安排前置 skill。例如“分析公共议题并写文章”的最终交付物是文章，但前置需要 `public`。
 
-如果用户没有指定最终交付物，但请求是开放式分析或可读表达，默认把最终交付物定为 `essay`。常见表达包括“分析一下”“怎么看”“讲讲”“写一下”“给我一个有洞察的回答”。这时走 `crossframe -> crossframe-essay -> crossframe-review`。
+如果用户没有指定最终交付物，但请求是开放式分析或可读表达，默认把最终交付物定为 `essay`。常见表达包括“分析一下”“怎么看”“讲讲”“写一下”“给我一个有洞察的回答”。这时走 `crossframe -> crossframe-essay -> crossframe-review`，并把 `voice_mode` 设为 `editorial-base`。
 
 如果用户明确要求非文章交付物，不要默认成文：评审报告、案例库、组织修复备忘录、反馈写回方案、命题辩论表、概念教学练习、来源台账、表格、清单、一句话结论、低条件行动方案和纯诊断，都必须保持原形态。
 
@@ -75,6 +75,16 @@
 - 组织修复文章必须在 `essay` 前完成 `org` 责任/授权/回流判断。
 - 读书后成文必须在 `essay` 前完成 `notebook` 的关联、不同、可吸收处和冲突处。
 - 任何成文任务必须在 `essay` 前完成源结构连续性检查；如果只读了孤立概念卡，先补读或在底稿中降档。
+
+## 4.1 声口传递规则
+
+只要最终交付物是 `essay`，且用户没有明确要求中性报告、备忘录、表格、清单、纯诊断或学术摘要，就把 `voice_mode` 传给 `crossframe-essay`：
+
+- `editorial-reply`：读者提问、关系困惑、组织困惑、怎么办/怎么看/为什么会这样。
+- `editorial-commentary`：公共评论、思想文章、制度评论、概念文章。
+- `editorial-base`：其它开放式可读分析。
+
+这些模式都必须读取 `../crossframe-essay/protocols/editorial-comrade-voice-protocol.md` 与 `../crossframe-essay/references/editorial-voice-principles.md`。声口只改变前台表达，不改变事实边界、概念保真、连续联读包和判断档位。
 
 ## 5. 质量闸
 

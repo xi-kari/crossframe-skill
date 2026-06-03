@@ -107,7 +107,7 @@
 - 高责任、公共制度、亲密关系、长期演化、深度分析和文章输出，还要读取连续联读包，并用源结构连续性检查避免只读单概念卡导致 3.0 失真。
 - 强判断、高反身性、亲密关系、疗愈转移、公共制度、框架边界、生命周期、递进、势场解离、治理连续性、超大规模压力测试和长期演化问题，必须按 `read-routing-map.md` 进入对应深水区模块。
 - 当用户要写文章、长文、评论、思想文章或批判性洞察文章时，使用 `crossframe-essay`：先形成 `结构洞察底稿`，再写 `文章正文`；需要深度时按需概念上升和引入中西经典/理论参照，但引用必须可核验并回到现实责任链。
-- 当用户要求亲切、编辑、同志口吻、报刊答复、耐心解答或给意见时，`crossframe-essay` 还要读取现代编辑口吻协议：问题型主题可用答复体，普通评论只吸收亲切、负责、果敢的声口；不要口号化，不要把亲切写成和稀泥，也不要把严厉写成人格审判。
+- `crossframe-essay` 自动成文默认读取现代编辑口吻协议：问题型主题用答复体，公共评论、思想文章和概念文章用评论体；只有用户明确要求中性报告、备忘录、表格、清单、纯诊断或学术摘要时才关闭。不要口号化，不要把亲切写成和稀泥，也不要把严厉写成人格审判。
 - 当用户要求评审、短答复、案例库、公共议题、组织修复、概念教学、命题辩论或研究笔记时，优先使用对应 `crossframe-*` 平行 skill；所有平行 skill 仍须读取 `skills/crossframe/SKILL.md` 与 `skills/crossframe/references/read-routing-map.md`。
 - 默认优先考虑 `crossframe-suite` 作为总入口。当用户任务需要多个 CrossFrame skill 连续协作时，先用 `crossframe-suite` 决定顺序；常见链路包括 `crossframe -> crossframe-public -> crossframe-essay -> crossframe-review`、`crossframe -> crossframe-org -> crossframe-essay -> crossframe-review`、`crossframe -> crossframe-notebook -> crossframe-essay -> crossframe-review`。不要一次读取全部 skill。
-- 当用户没有指定交付物，只是要求开放式分析、怎么看、讲讲或写一下时，suite 默认输出可读文章或文章式回答：`crossframe -> crossframe-essay -> crossframe-review`。用户明确要评审、案例库、备忘录、表格、清单、行动方案或纯诊断时，不要擅自生成文章。
+- 当用户没有指定交付物，只是要求开放式分析、怎么看、讲讲或写一下时，suite 默认输出带现代编辑底色的可读文章或文章式回答：`crossframe -> crossframe-essay -> crossframe-review`。用户明确要评审、案例库、备忘录、表格、清单、行动方案或纯诊断时，不要擅自生成文章。

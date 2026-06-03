@@ -9,7 +9,8 @@
 - 任务类型：关系困惑短答复。
 - 工作流：`crossframe -> crossframe-dialogue -> review-lite`
 - 必读 skill：结构诊断、短答复。
-- 按需读取：亲密关系入口、解释劳动、现代编辑声口。
+- 按需读取：亲密关系入口、解释劳动。
+- 正文声口：编辑回信答复体，先接住提问者的疲惫。
 - 不读取：`crossframe-essay`、`crossframe-public`、`crossframe-casebook`。
 - 质量闸：轻量自检，重点检查是否把责任压回受伤者。
 

@@ -12,7 +12,7 @@
 
 常见链路：普通文章 `crossframe -> crossframe-essay -> crossframe-review`；公共评论 `crossframe -> crossframe-public -> crossframe-essay -> crossframe-review`；组织复盘文章 `crossframe -> crossframe-org -> crossframe-essay -> crossframe-review`；答读者问 `crossframe -> crossframe-dialogue -> review-lite`；读书后成文 `crossframe -> crossframe-notebook -> crossframe-essay -> crossframe-review`。不要一次读取全部 skill。
 
-默认优先考虑 `crossframe-suite`。如果用户没有指定交付物，只说“分析一下”“怎么看”“讲讲”“写一下”或“给我一个有洞察的回答”，suite 默认走 `crossframe -> crossframe-essay -> crossframe-review`，输出可读文章或文章式回答。若用户明确要评审、案例库、备忘录、表格、清单、行动方案或纯诊断，不要擅自生成文章。
+默认优先考虑 `crossframe-suite`。如果用户没有指定交付物，只说“分析一下”“怎么看”“讲讲”“写一下”或“给我一个有洞察的回答”，suite 默认走 `crossframe -> crossframe-essay -> crossframe-review`，输出带现代编辑底色的可读文章或文章式回答。若用户明确要评审、案例库、备忘录、表格、清单、行动方案或纯诊断，不要擅自生成文章。
 
 如果用户要求写中文文章、长文、评论、思想文章、批判性洞察文章或结构洞察文章，请读取：
 
@@ -23,12 +23,12 @@
 5. 高责任、公共制度、亲密关系、长期演化、深度分析和文章输出，读取 `skills/crossframe/references/continuity-bundles.md`，按需读取 `skills/crossframe/references/v3-source-spine.md` 与 `skills/crossframe/references/v3-section-digest-index.md`
 6. `skills/crossframe-essay/references/evidence-and-search-rules.md`
 7. 若需要概念上升、引经据典、理论参照或文学互文，读取 `skills/crossframe-essay/protocols/concept-elevation-protocol.md`、`skills/crossframe-essay/references/reference-and-allusion-rules.md`、`skills/crossframe-essay/references/concept-reference-map.md`
-8. 若用户要求亲切、编辑、同志口吻、报刊答复、耐心解答或给意见，读取 `skills/crossframe-essay/protocols/editorial-comrade-voice-protocol.md` 与 `skills/crossframe-essay/references/editorial-voice-principles.md`
+8. 自动成文默认读取 `skills/crossframe-essay/protocols/editorial-comrade-voice-protocol.md` 与 `skills/crossframe-essay/references/editorial-voice-principles.md`；只有显式中性报告/备忘录/表格/纯诊断时关闭
 9. `skills/crossframe-essay/protocols/essay-protocol.md` 或 `interactive-drafting-protocol.md`
 10. `skills/crossframe-essay/templates/insight-dossier-template.md`
 11. `skills/crossframe-essay/templates/essay-output-template.md` 或 `interactive-session-template.md`
 
-文章输出默认先给 `结构洞察底稿`，再给 `文章正文`。公共议题、最新事实、真实组织/平台/人物/政策/公司相关内容必须查源；私人关系、哲学概念和泛论随笔默认不查源，除非用户要求。直接引用必须可核验；不确定原句时只做意译或思想映射；经典/理论参照必须回到现实机制与责任链。现代编辑同志口吻只用于前台表达：亲切但不和稀泥，果敢但不人格审判。
+文章输出默认先给 `结构洞察底稿`，再给 `文章正文`。公共议题、最新事实、真实组织/平台/人物/政策/公司相关内容必须查源；私人关系、哲学概念和泛论随笔默认不查源，除非用户要求。直接引用必须可核验；不确定原句时只做意译或思想映射；经典/理论参照必须回到现实机制与责任链。现代编辑底色是默认前台表达：亲切但不和稀泥，果敢但不人格审判。
 
 如果用户要求结构诊断、推演、开放断言、高责任审查或低条件行动，请读取：
 

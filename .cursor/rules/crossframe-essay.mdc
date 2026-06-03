@@ -16,7 +16,7 @@ Required flow:
 4. Route the topic through the appropriate CrossFrame protocol.
 5. Decide whether to search using `skills/crossframe-essay/references/evidence-and-search-rules.md`.
 6. If the topic needs depth, concept elevation, 引经据典, theory, or literary allusion, read `skills/crossframe-essay/protocols/concept-elevation-protocol.md`, `skills/crossframe-essay/references/reference-and-allusion-rules.md`, and `skills/crossframe-essay/references/concept-reference-map.md`.
-7. If the user asks for 亲切、编辑、同志口吻、报刊答复、耐心解答, or advice, read `skills/crossframe-essay/protocols/editorial-comrade-voice-protocol.md` and `skills/crossframe-essay/references/editorial-voice-principles.md`.
+7. Automatic article mode reads `skills/crossframe-essay/protocols/editorial-comrade-voice-protocol.md` and `skills/crossframe-essay/references/editorial-voice-principles.md` by default; only close this voice for explicit neutral report, memo, table, pure diagnosis, or academic summary requests.
 8. Output `结构洞察底稿` before `文章正文`.
 
 Do not write only the article body. Do not let sources decide the thesis. Public/current/real-world topics require sources and evidence boundaries; private relationship, philosophical, and general essay topics do not browse by default unless requested.
@@ -25,4 +25,4 @@ Use plain Chinese for ordinary readers. Keep terms like 承接, 回流, 开放�
 
 Direct quotes must be verifiable. If unsure, use paraphrase, allusion, or thought mapping. References must return to concrete mechanism, evidence, and responsibility chain.
 
-Modern editor-comrade voice means patient, humble, serious, and decisive. It may use answer-form for reader questions, but must not become retro slogan, empty comfort, or personality judgment.
+Modern editor-comrade base voice is the default for automatic articles: patient, humble, serious, and decisive. It may use answer-form for reader questions, but must not become retro slogan, empty comfort, or personality judgment.

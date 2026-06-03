@@ -9,7 +9,8 @@
 - 任务类型：组织问题洞察文章。
 - 工作流：`crossframe -> crossframe-org -> crossframe-essay -> crossframe-review`
 - 必读 skill：结构诊断、组织修复、文章写作、最终评审。
-- 按需读取：组织复盘改造、反馈写回、现代编辑声口。
+- 按需读取：组织复盘改造、反馈写回。
+- 正文声口：默认现代编辑底色；组织评论体，亲切但有判断。
 - 不读取：`crossframe-public`、`crossframe-casebook`、`crossframe-teach`。
 - 质量闸：完整评审，因为这是长文且涉及组织责任链。
 

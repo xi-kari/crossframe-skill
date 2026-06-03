@@ -68,7 +68,7 @@ CrossFrame Essay 仍然必须读取 `skills/crossframe/SKILL.md` 与 `skills/cro
 
 如果启用概念上升，先从结构机制抽象上位概念，再选择中西经典、历史经验、理论或文学互文，最后回落到现实责任链。直接引用必须可核验；不确定原句时只做意译或思想映射。
 
-如果启用现代编辑同志口吻，先在底稿中写出 `正文声口方案`，再成文。问题型主题可用答复体，普通思想/评论文章只吸收亲切、负责、果敢的声口。不要复古口号化，不要把亲切写成和稀泥，也不要把严厉写成人格审判。
+自动成文默认启用现代编辑底色，先在底稿中写出 `正文声口方案`，再成文。问题型主题用答复体，公共评论、思想文章和概念文章用评论体。只有用户明确要求中性报告、备忘录、表格、清单、纯诊断或学术摘要时才关闭；不要复古口号化，不要把亲切写成和稀泥，也不要把严厉写成人格审判。
 
 ## 何时调用其它平行 skill
 
@@ -161,7 +161,7 @@ CrossFrame Essay 仍然必须读取 `skills/crossframe/SKILL.md` 与 `skills/cro
 3. `skills/crossframe-essay/references/evidence-and-search-rules.md`
 4. `skills/crossframe-essay/references/critical-insight-principles.md`
 5. 概念上升读取 `skills/crossframe-essay/protocols/concept-elevation-protocol.md`、`references/reference-and-allusion-rules.md`、`references/concept-reference-map.md`
-6. 亲切、编辑、同志口吻、报刊答复或给意见时读取 `skills/crossframe-essay/protocols/editorial-comrade-voice-protocol.md` 与 `references/editorial-voice-principles.md`
+6. 自动成文默认读取 `skills/crossframe-essay/protocols/editorial-comrade-voice-protocol.md` 与 `references/editorial-voice-principles.md`；显式中性报告/备忘录/表格/纯诊断时才关闭
 7. `skills/crossframe-essay/templates/insight-dossier-template.md`
 8. `skills/crossframe-essay/templates/essay-output-template.md` 或 `interactive-session-template.md`
 
