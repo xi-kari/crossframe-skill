@@ -16,10 +16,11 @@ description: |
 
 1. `../crossframe/SKILL.md`
 2. `../crossframe/references/read-routing-map.md`
-3. 本目录 `protocols/notebook-reading-protocol.md`
-4. 本目录 `protocols/bidirectional-reading-protocol.md`
-5. 本目录 `protocols/source-integrity-protocol.md`
-6. 按任务读取 `templates/`、`references/` 和 `examples/`
+3. 若阅读对象触发高责任、公共制度、亲密关系、长期演化、框架治理、AI 现实验证、弱信号/不透明、无法退出、工具化、隐喻/来源透明或文章输出，追加读取 `../crossframe/references/continuity-bundles.md`，并按需使用 `../crossframe/worksheets/source-continuity-check.md`；未完成联读时只能降档。
+4. 本目录 `protocols/notebook-reading-protocol.md`
+5. 本目录 `protocols/bidirectional-reading-protocol.md`
+6. 本目录 `protocols/source-integrity-protocol.md`
+7. 按任务读取 `templates/`、`references/` 和 `examples/`
 
 不要把 canonical 全文搬进本 skill 输出。只引用必要规则名、概念名和相对路径。
 

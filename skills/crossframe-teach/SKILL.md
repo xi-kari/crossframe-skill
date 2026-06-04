@@ -16,6 +16,7 @@ description: |
 
 - `../crossframe/SKILL.md`
 - `../crossframe/references/read-routing-map.md`
+- 若概念教学触发高责任、公共制度、亲密关系、长期演化、框架治理、AI 现实验证、弱信号/不透明、无法退出、工具化、隐喻/来源透明或文章输出，追加读取 `../crossframe/references/continuity-bundles.md`，并按需使用 `../crossframe/worksheets/source-continuity-check.md`；未完成联读时只能降档。
 
 不要把 canonical 全文复制进回答。只按本次概念需要读取 canonical 的协议、术语保真材料、概念卡或模板；教学表达使用本 skill 的轻量协议和模板。
 
