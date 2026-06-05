@@ -1,6 +1,7 @@
 crossframe
 crossframe-suite
 crossframe-essay
+crossframe-critical
 crossframe-review
 crossframe-dialogue
 crossframe-casebook

@@ -1,12 +1,13 @@
 # CrossFrame / Agent Adapter
 
-本文件是给通用 AI agent 的仓库级入口说明。仓库主体仍以 [README.md](README.md)、[skills/crossframe-suite/SKILL.md](skills/crossframe-suite/SKILL.md)、[skills/crossframe/SKILL.md](skills/crossframe/SKILL.md) 与 [skills/crossframe-essay/SKILL.md](skills/crossframe-essay/SKILL.md) 为准。
+本文件是给通用 AI agent 的仓库级入口说明。仓库主体仍以 [README.md](README.md)、[skills/crossframe-suite/SKILL.md](skills/crossframe-suite/SKILL.md)、[skills/crossframe/SKILL.md](skills/crossframe/SKILL.md)、[skills/crossframe-essay/SKILL.md](skills/crossframe-essay/SKILL.md) 与 [skills/crossframe-critical/SKILL.md](skills/crossframe-critical/SKILL.md) 为准。
 
 ## 仓库怎么理解
 
 - `skills/crossframe-suite/`：CrossFrame skill family 总调度入口，负责连续触发顺序和质量闸。
 - `skills/crossframe/`：真正可安装的 Codex skill 主体。
 - `skills/crossframe-essay/`：平行文章写作 skill，把 CrossFrame 结构判断转成中文批判性洞察文章。
+- `skills/crossframe-critical/`：点名调用的结构批判长文 skill，输出批判底稿、篇章方案和完整正文；不接入 suite 默认调度。
 - `skills/crossframe-review/`：评审 CrossFrame 输出是否真推理、守证据和边界。
 - `skills/crossframe-dialogue/`：答读者问、编辑回信和咨询式短答复。
 - `skills/crossframe-casebook/`：把材料整理成可复用案例库。
@@ -32,6 +33,8 @@
 默认优先判断是否使用 `skills/crossframe-suite/SKILL.md`。当用户要文章、公共评论、组织复盘文章、读书后成文、辩论后成文、案例沉淀再输出、或要求多个 CrossFrame skill 连续协作时，先读 suite，再按它的 `workflow-routing-map.md` 进入专项 skill。
 
 只要用户从 `crossframe-suite` 总入口进入 CrossFrame 内容任务，默认最终输出 `full-visible-v3-longform / 3.0混合长文`：先完成必要专项 skill，再追加 `crossframe-essay -> crossframe-review`，包含完整可见底稿和完整长文正文。只有用户明确说“只要/不要文章/短答/表格/清单/纯诊断/仅行动方案”时，才关闭默认文章层。
+
+`crossframe-critical` 是例外：它是显式点名测试 skill，不得加入 `crossframe-suite`、默认链路或总调用适配。只有用户明确写 `$crossframe-critical`、`crossframe-critical` 或要求测试批判 skill 时才读取。
 
 当任务涉及以下内容时使用：
 
@@ -73,6 +76,7 @@ CrossFrame Essay 仍然必须读取 `skills/crossframe/SKILL.md` 与 `skills/cro
 ## 何时调用其它平行 skill
 
 - 审查、评审、打分、抓坏输出、判断是否真的推理：`skills/crossframe-review/SKILL.md`
+- 点名结构批判长文、要求批判底稿 + 篇章方案 + 1800-2800 字正文：`skills/crossframe-critical/SKILL.md`
 - 答读者问、编辑回信、咨询式短答复、我该怎么看/怎么办：`skills/crossframe-dialogue/SKILL.md`
 - 整理聊天记录、组织材料、项目复盘、公共争议为案例库：`skills/crossframe-casebook/SKILL.md`
 - 公共议题、平台申诉、制度评论、机构合规材料、公共承诺兑现：`skills/crossframe-public/SKILL.md`
