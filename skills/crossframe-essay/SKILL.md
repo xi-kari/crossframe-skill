@@ -1,6 +1,7 @@
 ---
 name: crossframe-essay
-description: CrossFrame Essay 是基于 CrossFrame 的中文批判性洞察文章写作 skill。Use when the user asks to write or shape a 中文文章、长文、评论、思想文章、批判性洞察文章、结构洞察文章，或想把关系、团队、组织、制度、公共议题、哲学概念和复杂现实问题写成面向普通读者、先推理后表达、可按需概念上升并引入中西经典/理论参照的文章。也适合用户要求亲切、编辑、同志口吻、报刊答复、耐心解答或给出意见的中文洞察文章。默认先输出结构洞察底稿，再输出文章正文；也支持互动打磨、候选开头、逐段推进和保留用户编辑。
+description: "CrossFrame Essay explicit-only Chinese critical insight writing skill. Use only when the user explicitly names crossframe-essay, $crossframe-essay, /crossframe-essay, or asks to use CrossFrame Essay; do not trigger implicitly for ordinary writing, commentary, article, editing, or long-answer tasks. Suite-directed use after an explicit crossframe-suite invocation is allowed."
+disable-model-invocation: true
 ---
 
 # CrossFrame Essay

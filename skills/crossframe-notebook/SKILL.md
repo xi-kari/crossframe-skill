@@ -1,7 +1,7 @@
 ---
 name: crossframe-notebook
-description: |
-  CrossFrame Notebook 是读书、理论、文章研究笔记专项 skill，用于把一本书、一篇文章、一种理论或用户摘录做成与 CrossFrame 双向互读的研究笔记。Use when the user asks to read, compare, annotate, digest, absorb, critique, or study books, essays, theories, public concepts, research notes, excerpts, or citations through CrossFrame while preserving the source's own claims, differences, conflicts, absorbable parts, non-absorbable parts, and questions that should feed back into the framework.
+description: "CrossFrame Notebook explicit-only reading and theory note skill. Use only when the user explicitly names crossframe-notebook, $crossframe-notebook, /crossframe-notebook, or asks to use CrossFrame Notebook; do not trigger implicitly for ordinary book, essay, theory, research-note, excerpt, comparison, or annotation tasks. Suite-directed use after an explicit crossframe-suite invocation is allowed."
+disable-model-invocation: true
 ---
 
 # CrossFrame Notebook

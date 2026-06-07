@@ -1,6 +1,7 @@
 ---
 name: crossframe-casebook
-description: Use when turning chats, organizational material, project retrospectives, or public dispute material into reusable, redacted CrossFrame casebook entries.
+description: "CrossFrame Casebook explicit-only casebook skill. Use only when the user explicitly names crossframe-casebook, $crossframe-casebook, /crossframe-casebook, or asks to use CrossFrame Casebook; do not trigger implicitly for ordinary summaries, retrospectives, public dispute notes, or material organization. Suite-directed use after an explicit crossframe-suite invocation is allowed."
+disable-model-invocation: true
 ---
 
 # CrossFrame Casebook for Claude Code

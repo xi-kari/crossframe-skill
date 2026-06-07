@@ -1,6 +1,7 @@
 ---
 name: crossframe-casebook
-description: CrossFrame Casebook 是把聊天记录、组织材料、项目复盘和公共争议材料整理成可复用案例库的中文案例沉淀 skill。Use when the user asks to build, clean, summarize, index, compare, reuse, anonymize, audit, or maintain a casebook from relationship, team, organization, project review, public dispute, platform governance, or long-running CrossFrame diagnostic materials.
+description: "CrossFrame Casebook explicit-only casebook skill. Use only when the user explicitly names crossframe-casebook, $crossframe-casebook, /crossframe-casebook, or asks to use CrossFrame Casebook; do not trigger implicitly for ordinary summaries, retrospectives, public dispute notes, or material organization. Suite-directed use after an explicit crossframe-suite invocation is allowed."
+disable-model-invocation: true
 ---
 
 # CrossFrame Casebook

@@ -1,6 +1,7 @@
 ---
 name: crossframe-public
-description: Use for public issues, platform appeals, institutional governance, public policy, compliance materials, procedural justice, weak-signal protection, and evidence-boundary analysis.
+description: "CrossFrame Public explicit-only public-issues skill. Use only when the user explicitly names crossframe-public, $crossframe-public, /crossframe-public, or asks to use CrossFrame Public; do not trigger implicitly for ordinary public-policy, platform appeal, institution, compliance, source-checking, or commentary tasks. Suite-directed use after an explicit crossframe-suite invocation is allowed."
+disable-model-invocation: true
 ---
 
 # CrossFrame Public for Claude Code

@@ -1,7 +1,7 @@
 ---
 name: crossframe-public
-description: |
-  CrossFrame Public 是公共议题、平台治理、制度评论、平台申诉、公共政策和机构合规材料审查的中文专项 skill。适用于用户要分析真实公共争议、政策变化、平台处罚/封禁/申诉、公共承诺兑现、机构道歉/整改/AI 合规材料、舆论热度与事实边界、程序正义、弱信号保护、申诉有效性、公共评论底稿、证据边界摘要或行动边界时。默认查源，先区分事实、来源成本、平台/机构声明、热度信号和解释，再按 CrossFrame 公共制度路由输出。
+description: "CrossFrame Public explicit-only public-issues skill. Use only when the user explicitly names crossframe-public, $crossframe-public, /crossframe-public, or asks to use CrossFrame Public; do not trigger implicitly for ordinary public-policy, platform appeal, institution, compliance, source-checking, or commentary tasks. Suite-directed use after an explicit crossframe-suite invocation is allowed."
+disable-model-invocation: true
 ---
 
 # CrossFrame Public

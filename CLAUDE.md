@@ -2,6 +2,8 @@
 
 @AGENTS.md
 
+CrossFrame skills 在 Claude Code 中也是显式调用 only。不要因为普通分析、写作、评论、组织修复、读书、辩论或评审任务自动触发 `.claude/skills/crossframe*/SKILL.md`。只有用户明确点名 `crossframe-suite`、`crossframe`、某个 `crossframe-*`，或使用下面的 `/crossframe*` 命令时才进入 CrossFrame。用户显式调用 `/crossframe-suite` 后，suite 内部继续可以按 routing map 联合读取 sibling skills，这不算被动触发。
+
 这个仓库提供 Claude Code 项目级 skill：
 
 - `.claude/skills/crossframe/SKILL.md`
@@ -109,5 +111,5 @@
 - 当用户要写文章、长文、评论、思想文章或批判性洞察文章时，使用 `crossframe-essay`：先形成完整可见 `结构洞察底稿`，再写完整长文 `文章正文`；需要深度时按需概念上升和引入中西经典/理论参照，但引用必须可核验并回到现实责任链。
 - `crossframe-essay` 自动成文默认读取现代编辑口吻协议：问题型主题用答复体，公共评论、思想文章和概念文章用评论体；只有用户明确要求中性报告、备忘录、表格、清单、纯诊断或学术摘要时才关闭。不要口号化，不要把亲切写成和稀泥，也不要把严厉写成人格审判。
 - 当用户要求评审、短答复、案例库、公共议题、组织修复、概念教学、命题辩论或研究笔记时，优先使用对应 `crossframe-*` 平行 skill；所有平行 skill 仍须读取 `skills/crossframe/SKILL.md` 与 `skills/crossframe/references/read-routing-map.md`。
-- 默认优先考虑 `crossframe-suite` 作为总入口。当用户任务需要多个 CrossFrame skill 连续协作时，先用 `crossframe-suite` 决定顺序；常见链路包括 `crossframe -> crossframe-public -> crossframe-essay -> crossframe-review`、`crossframe -> crossframe-org -> crossframe-essay -> crossframe-review`、`crossframe -> crossframe-notebook -> crossframe-essay -> crossframe-review`。不要一次读取全部 skill。
+- 显式调用后优先考虑 `crossframe-suite` 作为总入口。当用户显式要求多个 CrossFrame skill 连续协作时，先用 `crossframe-suite` 决定顺序；suite 内部联合读取 sibling skills 不算被动触发。常见链路包括 `crossframe -> crossframe-public -> crossframe-essay -> crossframe-review`、`crossframe -> crossframe-org -> crossframe-essay -> crossframe-review`、`crossframe -> crossframe-notebook -> crossframe-essay -> crossframe-review`。不要一次读取全部 skill。
 - 当用户从 suite 总入口进入任何 CrossFrame 内容任务时，默认输出 `full-visible-v3-longform / 3.0混合长文`：先完成必要专项 skill，再追加 `crossframe-essay -> crossframe-review`，包含完整可见底稿和完整长文正文。只有用户明确说“只要/不要文章/短答/表格/清单/纯诊断/仅行动方案”时，才关闭默认文章层。

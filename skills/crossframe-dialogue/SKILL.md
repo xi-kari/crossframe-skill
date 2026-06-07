@@ -1,6 +1,7 @@
 ---
 name: crossframe-dialogue
-description: CrossFrame Dialogue 是面向答读者问、编辑回信、咨询式回应和短意见回复的中文结构答复 skill。Use when the user asks for a short but insightful answer, reader reply, advice note, consultation-style response, editorial response, or asks "我该怎么看/怎么办/是不是我想多了" about relationships, teams, organizations, public issues, philosophy, or recurring structural trouble.
+description: "CrossFrame Dialogue explicit-only short Chinese structural reply skill. Use only when the user explicitly names crossframe-dialogue, $crossframe-dialogue, /crossframe-dialogue, or asks to use CrossFrame Dialogue; do not trigger implicitly for ordinary advice, reader replies, editor letters, or consultation-style answers. Suite-directed use after an explicit crossframe-suite invocation is allowed."
+disable-model-invocation: true
 ---
 
 # CrossFrame Dialogue

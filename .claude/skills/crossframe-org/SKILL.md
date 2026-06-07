@@ -1,7 +1,7 @@
 ---
 name: crossframe-org
-description: |
-  Use for team, project, and organization repair: project failure, distorted retrospectives, middle-manager depletion, responsibility chain, authorization chain, feedback write-back, stop conditions, and low-risk pilots.
+description: "CrossFrame Org explicit-only organization repair skill. Use only when the user explicitly names crossframe-org, $crossframe-org, /crossframe-org, or asks to use CrossFrame Org; do not trigger implicitly for ordinary project review, team diagnosis, retrospective, responsibility-chain, authorization-chain, or pilot-design tasks. Suite-directed use after an explicit crossframe-suite invocation is allowed."
+disable-model-invocation: true
 ---
 
 # CrossFrame Org for Claude Code

@@ -1,6 +1,7 @@
 ---
 name: crossframe-notebook
-description: Use for bidirectional CrossFrame reading notes on books, essays, theories, excerpts, citations, and research notes, preserving relation, difference, conflict, absorption, and feedback questions.
+description: "CrossFrame Notebook explicit-only reading and theory note skill. Use only when the user explicitly names crossframe-notebook, $crossframe-notebook, /crossframe-notebook, or asks to use CrossFrame Notebook; do not trigger implicitly for ordinary book, essay, theory, research-note, excerpt, comparison, or annotation tasks. Suite-directed use after an explicit crossframe-suite invocation is allowed."
+disable-model-invocation: true
 ---
 
 # CrossFrame Notebook for Claude Code

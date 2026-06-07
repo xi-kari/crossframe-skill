@@ -21,8 +21,10 @@
 
 - 中文为权威语义；`CrossFrame` 只是英文传播名与 skill id。
 - 新增接口只负责入口、路由和最小约束。
-- 多 skill 连续任务先读取 `skills/crossframe-suite/SKILL.md`；suite 只调度，不替代专项 skill。
-- `crossframe-suite` 是推荐默认入口；只要从总入口进入，默认在必要专项 skill 后追加 `crossframe-essay -> crossframe-review`，输出档位为 `full-visible-v3-longform / 3.0混合长文`。
+- 整套 CrossFrame skill 只能显式触发；用户必须点名 `crossframe-suite`、`crossframe`、某个 `crossframe-*`，或使用 `$crossframe-*` / `/crossframe-*` 命令。
+- 外部初始触发不能是被动的；普通分析、写作、评论、组织修复、读书或辩论任务不应自动召回 CrossFrame。
+- 用户显式调用 `crossframe-suite` 后，多 skill 连续任务仍然先读取 `skills/crossframe-suite/SKILL.md`；suite 可以按 routing map 联合读取 sibling skill，但不替代专项 skill。
+- `crossframe-suite` 是显式调用后的推荐总入口；只要从总入口进入，默认在必要专项 skill 后追加 `crossframe-essay -> crossframe-review`，输出档位为 `full-visible-v3-longform / 3.0混合长文`。
 - `crossframe-critical` 不进入总入口调度。只有用户明确写 `$crossframe-critical`、`crossframe-critical` 或要求测试这个批判 skill 时才读取它。
 - 只有用户明确说“只要/不要文章/短答/表格/清单/纯诊断/仅行动方案”时，才关闭默认文章层。
 - 若需要更新框架主体，优先更新 `skills/crossframe/`，再回填薄适配层。
@@ -42,18 +44,18 @@
 
 | 接口 | 入口文件 | 说明 |
 | --- | --- | --- |
-| Codex | `skills/crossframe*/` | 可直接用 skill-installer 安装；复杂任务优先触发 `crossframe-suite` |
-| Claude Code | `.claude/skills/crossframe*/SKILL.md` + `.claude/commands/crossframe*.md` + `CLAUDE.md` | 自动触发 skill，也可调用 `/crossframe`、`/crossframe-explain`、`/crossframe-audit`、`/crossframe-essay` |
+| Codex | `skills/crossframe*/` | 可直接用 skill-installer 安装；安装后不被动触发，需用户显式点名；suite 显式启动后仍可联合调用 sibling skill |
+| Claude Code | `.claude/skills/crossframe*/SKILL.md` + `.claude/commands/crossframe*.md` + `CLAUDE.md` | 禁止自动触发 skill；通过 `/crossframe`、`/crossframe-explain`、`/crossframe-audit`、`/crossframe-essay` 或明确点名启动 |
 | Gemini CLI | `GEMINI.md` | 仓库级上下文入口 |
 | Cursor | `.cursor/rules/crossframe-suite.mdc` + `.cursor/rules/crossframe.mdc` + `.cursor/rules/crossframe-essay.mdc` + `AGENTS.md` | 规则文件与通用入口 |
 | GitHub Copilot | `.github/copilot-instructions.md` | 仓库级说明 |
-| Windsurf / Cascade | `.windsurf/rules/crossframe.md` + `AGENTS.md` | Workspace rule，支持手动 `@crossframe` 或自动规则场景 |
+| Windsurf / Cascade | `.windsurf/rules/crossframe.md` + `AGENTS.md` | Workspace rule，只支持手动 `@crossframe` 或明确点名，不使用自动规则场景 |
 | Cline | `.clinerules/crossframe.md` | Project rule |
 | Roo Code | `.roo/rules/crossframe.md` | Workspace-wide rule |
 | Continue | `.continue/rules/crossframe.md` | Local rule |
 | Aider | `CONVENTIONS.md` + `.aider.conf.yml` | 自动读取 conventions |
 | LLM 索引 | `llms.txt` | 机器可读入口索引 |
-| 通用 agent | `AGENTS.md` | 默认入口 |
+| 通用 agent | `AGENTS.md` | 显式点名后的入口 |
 
 ## 迁移到别的项目
 

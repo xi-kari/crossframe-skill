@@ -1,7 +1,7 @@
 ---
 name: crossframe-suite
-description: |
-  Use for complex CrossFrame tasks that need multiple sibling skills in sequence: essay after diagnosis, public commentary, organization repair writing, reader replies, debate-to-article, casebook extraction, reading notes, and review after generation.
+description: "CrossFrame Suite explicit-only router. Use only when the user explicitly names crossframe-suite, $crossframe-suite, /crossframe-suite, or asks to use the CrossFrame suite; do not trigger implicitly for ordinary analysis, writing, public, organization, debate, teaching, reading, or review tasks. After explicit invocation, it routes sibling CrossFrame skills and decides where to stop."
+disable-model-invocation: true
 ---
 
 # CrossFrame Suite for Claude Code

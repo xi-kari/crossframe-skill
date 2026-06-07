@@ -1,7 +1,7 @@
 ---
 name: crossframe
-description: |
-  CrossFrame 是“跨尺度结构诊断框架 v3.0”的中文结构推理协议型 skill，用于诊断关系、团队、组织、制度、公共争议和长期演化中的复杂失衡。它要求先抽取事实、过尺度与责任闸、形成机制候选，再输出开放断言、推演分支、反俘获判断、低条件行动、生命周期/递进判断、治理连续性、框架治理/证伪、AI 现实验证、弱信号保护、无法退出主体保护或超大规模压力测试。适用于用户提到 CrossFrame、跨尺度结构诊断、结构诊断、推演、开放断言、高责任判断、反俘获、亲密关系、疗愈转移、公共制度、长期演化、生命意义、第一因、虚无主义等概念解释，或希望分析复杂反复问题而不是套概念时。
+description: "CrossFrame explicit-only structural diagnosis skill for 跨尺度结构诊断框架 v3.0. Use only when the user explicitly names crossframe, $crossframe, /crossframe, CrossFrame, or says to use 跨尺度结构诊断; do not trigger implicitly from ordinary relationship, team, organization, public, philosophy, or long-term analysis requests. Suite-directed use after an explicit crossframe-suite invocation is allowed."
+disable-model-invocation: true
 ---
 
 # CrossFrame

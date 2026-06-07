@@ -1,6 +1,7 @@
 ---
 name: crossframe-review
-description: Use when reviewing, auditing, grading, smoke-testing, or repairing CrossFrame-style outputs, essays, diagnostics, citations, evidence boundaries, concept fidelity, skipped dossiers, pseudo-reasoning, or personality judgment.
+description: "CrossFrame Review explicit-only audit skill. Use only when the user explicitly names crossframe-review, $crossframe-review, /crossframe-review, or asks to use CrossFrame Review; do not trigger implicitly for ordinary reviews, critiques, audits, grading, smoke tests, or repair tasks. Suite-directed use after an explicit crossframe-suite invocation is allowed."
+disable-model-invocation: true
 ---
 
 # CrossFrame Review for Claude Code

@@ -1,7 +1,7 @@
 ---
 name: crossframe-teach
-description: |
-  CrossFrame 概念教学解释专项 skill，用于把 CrossFrame 概念讲给普通人：先用人话解释，再给概念映射、误读边界、反例、现实观察信号和练习题。适用于用户要求解释承接/回流、开放断言、尺度转移、爱/开放行动、责任链、回流、证据成本、判断档位等 CrossFrame 概念，要求区分概念边界、纠正常见误读、生成教学样例、设计练习题，或把理论术语翻译成可观察现实语言时。
+description: "CrossFrame Teach explicit-only concept teaching skill. Use only when the user explicitly names crossframe-teach, $crossframe-teach, /crossframe-teach, or asks to use CrossFrame Teach; do not trigger implicitly for ordinary concept explanations, exercises, examples, or theory-to-plain-language tasks. Suite-directed use after an explicit crossframe-suite invocation is allowed."
+disable-model-invocation: true
 ---
 
 # CrossFrame Teach

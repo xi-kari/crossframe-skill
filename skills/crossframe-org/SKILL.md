@@ -1,7 +1,7 @@
 ---
 name: crossframe-org
-description: |
-  CrossFrame Org 是基于 CrossFrame 的团队、项目、组织修复专项 skill。Use when the user asks for organization diagnosis, project failure review, distorted retrospectives, middle-manager depletion, responsibility or authorization chain breaks, feedback write-back, postmortem redesign, stop conditions, or low-risk organizational pilots. 输出组织诊断备忘录、反馈写回方案、复盘改造建议或低风险试点计划，不写文章。
+description: "CrossFrame Org explicit-only organization repair skill. Use only when the user explicitly names crossframe-org, $crossframe-org, /crossframe-org, or asks to use CrossFrame Org; do not trigger implicitly for ordinary project review, team diagnosis, retrospective, responsibility-chain, authorization-chain, or pilot-design tasks. Suite-directed use after an explicit crossframe-suite invocation is allowed."
+disable-model-invocation: true
 ---
 
 # CrossFrame Org

@@ -28,15 +28,17 @@
 - `skills/crossframe/templates/`：用户可见输出模板，默认包含推理提纲。
 - 适配层：`CLAUDE.md`、`.claude/skills/crossframe*/SKILL.md`、`.claude/commands/crossframe*.md`、`GEMINI.md`、`.cursor/rules/crossframe*.mdc`、`.github/copilot-instructions.md`、`.windsurf/rules/crossframe.md`、`.clinerules/crossframe.md`、`.roo/rules/crossframe.md`、`.continue/rules/crossframe.md`、`CONVENTIONS.md`、`.aider.conf.yml`、`llms.txt`。
 
-## 何时调用 CrossFrame
+## 显式调用边界
 
-默认优先判断是否使用 `skills/crossframe-suite/SKILL.md`。当用户要文章、公共评论、组织复盘文章、读书后成文、辩论后成文、案例沉淀再输出、或要求多个 CrossFrame skill 连续协作时，先读 suite，再按它的 `workflow-routing-map.md` 进入专项 skill。
+整套 CrossFrame skill 不能被动触发。只有当用户明确点名 `crossframe-suite`、`crossframe`、某个 `crossframe-*`，使用 `$crossframe-*` / `/crossframe-*`，或明确说“用 CrossFrame / 用跨尺度结构诊断框架”时，才进入本仓库的 CrossFrame 链路。
+
+这条限制只约束外部初始触发，不禁止 suite 内部联合调用。用户显式调用 `crossframe-suite` 后，suite 仍然可以按 `workflow-routing-map.md` 读取和串联 `crossframe`、`crossframe-essay`、`crossframe-review` 及其它 sibling skill。
 
 只要用户从 `crossframe-suite` 总入口进入 CrossFrame 内容任务，默认最终输出 `full-visible-v3-longform / 3.0混合长文`：先完成必要专项 skill，再追加 `crossframe-essay -> crossframe-review`，包含完整可见底稿和完整长文正文。只有用户明确说“只要/不要文章/短答/表格/清单/纯诊断/仅行动方案”时，才关闭默认文章层。
 
-`crossframe-critical` 是例外：它是显式点名测试 skill，不得加入 `crossframe-suite`、默认链路或总调用适配。只有用户明确写 `$crossframe-critical`、`crossframe-critical` 或要求测试批判 skill 时才读取。
+显式调用后，按任务内容路由到以下能力：
 
-当任务涉及以下内容时使用：
+`crossframe-critical` 是更严格的 named-only 平行 skill：它不得加入 `crossframe-suite` 默认链路或总调用适配。只有用户明确写 `$crossframe-critical`、`crossframe-critical` 或要求测试批判 skill 时才读取。
 
 - 关系、团队、项目、组织、制度、公共争议中的复杂失衡
 - 需要结构诊断、推演、路径展开、后续走向或分支终点
@@ -54,11 +56,11 @@
 - 医疗、法律、金融等需要专业资质的最终判断
 - 用户只是需要安慰，不需要诊断分析的对话
 
-## 何时调用 CrossFrame Essay
+## 显式调用 CrossFrame Essay
 
-若写作任务还涉及公共事实、组织修复、命题辩论、读书研究、案例沉淀或最后评审，先使用 `skills/crossframe-suite/SKILL.md` 决定链路；不要直接只触发 essay。
+只有用户明确点名 `crossframe-essay` 或 CrossFrame Essay 时，才直接进入 `skills/crossframe-essay/SKILL.md`。若用户显式调用 `crossframe-suite`，且写作任务还涉及公共事实、组织修复、命题辩论、读书研究、案例沉淀或最后评审，先由 suite 决定链路；不要直接只触发 essay。
 
-当任务涉及以下内容时使用 `skills/crossframe-essay/SKILL.md`：
+显式调用后，当任务涉及以下内容时使用 `skills/crossframe-essay/SKILL.md`：
 
 - 用户要求写中文文章、长文、评论、思想文章、批判性洞察文章或结构洞察文章
 - 用户想把 CrossFrame 分析结果转成普通读者能读的文章
@@ -73,10 +75,10 @@ CrossFrame Essay 仍然必须读取 `skills/crossframe/SKILL.md` 与 `skills/cro
 
 自动成文默认启用 `full-visible-v3-longform` 和现代编辑底色，先在底稿中写出 `正文声口方案`，再成文。问题型主题用答复体，公共评论、思想文章和概念文章用评论体。只有用户明确要求短答、中性报告、备忘录、表格、清单、纯诊断或学术摘要时才关闭；不要复古口号化，不要把亲切写成和稀泥，也不要把严厉写成人格审判。
 
-## 何时调用其它平行 skill
+## 显式调用其它平行 skill
 
-- 审查、评审、打分、抓坏输出、判断是否真的推理：`skills/crossframe-review/SKILL.md`
-- 点名结构批判长文、要求批判底稿 + 篇章方案 + 1800-2800 字正文：`skills/crossframe-critical/SKILL.md`
+- 审查、评审、打分、抓坏输出、判断是否真的推理；用户明确点名 `crossframe-review`：`skills/crossframe-review/SKILL.md`
+- 点名结构批判长文、要求批判底稿 + 篇章方案 + 1800-2800 字正文；用户明确点名 `crossframe-critical`：`skills/crossframe-critical/SKILL.md`
 - 答读者问、编辑回信、咨询式短答复、我该怎么看/怎么办：`skills/crossframe-dialogue/SKILL.md`
 - 整理聊天记录、组织材料、项目复盘、公共争议为案例库：`skills/crossframe-casebook/SKILL.md`
 - 公共议题、平台申诉、制度评论、机构合规材料、公共承诺兑现：`skills/crossframe-public/SKILL.md`
@@ -102,7 +104,7 @@ CrossFrame Essay 仍然必须读取 `skills/crossframe/SKILL.md` 与 `skills/cro
 - 读书研究：`crossframe -> crossframe-notebook -> crossframe-review`
 - 读书后成文：`crossframe -> crossframe-notebook -> crossframe-essay -> crossframe-review`
 
-连续触发时先给短 `调度提纲`：任务类型、工作流、必读 skill、按需读取、不读取、质量闸。不要为了完整而读取全部 skill。
+连续触发只发生在用户显式调用 `crossframe-suite` 之后。此时先给短 `调度提纲`：任务类型、工作流、必读 skill、按需读取、不读取、质量闸。不要为了完整而读取全部 skill。
 
 总入口默认对任何 CrossFrame 内容任务成文，并默认是 `full-visible-v3-longform / 3.0混合长文`；显式关闭文章层时才保留原形态。
 

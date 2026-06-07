@@ -1,3 +1,6 @@
-display_name: CrossFrame Review
-short_description: 审查 CrossFrame 输出是否真推理、守证据与边界。
-default_prompt: 用 crossframe-review 审查这段 CrossFrame 诊断或文章，检查推理链、证据边界、引用完整性和修复建议。
+interface:
+  display_name: "CrossFrame Review"
+  short_description: "显式点名调用的 CrossFrame 输出评审与修复入口。"
+  default_prompt: "Use $crossframe-review only after the user explicitly invokes it."
+policy:
+  allow_implicit_invocation: false

@@ -4,7 +4,9 @@
 
 本文件是 Gemini CLI 的仓库级上下文入口。
 
-如果用户要求一个复杂任务需要多个 CrossFrame skill 连续协作，先读取：
+CrossFrame skills 在 Gemini CLI 中也是显式调用 only。不要因为普通分析、写作、评论、组织修复、读书、辩论或评审任务自动触发 CrossFrame。只有用户明确点名 `crossframe-suite`、`crossframe`、某个 `crossframe-*`，或明确说“用 CrossFrame / 用跨尺度结构诊断框架”时才进入本文件下面的 CrossFrame 路由。
+
+如果用户显式调用 `crossframe-suite`，并要求一个复杂任务需要多个 CrossFrame skill 连续协作，先读取：
 
 1. `skills/crossframe-suite/SKILL.md`
 2. `skills/crossframe-suite/references/workflow-routing-map.md`
@@ -12,9 +14,9 @@
 
 常见链路：普通文章 `crossframe -> crossframe-essay -> crossframe-review`；公共评论 `crossframe -> crossframe-public -> crossframe-essay -> crossframe-review`；组织复盘文章 `crossframe -> crossframe-org -> crossframe-essay -> crossframe-review`；答读者问 `crossframe -> crossframe-dialogue -> crossframe-essay(full-visible-v3-longform) -> crossframe-review`；读书研究 `crossframe -> crossframe-notebook -> crossframe-essay(full-visible-v3-longform) -> crossframe-review`。不要一次读取全部 skill。
 
-默认优先考虑 `crossframe-suite`。只要用户从 suite 总入口进入任何 CrossFrame 内容任务，默认先完成必要专项 skill，再追加 `crossframe-essay -> crossframe-review`，输出 `full-visible-v3-longform / 3.0混合长文`，包含完整可见底稿和完整长文正文。只有用户明确说“只要/不要文章/短答/表格/清单/纯诊断/仅行动方案”时，才关闭默认文章层。
+显式调用后优先考虑 `crossframe-suite`。suite 内部按 routing map 联合读取 sibling skills 不算被动触发。只要用户从 suite 总入口进入任何 CrossFrame 内容任务，默认先完成必要专项 skill，再追加 `crossframe-essay -> crossframe-review`，输出 `full-visible-v3-longform / 3.0混合长文`，包含完整可见底稿和完整长文正文。只有用户明确说“只要/不要文章/短答/表格/清单/纯诊断/仅行动方案”时，才关闭默认文章层。
 
-如果用户要求写中文文章、长文、评论、思想文章、批判性洞察文章或结构洞察文章，请读取：
+如果用户显式调用 `crossframe-essay` 或经 `crossframe-suite` 路由到写作，并要求写中文文章、长文、评论、思想文章、批判性洞察文章或结构洞察文章，请读取：
 
 1. `skills/crossframe-essay/SKILL.md`
 2. `skills/crossframe/SKILL.md`
@@ -30,7 +32,7 @@
 
 文章输出默认先给完整可见 `结构洞察底稿`，再给完整长文 `文章正文`。公共议题、最新事实、真实组织/平台/人物/政策/公司相关内容必须查源；私人关系、哲学概念和泛论随笔默认不查源，除非用户要求。直接引用必须可核验；不确定原句时只做意译或思想映射；经典/理论参照必须回到现实机制与责任链。现代编辑底色是默认前台表达：亲切但不和稀泥，果敢但不人格审判。
 
-如果用户要求结构诊断、推演、开放断言、高责任审查或低条件行动，请读取：
+如果用户显式调用 `crossframe` 或经 `crossframe-suite` 路由到结构诊断、推演、开放断言、高责任审查或低条件行动，请读取：
 
 1. `skills/crossframe/SKILL.md`
 2. `skills/crossframe/references/read-routing-map.md`
@@ -51,7 +53,7 @@
 - 强判断、高反身性、亲密关系、疗愈转移、公共制度、框架边界、生命周期、递进、势场解离、治理连续性、超大规模压力测试和长期演化问题，按 `read-routing-map.md` 读取对应深水区模块。
 - 需要连续保真的场景，必须检查 3.0 连续联读包，避免只读单概念卡导致失真。
 
-如果用户要求以下专项任务，优先读取对应平行 skill，再按该 skill 的说明读取 `skills/crossframe/SKILL.md` 与路由图：
+如果用户显式点名以下专项 skill，或经 `crossframe-suite` 路由到以下专项任务，优先读取对应平行 skill，再按该 skill 的说明读取 `skills/crossframe/SKILL.md` 与路由图：
 
 - 评审、审查、打分、抓坏输出：`skills/crossframe-review/SKILL.md`
 - 答读者问、编辑回信、咨询式短答复：`skills/crossframe-dialogue/SKILL.md`

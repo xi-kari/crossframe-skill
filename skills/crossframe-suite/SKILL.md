@@ -1,7 +1,7 @@
 ---
 name: crossframe-suite
-description: |
-  CrossFrame Suite 是 CrossFrame skill family 的默认总入口和调度入口。Use by default for CrossFrame-style complex analysis, especially when the user asks for an open-ended readable answer, article-like output, diagnosis-to-essay, public commentary, organization repair writing, reader replies, debate-to-article, casebook extraction, teaching plus exercises, reading notes, or review after generation. It decides which CrossFrame skills to read, in what order, when to produce a readable essay/article, and where to stop, so the agent does not trigger every skill at once or skip required reasoning.
+description: "CrossFrame Suite explicit-only router. Use only when the user explicitly names crossframe-suite, $crossframe-suite, /crossframe-suite, or asks to use the CrossFrame suite; do not trigger implicitly for ordinary analysis, writing, public, organization, debate, teaching, reading, or review tasks. After explicit invocation, it routes sibling CrossFrame skills and decides where to stop."
+disable-model-invocation: true
 ---
 
 # CrossFrame Suite
@@ -16,9 +16,9 @@ description: |
 
 当任务触发 CrossFrame 主体时，suite 还要把 `../crossframe/references/continuity-bundles.md` 纳入调度判断：本次是否需要按 v3.0 原文连续板块联读，而不是只读单个概念卡。v2.0 文件只作为历史基线；默认以 v3.0 源结构为准。
 
-## 默认入口
+## 显式调用后的总入口
 
-一般使用 CrossFrame family 时，优先从本 skill 进入。只有任务非常单一时，才直接使用对应专项 skill。
+只有用户显式调用 `crossframe-suite`、`$crossframe-suite`、`/crossframe-suite` 或明确要求使用 CrossFrame Suite 时，才从本 skill 进入。进入之后，优先由本 skill 调度；只有任务非常单一且用户点名了专项 skill 时，才直接使用对应专项 skill。
 
 当用户通过本 skill 作为总入口提出任何 CrossFrame 内容任务时，默认最终都生成**3.0 混合长文**，输出档位为 `full-visible-v3-longform`：完整可见底稿 + 完整长文正文。专项产物可以先生成，但最后默认进入文章层。
 

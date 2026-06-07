@@ -1,7 +1,7 @@
 ---
 name: crossframe-debate
-description: |
-  CrossFrame Debate 是 CrossFrame 的命题辩论与论证检验专项 skill。Use when the user gives a proposition, thesis, debate motion, controversial claim, relationship claim, public issue claim, philosophical claim, or argumentative draft and wants both-side structure, steelman/strongest rebuttal, hidden premises, evidence requirements, reverse conditions, withdrawal conditions, and safer wording. It is for making arguments testable, not for winning a debate.
+description: "CrossFrame Debate explicit-only proposition testing skill. Use only when the user explicitly names crossframe-debate, $crossframe-debate, /crossframe-debate, or asks to use CrossFrame Debate; do not trigger implicitly for ordinary debate, argument, thesis, proposition, controversial-claim, or rebuttal tasks. Suite-directed use after an explicit crossframe-suite invocation is allowed."
+disable-model-invocation: true
 ---
 
 # CrossFrame Debate

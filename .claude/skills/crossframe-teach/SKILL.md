@@ -1,6 +1,7 @@
 ---
 name: crossframe-teach
-description: Use for teaching CrossFrame concepts in plain Chinese with concept mapping, misunderstanding boundaries, real-world signals, examples, and exercises.
+description: "CrossFrame Teach explicit-only concept teaching skill. Use only when the user explicitly names crossframe-teach, $crossframe-teach, /crossframe-teach, or asks to use CrossFrame Teach; do not trigger implicitly for ordinary concept explanations, exercises, examples, or theory-to-plain-language tasks. Suite-directed use after an explicit crossframe-suite invocation is allowed."
+disable-model-invocation: true
 ---
 
 # CrossFrame Teach for Claude Code

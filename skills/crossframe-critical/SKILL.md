@@ -1,6 +1,7 @@
 ---
 name: crossframe-critical
-description: CrossFrame Critical is a local explicit-invocation skill for writing Chinese structural critique essays from a CrossFrame diagnosis, with sharper attention to cost chains, benefit chains, ideology, alienation, reproduction mechanisms, and rhetorical concealment. Use only when the user explicitly invokes `$crossframe-critical`, says "crossframe-critical", or clearly asks to test this critical parallel skill; do not trigger implicitly for ordinary CrossFrame, essay, public, or review tasks.
+description: "CrossFrame Critical explicit-only skill for writing Chinese structural critique essays from a CrossFrame diagnosis, with sharper attention to cost chains, benefit chains, ideology, alienation, reproduction mechanisms, and rhetorical concealment. Use only when the user explicitly invokes $crossframe-critical, says crossframe-critical, or clearly asks to test this critical parallel skill; do not trigger implicitly for ordinary CrossFrame, essay, public, or review tasks."
+disable-model-invocation: true
 ---
 
 # CrossFrame Critical

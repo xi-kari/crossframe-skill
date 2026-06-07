@@ -1,7 +1,7 @@
 ---
 name: crossframe-review
-description: |
-  CrossFrame Review 是 CrossFrame 的平行评审 skill，用于审查 AI 输出、结构诊断、中文文章、审计稿或修复稿是否真正执行 CrossFrame 推理。Use when the user asks to review, audit, validate, grade, critique, find failures, smoke-test, or repair CrossFrame-style output, especially to catch concept stacking, pseudo-reasoning, missing evidence boundaries, personality judgment, forged or unverifiable citations, source search taking over the thesis, skipped structure dossier, AI compliance theater, and high-responsibility claims without proposition verification.
+description: "CrossFrame Review explicit-only audit skill. Use only when the user explicitly names crossframe-review, $crossframe-review, /crossframe-review, or asks to use CrossFrame Review; do not trigger implicitly for ordinary reviews, critiques, audits, grading, smoke tests, or repair tasks. Suite-directed use after an explicit crossframe-suite invocation is allowed."
+disable-model-invocation: true
 ---
 
 # CrossFrame Review
