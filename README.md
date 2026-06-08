@@ -48,7 +48,7 @@ CrossFrame 是一组给 AI 用的中文 skills。整套 skill 只能显式触发
 
 2026-06-09 这一版按本地安装版和 `crossframe-skill.tar.gz` 打包版同步 12 个 CrossFrame skill。同步范围只包括本仓库所属的 `crossframe`、`crossframe-suite`、`crossframe-essay`、`crossframe-critical`、`crossframe-review`、`crossframe-dialogue`、`crossframe-casebook`、`crossframe-public`、`crossframe-org`、`crossframe-teach`、`crossframe-debate`、`crossframe-notebook`。
 
-本次没有把其它仓库的 `crossframe-code` 或 `crossframe-coder` 合入这里。主要说明变化是：保留显式调用边界，同时恢复本地版的完整长文默认链路、模式/角色选择器，以及 `integrity-check.md` 作为联读包、概念保真和源结构连续性的合并检查入口。
+本次没有把其它仓库的 `crossframe-code` 或 `crossframe-coder` 合入这里。主要说明变化是：保留显式调用边界，同时恢复本地版的完整长文默认链路、模式/角色选择器，以及 `integrity-check.md` 作为联读包、概念保真和源结构连续性的合并检查入口。其它 AI 应用适配层也同步到这套入口规则：Claude Code、Gemini CLI、Cursor、GitHub Copilot、Windsurf/Cascade、Cline、Roo Code、Continue、Aider 和通用 agent 都只做薄路由，不复制完整协议。
 
 显式调用之后，仓库里这组平行 skill 仍然可以由 `crossframe-suite` 调度。`suite` 显式启动后的内部联合调用不算被动触发：
 
@@ -219,9 +219,10 @@ CrossFrame 不再依赖“把一整篇原文塞给 AI”。它会按问题类型
 
 仓库里现在有三层材料防止读少：
 
+- `integrity-check.md`：日常完整性检查入口，合并联读包、概念保真和源结构连续性检查。
 - `v3-source-spine.md`：保存 3.0 DOCX 的章节顺序和相邻关系。
 - `v3-section-digest-index.md`：给每节一个保真摘要和误读边界。
-- `continuity-bundles.md`：规定哪些概念必须成组读取。
+- `continuity-bundles.md`：规定哪些概念必须成组读取，作为展开审计和历史详参。
 
 所以 CrossFrame 不是“塞原文”，也不是“只读关键词”。它会先判断当前问题属于哪个连续板块，再按原文结构一起读取必要内容。
 
@@ -293,18 +294,18 @@ CrossFrame 不应该只说：
 ### Codex 安装
 
 ```powershell
-py -3 "$HOME/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py" --repo xixilove486/crossframe-skill --path skills/crossframe-suite
-py -3 "$HOME/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py" --repo xixilove486/crossframe-skill --path skills/crossframe
-py -3 "$HOME/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py" --repo xixilove486/crossframe-skill --path skills/crossframe-essay
-py -3 "$HOME/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py" --repo xixilove486/crossframe-skill --path skills/crossframe-critical
-py -3 "$HOME/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py" --repo xixilove486/crossframe-skill --path skills/crossframe-review
-py -3 "$HOME/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py" --repo xixilove486/crossframe-skill --path skills/crossframe-dialogue
-py -3 "$HOME/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py" --repo xixilove486/crossframe-skill --path skills/crossframe-casebook
-py -3 "$HOME/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py" --repo xixilove486/crossframe-skill --path skills/crossframe-public
-py -3 "$HOME/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py" --repo xixilove486/crossframe-skill --path skills/crossframe-org
-py -3 "$HOME/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py" --repo xixilove486/crossframe-skill --path skills/crossframe-teach
-py -3 "$HOME/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py" --repo xixilove486/crossframe-skill --path skills/crossframe-debate
-py -3 "$HOME/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py" --repo xixilove486/crossframe-skill --path skills/crossframe-notebook
+py -3 "$HOME/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py" --repo xi-kari/crossframe-skill --path skills/crossframe-suite
+py -3 "$HOME/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py" --repo xi-kari/crossframe-skill --path skills/crossframe
+py -3 "$HOME/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py" --repo xi-kari/crossframe-skill --path skills/crossframe-essay
+py -3 "$HOME/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py" --repo xi-kari/crossframe-skill --path skills/crossframe-critical
+py -3 "$HOME/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py" --repo xi-kari/crossframe-skill --path skills/crossframe-review
+py -3 "$HOME/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py" --repo xi-kari/crossframe-skill --path skills/crossframe-dialogue
+py -3 "$HOME/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py" --repo xi-kari/crossframe-skill --path skills/crossframe-casebook
+py -3 "$HOME/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py" --repo xi-kari/crossframe-skill --path skills/crossframe-public
+py -3 "$HOME/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py" --repo xi-kari/crossframe-skill --path skills/crossframe-org
+py -3 "$HOME/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py" --repo xi-kari/crossframe-skill --path skills/crossframe-teach
+py -3 "$HOME/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py" --repo xi-kari/crossframe-skill --path skills/crossframe-debate
+py -3 "$HOME/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py" --repo xi-kari/crossframe-skill --path skills/crossframe-notebook
 ```
 
 安装后，本地 Codex 应显示：
@@ -327,7 +328,7 @@ crossframe-notebook
 ### 手动安装
 
 ```powershell
-git clone https://github.com/xixilove486/crossframe-skill.git
+git clone https://github.com/xi-kari/crossframe-skill.git
 Copy-Item -Path ".\crossframe-skill\skills\crossframe-suite" -Destination "$HOME\.codex\skills\crossframe-suite" -Recurse -Force
 Copy-Item -Path ".\crossframe-skill\skills\crossframe" -Destination "$HOME\.codex\skills\crossframe" -Recurse -Force
 Copy-Item -Path ".\crossframe-skill\skills\crossframe-essay" -Destination "$HOME\.codex\skills\crossframe-essay" -Recurse -Force
@@ -353,7 +354,7 @@ Copy-Item -Path ".\crossframe-skill\skills\crossframe-notebook" -Destination "$H
 <a id="adapters"></a>
 ## 其他 AI 软件
 
-这个仓库也放了几个薄适配文件，方便在其他 AI 工具里使用同一套方法。
+这个仓库也放了几个薄适配文件，方便在其他 AI 工具里使用同一套方法。本次同步后，这些适配统一以 `integrity-check.md` 作为本地 v3.1 日常完整性入口；`continuity-bundles.md`、`concept-fidelity-check.md` 和 `source-continuity-check.md` 只在需要展开审计时使用。
 
 | 工具 | 入口文件 |
 | --- | --- |

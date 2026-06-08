@@ -20,6 +20,8 @@ Do not copy the full v3.0 text into adapters. Do not duplicate the full skill bo
 
 CrossFrame must not become personality judgment, fate prediction, professional advice replacement, responsibility dilution, or AI compliance theater.
 
+For v3.1 local fidelity, use `skills/crossframe/references/integrity-check.md` as the one-stop integrity entry before final output when high-risk concepts, public/institutional responsibility, intimate relationships, long-term evolution, deep analysis, AI compliance, weak signals, or essay/article output are involved. Expand to `continuity-bundles.md`, `concept-fidelity-check.md`, and `source-continuity-check.md` only when an audit or source-structure trace needs details.
+
 After explicit CrossFrame Essay or Suite invocation, when the user asks for 中文文章、长文、评论、思想文章、批判性洞察文章 or structure-to-essay writing:
 
 1. Read `skills/crossframe-essay/SKILL.md`.
@@ -32,3 +34,5 @@ After explicit CrossFrame Essay or Suite invocation, when the user asks for 中�
 8. Write plain Chinese for ordinary readers and keep CrossFrame terms mostly in the backend. Modern editor-comrade voice should be patient, humble, serious, and decisive, not slogan-like or judgmental.
 
 After explicit invocation of a CrossFrame-adjacent specialized workflow, use the matching sibling skill first: `crossframe-review`, `crossframe-dialogue`, `crossframe-casebook`, `crossframe-public`, `crossframe-org`, `crossframe-teach`, `crossframe-debate`, or `crossframe-notebook`. Each sibling skill remains a light wrapper around `skills/crossframe/` and must not duplicate the canonical framework text.
+
+This repository adapts exactly 12 CrossFrame skills. Do not add `crossframe-code` or `crossframe-coder`; those belong to another repository.

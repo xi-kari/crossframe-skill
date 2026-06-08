@@ -16,6 +16,7 @@ Read:
 2. `skills/crossframe/references/read-routing-map.md`
 3. The protocol and template selected by the route
 4. Concept cards when high-risk concepts carry the judgment
+5. `skills/crossframe/references/integrity-check.md` for one-stop concept fidelity and source-continuity checks in high-risk, public, intimate, long-evolution, deep-analysis, or essay/article tasks
 
 Output:
 

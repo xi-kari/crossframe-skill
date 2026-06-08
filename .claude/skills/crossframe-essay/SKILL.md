@@ -13,12 +13,13 @@ disable-model-invocation: true
 1. 读取 `skills/crossframe-essay/SKILL.md`。
 2. 读取 `skills/crossframe/SKILL.md`。
 3. 读取 `skills/crossframe/references/read-routing-map.md`，把主题路由到对应 CrossFrame protocol。
-4. 读取 `skills/crossframe-essay/references/evidence-and-search-rules.md`，决定是否查源。
-5. 需要思想深度、概念上升、引经据典或理论参照时，读取 `skills/crossframe-essay/protocols/concept-elevation-protocol.md`、`skills/crossframe-essay/references/reference-and-allusion-rules.md` 和 `skills/crossframe-essay/references/concept-reference-map.md`。
-6. 自动成文默认读取 `skills/crossframe-essay/protocols/editorial-comrade-voice-protocol.md` 与 `skills/crossframe-essay/references/editorial-voice-principles.md`；只有显式中性报告、备忘录、表格、纯诊断或学术摘要时关闭。
-7. 自动成文读取 `skills/crossframe-essay/protocols/essay-protocol.md` 与对应模板，默认执行 `full-visible-v3-longform`。
-8. 互动打磨读取 `skills/crossframe-essay/protocols/interactive-drafting-protocol.md` 与互动模板。
-9. 默认输出完整可见 `结构洞察底稿`，再输出完整长文 `文章正文`。
+4. 读取 `skills/crossframe/references/integrity-check.md`，确认概念卡、连续联读包和降档条件。
+5. 读取 `skills/crossframe-essay/references/evidence-and-search-rules.md`，决定是否查源。
+6. 需要思想深度、概念上升、引经据典或理论参照时，读取 `skills/crossframe-essay/protocols/concept-elevation-protocol.md`、`skills/crossframe-essay/references/reference-and-allusion-rules.md` 和 `skills/crossframe-essay/references/concept-reference-map.md`。
+7. 自动成文默认读取 `skills/crossframe-essay/protocols/editorial-comrade-voice-protocol.md` 与 `skills/crossframe-essay/references/editorial-voice-principles.md`；只有显式中性报告、备忘录、表格、纯诊断或学术摘要时关闭。
+8. 自动成文读取 `skills/crossframe-essay/protocols/essay-protocol.md` 与对应模板，默认执行 `full-visible-v3-longform`。
+9. 互动打磨读取 `skills/crossframe-essay/protocols/interactive-drafting-protocol.md` 与互动模板。
+10. 默认输出完整可见 `结构洞察底稿`，再输出完整长文 `文章正文`。
 
 硬规则：
 

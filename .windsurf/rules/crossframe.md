@@ -23,7 +23,7 @@ Read order:
 4. `skills/crossframe/templates/reasoning-outline-output.md`
 5. `skills/crossframe/templates/user-facing-language.md`
 
-Output a short 推理提纲 first, then a readable Chinese answer. Do not use concept names as conclusions. If a high-risk concept carries the judgment, read the matching card under `skills/crossframe/references/concept-cards/` and run `skills/crossframe/worksheets/concept-fidelity-check.md`.
+Output a short 推理提纲 first, then a readable Chinese answer. Do not use concept names as conclusions. If a high-risk concept carries the judgment, read the matching card under `skills/crossframe/references/concept-cards/` and use `skills/crossframe/references/integrity-check.md` as the one-stop concept fidelity and source-continuity check.
 
 Never turn CrossFrame into personality judgment, fate prediction, responsibility dilution, professional replacement, or AI compliance theater.
 

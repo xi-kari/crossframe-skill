@@ -12,4 +12,4 @@ Then route to the required sibling skills only. Start with a short `调度提纲
 
 For any CrossFrame content task through Suite, finish the needed sibling skills first, then append `crossframe-essay -> crossframe-review` and use `full-visible-v3-longform`: complete visible 3.0 dossier plus complete long-form article. Only skip the article layer when the user explicitly says only/no article/short answer/table/checklist/pure diagnosis/action plan only.
 
-For high-responsibility, public, intimate, long-evolution, deep-analysis, or article workflows, ensure the underlying `crossframe` step reads `continuity-bundles.md` and performs `source-continuity-check.md`; include the triggered continuous reading bundles in the dispatch outline.
+For high-responsibility, public, intimate, long-evolution, deep-analysis, or article workflows, ensure the underlying `crossframe` step reads `integrity-check.md`; include the triggered continuous reading bundles in the dispatch outline and expand `continuity-bundles.md` / `source-continuity-check.md` only when an audit needs details.

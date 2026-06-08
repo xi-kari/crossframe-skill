@@ -26,6 +26,7 @@
 - 用户显式调用 `crossframe-suite` 后，多 skill 连续任务仍然先读取 `skills/crossframe-suite/SKILL.md`；suite 可以按 routing map 联合读取 sibling skill，但不替代专项 skill。
 - `crossframe-suite` 是显式调用后的推荐总入口；只要从总入口进入，默认在必要专项 skill 后追加 `crossframe-essay -> crossframe-review`，输出档位为 `full-visible-v3-longform / 3.0混合长文`。
 - `crossframe-critical` 不进入总入口调度。只有用户明确写 `$crossframe-critical`、`crossframe-critical` 或要求测试这个批判 skill 时才读取它。
+- 当前仓库只包含 12 个 CrossFrame skill；其它仓库的 `crossframe-code` 与 `crossframe-coder` 不属于本适配范围。
 - 只有用户明确说“只要/不要文章/短答/表格/清单/纯诊断/仅行动方案”时，才关闭默认文章层。
 - 若需要更新框架主体，优先更新 `skills/crossframe/`，再回填薄适配层。
 - 若需要更新文章写作主体，优先更新 `skills/crossframe-essay/`，并确认它仍通过相对路径读取 `skills/crossframe/`。
@@ -35,7 +36,7 @@
 - 直接引用必须可核验；不确定原句时只做意译、典故或思想映射。
 - 现代编辑同志口吻是前台声口层，不改变结构判断；亲切不能和稀泥，严厉不能人格审判。
 - 高风险概念必须按需读取 `skills/crossframe/references/concept-cards/`，不要只按字面理解。
-- 防失真材料以 `skills/crossframe/references/read-routing-map.md`、`skills/crossframe/references/v3-term-fidelity.md`、`skills/crossframe/references/continuity-bundles.md`、`skills/crossframe/references/v3-source-spine.md`、`skills/crossframe/references/v3-section-digest-index.md`、`skills/crossframe/worksheets/concept-fidelity-check.md` 和 `skills/crossframe/worksheets/source-continuity-check.md` 为入口。
+- 防失真材料日常以 `skills/crossframe/references/integrity-check.md` 为入口；需要展开审计或追踪原文结构时，再查看 `skills/crossframe/references/read-routing-map.md`、`skills/crossframe/references/v3-term-fidelity.md`、`skills/crossframe/references/continuity-bundles.md`、`skills/crossframe/references/v3-source-spine.md`、`skills/crossframe/references/v3-section-digest-index.md`、`skills/crossframe/worksheets/concept-fidelity-check.md` 和 `skills/crossframe/worksheets/source-continuity-check.md`。
 - 高责任、公共制度、亲密关系、长期演化、深度分析和文章输出场景，不能只读单张概念卡；必须检查对应 3.0 连续联读包。
 - 深水区模块以命题验证、高反身性、亲密关系轻量入口、疗愈转移、公共制度专项、框架边界、生命周期、递进闭环、势场解离、治理连续性、超大规模压力测试、表达翻译和理论后台索引为入口。
 - `skills/crossframe/references/v3-coverage-map.md` 用于维护时核对 v3.0 覆盖状态，不作为普通输出材料。
@@ -45,7 +46,7 @@
 | 接口 | 入口文件 | 说明 |
 | --- | --- | --- |
 | Codex | `skills/crossframe*/` | 可直接用 skill-installer 安装；安装后不被动触发，需用户显式点名；suite 显式启动后仍可联合调用 sibling skill |
-| Claude Code | `.claude/skills/crossframe*/SKILL.md` + `.claude/commands/crossframe*.md` + `CLAUDE.md` | 禁止自动触发 skill；通过 `/crossframe`、`/crossframe-explain`、`/crossframe-audit`、`/crossframe-essay` 或明确点名启动 |
+| Claude Code | `.claude/skills/crossframe*/SKILL.md` + `.claude/commands/crossframe*.md` + `CLAUDE.md` | 禁止自动触发 skill；通过 `/crossframe`、`/crossframe-suite`、`/crossframe-explain`、`/crossframe-audit`、`/crossframe-essay` 或明确点名启动 |
 | Gemini CLI | `GEMINI.md` | 仓库级上下文入口 |
 | Cursor | `.cursor/rules/crossframe-suite.mdc` + `.cursor/rules/crossframe.mdc` + `.cursor/rules/crossframe-essay.mdc` + `AGENTS.md` | 规则文件与通用入口 |
 | GitHub Copilot | `.github/copilot-instructions.md` | 仓库级说明 |
@@ -76,7 +77,7 @@
 
 1. `skills/crossframe-suite/SKILL.md` 与 `skills/crossframe-suite/references/workflow-routing-map.md`
 2. `skills/crossframe/SKILL.md`
-3. `skills/crossframe/references/read-routing-map.md`、`references/v3-term-fidelity.md`、`references/continuity-bundles.md`、`references/v3-source-spine.md`
+3. `skills/crossframe/references/integrity-check.md`、`skills/crossframe/references/read-routing-map.md`、`skills/crossframe/references/v3-term-fidelity.md`、`skills/crossframe/references/continuity-bundles.md`、`skills/crossframe/references/v3-source-spine.md`
 4. `skills/crossframe-essay/SKILL.md`
 5. 各 `skills/crossframe-*/SKILL.md`
 6. 各 `skills/crossframe-*/protocols/` 与 `references/`

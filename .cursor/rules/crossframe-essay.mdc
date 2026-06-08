@@ -13,11 +13,12 @@ Required flow:
 1. Read `skills/crossframe-essay/SKILL.md`.
 2. Read `skills/crossframe/SKILL.md`.
 3. Read `skills/crossframe/references/read-routing-map.md`.
-4. Route the topic through the appropriate CrossFrame protocol.
-5. Decide whether to search using `skills/crossframe-essay/references/evidence-and-search-rules.md`.
-6. If the topic needs depth, concept elevation, 引经据典, theory, or literary allusion, read `skills/crossframe-essay/protocols/concept-elevation-protocol.md`, `skills/crossframe-essay/references/reference-and-allusion-rules.md`, and `skills/crossframe-essay/references/concept-reference-map.md`.
-7. Automatic article mode reads `skills/crossframe-essay/protocols/editorial-comrade-voice-protocol.md` and `skills/crossframe-essay/references/editorial-voice-principles.md` by default; only close this voice for explicit neutral report, memo, table, pure diagnosis, or academic summary requests.
-8. Output a complete visible `结构洞察底稿` before a complete long-form `文章正文`; default output mode is `full-visible-v3-longform`.
+4. Read `skills/crossframe/references/integrity-check.md` to confirm the required concept cards, continuous-reading bundles, and downgrade conditions.
+5. Route the topic through the appropriate CrossFrame protocol.
+6. Decide whether to search using `skills/crossframe-essay/references/evidence-and-search-rules.md`.
+7. If the topic needs depth, concept elevation, 引经据典, theory, or literary allusion, read `skills/crossframe-essay/protocols/concept-elevation-protocol.md`, `skills/crossframe-essay/references/reference-and-allusion-rules.md`, and `skills/crossframe-essay/references/concept-reference-map.md`.
+8. Automatic article mode reads `skills/crossframe-essay/protocols/editorial-comrade-voice-protocol.md` and `skills/crossframe-essay/references/editorial-voice-principles.md` by default; only close this voice for explicit neutral report, memo, table, pure diagnosis, or academic summary requests.
+9. Output a complete visible `结构洞察底稿` before a complete long-form `文章正文`; default output mode is `full-visible-v3-longform`.
 
 Do not write only the article body, and do not let the dossier replace the body. Do not shrink automatic articles into short answers. Public/current/real-world topics require sources and evidence boundaries; private relationship, philosophical, and general essay topics do not browse by default unless requested.
 

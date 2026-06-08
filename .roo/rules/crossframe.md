@@ -15,10 +15,10 @@ Start from:
 - `skills/crossframe/SKILL.md`
 - `skills/crossframe/references/read-routing-map.md`
 
-Then load the specific routed files. Always produce a short visible 推理提纲 before the user-facing answer. Use plain Chinese; do not dump concepts. For high-risk concepts, read the corresponding concept card and run the concept-fidelity check.
+Then load the specific routed files. Always produce a short visible 推理提纲 before the user-facing answer. Use plain Chinese; do not dump concepts. For high-risk concepts, read the corresponding concept card and use `skills/crossframe/references/integrity-check.md` for the merged concept-fidelity check.
 
 
-For v3.0 source fidelity, high-responsibility, public institution, intimate relationship, long-term evolution, deep analysis, AI compliance, weak-signal, no-institution, trapped-subject, toolization, or essay/article tasks must read `skills/crossframe/references/continuity-bundles.md`; when needed, read `skills/crossframe/references/v3-source-spine.md`, `skills/crossframe/references/v3-section-digest-index.md`, `skills/crossframe/references/v3-term-fidelity.md`, and run `skills/crossframe/worksheets/source-continuity-check.md`. Do not rely on one isolated concept card for these cases.
+For v3.0 source fidelity, high-responsibility, public institution, intimate relationship, long-term evolution, deep analysis, AI compliance, weak-signal, no-institution, trapped-subject, toolization, or essay/article tasks must read `skills/crossframe/references/integrity-check.md`; when expanded audit is needed, read `skills/crossframe/references/continuity-bundles.md`, `skills/crossframe/references/v3-source-spine.md`, `skills/crossframe/references/v3-section-digest-index.md`, `skills/crossframe/references/v3-term-fidelity.md`, and run `skills/crossframe/worksheets/source-continuity-check.md`. Do not rely on one isolated concept card for these cases.
 
 Hard limits: no personality judgment, no fate prediction, no responsibility dilution, no professional replacement, no AI compliance theater.
 

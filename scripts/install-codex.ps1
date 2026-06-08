@@ -1,5 +1,5 @@
 param(
-  [string]$Repo = "xixilove486/crossframe-skill"
+  [string]$Repo = "xi-kari/crossframe-skill"
 )
 
 $ErrorActionPreference = "Stop"
