@@ -6,11 +6,11 @@
 
 ## 0. 模式与角色判定（强制交互）
 
-读取 `../crossframe-suite/references/output-mode-selector.md`，根据用户触发词自动判定本次的 output_mode（保守/客观/激进/批判）和 role（学术专家/实践工匠/战略决策者/大众传播/批判反思者/未来探索者）。
+读取 `../crossframe-suite/references/output-mode-selector.md`，根据用户触发词自动判定本次的 output_mode（保守/客观/激进/批判）、role（学术专家/实践工匠/战略决策者/大众传播/批判反思者/未来探索者）和 `topic_sensitivity`（low/normal/vulnerable/high-stakes）。
 
 **若用户在本次对话中未使用任何触发关键词（保守、客观、激进、批判、学术、实操、战略、通俗、批判反思、未来、1-6 数字加模式组合），AI 必须主动展示 `../crossframe-suite/templates/mode-selection-dialog.md` 弹窗，并在此处停止，等待用户回复后再继续。**
 
-即使用户只说了一句"分析一下这个现象"，没有提任何模式或角色，也必须先弹出选项。不得以"用户没说"为由跳过弹窗、直接使用默认值跑完全程。默认值（客观/学术专家）仅在以下情况生效：用户明确回复"默认"、或以"直接开始/随便/都行/不用选"等措辞表示不需要选择。
+即使用户只说了一句"分析一下这个现象"，没有提任何模式或角色，也必须先弹出选项。不得以"用户没说"为由跳过弹窗、直接使用默认值跑完全程。默认值（客观/学术专家）仅在以下情况生效：用户明确回复"默认"、或以"直接开始/随便/都行/不用选"等措辞表示不需要选择。`topic_sensitivity` 不需要用户选择，由题材自动判定；若出现痛苦、绝望、创伤、无法退出、求助暗示或高责任现实处置，必须显式写入调度提纲。
 
 ## 1. 判断任务主目标
 
@@ -93,13 +93,14 @@
 
 ## 4.1 声口传递规则
 
-只要 suite 没有被用户显式关闭文章层，就把 `voice_mode` 传给 `crossframe-essay`：
+只要 suite 没有被用户显式关闭文章层，就把 `voice_mode` 和 `topic_sensitivity` 一起传给 `crossframe-essay`：
 
-- `editorial-reply`：读者提问、关系困惑、组织困惑、怎么办/怎么看/为什么会这样。
-- `editorial-commentary`：公共评论、思想文章、制度评论、概念文章。
-- `editorial-base`：其它开放式可读分析。
+- `neutral-analysis`：学术专家/批判反思者默认使用。允许清楚、平实、有正常温度；不启用现代编辑底色。
+- `neutral-decisive`：实践工匠/战略决策者默认使用。可以给出优先级、步骤和止损条件。
+- `editorial-reply`：大众传播或用户显式要求亲切/编辑口吻时，用于读者提问、关系困惑、组织困惑、怎么办/怎么看/为什么会这样。
+- `editorial-commentary`：大众传播/未来探索者或用户显式要求时，用于公共评论、思想文章、制度评论、概念文章。
 
-这些模式都必须读取 `../crossframe-essay/protocols/editorial-comrade-voice-protocol.md` 与 `../crossframe-essay/references/editorial-voice-principles.md`。声口只改变前台表达，不改变事实边界、概念保真、连续联读包和判断档位。
+这些声口只改变前台表达，不改变事实边界、概念保真、连续联读包和判断档位。若未启用编辑底色的角色因为 `topic_sensitivity=vulnerable` 需要明显共情承接，或因为论证需要拆题/改良版选项，必须在底稿中声明原因和边界。`topic_sensitivity=high-stakes` 默认优先审计型底稿，不用文章温度覆盖判断责任。
 
 ## 4.2 输出档位规则
 
