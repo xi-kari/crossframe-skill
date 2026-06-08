@@ -1,7 +1,7 @@
 ---
 name: crossframe-suite
-description: "CrossFrame Suite explicit-only router. Use only when the user explicitly names crossframe-suite, $crossframe-suite, /crossframe-suite, or asks to use the CrossFrame suite; do not trigger implicitly for ordinary analysis, writing, public, organization, debate, teaching, reading, or review tasks. After explicit invocation, it routes sibling CrossFrame skills and decides where to stop."
-disable-model-invocation: true
+description: CrossFrame Suite 是 CrossFrame skill family 的总调度入口。仅通过 /crossframe-suite 斜杠命令触发，不被任何自然语言被动触发。内部调度全部 12 个 skill 的读取顺序和工作流。
+trigger: slash-only
 ---
 
 # CrossFrame Suite
@@ -14,13 +14,15 @@ disable-model-invocation: true
 
 它不复制 `crossframe`、`crossframe-essay` 或其它平行 skill 的正文。中文为权威语义；英文只作 skill id、文件名和对外传播名。
 
-当任务触发 CrossFrame 主体时，suite 还要把 `../crossframe/references/continuity-bundles.md` 纳入调度判断：本次是否需要按 v3.0 原文连续板块联读，而不是只读单个概念卡。v2.0 文件只作为历史基线；默认以 v3.0 源结构为准。
+> **本 skill 仅通过 `/crossframe-suite` 斜杠命令触发。** 不被"用 CrossFrame""crossframe""结构诊断""用框架分析"等任何自然语言被动触发，也不被"分析一下""怎么看""讲讲""写一下"等日常用语触发。唯一入口是用户输入 `/crossframe-suite` 命令。
 
-## 显式调用后的总入口
+当任务触发 CrossFrame 主体时，suite 还要把 `../crossframe/references/integrity-check.md` 纳入调度判断：本次是否需要按 v3.0 原文连续板块联读，而不是只读单个概念卡。integrity-check.md 合并了联读包索引、概念保真检查和源结构连续性检查的完整入口。v2.0 文件只作为历史基线；默认以 v3.0 源结构为准。
 
-只有用户显式调用 `crossframe-suite`、`$crossframe-suite`、`/crossframe-suite` 或明确要求使用 CrossFrame Suite 时，才从本 skill 进入。进入之后，优先由本 skill 调度；只有任务非常单一且用户点名了专项 skill 时，才直接使用对应专项 skill。
+## 调用方式
 
-当用户通过本 skill 作为总入口提出任何 CrossFrame 内容任务时，默认最终都生成**3.0 混合长文**，输出档位为 `full-visible-v3-longform`：完整可见底稿 + 完整长文正文。专项产物可以先生成，但最后默认进入文章层。
+用户输入斜杠命令 `/crossframe-suite` 进入本 skill。这是唯一入口——不被任何自然语言触发。suite 被激活后，读取 dispatch 协议、弹出模式/角色选择器、按路由调度子 skill。
+
+当用户通过本 skill 作为入口提出任何 CrossFrame 内容任务时，默认最终都生成**3.0 混合长文**，输出档位为 `full-visible-v3-longform`：完整可见底稿 + 完整长文正文。所有任务走同一完整链路，不做深度分级。框架谦逊地接住每一个问题。
 
 ```text
 crossframe -> [needed sibling skills] -> crossframe-essay(full-visible-v3-longform) -> crossframe-review
@@ -36,30 +38,9 @@ crossframe -> [needed sibling skills] -> crossframe-essay(full-visible-v3-longfo
 
 ## 何时使用
 
-当任务不是单一诊断，而可能需要多个 CrossFrame skill 连续协作时，优先使用本 skill：
+用户输入斜杠命令 `/crossframe-suite` 时。这是唯一入口。不存在其他触发途径——没有自然语言关键词、没有被动匹配、没有 AI 主动建议。
 
-- 用户希望使用 CrossFrame，但没有指定具体子 skill。
-- 用户只说“分析一下/怎么看/讲讲/写一下”，且更像想看一段可读输出。
-- 写文章、评论、思想文章、公共评论、组织复盘文章。
-- 答读者问、编辑回信、咨询式回应，但问题背后有结构诊断。
-- 把材料整理成案例，再写分析或沉淀概念。
-- 读书、理论、文章研究笔记，需要比较与 CrossFrame 的关联和不同。
-- 命题辩论后需要成文、给结论或写反驳。
-- 先生成输出，再评审它是否真的推理。
-- 用户说“这些 skill 应该一起用”“连续触发”“总规则”“总入口”“怎么组合调用”。
-
-若任务非常单一，直接使用对应专项 skill，不要绕行：
-
-- 只要结构诊断：`../crossframe/SKILL.md`
-- 只要文章：`../crossframe-essay/SKILL.md`
-- 只要评审：`../crossframe-review/SKILL.md`
-- 只要短答复：`../crossframe-dialogue/SKILL.md`
-- 只要案例库：`../crossframe-casebook/SKILL.md`
-- 只要公共议题证据边界：`../crossframe-public/SKILL.md`
-- 只要组织修复备忘录：`../crossframe-org/SKILL.md`
-- 只要概念教学：`../crossframe-teach/SKILL.md`
-- 只要命题论证：`../crossframe-debate/SKILL.md`
-- 只要读书研究笔记：`../crossframe-notebook/SKILL.md`
+**所有 CrossFrame 任务统一从本 skill 进入。** suite 被激活后判断工作流，内部调度全部 12 个 skill。用户无需知道子 skill 名称。
 
 ## 必须读取
 
@@ -77,7 +58,7 @@ crossframe -> [needed sibling skills] -> crossframe-essay(full-visible-v3-longfo
 - 场景追加：只读取本次必要的专项 skill，不把全部 skill 一起触发。
 - 成文后置：写文章前先有结构洞察底稿；公共、组织、辩论、读书等专项判断先完成，再进入 `crossframe-essay`。
 - 默认成文：suite 被触发时，最终输出默认走 `crossframe-essay`，输出档位固定为 `full-visible-v3-longform`；专项产物先做，文章后置。
-- 默认声口：suite 默认成文时，必须把“现代编辑底色”传给 `crossframe-essay`。问题型主题用答复体；公共评论、思想文章和概念文章用评论体；只有用户显式要求中性报告/备忘录/表格/纯诊断时才关闭文章声口。
+- 声口由角色决定：在 v3.1 中，声口不再默认传递，由 `output-mode-selector.md` 中的角色自动决定：学术专家/批判反思者→中性分析体；大众传播/未来探索者→按需启用编辑底色（答复体/评论体）。用户显式要求"亲切/编辑口吻"时覆盖以上默认。
 - 长文契约：任何从 suite 进入、且未显式关闭文章层的 CrossFrame 内容任务，默认不是短答，不得用项目符号诊断、摘要式回答或“如果只要一句话”替代完整正文。
 - 成文边界：默认对所有 CrossFrame 内容任务成文；只有用户用“只要/不要文章/短答/表格/清单/纯诊断/仅行动方案”等词明确关闭时，才关闭文章层。
 - 源连续性：高责任、公共制度、亲密关系、长期演化、深度分析、框架治理、AI 现实验证、弱信号/不透明、无法退出和文章输出，要在调度中列出本次触发的 v3.0 连续联读包；不要只列概念卡。
@@ -153,3 +134,6 @@ crossframe -> crossframe-notebook -> crossframe-essay -> crossframe-review
 - 禁止公共议题不查源却做强判断。
 - 禁止把 `crossframe-review` 当作形式收尾；它必须能否决坏输出。
 - 禁止让调度规则取代专项 skill 的协议。
+- 禁止以"问题简单/轻量"为由跳过完整诊断链或压缩长文输出。框架谦逊地接住每一个问题。
+- 禁止 AI 绕过 suite 直接调用任何子 skill。禁止因用户提到了子 skill 中的概念或场景就直接跳入该子 skill。所有 CrossFrame 任务必须经由 suite 入口统一调度。
+- 禁止 AI 在任何自然语言场景下主动触发 CrossFrame。suite 仅通过 /crossframe-suite 斜杠命令激活——不存在自然语言触发词。框架是工具——用户决定何时使用它。

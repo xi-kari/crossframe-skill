@@ -1,10 +1,13 @@
 ---
 name: crossframe-review
-description: "CrossFrame Review explicit-only audit skill. Use only when the user explicitly names crossframe-review, $crossframe-review, /crossframe-review, or asks to use CrossFrame Review; do not trigger implicitly for ordinary reviews, critiques, audits, grading, smoke tests, or repair tasks. Suite-directed use after an explicit crossframe-suite invocation is allowed."
-disable-model-invocation: true
+description: 经由 crossframe-suite 调度使用，不独立响应。审查 AI 输出、结构诊断、中文文章、审计稿或修复稿是否真正执行 CrossFrame 推理的平行评审 skill。
+trigger: suite-only
 ---
 
 # CrossFrame Review
+
+
+> **本 skill 不独立触发。** 所有 CrossFrame 任务统一从 `crossframe-suite` 入口调度。用户无需直接调用本 skill；suite 根据路由规则在需要时自动加载。
 
 如果评审对象来自多个 CrossFrame skill 的连续工作流，先读取 `../crossframe-suite/SKILL.md` 还原应有调度链，再判断是否有漏触发、误触发或跳过质量闸。
 
@@ -16,8 +19,8 @@ disable-model-invocation: true
 
 1. 读取 `../crossframe/SKILL.md`。
 2. 读取 `../crossframe/references/read-routing-map.md`。
-3. 读取 `../crossframe/references/continuity-bundles.md`，判断本应触发哪些 v3.0 连续联读包。
-4. 若评审对象是深度、审计、高责任、公共制度、亲密关系、长期演化或文章类输出，按需读取 `../crossframe/worksheets/source-continuity-check.md`。
+3. 读取 `../crossframe/references/integrity-check.md`，判断本应触发哪些 v3.0 连续联读包。
+4. 若评审对象是深度、审计、高责任、公共制度、亲密关系、长期演化或文章类输出，按需查阅 `../crossframe/references/integrity-check.md`（已被 integrity-check.md 取代，保留为历史详参）。
 5. 若评审对象是文章、长文、评论、思想文章、报刊答复或“现代编辑同志口吻”输出，按需读取 `../crossframe-essay/SKILL.md`。
 6. 读取本目录的 `protocols/review-protocol.md` 和 `templates/review-report.md`。
 7. 若涉及文章底稿、引用、检索材料或声口，追加读取 `protocols/article-review-protocol.md`。

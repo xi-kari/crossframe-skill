@@ -1,10 +1,13 @@
 ---
 name: crossframe
-description: "CrossFrame explicit-only structural diagnosis skill for 跨尺度结构诊断框架 v3.0. Use only when the user explicitly names crossframe, $crossframe, /crossframe, CrossFrame, or says to use 跨尺度结构诊断; do not trigger implicitly from ordinary relationship, team, organization, public, philosophy, or long-term analysis requests. Suite-directed use after an explicit crossframe-suite invocation is allowed."
-disable-model-invocation: true
+description: 经由 crossframe-suite 调度使用，不独立响应。"跨尺度结构诊断框架 v3.0"的中文结构推理协议型 skill，用于诊断关系、团队、组织、制度、公共争议和长期演化中的复杂失衡。
+trigger: suite-only
 ---
 
 # CrossFrame
+
+
+> **本 skill 不独立触发。** 所有 CrossFrame 任务统一从 `crossframe-suite` 入口调度。用户无需直接调用本 skill；suite 根据路由规则在需要时自动加载。
 
 如果用户任务需要多个 CrossFrame 平行 skill 连续协作，先读取 `../crossframe-suite/SKILL.md` 做总调度；本 skill 负责其中的结构诊断、事实边界、尺度窗口、机制候选和判断档位。
 
@@ -30,14 +33,14 @@ CrossFrame 不是“把 v3.0 文本塞进上下文”的提示词包，而是一
 4. 通过五闸：对象闸、证据闸、尺度闸、责任闸、观测闸。
 5. 形成至少两个机制候选；除非证据足以说明只有一个机制。
 6. 对承担判断作用的概念做完整吸收：读取对应概念卡，并用 `worksheets/concept-fidelity-check.md` 做保真检查。
-7. 做源结构连续性检查：读取 `references/continuity-bundles.md`，必要时读取 `references/v3-source-spine.md` 和 `references/v3-section-digest-index.md`，再用 `worksheets/source-continuity-check.md` 判断是否只读了孤立概念卡；需要版本演化对照时再读取 v2 历史基线。
+7. 做完整性检查：读取 `references/integrity-check.md`，检查概念卡和联读包是否读全。`v3-source-spine.md`、`v3-section-digest-index.md`、`continuity-bundles.md` 保留为历史详参，日常不再强制读取。需要版本演化对照时再读取 v2 历史基线。
 8. 决定判断档位：轻量观察、开放断言、完整诊断、强判断、低条件试探行动、退出转移。若必须联读但未联读，不能维持强判断。
 9. 先输出可见推理提纲，再选择模板输出：先说现实语言，再按需要附内部映射。
 
 ## 读取规则
 
 - 普通诊断：读 `protocols/diagnosis-protocol.md`，并使用 `worksheets/intake-worksheet.md`、`worksheets/five-gates-worksheet.md`、`worksheets/evidence-ledger.md`、`worksheets/mechanism-candidates.md`。
-- 推演、后续走向、路径展开、分支终点：读 `protocols/inference-protocol.md` 和 `templates/inference-output.md`。
+- 推演、后续走向、路径展开、分支终点：读 `protocols/inference-protocol.md` 和 `templates/inference-output.md`。若通过 mode-selector 选择了未来探索者角色，自动触发此路由。
 - 低到中等把握的判断：读 `protocols/open-assertion-protocol.md`、`worksheets/open-assertion-record.md` 和 `templates/open-assertion-output.md`。
 - 高责任、强权力密度、处分、名誉、权利、资源、公共记忆类问题：读 `protocols/anti-capture-protocol.md` 和 `worksheets/high-responsibility-check.md`。
 - 影响资格、名誉、资源、权利、处置、公共记忆的强判断：读 `protocols/proposition-verification-protocol.md`、`worksheets/proposition-verification.md`、`worksheets/prospective-registration.md` 和 `templates/strong-judgment-output.md`。
@@ -59,8 +62,7 @@ CrossFrame 不是“把 v3.0 文本塞进上下文”的提示词包，而是一
 - 文明尺度、长期演化、制度生成、系统持续性、多中心治理或用户要求深层理论时：先读对应专项协议；需要根假设和核心推论时再读 `references/theory-backend-index.md`；不要让理论后台进入普通前台输出。
 - 如果最终输出要使用承接/回流、开放断言、尺度转移、观测反身性、权力封闭、低条件试探行动、爱/开放行动、主体/责任链、证据成本、机制候选、判断档位、退出转移、修复副产品等高风险概念，必须先读取对应概念卡；不能只凭最小概念集作精细判断。
 - 如果高风险概念属于 v3.0 原文连续板块，必须按 `references/continuity-bundles.md` 读取对应联读包；不能只读单张概念卡就下结论。
-- 输出前使用 `worksheets/concept-fidelity-check.md` 检查：本次概念是否读全、是否保留中文语义、是否落回现实行为、是否避免压缩失真。
-- 输出前使用 `worksheets/source-continuity-check.md` 检查：本次判断是否漏读原文相邻约束、是否触发必须联读包、是否需要降档。
+- 输出前使用 `references/integrity-check.md` 做一次性完整性检查（替代分别读取 concept-fidelity-check 和 source-continuity-check）。
 
 ## 输出规则
 
@@ -91,6 +93,7 @@ CrossFrame 不是“把 v3.0 文本塞进上下文”的提示词包，而是一
 2. 用户是否能知道这个判断来自哪些事实，而不是来自概念套用？
 3. 是否把“承接、回流、尺度、开放断言”等术语翻译成了现实行为？
 4. 是否给出了一个可观察信号或行动边界？
+5.（实质闸 S-Gate）即使形式推理全部正确（对象对、边界清、机制齐、档位匹配、术语保真），核心判断仍可能因为什么而错误？
 
 任一不通过，先重写表达，再输出。
 
@@ -115,7 +118,8 @@ CrossFrame 不是“把 v3.0 文本塞进上下文”的提示词包，而是一
 - `references/v3-source-spine.md`：v3.0 原文标题层级、章节顺序、相邻关系和承接状态。
 - `references/v3-section-digest-index.md`：v3.0 逐节保真摘要、不可误读边界和相邻联读提醒。
 - `references/v3-change-rationale-from-patch.md`：补丁稿到 v3.0 新增模块的承接说明。
-- `references/continuity-bundles.md`：v3.0 原文中不能拆散读取的连续联读包。
+- `references/integrity-check.md`：完整性检查（合并联读包、概念保真、源连续性为单一入口）。v3.1 日常使用优先读取本文件。
+- `references/continuity-bundles.md`：v3.0 原文中不能拆散读取的连续联读包（历史详参，已被 integrity-check.md 取代）。
 - `references/concepts-minimal-set.md`：最小概念集。
 - `references/v3-term-fidelity.md`：v3.0 新增术语保真表，防止压缩失真。
 - `references/v2-term-fidelity.md`：v2.0 核心术语保真表，作为历史基线保留。

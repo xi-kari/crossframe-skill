@@ -44,6 +44,12 @@ CrossFrame 是一组给 AI 用的中文 skills。整套 skill 只能显式触发
 
 这一版又补了一层“3.0 源结构连续性”：CrossFrame 不把 `跨尺度结构诊断框架v3.0.docx` 整篇粗暴塞进上下文，但会保存它的章节脊柱、逐节摘要和必须联读的连续板块。这样拆成 skill 以后，AI 不会只读一张概念卡就下判断。
 
+## 本次同步说明
+
+2026-06-09 这一版按本地安装版和 `crossframe-skill.tar.gz` 打包版同步 12 个 CrossFrame skill。同步范围只包括本仓库所属的 `crossframe`、`crossframe-suite`、`crossframe-essay`、`crossframe-critical`、`crossframe-review`、`crossframe-dialogue`、`crossframe-casebook`、`crossframe-public`、`crossframe-org`、`crossframe-teach`、`crossframe-debate`、`crossframe-notebook`。
+
+本次没有把其它仓库的 `crossframe-code` 或 `crossframe-coder` 合入这里。主要说明变化是：保留显式调用边界，同时恢复本地版的完整长文默认链路、模式/角色选择器，以及 `integrity-check.md` 作为联读包、概念保真和源结构连续性的合并检查入口。
+
 显式调用之后，仓库里这组平行 skill 仍然可以由 `crossframe-suite` 调度。`suite` 显式启动后的内部联合调用不算被动触发：
 
 - `crossframe-suite`：显式调用后的推荐总入口，用于判断一个任务应该连续读取哪些 sibling skill，以及按什么顺序执行。只要从总入口进入，默认最终都输出 `full-visible-v3-longform / 3.0混合长文`：完整可见底稿 + 完整长文正文；评审、案例库、备忘录、表格或行动清单会先做，再默认转成文章，除非你明确说“只要/不要文章/短答”。

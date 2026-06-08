@@ -83,9 +83,15 @@ def main() -> int:
             print(f"bundle missing in read-routing-map: {bundle_id}")
             return 1
 
-    for required in ["source-continuity-check.md", "continuity-bundles.md", "v2-source-spine.md"]:
-        if required not in routing_text + suite_text + review_text:
-            print(f"adapter route missing reference: {required}")
+    adapter_text = routing_text + suite_text + review_text
+    required_routes = [
+        ("source-continuity-check.md", "integrity-check.md"),
+        ("continuity-bundles.md",),
+        ("v2-source-spine.md",),
+    ]
+    for alternatives in required_routes:
+        if not any(required in adapter_text for required in alternatives):
+            print(f"adapter route missing reference: {' or '.join(alternatives)}")
             return 1
 
     print("ok: v2.0 source continuity files match DOCX heading structure")

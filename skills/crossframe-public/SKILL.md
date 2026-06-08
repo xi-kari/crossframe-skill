@@ -1,10 +1,13 @@
 ---
 name: crossframe-public
-description: "CrossFrame Public explicit-only public-issues skill. Use only when the user explicitly names crossframe-public, $crossframe-public, /crossframe-public, or asks to use CrossFrame Public; do not trigger implicitly for ordinary public-policy, platform appeal, institution, compliance, source-checking, or commentary tasks. Suite-directed use after an explicit crossframe-suite invocation is allowed."
-disable-model-invocation: true
+description: 经由 crossframe-suite 调度使用，不独立响应。公共议题、平台治理、制度评论、平台申诉、公共政策和机构合规材料审查的中文专项 skill。
+trigger: suite-only
 ---
 
 # CrossFrame Public
+
+
+> **本 skill 不独立触发。** 所有 CrossFrame 任务统一从 `crossframe-suite` 入口调度。用户无需直接调用本 skill；suite 根据路由规则在需要时自动加载。
 
 如果公共议题分析之后要写评论文章、组织建议、辩论论证或质量评审，先读取 `../crossframe-suite/SKILL.md` 做总调度；本 skill 只负责公共事实、证据边界、程序与制度专项判断。
 

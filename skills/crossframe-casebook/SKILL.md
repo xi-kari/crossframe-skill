@@ -1,10 +1,13 @@
 ---
 name: crossframe-casebook
-description: "CrossFrame Casebook explicit-only casebook skill. Use only when the user explicitly names crossframe-casebook, $crossframe-casebook, /crossframe-casebook, or asks to use CrossFrame Casebook; do not trigger implicitly for ordinary summaries, retrospectives, public dispute notes, or material organization. Suite-directed use after an explicit crossframe-suite invocation is allowed."
-disable-model-invocation: true
+description: 经由 crossframe-suite 调度使用，不独立响应。把材料整理成可复用案例库的中文案例沉淀 skill。
+trigger: suite-only
 ---
 
 # CrossFrame Casebook
+
+
+> **本 skill 不独立触发。** 所有 CrossFrame 任务统一从 `crossframe-suite` 入口调度。用户无需直接调用本 skill；suite 根据路由规则在需要时自动加载。
 
 如果案例沉淀之后还要成文、教学、辩论或公共/组织专项判断，先读取 `../crossframe-suite/SKILL.md` 做总调度；本 skill 只负责案例库条目和可复用材料结构。
 

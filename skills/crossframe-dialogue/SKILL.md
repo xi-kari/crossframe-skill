@@ -1,10 +1,13 @@
 ---
 name: crossframe-dialogue
-description: "CrossFrame Dialogue explicit-only short Chinese structural reply skill. Use only when the user explicitly names crossframe-dialogue, $crossframe-dialogue, /crossframe-dialogue, or asks to use CrossFrame Dialogue; do not trigger implicitly for ordinary advice, reader replies, editor letters, or consultation-style answers. Suite-directed use after an explicit crossframe-suite invocation is allowed."
-disable-model-invocation: true
+description: 经由 crossframe-suite 调度使用，不独立响应。面向答读者问、编辑回信、咨询式回应和短意见回复的中文结构答复 skill。
+trigger: suite-only
 ---
 
 # CrossFrame Dialogue
+
+
+> **本 skill 不独立触发。** 所有 CrossFrame 任务统一从 `crossframe-suite` 入口调度。用户无需直接调用本 skill；suite 根据路由规则在需要时自动加载。
 
 如果用户要把短答复扩成长文、公共评论、组织备忘录或案例沉淀，先读取 `../crossframe-suite/SKILL.md` 做总调度；本 skill 只负责短答复、编辑回信和咨询式回应。
 

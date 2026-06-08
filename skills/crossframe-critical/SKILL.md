@@ -1,10 +1,13 @@
 ---
 name: crossframe-critical
-description: "CrossFrame Critical explicit-only skill for writing Chinese structural critique essays from a CrossFrame diagnosis, with sharper attention to cost chains, benefit chains, ideology, alienation, reproduction mechanisms, and rhetorical concealment. Use only when the user explicitly invokes $crossframe-critical, says crossframe-critical, or clearly asks to test this critical parallel skill; do not trigger implicitly for ordinary CrossFrame, essay, public, or review tasks."
-disable-model-invocation: true
+description: 经由 crossframe-suite 调度使用，不独立响应。写中文结构批判文章的并行测试 skill。 Use only when the user explicitly invokes `$crossframe-critical`, says "crossframe-critical", or clearly asks to test this critical parallel skill; do not trigger implicitly for ordinary CrossFrame, essay, public, or review tasks.
+trigger: suite-only
 ---
 
 # CrossFrame Critical
+
+
+> **本 skill 不独立触发。** 所有 CrossFrame 任务统一从 `crossframe-suite` 入口调度。用户无需直接调用本 skill；suite 根据路由规则在需要时自动加载。
 
 This is a parallel local test skill. It does not replace `crossframe`, `crossframe-essay`, `crossframe-public`, or `crossframe-suite`.
 

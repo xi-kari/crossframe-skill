@@ -1,10 +1,13 @@
 ---
 name: crossframe-notebook
-description: "CrossFrame Notebook explicit-only reading and theory note skill. Use only when the user explicitly names crossframe-notebook, $crossframe-notebook, /crossframe-notebook, or asks to use CrossFrame Notebook; do not trigger implicitly for ordinary book, essay, theory, research-note, excerpt, comparison, or annotation tasks. Suite-directed use after an explicit crossframe-suite invocation is allowed."
-disable-model-invocation: true
+description: 经由 crossframe-suite 调度使用，不独立响应。读书、理论、文章研究笔记专项 skill，用于与 CrossFrame 双向互读。
+trigger: suite-only
 ---
 
 # CrossFrame Notebook
+
+
+> **本 skill 不独立触发。** 所有 CrossFrame 任务统一从 `crossframe-suite` 入口调度。用户无需直接调用本 skill；suite 根据路由规则在需要时自动加载。
 
 如果读书研究之后要成文、教学、辩论或评审，先读取 `../crossframe-suite/SKILL.md` 做总调度；本 skill 只负责读书/理论/文章研究笔记。
 

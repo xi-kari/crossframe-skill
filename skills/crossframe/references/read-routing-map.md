@@ -48,10 +48,10 @@
 
 ## 连续联读执行规则
 
-- 只要上表的“连续联读包”不是空，就先读 `references/continuity-bundles.md`，确认同读材料和降档规则。
-- 深度、审计、高责任、公共制度、亲密关系、长期演化、框架治理和文章输出场景，必须按需读 `references/v3-source-spine.md` 或 `references/v3-section-digest-index.md`，确认原文相邻章节。
+- 只要上表的“连续联读包”不是空，就先读 `references/integrity-check.md`，确认同读材料和降档规则。`continuity-bundles.md` 和 `v3-source-spine.md` 保留为历史详参，按需查阅。
+- 深度、审计、高责任、公共制度、亲密关系、长期演化、框架治理和文章输出场景，按需查阅 `references/v3-source-spine.md` 或 `references/v3-section-digest-index.md`（历史详参），确认原文相邻章节。日常完整性检查优先使用 `references/integrity-check.md`。
 - 若 v3.0 与 v2.0 的理解冲突，以 v3.0 为准；若需要追踪演化，再读取 `v2-source-spine.md`、`v2-section-digest-index.md` 和 `v3-change-rationale-from-patch.md`。
-- 输出前使用 `worksheets/source-continuity-check.md`：若发现只读了单张概念卡，且本文件要求联读，必须补读或降档。
+- 输出前使用 `references/integrity-check.md` 做完整性检查：若发现只读了单张概念卡，且本节要求联读，必须补读或降档。
 - `templates/reasoning-outline-output.md` 中的“本次连续联读包”只列包名，不展开完整工作表。
 
 ## 高风险概念触发

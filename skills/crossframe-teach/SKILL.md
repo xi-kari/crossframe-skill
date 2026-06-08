@@ -1,10 +1,13 @@
 ---
 name: crossframe-teach
-description: "CrossFrame Teach explicit-only concept teaching skill. Use only when the user explicitly names crossframe-teach, $crossframe-teach, /crossframe-teach, or asks to use CrossFrame Teach; do not trigger implicitly for ordinary concept explanations, exercises, examples, or theory-to-plain-language tasks. Suite-directed use after an explicit crossframe-suite invocation is allowed."
-disable-model-invocation: true
+description: 经由 crossframe-suite 调度使用，不独立响应。把 CrossFrame 概念讲给普通人的教学 skill。undefined。
+trigger: suite-only
 ---
 
 # CrossFrame Teach
+
+
+> **本 skill 不独立触发。** 所有 CrossFrame 任务统一从 `crossframe-suite` 入口调度。用户无需直接调用本 skill；suite 根据路由规则在需要时自动加载。
 
 如果概念教学要连接文章写作、案例沉淀、读书研究或输出评审，先读取 `../crossframe-suite/SKILL.md` 做总调度；本 skill 只负责教学解释、误读边界和练习。
 

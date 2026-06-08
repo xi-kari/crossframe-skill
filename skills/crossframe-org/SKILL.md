@@ -1,10 +1,13 @@
 ---
 name: crossframe-org
-description: "CrossFrame Org explicit-only organization repair skill. Use only when the user explicitly names crossframe-org, $crossframe-org, /crossframe-org, or asks to use CrossFrame Org; do not trigger implicitly for ordinary project review, team diagnosis, retrospective, responsibility-chain, authorization-chain, or pilot-design tasks. Suite-directed use after an explicit crossframe-suite invocation is allowed."
-disable-model-invocation: true
+description: 经由 crossframe-suite 调度使用，不独立响应。团队、项目、组织修复专项 skill。
+trigger: suite-only
 ---
 
 # CrossFrame Org
+
+
+> **本 skill 不独立触发。** 所有 CrossFrame 任务统一从 `crossframe-suite` 入口调度。用户无需直接调用本 skill；suite 根据路由规则在需要时自动加载。
 
 如果组织修复判断之后要写文章、沉淀案例、做辩论或评审输出，先读取 `../crossframe-suite/SKILL.md` 做总调度；本 skill 只负责团队、项目和组织修复专项。
 

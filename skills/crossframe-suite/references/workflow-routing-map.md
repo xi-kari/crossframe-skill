@@ -6,21 +6,21 @@
 
 | 用户目标 | 默认工作流 | 说明 |
 |---|---|---|
-| 结构诊断 | `crossframe -> crossframe-essay(full-visible-v3-longform, editorial-base) -> crossframe-review` | 先诊断，再默认成文；只有用户说“只要纯诊断/不要文章”才停在诊断。 |
-| 开放式可读分析 | `crossframe -> crossframe-essay(full-visible-v3-longform, editorial-base) -> crossframe-review` | 用户只说分析、怎么看、讲讲、写一下且未指定格式时，默认输出完整可见底稿 + 完整长文正文。 |
-| 普通洞察文章 | `crossframe -> crossframe-essay(full-visible-v3-longform, editorial-base) -> crossframe-review` | 先诊断，再完整底稿，再长文正文，再评审；默认不是短答或冷诊断腔。 |
+| 结构诊断 | `crossframe -> crossframe-essay(full-visible-v3-longform, voice=auto) -> crossframe-review` | 先诊断，再默认成文；只有用户说“只要纯诊断/不要文章”才停在诊断。 |
+| 开放式可读分析 | `crossframe -> crossframe-essay(full-visible-v3-longform, voice=auto) -> crossframe-review` | 用户只说分析、怎么看、讲讲、写一下且未指定格式时，默认输出完整可见底稿 + 完整长文正文。 |
+| 普通洞察文章 | `crossframe -> crossframe-essay(full-visible-v3-longform, voice=auto) -> crossframe-review` | 先诊断，再完整底稿，再长文正文，再评审；默认不是短答或冷诊断腔。 |
 | 公共评论文章 | `crossframe -> crossframe-public -> crossframe-essay -> crossframe-review` | 公共事实和证据边界必须在成文前完成。 |
 | 组织复盘文章 | `crossframe -> crossframe-org -> crossframe-essay -> crossframe-review` | 先看责任链、授权链、反馈写回，再成文。 |
-| 答读者问 | `crossframe -> crossframe-dialogue -> crossframe-essay(full-visible-v3-longform, editorial-reply) -> crossframe-review` | 先短答复接住问题，再默认扩成文章；只有明确要短答才停在 dialogue。 |
+- 不要因为短答复要有温度就跳过 crossframe-dialogue；dialogue 后若用户回复收束性措辞（好的/谢谢/明白了），视为已满足需求，不追成文章。只有用户明确说"展开/写详细/继续分析"时才进入 essay。
 | 编辑同志口吻长答 | `crossframe -> crossframe-dialogue -> crossframe-essay -> crossframe-review` | 先回信式判断，再扩成长文。 |
-| 案例沉淀 | `crossframe -> crossframe-casebook -> crossframe-essay(full-visible-v3-longform, editorial-base) -> crossframe-review` | 先沉淀案例，再默认成文。 |
+| 案例沉淀 | `crossframe -> crossframe-casebook -> crossframe-essay(full-visible-v3-longform, voice=auto) -> crossframe-review` | 先沉淀案例，再默认成文。 |
 | 案例后成文 | `crossframe -> crossframe-casebook -> crossframe-essay -> crossframe-review` | 案例是文章材料，不替代文章判断。 |
-| 概念教学 | `crossframe -> crossframe-teach -> crossframe-essay(full-visible-v3-longform, editorial-base) -> crossframe-review` | 先教学解释，再默认成文。 |
-| 命题辩论 | `crossframe -> crossframe-debate -> crossframe-essay(full-visible-v3-longform, editorial-base) -> crossframe-review` | 先拆命题和证据要求，再默认成文。 |
+| 概念教学 | `crossframe -> crossframe-teach -> crossframe-essay(full-visible-v3-longform, voice=auto) -> crossframe-review` | 先教学解释，再默认成文。 |
+| 命题辩论 | `crossframe -> crossframe-debate -> crossframe-essay(full-visible-v3-longform, voice=auto) -> crossframe-review` | 先拆命题和证据要求，再默认成文。 |
 | 辩论后成文 | `crossframe -> crossframe-debate -> crossframe-essay -> crossframe-review` | 论证完成后再写文章。 |
-| 读书研究 | `crossframe -> crossframe-notebook -> crossframe-essay(full-visible-v3-longform, editorial-base) -> crossframe-review` | 先输出关联、不同、可吸收处、冲突处，再默认成文。 |
+| 读书研究 | `crossframe -> crossframe-notebook -> crossframe-essay(full-visible-v3-longform, voice=auto) -> crossframe-review` | 先输出关联、不同、可吸收处、冲突处，再默认成文。 |
 | 读书后成文 | `crossframe -> crossframe-notebook -> crossframe-essay -> crossframe-review` | 研究笔记先于文章。 |
-| 评审已有输出 | `crossframe-review -> crossframe-essay(full-visible-v3-longform, editorial-base) -> crossframe-review-lite` | 先给评审结论，再默认写成可读文章；只有“只要评审/不要文章”才停在 review。 |
+| 评审已有输出 | `crossframe-review -> crossframe-essay(full-visible-v3-longform, voice=auto) -> crossframe-review-lite` | 先给评审结论，再默认写成可读文章；只有“只要评审/不要文章”才停在 review。 |
 
 ## 默认成文规则
 
@@ -41,12 +41,14 @@
 此时默认链路是：
 
 ```text
-crossframe -> source-continuity-check -> crossframe-essay(full-visible-v3-longform, editorial-base) -> crossframe-review
+crossframe -> source-continuity-check -> crossframe-essay(full-visible-v3-longform, voice=auto) -> crossframe-review
 ```
 
 `source-continuity-check` 不是独立 skill，而是 `crossframe` 内部的连续联读检查：读取 `continuity-bundles.md`，必要时读取 `v3-source-spine.md`、`v3-section-digest-index.md` 和 `v3-term-fidelity.md`。v2 文件只在需要历史版本对照时读取。
 
-`editorial-base` 表示自动成文默认启用 `crossframe-essay` 的现代编辑底色：先接住问题，再共同分析结构，必要时严厉批评不当做法，最后给出清醒、有分寸的意见。问题型主题用答复体；公共评论、思想文章、概念文章用评论体。只有用户明确要求中性报告、备忘录、表格、清单、纯诊断或学术摘要时，才关闭这一声口。
+`voice=auto` 表示自动成文默认启用 `crossframe-essay` 的现代编辑底色：先接住问题，再共同分析结构，必要时严厉批评不当做法，最后给出清醒、有分寸的意见。问题型主题用答复体；公共评论、思想文章、概念文章用评论体。只有用户明确要求中性报告、备忘录、表格、清单、纯诊断或学术摘要时，才关闭这一声口。
+
+`voice=auto` 表示声口由 `output-mode-selector.md` 中的角色自动决定。用户可显式指定覆盖。
 
 `full-visible-v3-longform` 表示底稿完整可见，至少展示对象、事实边界、尺度窗口、机制候选、v3 连续联读包、源结构保真、概念风险、反向条件、声口方案和文章转译方案；正文默认 1200-2200 中文字，有标题、铺陈、概念上升、经典/理论参照或思想映射、现实回落、边界段和余味结尾。
 
@@ -67,6 +69,7 @@ crossframe -> source-continuity-check -> crossframe-essay(full-visible-v3-longfo
 
 - 平台、政策、公共制度、公共承诺、申诉、封禁、处罚、合规、机构声明。
 - 最新事实、真实人物、真实公司、真实组织、公共争议。
+- **半公半私争议**：当议题涉及组织内部权力、晋升、分配但不到公共制度层面时，优先走 org。如果同时涉及外部合规/公众可见/平台规则，org 和 public 可并行加载——先 org 做内部责任链判断，再 public 做外部证据边界检查。链路：`crossframe -> crossframe-org -> crossframe-public -> crossframe-essay`。
 - 需要查源、证据边界、弱信号保护或反俘获。
 - 涉及 AI 合规文本、机构自评、恶意合规、可见性偏误或开放断言被处置化时，必须追加 v3.0 证据可见性包和权力捕获包。
 
@@ -110,13 +113,15 @@ crossframe -> source-continuity-check -> crossframe-essay(full-visible-v3-longfo
 
 - 教概念、讲给普通人、解释术语、做练习、误读纠偏。
 - 用户问“这个概念到底什么意思”。
+- 分析中发现用户困惑的根源是某个 CrossFrame 概念未被理解（如问题反复发生但反馈从来不落地 → 本质是承接/回流的概念死角），AI 应在回答中自动判断是否需要嵌入式概念解释，而不是另起独立 teach 输出。
 
 ### 追加 `crossframe-essay`
 
 - 写文章、长文、评论、随笔、思想文章、洞察文章、报刊答复体。
 - 用户要求概念上升、引经据典、现代编辑同志口吻。
-- suite 默认对任何 CrossFrame 内容任务都追加，并默认传入 `editorial-base` 声口要求；不要等用户再次说“请写成文章”。
+- suite 默认对任何 CrossFrame 内容任务都追加，并默认传入 `voice=auto` 声口要求；不要等用户再次说“请写成文章”。
 - suite 默认成文必须同时传入 `full-visible-v3-longform` 输出档位；不要把任何未显式关闭文章层的内容任务压缩成短答。
+- **debate 先行提议**：若文章中心命题涉及价值判断、因果归责或公共定性，在底稿完成后、正文写作前，主动询问用户："你的核心判断放到最挑剔的读者面前，最容易被攻击的点在哪？要不要我先帮你模拟一下正反双方，找出你论点最怕的证据？大概花几分钟，但能让结论更稳。"用户确认后才进入 debate 链路，不得默认跳过。
 
 ### 追加 `crossframe-review`
 
@@ -136,7 +141,6 @@ crossframe -> source-continuity-check -> crossframe-essay(full-visible-v3-longfo
 
 - 不要因为出现“公共”一词就读取全部公共协议；先判断是否涉及真实公共事实或制度责任。
 - 不要因为文章需要漂亮就读取 `notebook`；只有需要外部文本、理论参照或读书比较时才读。
-- 不要因为短答复要有温度就跳过 `dialogue`；但若用户没有明确要求“只要短答”，`dialogue` 后仍默认追加 `essay`。
 - 不要把 `review` 输出给用户，除非用户要求评审报告或发现硬失败。
 - 不要把所有 sibling skill 都列进“本次读取”，未读取的要写在“不读取”里。
 

@@ -1,10 +1,13 @@
 ---
 name: crossframe-essay
-description: "CrossFrame Essay explicit-only Chinese critical insight writing skill. Use only when the user explicitly names crossframe-essay, $crossframe-essay, /crossframe-essay, or asks to use CrossFrame Essay; do not trigger implicitly for ordinary writing, commentary, article, editing, or long-answer tasks. Suite-directed use after an explicit crossframe-suite invocation is allowed."
-disable-model-invocation: true
+description: 经由 crossframe-suite 调度使用，不独立响应。基于 CrossFrame 的中文批判性洞察文章写作 skill。默认先输出结构洞察底稿，再输出文章正文。
+trigger: suite-only
 ---
 
 # CrossFrame Essay
+
+
+> **本 skill 不独立触发。** 所有 CrossFrame 任务统一从 `crossframe-suite` 入口调度。用户无需直接调用本 skill；suite 根据路由规则在需要时自动加载。
 
 如果用户任务需要先诊断、再进入公共/组织/辩论/读书等专项判断，最后才成文，先读取 `../crossframe-suite/SKILL.md` 做总调度；本 skill 只负责文章底稿与正文生成。
 
@@ -25,12 +28,12 @@ CrossFrame Essay 是 `crossframe` 的平行写作 skill，不替代 `crossframe`
    - 互动打磨：给候选开头、中心命题和文章骨架，再逐段推进。
 2. 读取 `../crossframe/SKILL.md`。
 3. 读取 `../crossframe/references/read-routing-map.md`，把主题路由到相应 CrossFrame protocol。
-4. 读取 `../crossframe/references/continuity-bundles.md`，至少确认 `diagnosis-mainline-pack` 与 `expression-article-pack`；公共、亲密、长期演化或高责任主题追加对应联读包。
-5. 用 `../crossframe/worksheets/source-continuity-check.md` 检查是否只读了孤立概念卡；深度文章按需读取 `../crossframe/references/v3-source-spine.md`、`../crossframe/references/v3-section-digest-index.md` 或 `../crossframe/references/v3-term-fidelity.md`。
+4. 读取 `../crossframe/references/integrity-check.md`，至少确认 `diagnosis-mainline-pack` 与 `expression-article-pack`；公共、亲密、长期演化或高责任主题追加对应联读包。
+5. 用 `../crossframe/references/integrity-check.md` 做完整性检查；深度文章按需读取 `../crossframe/references/v3-source-spine.md`、`../crossframe/references/v3-section-digest-index.md` 或 `../crossframe/references/v3-term-fidelity.md`。
 6. 读取 `references/evidence-and-search-rules.md`，决定本次是否需要联网或查源。
 7. 按需读取 `references/critical-insight-principles.md`。
 8. 如果主题是思想文章、公共议题、复杂关系/组织文章，或用户要求深度、概念上升、引经据典，读取 `protocols/concept-elevation-protocol.md`、`references/reference-and-allusion-rules.md` 和 `references/concept-reference-map.md`。
-9. 自动成文默认读取 `protocols/editorial-comrade-voice-protocol.md` 和 `references/editorial-voice-principles.md`，并在底稿中写出 `正文声口方案`。如果用户明确要求中性报告、备忘录、表格、纯诊断或学术摘要，才可关闭现代编辑底色，并说明关闭原因。
+9. 声口由角色选择决定：学术专家/批判反思者→中性分析体（不启用现代编辑底色）；实践工匠/战略决策者→中性分析体（可带决定语气）；大众传播/未来探索者→按需启用现代编辑底色，读取 `protocols/editorial-comrade-voice-protocol.md` 和 `references/editorial-voice-principles.md`。用户显式要求"亲切/编辑口吻"时覆盖以上默认。若角色不启用编辑底色且用户未要求，则在底稿中说明"本次为中性分析体，不启用编辑底色"。
 10. 自动成文时读取 `protocols/essay-protocol.md`，互动打磨时读取 `protocols/interactive-drafting-protocol.md`。
 11. 先生成 `结构洞察底稿`，再从底稿转译出 `文章正文`。
 
@@ -41,7 +44,7 @@ CrossFrame Essay 是 `crossframe` 的平行写作 skill，不替代 `crossframe`
 - 如果主题涉及公共议题、最新事实、真实组织、平台、政策、公司、人物、法律、技术标准或数据，必须查源；来源只进入证据边界、反例、现实案例和事实限制，不接管文章命题。
 - 如果主题是私人关系、泛论随笔、哲学概念或用户给出的虚构/概括性材料，默认不联网，除非用户要求或文章需要现实来源来避免误导。
 - 如果启用概念上升，先从 CrossFrame 机制抽象上位概念，再选择中西经典、历史经验、理论或文学互文，最后回落到现实判断。
-- 自动成文默认启用现代编辑底色，先写 `正文声口方案`，再成文。问题型主题写成答复体；公共评论、思想文章、概念文章写成评论体；只有显式短答/中性报告/备忘录/表格/纯诊断/学术摘要才关闭声口或长文档位。
+- 声口由角色自动决定（学术/批判反思→中性；大众/未来→按需启用编辑底色）。先写 `正文声口方案`，再成文。用户显式要求时覆盖默认。
 - `full-visible-v3-longform` 默认要求正文 1200-2200 中文字，不能用“如果只要一句话”“换成人话说”或项目符号回答替代文章开篇。
 - 如果文章判断使用高风险 CrossFrame 概念，按 `../crossframe/references/read-routing-map.md` 读取对应概念卡，并用 `../crossframe/worksheets/concept-fidelity-check.md` 做保真检查。
 - 如果文章判断触发 v3.0 连续板块，按 `../crossframe/references/continuity-bundles.md` 读取对应联读包，并在底稿中写出“源结构连续性检查”。
