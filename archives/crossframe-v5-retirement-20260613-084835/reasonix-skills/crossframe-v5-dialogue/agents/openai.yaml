@@ -1,0 +1,3 @@
+display_name: Crossframe V5 Dialogue
+short_description: CrossFrame v5 专项 skill routed by crossframe-v5-suite.
+default_prompt: "Use crossframe-v5-dialogue only through crossframe-v5-suite after v5 continuity bundle routing."

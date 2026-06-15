@@ -24,8 +24,9 @@ trigger: suite-only
 1. `../crossframe/SKILL.md`
 2. `../crossframe/references/read-routing-map.md`
 3. 若问题触发高责任、公共制度、亲密关系、长期演化、框架治理、AI 现实验证、弱信号/不透明、无法退出、工具化、隐喻/来源透明或文章输出，追加读取 `../crossframe/references/continuity-bundles.md`，并按需使用 `../crossframe/worksheets/source-continuity-check.md`；未完成联读时只能降档。
-4. `protocols/dialogue-protocol.md`
-5. `references/dialogue-quality-gates.md`
+4. 复用 `../crossframe/templates/read-state-capsule.md` 规定的 `v5-read-state-capsule`，并在高责任、公共、AI/过程性产物、生命周期、无法退出主体或文章输出场景执行 `../crossframe/worksheets/source-anchor-integrity-check.md`。如果胶囊缺失，回到 `../crossframe/SKILL.md` 补齐；本 skill 不重新发明源路由。
+5. `protocols/dialogue-protocol.md`
+6. `references/dialogue-quality-gates.md`
 
 如果用户要求亲切、编辑、同志口吻、答读者问、报刊回信、耐心解答、给意见，或问题天然像读者来信，再按需读取：
 

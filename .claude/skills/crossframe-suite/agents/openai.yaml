@@ -1,0 +1,6 @@
+interface:
+  display_name: "CrossFrame Suite"
+  short_description: "显式点名调用的 CrossFrame 总调度入口；只在用户主动指定时路由 sibling skills。"
+  default_prompt: "Use $crossframe-suite only after the user explicitly invokes it."
+policy:
+  allow_implicit_invocation: false

@@ -1,0 +1,6 @@
+interface:
+  display_name: "CrossFrame Public"
+  short_description: "显式点名调用的 CrossFrame 公共议题与制度证据边界入口。"
+  default_prompt: "Use $crossframe-public only after the user explicitly invokes it."
+policy:
+  allow_implicit_invocation: false

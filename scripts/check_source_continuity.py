@@ -1,73 +1,24 @@
 from __future__ import annotations
 
 import argparse
+import importlib.util
 import re
+import sys
 from pathlib import Path
 
-from docx import Document
+
+V5_DOCX = r"E:\世界模型\跨尺度结构诊断框架v5.0.docx"
 
 
-SKILL_IDS = [
-    "crossframe-suite",
-    "crossframe",
-    "crossframe-essay",
-    "crossframe-review",
-    "crossframe-dialogue",
-    "crossframe-casebook",
-    "crossframe-public",
-    "crossframe-org",
-    "crossframe-teach",
-    "crossframe-debate",
-    "crossframe-notebook",
-]
-
-REQUIRED_V3_BUNDLES = [
-    "v3-framework-governance-falsification-pack",
-    "v3-procedural-judgment-pack",
-    "v3-evidence-visibility-pack",
-    "v3-power-capture-malicious-compliance-pack",
-    "v3-no-institution-middle-path-pack",
-    "v3-trapped-trauma-baseline-pack",
-    "v3-love-generative-action-pack",
-    "v3-concept-migration-metaphor-pack",
-    "v3-toolization-accessibility-pack",
-    "v3-observation-entropy-contraction-pack",
-]
-
-PATCH_KEY_TERMS = [
-    "框架自诊",
-    "共识程序",
-    "根假设证伪",
-    "案例库",
-    "前概念闸",
-    "概念有效性",
-    "可见性偏误",
-    "不透明",
-    "恶意合规",
-    "AI 诊断",
-    "弱信号保护",
-    "无制度基础设施",
-    "无法退出",
-    "复杂创伤",
-    "爱与开放性承担行动",
-    "规范性前提",
-    "隐喻漂移",
-    "知识谱系",
-    "使用门槛债",
-    "工具化",
-    "开放断言被权力捕获",
-    "良性消亡",
-]
-
-
-def extract_docx_headings(path: Path) -> list[str]:
-    doc = Document(str(path))
-    headings: list[str] = []
-    for para in doc.paragraphs:
-        text = " ".join(para.text.split())
-        if text and para.style.name.startswith("Heading"):
-            headings.append(text)
-    return headings
+def load_generator(script_dir: Path):
+    module_path = script_dir / "generate_source_continuity.py"
+    spec = importlib.util.spec_from_file_location("generate_source_continuity", module_path)
+    if spec is None or spec.loader is None:
+        raise SystemExit(f"cannot load generator: {module_path}")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    return module
 
 
 def require(condition: bool, message: str) -> None:
@@ -75,99 +26,190 @@ def require(condition: bool, message: str) -> None:
         raise SystemExit(message)
 
 
+def read(path: Path) -> str:
+    return path.read_text(encoding="utf-8")
+
+
+def expand_required_closure(start: str, required_with: dict[str, tuple[str, ...]]) -> set[str]:
+    """Return the recursive must-read closure without recursing forever on mutual dependencies."""
+    closure: set[str] = set()
+    visiting: set[str] = set()
+
+    def visit(bundle_id: str) -> None:
+        if bundle_id in visiting:
+            return
+        visiting.add(bundle_id)
+        for required_id in required_with.get(bundle_id, ()):
+            if required_id not in closure:
+                closure.add(required_id)
+                visit(required_id)
+            else:
+                visit(required_id)
+        visiting.remove(bundle_id)
+
+    visit(start)
+    closure.discard(start)
+    return closure
+
+
+def active_markdown_files(repo: Path) -> list[Path]:
+    files: list[Path] = []
+    for root in [repo / "skills"]:
+        for path in root.rglob("*.md"):
+            rel = path.relative_to(repo).as_posix()
+            if "/references/v2-" in rel or "/references/v3-" in rel:
+                continue
+            if "/references/crossframe-v2-core.md" in rel:
+                continue
+            files.append(path)
+    return files
+
+
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Check CrossFrame source continuity files.")
-    parser.add_argument("--version", default="v3")
-    parser.add_argument("--source-docx", default=r"D:\下载\跨尺度结构诊断框架v3.0.docx")
-    parser.add_argument("--previous-docx", default=r"D:\下载\跨尺度结构诊断框架v2.0.docx")
-    parser.add_argument("--patch-docx", default=r"D:\下载\补丁稿.docx")
+    parser = argparse.ArgumentParser(description="Check CrossFrame v5 source continuity files.")
+    parser.add_argument("--version", default="v5")
+    parser.add_argument("--source-docx", default=V5_DOCX)
     parser.add_argument("--repo", default=".")
     args = parser.parse_args()
 
     version = args.version.lower()
-    prefix = version.upper()
+    require(version == "v5", "this checker is versioned for v5; pass --version v5")
     repo = Path(args.repo).resolve()
-    crossframe = repo / "skills" / "crossframe"
     source_docx = Path(args.source_docx)
-    previous_docx = Path(args.previous_docx)
-    patch_docx = Path(args.patch_docx)
+    require(source_docx.exists(), f"missing source docx: {source_docx}")
 
-    source_spine = crossframe / "references" / f"{version}-source-spine.md"
-    digest_index = crossframe / "references" / f"{version}-section-digest-index.md"
-    coverage_map = crossframe / "references" / f"{version}-coverage-map.md"
-    term_fidelity = crossframe / "references" / f"{version}-term-fidelity.md"
-    rationale = crossframe / "references" / "v3-change-rationale-from-patch.md"
-    bundles = crossframe / "references" / "continuity-bundles.md"
-    routing = crossframe / "references" / "read-routing-map.md"
-    worksheet = crossframe / "worksheets" / "source-continuity-check.md"
+    generator = load_generator(Path(__file__).resolve().parent)
+    bundle_ids = [bundle.id for bundle in generator.V5_BUNDLES]
+    bundle_id_set = set(bundle_ids)
+    for bundle_id, required_ids in generator.REQUIRED_WITH.items():
+        require(bundle_id in bundle_id_set, f"unknown required-with source bundle: {bundle_id}")
+        require(bundle_id not in required_ids, f"self dependency in required-with graph: {bundle_id}")
+        for required_id in required_ids:
+            require(required_id in bundle_id_set, f"unknown required-with target bundle: {bundle_id} -> {required_id}")
+    recursive_closures = {
+        bundle_id: expand_required_closure(bundle_id, generator.REQUIRED_WITH)
+        for bundle_id in bundle_ids
+    }
+    nodes, tables = generator.extract_nodes(source_docx)
 
-    required_paths = [
-        source_docx,
-        patch_docx,
-        source_spine,
-        digest_index,
-        coverage_map,
-        term_fidelity,
-        rationale,
-        bundles,
-        routing,
-        worksheet,
+    crossframe = repo / "skills" / "crossframe"
+    refs = crossframe / "references"
+    templates = crossframe / "templates"
+    worksheets = crossframe / "worksheets"
+    required = [
+        refs / "v5-source-spine.md",
+        refs / "v5-section-digest-index.md",
+        refs / "v5-coverage-map.md",
+        refs / "v5-term-fidelity.md",
+        refs / "v5-material-selection-map.md",
+        refs / "continuity-bundles.md",
+        refs / "read-routing-map.md",
+        templates / "read-state-capsule.md",
+        worksheets / "source-continuity-check.md",
+        worksheets / "source-anchor-integrity-check.md",
+        worksheets / "seven-gates-worksheet.md",
     ]
-    missing = [path for path in required_paths if not path.exists()]
+    required.extend(refs / "continuity-bundles" / "v5" / f"{bundle_id}.md" for bundle_id in bundle_ids)
+    missing = [path for path in required if not path.exists()]
     require(not missing, "missing required files:\n" + "\n".join(str(path) for path in missing))
 
-    headings = extract_docx_headings(source_docx)
-    spine_text = source_spine.read_text(encoding="utf-8")
-    digest_text = digest_index.read_text(encoding="utf-8")
-    coverage_text = coverage_map.read_text(encoding="utf-8")
-    term_text = term_fidelity.read_text(encoding="utf-8")
-    rationale_text = rationale.read_text(encoding="utf-8")
-    bundle_text = bundles.read_text(encoding="utf-8")
-    routing_text = routing.read_text(encoding="utf-8")
-    worksheet_text = worksheet.read_text(encoding="utf-8")
+    spine = read(refs / "v5-source-spine.md")
+    digest = read(refs / "v5-section-digest-index.md")
+    coverage = read(refs / "v5-coverage-map.md")
+    terms = read(refs / "v5-term-fidelity.md")
+    material_map = read(refs / "v5-material-selection-map.md")
+    bundles = read(refs / "continuity-bundles.md")
+    routing = read(refs / "read-routing-map.md")
+    read_state_capsule = read(templates / "read-state-capsule.md")
+    worksheet = read(worksheets / "source-continuity-check.md")
+    anchor_integrity = read(worksheets / "source-anchor-integrity-check.md")
+    seven_gates = read(worksheets / "seven-gates-worksheet.md")
 
-    spine_ids = set(re.findall(rf"`{prefix}-H\d{{3}}`", spine_text))
-    digest_ids = set(re.findall(rf"`{prefix}-H\d{{3}}`", digest_text))
-    require(len(spine_ids) == len(headings), f"spine id count mismatch: docx={len(headings)} spine={len(spine_ids)}")
-    require(len(digest_ids) == len(headings), f"digest id count mismatch: docx={len(headings)} digest={len(digest_ids)}")
+    spine_ids = set(re.findall(r"`V5-H\d{3}`", spine))
+    digest_ids = set(re.findall(r"`V5-H\d{3}`", digest))
+    require(len(spine_ids) == len(nodes), f"spine id count mismatch: docx={len(nodes)} spine={len(spine_ids)}")
+    require(len(digest_ids) == len(nodes), f"digest id count mismatch: docx={len(nodes)} digest={len(digest_ids)}")
+    require(f"表格数量：{len(tables)}" in spine, "source spine table count mismatch")
 
-    missing_titles = [title for title in headings if title not in spine_text]
-    require(not missing_titles, "missing titles in source spine:\n" + "\n".join(missing_titles[:20]))
+    combined = "\n".join([spine, digest, coverage, terms, material_map, bundles, routing, read_state_capsule, worksheet, anchor_integrity, seven_gates])
+    for bundle_id in bundle_ids:
+        bundle_file = refs / "continuity-bundles" / "v5" / f"{bundle_id}.md"
+        text = read(bundle_file)
+        require(bundle_id in bundles, f"bundle missing in continuity-bundles.md: {bundle_id}")
+        require(bundle_id in routing, f"bundle missing in read-routing-map.md: {bundle_id}")
+        require(bundle_id in combined, f"bundle missing in v5 source materials: {bundle_id}")
+        for heading in [
+            "## 源锚点",
+            "## 必须连读原因",
+            "## 触发场景",
+            "## 必须同读材料",
+            "## 必须同读包（硬约束）",
+            "## 必须同读闭包（递归展开）",
+            "## 硬失败",
+            "## 降档规则",
+            "## 相邻候选包（非硬约束）",
+            "## 输出影响",
+            "## 输出自检",
+        ]:
+            require(heading in text, f"bundle file missing heading {heading}: {bundle_id}")
+        for required_id in generator.REQUIRED_WITH.get(bundle_id, ()):
+            require(required_id in text, f"bundle file missing required dependency: {bundle_id} -> {required_id}")
+        for closure_id in recursive_closures[bundle_id]:
+            require(closure_id in text, f"bundle file missing recursive closure dependency: {bundle_id} -> {closure_id}")
 
-    if previous_docx.exists():
-        previous_headings = extract_docx_headings(previous_docx)
-        removed = [title for title in previous_headings if title not in headings]
-        added = [title for title in headings if title not in previous_headings]
-        require(not removed, "v3 is missing v2 headings:\n" + "\n".join(removed[:20]))
-        require(len(added) >= 60, f"expected v3 additions from patch, got {len(added)}")
+    for needle in [
+        "v5-source-spine.md",
+        "v5-section-digest-index.md",
+        "v5-coverage-map.md",
+        "v5-term-fidelity.md",
+        "v5-material-selection-map.md",
+        "continuity-bundles/v5",
+        "必须同读闭包",
+        "必须同读包",
+        "v5-read-state-capsule",
+        "v5_source_modules",
+        "v5_continuity_bundles",
+        "required_closure",
+        "adjacent_candidates",
+        "source_grounding",
+        "downstream_read_policy",
+        "闭包是否读完",
+        "源锚点",
+        "本文推断",
+        "表达转译",
+        "外部思想映射",
+    ]:
+        require(needle in combined, f"v5 material reference missing: {needle}")
 
-    for bundle_id in REQUIRED_V3_BUNDLES:
-        require(bundle_id in bundle_text, f"bundle missing in continuity-bundles: {bundle_id}")
-        require(bundle_id in routing_text, f"bundle missing in read-routing-map: {bundle_id}")
-        require(bundle_id in source_spine.read_text(encoding="utf-8"), f"bundle missing in source spine: {bundle_id}")
+    for needle in [
+        "七闸",
+        "强判断八件套",
+        "低权力主体保护",
+        "证据降级",
+        "行动上限",
+        "过程性产物不得充当现实证明",
+        "局部状态坐标",
+    ]:
+        require(needle in combined, f"v5 key term missing: {needle}")
 
-    combined = "\n".join([spine_text, digest_text, coverage_text, term_text, rationale_text, bundle_text, routing_text])
-    missing_terms = [term for term in PATCH_KEY_TERMS if term not in combined]
-    require(not missing_terms, "patch terms not mapped:\n" + "\n".join(missing_terms))
+    stale_hits: list[str] = []
+    for path in active_markdown_files(repo):
+        text = read(path)
+        for needle in ["当前权威源为 `v3.0`", "full-visible-v3-longform"]:
+            if needle in text:
+                stale_hits.append(f"{path.relative_to(repo)}: {needle}")
+    require(not stale_hits, "stale active v3 authority markers:\n" + "\n".join(stale_hits))
 
-    for needle in ["v3-source-spine.md", "v3-section-digest-index.md", "v3-term-fidelity.md", "continuity-bundles.md"]:
-        require(needle in routing_text + worksheet_text, f"routing/worksheet missing reference: {needle}")
-
-    for skill_id in SKILL_IDS:
+    for skill_id in ["crossframe", "crossframe-suite", "crossframe-essay", "crossframe-review"]:
         skill_path = repo / "skills" / skill_id / "SKILL.md"
         require(skill_path.exists(), f"missing skill entry: {skill_id}")
-        text = skill_path.read_text(encoding="utf-8")
-        require(text.startswith("---"), f"missing frontmatter: {skill_id}")
-        if skill_id.startswith("crossframe"):
-            require("CrossFrame" in text or "crossframe" in text, f"skill does not identify CrossFrame: {skill_id}")
+        text = read(skill_path)
+        require("v5.0" in text or "v5" in text, f"skill not updated to v5: {skill_id}")
 
-    print(f"ok: {version}.0 source continuity files match DOCX heading structure")
-    print(f"headings: {len(headings)}")
-    if previous_docx.exists():
-        previous_headings = extract_docx_headings(previous_docx)
-        print(f"previous headings: {len(previous_headings)}")
-        print(f"added headings: {len([title for title in headings if title not in previous_headings])}")
-    print(f"v3 bundles: {len(REQUIRED_V3_BUNDLES)}")
+    print("ok: v5 source continuity files match DOCX heading structure")
+    print(f"headings: {len(nodes)}")
+    print(f"tables: {len(tables)}")
+    print(f"v5 bundles: {len(bundle_ids)}")
     return 0
 
 

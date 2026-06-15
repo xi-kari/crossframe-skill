@@ -1,0 +1,6 @@
+interface:
+  display_name: "CrossFrame Dialogue"
+  short_description: "显式点名调用的 CrossFrame 短答复与编辑回信入口。"
+  default_prompt: "Use $crossframe-dialogue only after the user explicitly invokes it."
+policy:
+  allow_implicit_invocation: false

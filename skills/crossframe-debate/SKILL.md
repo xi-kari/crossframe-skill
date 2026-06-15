@@ -22,9 +22,10 @@ trigger: suite-only
 1. 读取 `../crossframe/SKILL.md`。
 2. 读取 `../crossframe/references/read-routing-map.md`。
 3. 如果命题触发高责任、公共制度、亲密关系、长期演化、框架治理、AI 现实验证、弱信号/不透明、无法退出、工具化、隐喻/来源透明或文章输出，必须追加读取 `../crossframe/references/continuity-bundles.md`，并按需使用 `../crossframe/worksheets/source-continuity-check.md`；未完成联读时只能降档。
-4. 读取本目录的 `protocols/debate-protocol.md`。
-5. 读取 `templates/debate-analysis-output.md`。
-6. 按需读取 `references/debate-quality-gates.md` 和 `references/debate-failure-patterns.md`。
+4. 复用 `../crossframe/templates/read-state-capsule.md` 规定的 `v5-read-state-capsule`，并在高责任、公共、AI/过程性产物、生命周期、无法退出主体或文章输出场景执行 `../crossframe/worksheets/source-anchor-integrity-check.md`。如果胶囊缺失，回到 `../crossframe/SKILL.md` 补齐；本 skill 不重新发明源路由。
+5. 读取本目录的 `protocols/debate-protocol.md`。
+6. 读取 `templates/debate-analysis-output.md`。
+7. 按需读取 `references/debate-quality-gates.md` 和 `references/debate-failure-patterns.md`。
 
 按命题类型追加 canonical 路由：
 

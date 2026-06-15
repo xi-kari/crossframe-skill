@@ -1,0 +1,6 @@
+interface:
+  display_name: "CrossFrame Debate"
+  short_description: "显式点名调用的 CrossFrame 命题辩论与论证检验入口。"
+  default_prompt: "Use $crossframe-debate only after the user explicitly invokes it."
+policy:
+  allow_implicit_invocation: false

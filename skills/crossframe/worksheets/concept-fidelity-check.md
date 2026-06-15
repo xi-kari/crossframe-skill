@@ -13,7 +13,8 @@
 | --- | --- |
 | 本次承担判断作用的概念 |  |
 | 已读取的概念卡 |  |
-| 是否读取 `v3-term-fidelity.md` | 是 / 否；涉及 v2 历史概念时再读 `v2-term-fidelity.md` |
+| 是否读取 `v5-term-fidelity.md` | 是 / 否；涉及历史对照时再读 `v3-term-fidelity.md` 或 `v2-term-fidelity.md` |
+| 是否读取 v5 连读包 | 是 / 否；先从 `continuity-closure-map.md` 选择，必要时再读 `continuity-bundles/v5/` |
 | 概念被翻译成的现实行为 | 谁做了什么、谁承担了什么、什么改变或没有改变 |
 | 相邻概念是否被混淆 | 例如承接 vs 回流、反馈 vs 写回、退出转移 vs 放弃 |
 | 证据要求是否满足 | 高 / 中 / 低成本证据；弱信号是否需要保护 |

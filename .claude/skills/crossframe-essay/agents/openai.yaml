@@ -1,0 +1,6 @@
+interface:
+  display_name: "CrossFrame Essay"
+  short_description: "显式点名调用的 CrossFrame 中文洞察文章写作入口。"
+  default_prompt: "Use $crossframe-essay only after the user explicitly invokes it."
+policy:
+  allow_implicit_invocation: false

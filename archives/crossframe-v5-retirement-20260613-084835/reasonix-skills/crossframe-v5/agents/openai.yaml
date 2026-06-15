@@ -1,0 +1,4 @@
+interface:
+  display_name: "CrossFrame v5"
+  short_description: "跨尺度结构诊断框架 v5.0 的中文结构推理、连续联读与概念保真 skill"
+  default_prompt: "使用 CrossFrame v5 进行结构诊断：先按 v5 连读包确认源结构，再过七闸、列机制候选、完成完整性检查，最后输出推理提纲和人话判断。"

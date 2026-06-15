@@ -21,19 +21,20 @@ CrossFrame Org 是 `crossframe` 的平行组织修复 skill，不替代 canonica
 2. 读取 `../crossframe/SKILL.md`。
 3. 读取 `../crossframe/references/read-routing-map.md`，确定本次需要加载的 canonical protocol、worksheet、concept card 和模板。
 4. 如果组织判断触发高责任、公共制度、亲密关系、长期演化、框架治理、AI 现实验证、弱信号/不透明、无法退出、工具化、隐喻/来源透明或文章输出，必须追加读取 `../crossframe/references/continuity-bundles.md`，并按需使用 `../crossframe/worksheets/source-continuity-check.md`；未完成联读时只能降档。
-5. 读取 `references/org-routing-map.md`，选择本 skill 的专项协议、引用材料和模板。
-6. 按请求读取本地协议：
+5. 复用 `../crossframe/templates/read-state-capsule.md` 规定的 `v5-read-state-capsule`，并在高责任、公共、AI/过程性产物、生命周期、无法退出主体或文章输出场景执行 `../crossframe/worksheets/source-anchor-integrity-check.md`。如果胶囊缺失，回到 `../crossframe/SKILL.md` 补齐；本 skill 不重新发明源路由。
+6. 读取 `references/org-routing-map.md`，选择本 skill 的专项协议、引用材料和模板。
+7. 按请求读取本地协议：
    - 项目失败、团队反复卡住：`protocols/org-diagnostic-protocol.md`
    - 反馈没有进入下一轮结构改变：`protocols/feedback-writeback-protocol.md`
    - 复盘失真、复盘形式化：`protocols/retrospective-redesign-protocol.md`
    - 需要行动、试点、改造计划：`protocols/low-risk-pilot-protocol.md`
-7. 按需读取本地引用：
+8. 按需读取本地引用：
    - 责任链与授权链：`references/responsibility-authorization-chain.md`
    - 中层承接耗竭：`references/middle-manager-depletion.md`
    - 项目失败与复盘失真信号：`references/org-failure-signals.md`
    - 反管理鸡汤与反甩锅护栏：`references/anti-chicken-soup-guardrails.md`
-8. 如果判断使用高风险 CrossFrame 概念，按 `../crossframe/references/read-routing-map.md` 读取对应概念卡，并用 `../crossframe/worksheets/concept-fidelity-check.md` 做概念保真检查。
-9. 先形成内部组织 intake，再按模板输出；不要展示完整内部工作表，除非用户要求审计或完整工作表。
+9. 如果判断使用高风险 CrossFrame 概念，按 `../crossframe/references/read-routing-map.md` 读取对应概念卡，并用 `../crossframe/worksheets/concept-fidelity-check.md` 做概念保真检查。
+10. 先形成内部组织 intake，再按模板输出；不要展示完整内部工作表，除非用户要求审计或完整工作表。
 
 ## 内部组织 intake
 

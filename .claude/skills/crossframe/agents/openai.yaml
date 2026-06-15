@@ -1,0 +1,6 @@
+interface:
+  display_name: "CrossFrame"
+  short_description: "显式点名调用的 CrossFrame 结构诊断入口；不因普通分析任务自动触发。"
+  default_prompt: "Use $crossframe only after the user explicitly invokes it."
+policy:
+  allow_implicit_invocation: false

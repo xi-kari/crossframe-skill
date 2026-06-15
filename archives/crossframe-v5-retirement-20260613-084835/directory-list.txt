@@ -1,0 +1,242 @@
+archive_root: E:\世界模型\skill\crossframe-skill\archives\crossframe-v5-retirement-20260613-084835
+retired_count: 24
+
+[codex-skills] crossframe-v5
+source: C:\Users\cangm\.codex\skills\crossframe-v5
+archive: E:\世界模型\skill\crossframe-skill\archives\crossframe-v5-retirement-20260613-084835\codex-skills\crossframe-v5
+  DIR  agents
+  DIR  evals
+  DIR  examples
+  DIR  protocols
+  DIR  references
+  DIR  references\concept-cards
+  DIR  templates
+  DIR  worksheets
+
+[codex-skills] crossframe-v5-casebook
+source: C:\Users\cangm\.codex\skills\crossframe-v5-casebook
+archive: E:\世界模型\skill\crossframe-skill\archives\crossframe-v5-retirement-20260613-084835\codex-skills\crossframe-v5-casebook
+  DIR  agents
+  DIR  evals
+  DIR  examples
+  DIR  protocols
+  DIR  references
+  DIR  templates
+
+[codex-skills] crossframe-v5-critical
+source: C:\Users\cangm\.codex\skills\crossframe-v5-critical
+archive: E:\世界模型\skill\crossframe-skill\archives\crossframe-v5-retirement-20260613-084835\codex-skills\crossframe-v5-critical
+  DIR  agents
+  DIR  protocols
+  DIR  references
+  DIR  templates
+
+[codex-skills] crossframe-v5-debate
+source: C:\Users\cangm\.codex\skills\crossframe-v5-debate
+archive: E:\世界模型\skill\crossframe-skill\archives\crossframe-v5-retirement-20260613-084835\codex-skills\crossframe-v5-debate
+  DIR  agents
+  DIR  evals
+  DIR  examples
+  DIR  protocols
+  DIR  references
+  DIR  templates
+
+[codex-skills] crossframe-v5-dialogue
+source: C:\Users\cangm\.codex\skills\crossframe-v5-dialogue
+archive: E:\世界模型\skill\crossframe-skill\archives\crossframe-v5-retirement-20260613-084835\codex-skills\crossframe-v5-dialogue
+  DIR  agents
+  DIR  evals
+  DIR  examples
+  DIR  protocols
+  DIR  references
+  DIR  templates
+
+[codex-skills] crossframe-v5-essay
+source: C:\Users\cangm\.codex\skills\crossframe-v5-essay
+archive: E:\世界模型\skill\crossframe-skill\archives\crossframe-v5-retirement-20260613-084835\codex-skills\crossframe-v5-essay
+  DIR  agents
+  DIR  evals
+  DIR  examples
+  DIR  protocols
+  DIR  references
+  DIR  templates
+
+[codex-skills] crossframe-v5-notebook
+source: C:\Users\cangm\.codex\skills\crossframe-v5-notebook
+archive: E:\世界模型\skill\crossframe-skill\archives\crossframe-v5-retirement-20260613-084835\codex-skills\crossframe-v5-notebook
+  DIR  agents
+  DIR  evals
+  DIR  examples
+  DIR  protocols
+  DIR  references
+  DIR  templates
+
+[codex-skills] crossframe-v5-org
+source: C:\Users\cangm\.codex\skills\crossframe-v5-org
+archive: E:\世界模型\skill\crossframe-skill\archives\crossframe-v5-retirement-20260613-084835\codex-skills\crossframe-v5-org
+  DIR  agents
+  DIR  evals
+  DIR  examples
+  DIR  protocols
+  DIR  references
+  DIR  templates
+
+[codex-skills] crossframe-v5-public
+source: C:\Users\cangm\.codex\skills\crossframe-v5-public
+archive: E:\世界模型\skill\crossframe-skill\archives\crossframe-v5-retirement-20260613-084835\codex-skills\crossframe-v5-public
+  DIR  agents
+  DIR  evals
+  DIR  examples
+  DIR  protocols
+  DIR  references
+  DIR  templates
+
+[codex-skills] crossframe-v5-review
+source: C:\Users\cangm\.codex\skills\crossframe-v5-review
+archive: E:\世界模型\skill\crossframe-skill\archives\crossframe-v5-retirement-20260613-084835\codex-skills\crossframe-v5-review
+  DIR  agents
+  DIR  evals
+  DIR  examples
+  DIR  protocols
+  DIR  references
+  DIR  templates
+
+[codex-skills] crossframe-v5-suite
+source: C:\Users\cangm\.codex\skills\crossframe-v5-suite
+archive: E:\世界模型\skill\crossframe-skill\archives\crossframe-v5-retirement-20260613-084835\codex-skills\crossframe-v5-suite
+  DIR  agents
+  DIR  evals
+  DIR  examples
+  DIR  protocols
+  DIR  references
+  DIR  templates
+
+[codex-skills] crossframe-v5-teach
+source: C:\Users\cangm\.codex\skills\crossframe-v5-teach
+archive: E:\世界模型\skill\crossframe-skill\archives\crossframe-v5-retirement-20260613-084835\codex-skills\crossframe-v5-teach
+  DIR  agents
+  DIR  evals
+  DIR  examples
+  DIR  protocols
+  DIR  references
+  DIR  templates
+
+[reasonix-skills] crossframe-v5
+source: D:\deepseek\.reasonix\skills\crossframe-v5
+archive: E:\世界模型\skill\crossframe-skill\archives\crossframe-v5-retirement-20260613-084835\reasonix-skills\crossframe-v5
+  DIR  agents
+  DIR  evals
+  DIR  examples
+  DIR  protocols
+  DIR  references
+  DIR  references\concept-cards
+  DIR  templates
+  DIR  worksheets
+
+[reasonix-skills] crossframe-v5-casebook
+source: D:\deepseek\.reasonix\skills\crossframe-v5-casebook
+archive: E:\世界模型\skill\crossframe-skill\archives\crossframe-v5-retirement-20260613-084835\reasonix-skills\crossframe-v5-casebook
+  DIR  agents
+  DIR  evals
+  DIR  examples
+  DIR  protocols
+  DIR  references
+  DIR  templates
+
+[reasonix-skills] crossframe-v5-critical
+source: D:\deepseek\.reasonix\skills\crossframe-v5-critical
+archive: E:\世界模型\skill\crossframe-skill\archives\crossframe-v5-retirement-20260613-084835\reasonix-skills\crossframe-v5-critical
+  DIR  agents
+  DIR  protocols
+  DIR  references
+  DIR  templates
+
+[reasonix-skills] crossframe-v5-debate
+source: D:\deepseek\.reasonix\skills\crossframe-v5-debate
+archive: E:\世界模型\skill\crossframe-skill\archives\crossframe-v5-retirement-20260613-084835\reasonix-skills\crossframe-v5-debate
+  DIR  agents
+  DIR  evals
+  DIR  examples
+  DIR  protocols
+  DIR  references
+  DIR  templates
+
+[reasonix-skills] crossframe-v5-dialogue
+source: D:\deepseek\.reasonix\skills\crossframe-v5-dialogue
+archive: E:\世界模型\skill\crossframe-skill\archives\crossframe-v5-retirement-20260613-084835\reasonix-skills\crossframe-v5-dialogue
+  DIR  agents
+  DIR  evals
+  DIR  examples
+  DIR  protocols
+  DIR  references
+  DIR  templates
+
+[reasonix-skills] crossframe-v5-essay
+source: D:\deepseek\.reasonix\skills\crossframe-v5-essay
+archive: E:\世界模型\skill\crossframe-skill\archives\crossframe-v5-retirement-20260613-084835\reasonix-skills\crossframe-v5-essay
+  DIR  agents
+  DIR  evals
+  DIR  examples
+  DIR  protocols
+  DIR  references
+  DIR  templates
+
+[reasonix-skills] crossframe-v5-notebook
+source: D:\deepseek\.reasonix\skills\crossframe-v5-notebook
+archive: E:\世界模型\skill\crossframe-skill\archives\crossframe-v5-retirement-20260613-084835\reasonix-skills\crossframe-v5-notebook
+  DIR  agents
+  DIR  evals
+  DIR  examples
+  DIR  protocols
+  DIR  references
+  DIR  templates
+
+[reasonix-skills] crossframe-v5-org
+source: D:\deepseek\.reasonix\skills\crossframe-v5-org
+archive: E:\世界模型\skill\crossframe-skill\archives\crossframe-v5-retirement-20260613-084835\reasonix-skills\crossframe-v5-org
+  DIR  agents
+  DIR  evals
+  DIR  examples
+  DIR  protocols
+  DIR  references
+  DIR  templates
+
+[reasonix-skills] crossframe-v5-public
+source: D:\deepseek\.reasonix\skills\crossframe-v5-public
+archive: E:\世界模型\skill\crossframe-skill\archives\crossframe-v5-retirement-20260613-084835\reasonix-skills\crossframe-v5-public
+  DIR  agents
+  DIR  evals
+  DIR  examples
+  DIR  protocols
+  DIR  references
+  DIR  templates
+
+[reasonix-skills] crossframe-v5-review
+source: D:\deepseek\.reasonix\skills\crossframe-v5-review
+archive: E:\世界模型\skill\crossframe-skill\archives\crossframe-v5-retirement-20260613-084835\reasonix-skills\crossframe-v5-review
+  DIR  agents
+  DIR  evals
+  DIR  examples
+  DIR  protocols
+  DIR  references
+  DIR  templates
+
+[reasonix-skills] crossframe-v5-suite
+source: D:\deepseek\.reasonix\skills\crossframe-v5-suite
+archive: E:\世界模型\skill\crossframe-skill\archives\crossframe-v5-retirement-20260613-084835\reasonix-skills\crossframe-v5-suite
+  DIR  agents
+  DIR  evals
+  DIR  examples
+  DIR  protocols
+  DIR  references
+  DIR  templates
+
+[reasonix-skills] crossframe-v5-teach
+source: D:\deepseek\.reasonix\skills\crossframe-v5-teach
+archive: E:\世界模型\skill\crossframe-skill\archives\crossframe-v5-retirement-20260613-084835\reasonix-skills\crossframe-v5-teach
+  DIR  agents
+  DIR  evals
+  DIR  examples
+  DIR  protocols
+  DIR  references
+  DIR  templates

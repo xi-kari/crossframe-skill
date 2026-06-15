@@ -1,0 +1,6 @@
+interface:
+  display_name: "CrossFrame Casebook"
+  short_description: "显式点名调用的 CrossFrame 案例库沉淀入口。"
+  default_prompt: "Use $crossframe-casebook only after the user explicitly invokes it."
+policy:
+  allow_implicit_invocation: false

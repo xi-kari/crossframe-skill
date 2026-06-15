@@ -1,0 +1,6 @@
+interface:
+  display_name: "CrossFrame Org"
+  short_description: "显式点名调用的 CrossFrame 团队、项目、组织修复入口。"
+  default_prompt: "Use $crossframe-org only after the user explicitly invokes it."
+policy:
+  allow_implicit_invocation: false

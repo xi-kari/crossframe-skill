@@ -23,10 +23,12 @@ On every trigger, read:
 
 1. `../crossframe/SKILL.md`
 2. `../crossframe/references/read-routing-map.md`
-3. `protocols/critical-article-protocol.md`
-4. `references/critical-matrix.md`
-5. `references/example-and-evidence-rules.md`
-6. `templates/critical-output-template.md`
+3. If the critique touches high-responsibility, public, AI/process artifact, lifecycle, trapped-subject, or article-output scenarios, reuse `../crossframe/templates/read-state-capsule.md` as `v5-read-state-capsule` and run `../crossframe/worksheets/source-anchor-integrity-check.md`; if the capsule is missing, return to `../crossframe/SKILL.md` instead of inventing source routing here.
+4. `protocols/critical-article-protocol.md`
+5. `references/critical-matrix.md`
+6. `references/example-and-evidence-rules.md`
+7. 若涉及真实公共对象、最新事实、机构、平台、政策、人物、公司、数据、AI/过程性产物或强判断，读取 `../crossframe/references/source-ledger-workflow.md` 并建立来源台账。
+8. `templates/critical-output-template.md`
 
 If the topic needs long-form style control, also read `../crossframe-essay/SKILL.md` and reuse only its article discipline, not its whole output contract.
 
@@ -54,7 +56,7 @@ Do not collapse the result into a short answer, checklist, memo, or diagnosis su
 
 - Start from CrossFrame structure, then become critical; do not begin from indignation and decorate it with structure words.
 - Critique mechanisms, interests, rhetoric, institutions, and responsibility chains; do not turn structural critique into personal condemnation.
-- A real or recent public event requires source checking before factual claims. Unverified examples must be labeled as analogy, hypothesis, or common pattern.
+- A real or recent public event requires source checking before factual claims, with a visible source ledger summary. Unverified examples must be labeled as analogy, hypothesis, or common pattern.
 - Use at least two concrete examples in the essay body unless the user provides a single narrowly bounded case and asks not to expand.
 - Include at least one countercondition, evidence gap, or withdrawal condition.
 - Do not use Marxist terms as prestige vocabulary. If a term cannot be translated into who pays, who benefits, what is hidden, and how the condition repeats, remove it.

@@ -1,13 +1,10 @@
 ---
 name: crossframe-review
-description: 经由 crossframe-suite 调度使用，不独立响应。审查 AI 输出、结构诊断、中文文章、审计稿或修复稿是否真正执行 CrossFrame 推理的平行评审 skill。
-trigger: suite-only
+description: "CrossFrame Review explicit-only audit skill. Use only when the user explicitly names crossframe-review, $crossframe-review, /crossframe-review, or asks to use CrossFrame Review; do not trigger implicitly for ordinary reviews, critiques, audits, grading, smoke tests, or repair tasks. Suite-directed use after an explicit crossframe-suite invocation is allowed."
+disable-model-invocation: true
 ---
 
 # CrossFrame Review
-
-
-> **本 skill 不独立触发。** 所有 CrossFrame 任务统一从 `crossframe-suite` 入口调度。用户无需直接调用本 skill；suite 根据路由规则在需要时自动加载。
 
 如果评审对象来自多个 CrossFrame skill 的连续工作流，先读取 `../crossframe-suite/SKILL.md` 还原应有调度链，再判断是否有漏触发、误触发或跳过质量闸。
 
@@ -19,14 +16,16 @@ trigger: suite-only
 
 1. 读取 `../crossframe/SKILL.md`。
 2. 读取 `../crossframe/references/read-routing-map.md`。
-3. 读取 `../crossframe/references/integrity-check.md`，判断本应触发哪些 v3.0 连续联读包。
-4. 若评审对象是深度、审计、高责任、公共制度、亲密关系、长期演化或文章类输出，按需查阅 `../crossframe/references/integrity-check.md`（已被 integrity-check.md 取代，保留为历史详参）。
-5. 若评审对象是文章、长文、评论、思想文章、报刊答复或“现代编辑同志口吻”输出，按需读取 `../crossframe-essay/SKILL.md`。
-6. 读取本目录的 `protocols/review-protocol.md` 和 `templates/review-report.md`。
-7. 若涉及文章底稿、引用、检索材料或声口，追加读取 `protocols/article-review-protocol.md`。
-8. 按需读取本目录 `references/` 中的评分表、失败类型表和证据边界清单。
+3. 读取 `../crossframe/references/runtime-read-policy.md` 与 `../crossframe/references/continuity-closure-map.md`，判断本应触发哪些 v5.0 连续联读包；只有需要包说明、源锚点或闭包细节时，再定向读取 `../crossframe/references/continuity-bundles.md` 或具体包文件。
+4. 若评审对象是深度、审计、高责任、公共制度、亲密关系、长期演化或文章类输出，读取或检查 `../crossframe/templates/read-state-capsule.md` 规定的 `v5-read-state-capsule` 是否存在并被下游复用。
+5. 按需读取 `../crossframe/worksheets/source-continuity-check.md` 与 `../crossframe/worksheets/source-anchor-integrity-check.md`，检查闭包是否完整、中心命题和行动边界是否能回指胶囊源锚点。
+6. 若评审对象是文章、长文、评论、思想文章、报刊答复或“现代编辑同志口吻”输出，按需读取 `../crossframe-essay/SKILL.md`。
+7. 读取本目录的 `protocols/review-protocol.md` 和 `templates/review-report.md`。
+8. 若涉及文章底稿、引用、检索材料或声口，追加读取 `protocols/article-review-protocol.md`。
+9. 若涉及公共事实、真实机构、平台、政策、人物、公司、最新事实、AI/过程性产物、批判文章或来源使用，读取 `../crossframe/references/source-ledger-workflow.md`，检查来源台账字段是否完整。
+10. 按需读取本目录 `references/` 中的评分表、失败类型表和证据边界清单。
 
-不要把 CrossFrame 主 skill 或文章 skill 的完整内容复制到本 skill 输出中。评审时只引用必要规则名、触发点和证据位置。
+不要把 CrossFrame 主 skill、文章 skill、eval、examples 或完整案例复制到本 skill 输出中。评审时只引用必要规则名、触发点和证据位置。若 `v5-read-state-capsule` 已存在，下游默认复用胶囊，不得为了评审而重复整块读取源索引。
 
 ## 评审目标
 
@@ -37,7 +36,8 @@ trigger: suite-only
 - 经过对象闸、证据闸、尺度闸、责任闸、观测闸。
 - 至少形成两个机制候选，或说明为什么只能有一个。
 - 对承担判断作用的高风险概念做保真检查，而不是把术语当结论。
-- 对属于 3.0 连续板块的高风险概念做源结构连续性检查，而不是只读单张概念卡。
+- 对属于 v5.0 连续板块的高风险概念做源结构连续性检查，而不是只读单张概念卡。
+- 对中心命题、机制候选、高风险概念、行动边界、文章类型转译和写作技法做源锚点完整性检查；不能回指胶囊的内容不得写成 CrossFrame v5 原义。
 - 给出可撤回条件、下一步观察或低条件行动边界。
 - 文章类输出必须先有结构洞察底稿，再写正文。
 
@@ -56,7 +56,14 @@ trigger: suite-only
 - 尺度洗白：用宏观叙事取消低尺度痛苦、责任链或具体失职。
 - AI 合规剧场：把 AI 生成材料、漂亮报告或自评文本当作独立强证据。
 - 连续性保真失败：本应触发 `continuity-bundles.md` 的联读包，却只读单个概念卡、单个 protocol 或单个摘录就下判断。
-- v3 现实保护失败：涉及 AI 现实验证、弱信号、不透明、无制度基础设施、无法退出、恶意合规、隐喻漂移、工具化或开放断言退场，却没有读取对应 v3 概念卡和联读包。
+- 胶囊缺失：应由 `crossframe` 生成 `v5-read-state-capsule` 的任务没有胶囊，导致 essay/review 各自重读源索引或发明路由。
+- 源锚点失败：中心命题、机制候选、高风险概念、行动边界或文章转译无法回指胶囊源锚点，却写成 CrossFrame v5 原义。
+- 下游重复整块读源：已有胶囊时，essay 或 review 又整块读取 v5 源索引、完整连读包或材料选择图，造成源边界漂移。
+- 选择器压缩失败：模式/角色或文章类型选择器没有完整渲染选项、推荐项和等待用户回复。
+- 技法越界失败：写作技法新增事实、强判断、点睛句或隐喻证明，越过底稿和胶囊源边界。
+- 来源用途越界失败：把热度、机构声明、PR 文案、AI 生成材料、自评文本或二手转述写成已核验事实。
+- 来源台账缺失：公共、批判、文章或高责任输出涉及真实对象，却没有来源、时间、来源类型、支持命题、不能证明什么、证据档位、使用位置、降档理由和仍需补证处。
+- v5 现实保护失败：涉及 AI 过程性产物、弱信号、不透明、无制度基础设施、无法退出、恶意合规、隐喻漂移、工具化或开放断言退场，却没有读取对应 v5 概念卡和联读包。
 
 ## 输出协议
 
@@ -72,6 +79,15 @@ trigger: suite-only
 - 是否合格
 
 若用户只要一句话结论，也要保留“是否合格 + 主要失败点 + 下一步修复”的最小结构。
+
+## Suite 调度可见性
+
+当本 skill 经 `crossframe-suite` 作为默认质量闸调用，而用户没有明确要求“只要评审/完整评审报告/不要文章”时，评审不接管最终输出：
+
+- 评审对象是已经形成的 `结构洞察底稿` 与 `文章正文`。
+- A/B 或小修可过时，把问题反馈给上游修正，最终可见交付仍是 `# 结构洞察底稿` + `# 文章正文`，最多追加一行短质量闸摘要。
+- C/D/F 或硬失败时，阻断发布并要求回到对应上游补底稿、补证据边界或重写正文；若用户没有要求只看评审，不得只输出评审报告来替代修复后的文章。
+- `templates/review-report.md` 只在用户显式要求完整评审报告、只评审已有输出，或硬失败需要说明阻断原因时作为主输出。
 
 ## 合格判定
 
