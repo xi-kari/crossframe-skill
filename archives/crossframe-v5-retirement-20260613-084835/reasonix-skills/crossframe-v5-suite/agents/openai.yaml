@@ -1,3 +1,0 @@
-display_name: CrossFrame v5 Suite
-short_description: Default CrossFrame v5 entry for slash-only routing and full-visible-v5-longform outputs unless explicitly disabled.
-default_prompt: "Use CrossFrame v5 Suite as the only entry. Select mode/role once, route lightly with workflow_state, let crossframe-v5 create the v5-read-state-capsule, run the full chain through essay and review without asking to continue, and ground framework claims in source anchors."
