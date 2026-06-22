@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CrossFrame Skill Suite | AI 的中文结构思考系统</title>
+    <meta
+      name="description"
+      content="CrossFrame Skill Suite 让 AI 在回答前先交账，在回答后继续追问。"
+    >
+    <meta property="og:title" content="CrossFrame Skill Suite">
+    <meta
+      property="og:description"
+      content="给 AI 装上的中文结构思考系统：诊断、成文、审查与追问。"
+    >
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="assets/og-image.svg">
+    <link rel="icon" href="assets/crossframe-mark.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="CrossFrame 首页">
+        <img src="assets/crossframe-mark.svg" alt="" width="34" height="34">
+        <span>CrossFrame</span>
+      </a>
+      <nav class="nav-links" aria-label="主导航">
+        <a href="#how">How it works</a>
+        <a href="#examples">Examples</a>
+        <a href="#skills">Skills</a>
+        <a href="#install">Install</a>
+        <a href="https://github.com/xi-kari/crossframe-skill">GitHub</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero section-band">
+        <div class="hero-copy">
+          <p class="eyebrow">CrossFrame Skill Suite</p>
+          <h1>给 AI 装上的中文结构思考系统。</h1>
+          <p class="hero-lede">
+            不是让 AI 更快回答，而是让 AI 在回答前先交账，在回答后还能继续追问。
+          </p>
+          <p class="hero-support">
+            CrossFrame 会先拆清事实、证据、尺度、机制、判断档位和行动边界，再生成可审查、可追问的中文输出。
+          </p>
+          <div class="hero-actions">
+            <a class="button primary" href="#install">快速开始</a>
+            <a class="button secondary" href="https://github.com/xi-kari/crossframe-skill">查看 GitHub</a>
+            <a class="button secondary" href="#examples">看一个例子</a>
+          </div>
+        </div>
+
+        <div class="hero-visual" aria-label="CrossFrame 质量链示意">
+          <img class="flow-art" src="assets/flow.svg" alt="source_id 到 inquiry 的结构链路图">
+          <div class="ledger-card card-a">
+            <span class="ledger-id">source_id: S1</span>
+            <strong>supports: CL2</strong>
+            <small>cannot prove: final cause</small>
+          </div>
+          <div class="ledger-card card-b">
+            <span class="ledger-id">claim_id: CL2</span>
+            <strong>grade: open_assertion</strong>
+            <small>withdraw if: source boundary fails</small>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-band pain" aria-labelledby="pain-title">
+        <div class="section-heading">
+          <p class="eyebrow">Pain Point</p>
+          <h2 id="pain-title">普通 AI 的问题，不是不会说，而是太会说。</h2>
+          <p>
+            它能把一个判断写得顺滑，却不告诉你事实在哪里、证据到哪一档、哪些只是推测、什么情况必须撤回。
+          </p>
+        </div>
+        <div class="three-grid">
+          <article class="surface-card">
+            <span class="card-index">01</span>
+            <h3>看起来像推理</h3>
+            <p>但没有证据边界。</p>
+          </article>
+          <article class="surface-card">
+            <span class="card-index">02</span>
+            <h3>看起来很深刻</h3>
+            <p>但把比喻当证明。</p>
+          </article>
+          <article class="surface-card">
+            <span class="card-index">03</span>
+            <h3>看起来有结论</h3>
+            <p>但没有撤回条件。</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="how" class="section-band how" aria-labelledby="how-title">
+        <div class="section-heading">
+          <p class="eyebrow">How It Works</p>
+          <h2 id="how-title">CrossFrame 让 AI 先做四件事</h2>
+        </div>
+        <div class="four-grid">
+          <article class="surface-card">
+            <span class="card-index">1</span>
+            <h3>拆事实</h3>
+            <p>事实、解释、推测和来源分开，不让顺滑表达替代证据。</p>
+          </article>
+          <article class="surface-card">
+            <span class="card-index">2</span>
+            <h3>定尺度</h3>
+            <p>个人、关系、组织、制度和历史阶段不能混写成同一种判断。</p>
+          </article>
+          <article class="surface-card">
+            <span class="card-index">3</span>
+            <h3>交台账</h3>
+            <p>中心命题必须绑定 claim_id，来源必须绑定 source_id。</p>
+          </article>
+          <article class="surface-card">
+            <span class="card-index">4</span>
+            <h3>过审查</h3>
+            <p>正文不能强于台账，生成层不能自己宣布质量通过。</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section-band loop" aria-labelledby="loop-title">
+        <div class="section-heading">
+          <p class="eyebrow">Workflow Loop</p>
+          <h2 id="loop-title">诊断、成文、审查、追问，是一条闭环</h2>
+        </div>
+        <div class="loop-track" aria-label="CrossFrame 工作流">
+          <article>
+            <span>Diagnose</span>
+            <h3>结构诊断</h3>
+            <p>生成事实边界、机制候选和 claim ledger。</p>
+          </article>
+          <article>
+            <span>Write</span>
+            <h3>中文成文</h3>
+            <p>把结构判断写成普通读者能读懂的中文。</p>
+          </article>
+          <article>
+            <span>Review</span>
+            <h3>质量闸</h3>
+            <p>抽句反查 source_id、claim_id 和概念契约。</p>
+          </article>
+          <article>
+            <span>Inquire</span>
+            <h3>继续追问</h3>
+            <p>完成后继续反证、补证、迁移和收束。</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="examples" class="section-band examples" aria-labelledby="examples-title">
+        <div class="section-heading">
+          <p class="eyebrow">Demo Cards</p>
+          <h2 id="examples-title">选择一个场景，看它怎么工作</h2>
+        </div>
+        <div class="demo-shell">
+          <div class="demo-tabs" role="tablist" aria-label="示例场景">
+            <button class="demo-tab is-active" type="button" role="tab" aria-selected="true" data-demo="philosophy">哲学问题</button>
+            <button class="demo-tab" type="button" role="tab" aria-selected="false" data-demo="history">历史分析</button>
+            <button class="demo-tab" type="button" role="tab" aria-selected="false" data-demo="org">组织复盘</button>
+            <button class="demo-tab" type="button" role="tab" aria-selected="false" data-demo="public">公共议题</button>
+            <button class="demo-tab" type="button" role="tab" aria-selected="false" data-demo="inquiry">完成后追问</button>
+          </div>
+          <article class="demo-panel" aria-live="polite">
+            <div>
+              <span class="panel-label">输入</span>
+              <p id="demo-input"></p>
+            </div>
+            <div>
+              <span class="panel-label">工作流</span>
+              <p id="demo-workflow"></p>
+            </div>
+            <div>
+              <span class="panel-label">输出摘要</span>
+              <ul id="demo-output"></ul>
+            </div>
+            <div>
+              <span class="panel-label">会被 review 抓住的边界</span>
+              <p id="demo-review"></p>
+            </div>
+            <div>
+              <span class="panel-label">下一步 inquiry</span>
+              <p id="demo-inquiry"></p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="skills" class="section-band skills" aria-labelledby="skills-title">
+        <div class="section-heading">
+          <p class="eyebrow">Skill Map</p>
+          <h2 id="skills-title">14 个 skills，各司其职</h2>
+        </div>
+        <div class="skill-groups">
+          <section class="skill-group" aria-labelledby="core-title">
+            <h3 id="core-title">Core</h3>
+            <div class="skill-list">
+              <article><strong>crossframe-suite</strong><span>总调度入口，决定连续工作流。</span></article>
+              <article><strong>crossframe</strong><span>结构诊断核心层。</span></article>
+              <article><strong>crossframe-review</strong><span>审查推理、证据边界和输出质量。</span></article>
+              <article><strong>crossframe-inquiry</strong><span>完成态后的结构追问层。</span></article>
+            </div>
+          </section>
+          <section class="skill-group" aria-labelledby="writing-title">
+            <h3 id="writing-title">Writing</h3>
+            <div class="skill-list">
+              <article><strong>crossframe-essay</strong><span>把结构诊断转成完整中文文章。</span></article>
+              <article><strong>crossframe-dialogue</strong><span>读者答复、编辑回信和咨询式短答。</span></article>
+              <article><strong>crossframe-critical</strong><span>点名调用的结构批判长文。</span></article>
+              <article><strong>crossframe-teach</strong><span>概念讲解、误读纠偏和练习。</span></article>
+            </div>
+          </section>
+          <section class="skill-group" aria-labelledby="domains-title">
+            <h3 id="domains-title">Domains</h3>
+            <div class="skill-list">
+              <article><strong>crossframe-history</strong><span>历史材料、史料边界和长时段制度问题。</span></article>
+              <article><strong>crossframe-public</strong><span>公共议题、平台治理和机构责任。</span></article>
+              <article><strong>crossframe-org</strong><span>团队、项目和组织修复。</span></article>
+            </div>
+          </section>
+          <section class="skill-group" aria-labelledby="research-title">
+            <h3 id="research-title">Research</h3>
+            <div class="skill-list">
+              <article><strong>crossframe-debate</strong><span>命题辩论、正反结构和撤回条件。</span></article>
+              <article><strong>crossframe-casebook</strong><span>把材料整理成可复用案例。</span></article>
+              <article><strong>crossframe-notebook</strong><span>读书、理论、文章和摘录研究笔记。</span></article>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="section-band quality" aria-labelledby="quality-title">
+        <div class="section-heading">
+          <p class="eyebrow">Quality Gate</p>
+          <h2 id="quality-title">为什么它不是普通提示词？</h2>
+        </div>
+        <div class="compare-grid">
+          <article class="surface-card">
+            <span class="panel-label">普通提示词</span>
+            <blockquote>请深入分析。</blockquote>
+          </article>
+          <article class="surface-card">
+            <span class="panel-label">CrossFrame</span>
+            <blockquote>
+              这条判断对应哪个 claim_id？来源能证明什么，不能证明什么？用了哪个 concept contract？什么情况必须撤回？正文有没有强于台账？
+            </blockquote>
+          </article>
+        </div>
+        <div class="quality-chain" aria-label="质量闭环">
+          <span>source_id</span>
+          <span>claim_id</span>
+          <span>concept contract</span>
+          <span>source anchor</span>
+          <span>review</span>
+          <span>inquiry</span>
+        </div>
+      </section>
+
+      <section id="install" class="section-band install" aria-labelledby="install-title">
+        <div class="section-heading">
+          <p class="eyebrow">Install / Try</p>
+          <h2 id="install-title">两分钟内试一次</h2>
+        </div>
+        <div class="install-shell">
+          <div class="install-tabs" role="tablist" aria-label="安装方式">
+            <button class="install-tab is-active" type="button" role="tab" aria-selected="true" data-install="codex">Codex</button>
+            <button class="install-tab" type="button" role="tab" aria-selected="false" data-install="claude">Claude Code</button>
+            <button class="install-tab" type="button" role="tab" aria-selected="false" data-install="agents">Other Agents</button>
+          </div>
+          <pre class="code-panel"><code id="install-code"></code></pre>
+        </div>
+      </section>
+
+      <section class="section-band faq" aria-labelledby="faq-title">
+        <div class="section-heading">
+          <p class="eyebrow">FAQ</p>
+          <h2 id="faq-title">常见问题</h2>
+        </div>
+        <div class="faq-list">
+          <details>
+            <summary>它会自动接管所有问题吗？</summary>
+            <p>不会。CrossFrame 是 explicit-only，只有用户明确点名 CrossFrame 或对应 skill 时才启动。</p>
+          </details>
+          <details>
+            <summary>它和提示词模板有什么不同？</summary>
+            <p>提示词模板通常要求“说得更好”。CrossFrame 要求回答前交台账，回答后可审查、可追问、可降档。</p>
+          </details>
+          <details>
+            <summary>为什么要有 crossframe-inquiry？</summary>
+            <p>因为完整分析、成文和 review 结束后，真正有价值的下一步通常是反证、补证、迁移和行动边界确认。</p>
+          </details>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <span>CrossFrame Skill Suite</span>
+      <a href="https://github.com/xi-kari/crossframe-skill">GitHub</a>
+      <a href="https://github.com/xi-kari/crossframe-skill/blob/main/docs/QUICKSTART.md">Quickstart</a>
+      <a href="https://github.com/xi-kari/crossframe-skill/blob/main/LICENSE">MIT License</a>
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>

@@ -15,6 +15,12 @@
 ![License](https://img.shields.io/badge/license-MIT-f8efcf?style=flat-square&labelColor=fffdf6&color=f8efcf)
 
 <p align="center">
+  <a href="https://xi-kari.github.io/crossframe-skill/"><strong>网页介绍</strong></a>
+  ·
+  <a href="https://github.com/xi-kari/crossframe-skill/releases"><strong>下载 Release</strong></a>
+</p>
+
+<p align="center">
   <a href="#what"><strong>它是什么</strong></a>
   ·
   <a href="#quickstart"><strong>快速开始</strong></a>

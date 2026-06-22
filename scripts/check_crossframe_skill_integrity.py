@@ -344,9 +344,57 @@ def check_public_release_docs(repo: Path, label: str) -> None:
     if not (repo / "skills").is_dir():
         return
 
+    website_files = {
+        "site/index.html": [
+            "CrossFrame Skill Suite",
+            "给 AI 装上的中文结构思考系统",
+            "让 AI 在回答前先交账",
+            "普通 AI 的问题，不是不会说，而是太会说",
+            "CrossFrame 让 AI 先做四件事",
+            "source_id",
+            "claim_id",
+            "concept contract",
+            "crossframe-inquiry",
+            "data-demo=\"philosophy\"",
+            "data-install=\"codex\"",
+        ],
+        "site/styles.css": [
+            "--bg: #f7f3ea",
+            "--accent: #5b6ee1",
+            "grid-template-columns",
+            "@media (max-width: 980px)",
+        ],
+        "site/app.js": [
+            "const demos",
+            "philosophy",
+            "history",
+            "org",
+            "public",
+            "inquiry",
+            "const installs",
+            "setDemo",
+            "setInstall",
+        ],
+        "site/assets/crossframe-mark.svg": ["CrossFrame mark"],
+        "site/assets/flow.svg": ["CrossFrame quality chain", "concept contract"],
+        "site/assets/og-image.svg": ["CrossFrame Skill Suite"],
+        ".github/workflows/pages.yml": [
+            "Deploy Website",
+            "actions/upload-pages-artifact@v3",
+            "path: site",
+            "actions/deploy-pages@v4",
+        ],
+    }
+    for rel, needles in website_files.items():
+        path = repo / rel
+        require(path.exists(), f"{label}: missing website file: {rel}")
+        text = read(path)
+        for needle in needles:
+            require(needle in text, f"{label}: website file {rel} missing marker: {needle}")
+
     required_docs = {
-        "README.md": ["14 个显式触发", "source_id -> claim_id", "docs/QUICKSTART.md", "framework-CrossFrame_v5.1", "review_%E2%86%92_inquiry"],
-        "CHANGELOG.md": ["v5.0.2", "crossframe-history", "crossframe-inquiry", "source_id"],
+        "README.md": ["14 个显式触发", "source_id -> claim_id", "docs/QUICKSTART.md", "framework-CrossFrame_v5.1", "review_%E2%86%92_inquiry", "https://xi-kari.github.io/crossframe-skill/", "网页介绍"],
+        "CHANGELOG.md": ["v5.1.3", "site/", "GitHub Pages", "v5.0.2", "crossframe-history", "crossframe-inquiry", "source_id"],
         "docs/WHAT_IS_CROSSFRAME.md": ["CrossFrame 是一组给 AI 使用的中文结构思考 skills", "一个一分钟例子", "它不是什么", "最推荐怎么用", "crossframe-inquiry"],
         "docs/QUICKSTART.md": ["install-codex.ps1", "--materials-only", "--source-docx"],
         "docs/CONCEPTS.md": ["Claim Ledger", "source_id", "Concept Contract"],
@@ -398,6 +446,10 @@ def check_public_release_docs(repo: Path, label: str) -> None:
         "scripts/package_crossframe_skill.py",
     ]:
         require((repo / rel).exists(), f"{label}: missing release maintenance script: {rel}")
+
+    package_script = read(repo / "scripts" / "package_crossframe_skill.py")
+    require('"site"' in package_script, f"{label}: package script does not include site directory")
+    require('default="v5.1.3"' in package_script, f"{label}: package script default version is not v5.1.3")
 
     require(not (repo / "scripts" / "check_v2_continuity.py").exists(), f"{label}: retired v2 checker still exists")
     require(not (repo / "scripts" / "generate_v2_continuity.py").exists(), f"{label}: retired v2 generator still exists")

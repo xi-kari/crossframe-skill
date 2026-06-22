@@ -1,5 +1,21 @@
 # Changelog
 
+## v5.1.3 - 2026-06-22
+
+### Added
+
+- 新增 `site/` 纯静态中文介绍页，用独立 landing page 展示 CrossFrame 的用途、质量链、场景 demo、14 个 skill 地图和安装入口。
+- 新增 GitHub Pages workflow，从 `site/` 直接部署项目网站。
+
+### Changed
+
+- README 顶部增加网页介绍和 Release 入口。
+- 发布包脚本纳入 `site/`，公开 zip 会包含网站文件。
+
+### Verification
+
+- 完整性校验新增网站关键文案、交互脚本、视觉资产、Pages workflow 和发布包覆盖检查。
+
 ## v5.1.2 - 2026-06-22
 
 ### Changed
