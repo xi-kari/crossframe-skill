@@ -105,8 +105,8 @@ img {
   grid-template-columns: minmax(0, 1.02fr) minmax(340px, 0.98fr);
   align-items: center;
   gap: clamp(34px, 6vw, 76px);
-  padding-top: clamp(34px, 7vw, 82px);
-  padding-bottom: clamp(46px, 7vw, 78px);
+  padding-top: clamp(28px, 5vw, 58px);
+  padding-bottom: clamp(34px, 5vw, 56px);
 }
 
 .hero-copy {
@@ -137,7 +137,7 @@ h2 {
 
 h1 {
   max-width: 780px;
-  font-size: clamp(3rem, 7.2vw, 6.7rem);
+  font-size: clamp(2.7rem, 5.4vw, 5.4rem);
   font-weight: 720;
 }
 
@@ -181,6 +181,32 @@ h3 {
   font-size: 0.92rem;
 }
 
+.micro-flow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 22px;
+}
+
+.micro-flow span {
+  padding: 8px 12px;
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 700;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 253, 247, 0.82);
+}
+
+.micro-flow span::after {
+  content: " →";
+  color: var(--accent);
+}
+
+.micro-flow span:last-child::after {
+  content: "";
+}
+
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
@@ -217,7 +243,7 @@ h3 {
 
 .hero-visual {
   position: relative;
-  min-height: 520px;
+  min-height: 500px;
   border: 1px solid var(--line);
   border-radius: 8px;
   background:
@@ -230,7 +256,7 @@ h3 {
 .flow-art {
   width: 100%;
   height: 100%;
-  min-height: 520px;
+  min-height: 500px;
   object-fit: cover;
 }
 
@@ -275,6 +301,13 @@ h3 {
   max-width: 720px;
   margin: 18px 0 0;
   font-size: 1.05rem;
+}
+
+.section-note {
+  max-width: 720px;
+  margin: 14px 0 0;
+  color: var(--muted);
+  font-size: 0.98rem;
 }
 
 .three-grid,
@@ -324,6 +357,16 @@ h3 {
 
 .surface-card p {
   margin: 12px 0 0;
+}
+
+.clean-list {
+  margin: 16px 0 0;
+  padding-left: 20px;
+  color: var(--muted);
+}
+
+.clean-list li + li {
+  margin-top: 8px;
 }
 
 .loop-track {
@@ -401,6 +444,17 @@ h3 {
   gap: 22px;
 }
 
+.safe-demo-badge {
+  width: fit-content;
+  padding: 4px 9px;
+  color: var(--accent-2);
+  font-size: 0.78rem;
+  font-weight: 800;
+  border: 1px solid rgba(47, 158, 143, 0.35);
+  border-radius: 999px;
+  background: rgba(47, 158, 143, 0.08);
+}
+
 .demo-panel p,
 .demo-panel ul {
   margin: 8px 0 0;
@@ -408,6 +462,20 @@ h3 {
 
 .demo-panel ul {
   padding-left: 19px;
+}
+
+.demo-disclaimer {
+  margin-top: 18px;
+  padding: 14px 16px;
+  color: var(--muted);
+  font-size: 0.96rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 253, 247, 0.78);
+}
+
+.demo-disclaimer strong {
+  color: var(--ink);
 }
 
 .skill-groups {
@@ -568,18 +636,23 @@ blockquote {
 }
 
 @media (max-width: 620px) {
+  .site-header {
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+
   .section-band {
     width: min(100% - 28px, 1180px);
     padding: 28px 0;
   }
 
   h1 {
-    font-size: clamp(2.15rem, 10vw, 2.9rem);
+    font-size: clamp(1.95rem, 8.4vw, 2.35rem);
     line-height: 1.08;
   }
 
   .hero {
-    gap: 18px;
+    gap: 12px;
     padding-top: 20px;
     padding-bottom: 18px;
   }
@@ -591,9 +664,7 @@ blockquote {
   }
 
   .hero-support {
-    margin-top: 10px;
-    font-size: 0.9rem;
-    line-height: 1.5;
+    display: none;
   }
 
   .hero-note {
@@ -603,8 +674,22 @@ blockquote {
   }
 
   .hero-actions {
-    margin-top: 18px;
+    margin-top: 12px;
     gap: 8px;
+  }
+
+  .micro-flow {
+    flex-wrap: nowrap;
+    gap: 4px;
+    margin-top: 12px;
+    padding-bottom: 2px;
+    overflow-x: auto;
+  }
+
+  .micro-flow span {
+    flex: 0 0 auto;
+    padding: 5px 8px;
+    font-size: 0.78rem;
   }
 
   .button {
@@ -619,6 +704,11 @@ blockquote {
 
   .hero-actions {
     display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .button.primary {
+    grid-column: 1 / -1;
   }
 
   .ledger-card {

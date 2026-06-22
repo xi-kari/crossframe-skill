@@ -15,9 +15,12 @@
     >
     <meta property="og:url" content="https://xi-kari.github.io/crossframe-skill/">
     <meta property="og:type" content="website">
-    <meta property="og:image" content="https://xi-kari.github.io/crossframe-skill/assets/og-image.svg">
+    <meta property="og:image" content="https://xi-kari.github.io/crossframe-skill/assets/og-image.png">
     <meta property="og:locale" content="zh_CN">
     <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="CrossFrame Skill Suite">
+    <meta name="twitter:description" content="让 AI 在回答前先交账，在回答后继续追问。">
+    <meta name="twitter:image" content="https://xi-kari.github.io/crossframe-skill/assets/og-image.png">
     <meta name="theme-color" content="#f7f3ea">
     <link rel="canonical" href="https://xi-kari.github.io/crossframe-skill/">
     <link rel="icon" href="assets/crossframe-mark.svg" type="image/svg+xml">
@@ -50,12 +53,20 @@
             CrossFrame 会先拆清事实、证据、尺度、机制、判断档位和行动边界，再生成可审查、可追问的中文输出。
           </p>
           <p class="hero-note">
-            这是项目介绍页；CrossFrame 作为本地 AI skill 使用，推荐从 Codex 或 Claude Code 安装。
+            这是项目介绍页；CrossFrame 作为本地 AI skill 使用，推荐安装到 Codex、Claude Code 或其它支持项目规则的 agent。
           </p>
+          <div class="micro-flow" aria-label="CrossFrame 微流程">
+            <span>问题</span>
+            <span>事实边界</span>
+            <span>命题台账</span>
+            <span>正文</span>
+            <span>review</span>
+            <span>inquiry</span>
+          </div>
           <div class="hero-actions">
-            <a class="button primary" href="#install">快速开始</a>
+            <a class="button primary" href="#install">开始安装</a>
             <a class="button secondary" href="https://github.com/xi-kari/crossframe-skill">查看 GitHub</a>
-            <a class="button secondary" href="#examples">看一个例子</a>
+            <a class="button secondary" href="#examples">查看模拟场景</a>
           </div>
         </div>
 
@@ -130,6 +141,33 @@
         </div>
       </section>
 
+      <section class="section-band fit" aria-labelledby="fit-title">
+        <div class="section-heading">
+          <p class="eyebrow">Use Boundary</p>
+          <h2 id="fit-title">什么时候适合用 CrossFrame？</h2>
+        </div>
+        <div class="compare-grid">
+          <article class="surface-card">
+            <span class="panel-label">适合</span>
+            <ul class="clean-list">
+              <li>复杂问题，需要拆事实、机制和边界。</li>
+              <li>写文章前，需要先形成结构底稿。</li>
+              <li>AI 输出看起来顺，但你想检查它有没有真正推理。</li>
+              <li>分析结束后，还想继续追问、反证和迁移。</li>
+            </ul>
+          </article>
+          <article class="surface-card">
+            <span class="panel-label">不适合</span>
+            <ul class="clean-list">
+              <li>单纯事实查询。</li>
+              <li>普通改写、翻译、摘要。</li>
+              <li>没有要求 CrossFrame 的日常聊天。</li>
+              <li>需要医生、律师、财务顾问或正式调查程序的高责任结论。</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
       <section class="section-band loop" aria-labelledby="loop-title">
         <div class="section-heading">
           <p class="eyebrow">Workflow Loop</p>
@@ -162,17 +200,21 @@
       <section id="examples" class="section-band examples" aria-labelledby="examples-title">
         <div class="section-heading">
           <p class="eyebrow">Demo Cards</p>
-          <h2 id="examples-title">选择一个场景，看它怎么工作</h2>
+          <h2 id="examples-title">选择一个安全模拟场景，看它怎么工作</h2>
+          <p class="section-note">
+            首页示例均为虚构或匿名结构样例，只展示 CrossFrame 的工作方式，不对现实人物、机构、国家、宗教或公共事件作判断。
+          </p>
         </div>
         <div class="demo-shell">
           <div class="demo-tabs" role="tablist" aria-label="示例场景">
-            <button class="demo-tab is-active" type="button" role="tab" aria-selected="true" aria-controls="demo-panel" data-demo="philosophy">哲学问题</button>
-            <button class="demo-tab" type="button" role="tab" aria-selected="false" aria-controls="demo-panel" data-demo="history">历史分析</button>
-            <button class="demo-tab" type="button" role="tab" aria-selected="false" aria-controls="demo-panel" data-demo="org">组织复盘</button>
-            <button class="demo-tab" type="button" role="tab" aria-selected="false" aria-controls="demo-panel" data-demo="public">公共议题</button>
+            <button class="demo-tab is-active" type="button" role="tab" aria-selected="true" aria-controls="demo-panel" data-demo="philosophy">概念追问</button>
+            <button class="demo-tab" type="button" role="tab" aria-selected="false" aria-controls="demo-panel" data-demo="history">历史接口</button>
+            <button class="demo-tab" type="button" role="tab" aria-selected="false" aria-controls="demo-panel" data-demo="org">组织机制</button>
+            <button class="demo-tab" type="button" role="tab" aria-selected="false" aria-controls="demo-panel" data-demo="public">公共证据</button>
             <button class="demo-tab" type="button" role="tab" aria-selected="false" aria-controls="demo-panel" data-demo="inquiry">完成后追问</button>
           </div>
           <article class="demo-panel" role="tabpanel" id="demo-panel" aria-live="polite">
+            <span class="safe-demo-badge">匿名模拟示例</span>
             <div>
               <span class="panel-label">输入</span>
               <p id="demo-input"></p>
@@ -194,6 +236,10 @@
               <p id="demo-inquiry"></p>
             </div>
           </article>
+        </div>
+        <div class="demo-disclaimer">
+          <strong>示例说明：</strong>
+          首页示例只展示工作流，不构成对现实对象的判断。真实历史、公共议题和组织材料需要进入 source ledger、claim ledger 和 review。
         </div>
       </section>
 
@@ -281,7 +327,7 @@
           <pre class="code-panel" role="tabpanel" id="install-panel"><code id="install-code"></code></pre>
         </div>
         <p class="install-note">
-          当前一键安装脚本面向 Windows PowerShell；macOS / Linux 用户可按 docs/ADAPTERS.md 手动复制 skills/crossframe*。
+          当前一键安装脚本面向 Windows PowerShell；macOS / Linux 用户可按 docs/ADAPTERS.md 手动复制 skills/crossframe* 到对应 agent 的 skills 目录。
         </p>
       </section>
 
@@ -307,12 +353,20 @@
             <summary>这个网页能直接运行 CrossFrame 吗？</summary>
             <p>不能。这个页面是介绍页。CrossFrame 作为本地 AI skill 使用，需要安装到 Codex、Claude Code 或其它支持项目规则 / skills 的 agent 中。</p>
           </details>
+          <details>
+            <summary>为什么首页示例都是虚构或匿名的？</summary>
+            <p>因为 CrossFrame 会处理历史、公共、组织等高责任主题。首页只展示工作方式，不对现实对象做判断；真实材料需要进入 source ledger、claim ledger 和 review。</p>
+          </details>
+          <details>
+            <summary>它会让 AI 变慢吗？</summary>
+            <p>复杂任务会更慢，因为它要先拆事实、证据、命题和边界。CrossFrame 的目标不是最快回答，而是降低顺滑错误和越界判断。</p>
+          </details>
         </div>
       </section>
     </main>
 
     <footer class="site-footer">
-      <span>CrossFrame Skill Suite</span>
+      <span>CrossFrame Skill Suite · v5.1.5 · explicit-only</span>
       <a href="https://github.com/xi-kari/crossframe-skill">GitHub</a>
       <a href="https://github.com/xi-kari/crossframe-skill/blob/main/docs/QUICKSTART.md">Quickstart</a>
       <a href="https://github.com/xi-kari/crossframe-skill/blob/main/LICENSE">MIT License</a>

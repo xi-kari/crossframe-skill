@@ -1,5 +1,20 @@
 # Changelog
 
+## v5.1.5 - 2026-06-22
+
+### Changed
+
+- 首页 Demo Cards 全部改为虚构或匿名结构样例，避免把真实国家、平台、组织或宗教/哲学争议放在 landing page 第一层。
+- Demo 区新增安全说明、匿名模拟标签和低敏 tab 命名：概念追问、历史接口、组织机制、公共证据、完成后追问。
+- Hero 补充 10 秒微流程，并把 CTA 调整为“开始安装 / 查看模拟场景”。
+- 新增“什么时候适合用 CrossFrame？”适合/不适合区块，降低新用户误解。
+- 分享预览从 SVG 切换为 PNG，并补齐 Twitter card 元数据。
+- Install、FAQ、Footer 和 `docs/EXAMPLES.md` 补齐非 Windows、虚构样例、高责任主题边界和版本状态说明。
+
+### Verification
+
+- 完整性校验新增安全模拟首页、PNG 分享图、FAQ、Use Boundary、v5.1.5 包版本和敏感 demo 退场检查。
+
 ## v5.1.4 - 2026-06-22
 
 ### Changed

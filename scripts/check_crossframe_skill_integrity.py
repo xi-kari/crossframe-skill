@@ -356,20 +356,42 @@ def check_public_release_docs(repo: Path, label: str) -> None:
             "claim_id",
             "concept contract",
             "crossframe-inquiry",
-            "https://xi-kari.github.io/crossframe-skill/assets/og-image.svg",
+            "https://xi-kari.github.io/crossframe-skill/assets/og-image.png",
+            "twitter:image",
             "rel=\"canonical\"",
             "og:url",
+            "选择一个安全模拟场景，看它怎么工作",
+            "首页示例均为虚构或匿名结构样例",
+            "匿名模拟示例",
+            "示例说明",
+            "Use Boundary",
+            "什么时候适合用 CrossFrame？",
+            "开始安装",
+            "查看模拟场景",
+            "概念追问",
+            "历史接口",
+            "组织机制",
+            "公共证据",
             "data-demo=\"philosophy\"",
             "data-install=\"codex\"",
             "aria-controls=\"demo-panel\"",
             "role=\"tabpanel\" id=\"demo-panel\"",
             "当前一键安装脚本面向 Windows PowerShell",
+            "到对应 agent 的 skills 目录",
             "这个网页能直接运行 CrossFrame 吗？",
+            "为什么首页示例都是虚构或匿名的？",
+            "它会让 AI 变慢吗？",
+            "CrossFrame Skill Suite · v5.1.5 · explicit-only",
         ],
         "site/styles.css": [
             "--bg: #f7f3ea",
             "--accent: #5b6ee1",
             ".hero-note",
+            ".micro-flow",
+            ".section-note",
+            ".clean-list",
+            ".safe-demo-badge",
+            ".demo-disclaimer",
             ".install-note",
             "height: 240px",
             "grid-template-columns",
@@ -382,6 +404,11 @@ def check_public_release_docs(repo: Path, label: str) -> None:
             "org",
             "public",
             "inquiry",
+            "一个问题什么时候不该被直接回答",
+            "虚构城邦",
+            "虚构团队",
+            "虚构平台",
+            "匿名结构分析",
             "const installs",
             "setDemo",
             "setInstall",
@@ -403,14 +430,25 @@ def check_public_release_docs(repo: Path, label: str) -> None:
         for needle in needles:
             require(needle in text, f"{label}: website file {rel} missing marker: {needle}")
 
+    require((repo / "site" / "assets" / "og-image.png").exists(), f"{label}: missing website file: site/assets/og-image.png")
+    public_page_text = read(repo / "site" / "index.html") + "\n" + read(repo / "site" / "app.js")
+    for retired_demo_marker in [
+        "生命的第一因",
+        "苏联",
+        "一個平台的申诉入口",
+        "一个平台的申诉入口是否等于治理有效",
+        "为什么这个团队越复盘越失真",
+    ]:
+        require(retired_demo_marker not in public_page_text, f"{label}: public page still has sensitive landing demo marker: {retired_demo_marker}")
+
     required_docs = {
         "README.md": ["14 个显式触发", "source_id -> claim_id", "docs/QUICKSTART.md", "framework-CrossFrame_v5.1", "review_%E2%86%92_inquiry", "https://xi-kari.github.io/crossframe-skill/", "网页介绍"],
-        "CHANGELOG.md": ["v5.1.4", "v5.1.3", "site/", "GitHub Pages", "v5.0.2", "crossframe-history", "crossframe-inquiry", "source_id"],
+        "CHANGELOG.md": ["v5.1.5", "v5.1.4", "v5.1.3", "site/", "GitHub Pages", "v5.0.2", "crossframe-history", "crossframe-inquiry", "source_id"],
         "docs/WHAT_IS_CROSSFRAME.md": ["CrossFrame 是一组给 AI 使用的中文结构思考 skills", "一个一分钟例子", "它不是什么", "最推荐怎么用", "crossframe-inquiry"],
         "docs/QUICKSTART.md": ["install-codex.ps1", "--materials-only", "--source-docx"],
         "docs/CONCEPTS.md": ["Claim Ledger", "source_id", "Concept Contract"],
         "docs/WORKFLOWS.md": ["previous_context -> crossframe-inquiry", "claim ledger / claim-ledger-check", "纯致谢"],
-        "docs/EXAMPLES.md": ["历史草稿档", "crossframe-inquiry", "mini 输出示例"],
+        "docs/EXAMPLES.md": ["首页只使用安全模拟样例", "真实/高敏主题", "source_id", "claim_id", "evidence grade", "withdrawal condition", "publish_boundary", "历史草稿档", "crossframe-inquiry", "mini 输出示例"],
         "docs/ADAPTERS.md": ["sync_skill_mirrors.py", "Codex", "Claude Code", "crossframe-history", "crossframe-inquiry", "纯致谢"],
         "docs/SAFETY_AND_LIMITS.md": ["默认不展示内部 reasoning", "工具调用参数"],
         "docs/FAQ.md": ["explicit-only", "--materials-only"],
@@ -460,7 +498,7 @@ def check_public_release_docs(repo: Path, label: str) -> None:
 
     package_script = read(repo / "scripts" / "package_crossframe_skill.py")
     require('"site"' in package_script, f"{label}: package script does not include site directory")
-    require('default="v5.1.4"' in package_script, f"{label}: package script default version is not v5.1.4")
+    require('default="v5.1.5"' in package_script, f"{label}: package script default version is not v5.1.5")
 
     require(not (repo / "scripts" / "check_v2_continuity.py").exists(), f"{label}: retired v2 checker still exists")
     require(not (repo / "scripts" / "generate_v2_continuity.py").exists(), f"{label}: retired v2 generator still exists")
