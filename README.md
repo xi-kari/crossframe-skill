@@ -1,87 +1,156 @@
+<div align="center">
+
 # CrossFrame Skill Suite
 
-CrossFrame Skill Suite is a Chinese structural diagnosis and writing skill suite for AI agents.
+### 面向 AI Agent 的中文结构诊断、追问、成文与质量审查 skill 家族
 
-It is designed for tasks where a plain answer is not enough: complex relationships, teams, institutions, public disputes, historical materials, arguments, reader replies, research notes, and long-form Chinese essays.
+**先拆清事实、证据、尺度、责任与机制，再输出普通读者能读懂的中文判断、答复、案例、备忘录或完整文章。**
 
-The suite asks the agent to separate facts, evidence, scale, responsibility, mechanism, and expression before producing a readable answer.
+<br>
 
-## What It Does
+![Language](https://img.shields.io/badge/language-%E4%B8%AD%E6%96%87%E8%BE%93%E5%87%BA-f3d7e6?style=flat-square&labelColor=fff7fb&color=f3d7e6)
+![Trigger](https://img.shields.io/badge/trigger-explicit_only-d8ebff?style=flat-square&labelColor=fafcff&color=d8ebff)
+![Framework](https://img.shields.io/badge/framework-CrossFrame_v5.0-e4ddff?style=flat-square&labelColor=fffaff&color=e4ddff)
+![Workflow](https://img.shields.io/badge/workflow-diagnosis_%E2%86%92_writing_%E2%86%92_review-d9f2df?style=flat-square&labelColor=fbfffb&color=d9f2df)
+![License](https://img.shields.io/badge/license-MIT-f8efcf?style=flat-square&labelColor=fffdf6&color=f8efcf)
 
-- Diagnoses complex social, organizational, relational, and institutional situations.
-- Turns structural analysis into readable Chinese essays, replies, reports, memos, and case notes.
-- Reviews generated answers for evidence boundaries, overclaiming, source drift, and weak reasoning.
-- Supports public-issue analysis, organization repair, debate analysis, historical-source handling, concept teaching, and research-note workflows.
-- Preserves explicit invocation: CrossFrame should be used only when the user asks for it.
+<p align="center">
+  <a href="#what"><strong>它是什么</strong></a>
+  ·
+  <a href="#use-cases"><strong>适用场景</strong></a>
+  ·
+  <a href="#language"><strong>中文输出</strong></a>
+  ·
+  <a href="#workflow"><strong>工作流</strong></a>
+  ·
+  <a href="#skills"><strong>Skill 地图</strong></a>
+  ·
+  <a href="#principles"><strong>输出原则</strong></a>
+</p>
 
-## When To Use It
+</div>
 
-Use CrossFrame when the user asks for one of these:
+---
 
-- structural diagnosis or cross-scale analysis
-- public issue, platform governance, policy, or institutional responsibility analysis
-- team, project, or organization repair
-- relationship or responsibility-chain analysis
-- historical materials, source-ledger boundaries, or archive/FOIA backlog handling
-- argument testing, debate mapping, or withdrawal conditions
-- turning analysis into a complete Chinese article
-- reviewing whether an answer actually reasons from evidence
-- follow-up inquiry after a completed analysis or article
+<a id="what"></a>
+## 它是什么
 
-Do not use it for simple factual lookup, arithmetic, ordinary chat, or tasks where the user did not ask for CrossFrame-style reasoning.
+CrossFrame Skill Suite 是一组给 AI agent 使用的中文结构诊断与成文 skills。
 
-## Main Entry
+它适合处理那些不能只靠“给建议”“写一段评论”“简单总结”解决的问题：关系、团队、组织、制度、公共争议、历史材料、命题辩论、读者来信、研究笔记，以及需要写成完整中文文章的复杂议题。
 
-For multi-step work, start with:
+它的核心目标不是堆术语，而是让 AI 在输出前先完成几件事：
+
+- 分清事实、解释、证据和推断。
+- 看清问题发生在哪个尺度：个人、关系、组织、制度、历史阶段或公共场域。
+- 找到责任链、授权链、反馈链和机制候选。
+- 判断哪些结论可以说，哪些只能保留为开放断言。
+- 把结构判断翻译成普通人能读懂的中文表达。
+
+---
+
+<a id="use-cases"></a>
+## 适用场景
+
+CrossFrame 适合用于：
+
+- **关系与责任链**：亲密关系、家庭、照护、解释劳动、退出困难、低权力主体保护。
+- **团队与组织**：项目复盘、授权失衡、反馈写回、责任转移、组织修复备忘录。
+- **公共议题**：平台治理、政策评论、机构责任、公共承诺、合规材料和申诉文本。
+- **历史材料**：史料边界、断代尺度、制度连续性、archive / FOIA backlog。
+- **命题辩论**：正反结构、隐藏前提、最强反方、证据要求和撤回条件。
+- **读书与研究**：理论、文章、摘录和案例材料的互读笔记。
+- **中文成文**：把结构诊断转成评论、思想文章、读者答复、案例、备忘录或长文。
+- **输出审查**：检查 AI 回答有没有真正推理、是否越界、是否把材料写成了空话。
+- **完成后追问**：在一轮分析、成文或质量闸完成后，继续追问、反证、补证和迁移应用。
+
+不适合用于：
+
+- 单纯事实查询。
+- 纯工具执行等非结构诊断任务。
+- 普通聊天、普通改写、普通摘要。
+- 用户没有要求 CrossFrame 式结构分析的场景。
+
+---
+
+<a id="language"></a>
+## 中文输出
+
+CrossFrame 默认面向中文问题和中文读者。
+
+使用时应保持：
+
+- **主要输出使用中文**。
+- 结构判断、文章正文、读者答复、案例和审查报告都应以中文完成。
+- `crossframe-*` 这类英文只作为 skill id 或路由标签使用，不应替代中文解释。
+- 术语尽量放在后台，前台先说人话。
+- 需要引用外部材料时，引用和证据边界必须可核验。
+
+---
+
+<a id="workflow"></a>
+## 工作流
+
+多步骤任务推荐从总入口开始：
 
 ```text
 crossframe-suite
 ```
 
-The suite chooses the workflow and then routes to the needed specialist skills.
-
-Common workflows:
+它会先判断任务类型，再选择需要读取的专项 skill。常见链路如下：
 
 ```text
-crossframe -> crossframe-review
-crossframe -> crossframe-essay -> crossframe-review
-crossframe -> crossframe-public -> crossframe-essay -> crossframe-review
-crossframe -> crossframe-org -> crossframe-essay -> crossframe-review
-crossframe -> crossframe-history -> crossframe-essay -> crossframe-review
-crossframe -> crossframe-dialogue
-crossframe -> crossframe-notebook
-crossframe -> crossframe-inquiry
+结构诊断      crossframe -> crossframe-review
+中文长文      crossframe -> crossframe-essay -> crossframe-review
+公共评论      crossframe -> crossframe-public -> crossframe-essay -> crossframe-review
+组织复盘      crossframe -> crossframe-org -> crossframe-essay -> crossframe-review
+历史研究      crossframe -> crossframe-history -> crossframe-essay -> crossframe-review
+答读者问      crossframe -> crossframe-dialogue
+读书研究      crossframe -> crossframe-notebook
+完成后追问    crossframe -> crossframe-review(lite) -> crossframe-inquiry
 ```
 
-## Skill Areas
+CrossFrame 是 **explicit-only**：只有用户明确点名 CrossFrame、`crossframe-suite`、`crossframe`、某个 `crossframe-*`，或使用对应命令时才应启动。
 
-| Skill | Purpose |
+---
+
+<a id="skills"></a>
+## Skill 地图
+
+| Skill | 用途 |
 | --- | --- |
-| `crossframe-suite` | Workflow router for multi-step CrossFrame tasks |
-| `crossframe` | Core structural diagnosis |
-| `crossframe-essay` | Converts analysis into complete Chinese essays |
-| `crossframe-review` | Checks reasoning, evidence boundaries, and output quality |
-| `crossframe-dialogue` | Reader replies, editorial responses, and short consultation answers |
-| `crossframe-casebook` | Turns materials into reusable case entries |
-| `crossframe-history` | Historical materials, source ledgers, and archive/FOIA boundaries |
-| `crossframe-public` | Public issues, institutions, platforms, policies, and compliance materials |
-| `crossframe-org` | Team, project, and organization repair |
-| `crossframe-teach` | Plain-language concept explanation and exercises |
-| `crossframe-debate` | Proposition testing, opposing arguments, and withdrawal conditions |
-| `crossframe-notebook` | Reading notes for books, theories, articles, and excerpts |
-| `crossframe-critical` | Named-only long-form structural critique |
-| `crossframe-inquiry` | Follow-up questions after a completed CrossFrame workflow |
+| `crossframe-suite` | 总调度入口，决定连续工作流 |
+| `crossframe` | 结构诊断核心层 |
+| `crossframe-essay` | 把结构诊断转成完整中文文章 |
+| `crossframe-review` | 审查推理、证据边界和输出质量 |
+| `crossframe-dialogue` | 读者答复、编辑回信、咨询式短答 |
+| `crossframe-casebook` | 把材料整理成可复用案例 |
+| `crossframe-history` | 历史材料、史料边界、长时段制度问题 |
+| `crossframe-public` | 公共议题、平台治理、政策和机构责任 |
+| `crossframe-org` | 团队、项目和组织修复 |
+| `crossframe-teach` | 概念讲解、误读纠偏和练习 |
+| `crossframe-debate` | 命题辩论、正反结构和撤回条件 |
+| `crossframe-notebook` | 读书、理论、文章和摘录研究笔记 |
+| `crossframe-critical` | 点名调用的结构批判长文 |
+| `crossframe-inquiry` | 完成态后的结构追问、反证、补证和迁移 |
 
-## Output Principles
+---
 
-CrossFrame outputs should:
+<a id="principles"></a>
+## 输出原则
 
-- show a concise reasoning outline before the final answer
-- distinguish fact, interpretation, mechanism candidate, and judgment level
-- avoid turning structural analysis into personality judgment
-- avoid presenting uncertain claims as closure
-- keep specialist terms mostly in the background and write for ordinary readers
-- preserve evidence boundaries when discussing public, institutional, historical, or current events
+CrossFrame 输出应当：
+
+- 先给简短推理提纲，再给正式回答。
+- 区分事实、解释、机制候选和判断档位。
+- 不把结构诊断写成人格审判。
+- 不把证据不足的判断写成已经闭合。
+- 不把复杂问题压缩成口号、鸡汤或责任稀释。
+- 面向普通中文读者，尽量少堆术语。
+- 公共、机构、历史和现实事实相关内容必须保留证据边界。
+- 文章输出要先有结构洞察，再进入正文。
+
+---
 
 ## License
 
