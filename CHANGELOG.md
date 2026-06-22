@@ -1,5 +1,20 @@
 # Changelog
 
+## v5.1.4 - 2026-06-22
+
+### Changed
+
+- 首页补充“项目介绍页，不是在线运行器”的说明，降低首次访问误解。
+- 移动端 hero 视觉区调整为 240px，改善结构图和台账卡片可读性。
+- Demo 与 Install tabs 补齐 `tabpanel` / `aria-controls` 语义。
+- Install 区补充 Windows PowerShell 与 macOS / Linux 手动复制说明。
+- FAQ 增加“网页能否直接运行 CrossFrame”。
+- Canonical、`og:url` 和 `og:image` 改为公开页面绝对地址。
+
+### Verification
+
+- 完整性校验新增本轮网页抛光项覆盖。
+
 ## v5.1.3 - 2026-06-22
 
 ### Added

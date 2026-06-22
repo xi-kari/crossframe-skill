@@ -349,18 +349,29 @@ def check_public_release_docs(repo: Path, label: str) -> None:
             "CrossFrame Skill Suite",
             "给 AI 装上的中文结构思考系统",
             "让 AI 在回答前先交账",
+            "这是项目介绍页",
             "普通 AI 的问题，不是不会说，而是太会说",
             "CrossFrame 让 AI 先做四件事",
             "source_id",
             "claim_id",
             "concept contract",
             "crossframe-inquiry",
+            "https://xi-kari.github.io/crossframe-skill/assets/og-image.svg",
+            "rel=\"canonical\"",
+            "og:url",
             "data-demo=\"philosophy\"",
             "data-install=\"codex\"",
+            "aria-controls=\"demo-panel\"",
+            "role=\"tabpanel\" id=\"demo-panel\"",
+            "当前一键安装脚本面向 Windows PowerShell",
+            "这个网页能直接运行 CrossFrame 吗？",
         ],
         "site/styles.css": [
             "--bg: #f7f3ea",
             "--accent: #5b6ee1",
+            ".hero-note",
+            ".install-note",
+            "height: 240px",
             "grid-template-columns",
             "@media (max-width: 980px)",
         ],
@@ -394,7 +405,7 @@ def check_public_release_docs(repo: Path, label: str) -> None:
 
     required_docs = {
         "README.md": ["14 个显式触发", "source_id -> claim_id", "docs/QUICKSTART.md", "framework-CrossFrame_v5.1", "review_%E2%86%92_inquiry", "https://xi-kari.github.io/crossframe-skill/", "网页介绍"],
-        "CHANGELOG.md": ["v5.1.3", "site/", "GitHub Pages", "v5.0.2", "crossframe-history", "crossframe-inquiry", "source_id"],
+        "CHANGELOG.md": ["v5.1.4", "v5.1.3", "site/", "GitHub Pages", "v5.0.2", "crossframe-history", "crossframe-inquiry", "source_id"],
         "docs/WHAT_IS_CROSSFRAME.md": ["CrossFrame 是一组给 AI 使用的中文结构思考 skills", "一个一分钟例子", "它不是什么", "最推荐怎么用", "crossframe-inquiry"],
         "docs/QUICKSTART.md": ["install-codex.ps1", "--materials-only", "--source-docx"],
         "docs/CONCEPTS.md": ["Claim Ledger", "source_id", "Concept Contract"],
@@ -449,7 +460,7 @@ def check_public_release_docs(repo: Path, label: str) -> None:
 
     package_script = read(repo / "scripts" / "package_crossframe_skill.py")
     require('"site"' in package_script, f"{label}: package script does not include site directory")
-    require('default="v5.1.3"' in package_script, f"{label}: package script default version is not v5.1.3")
+    require('default="v5.1.4"' in package_script, f"{label}: package script default version is not v5.1.4")
 
     require(not (repo / "scripts" / "check_v2_continuity.py").exists(), f"{label}: retired v2 checker still exists")
     require(not (repo / "scripts" / "generate_v2_continuity.py").exists(), f"{label}: retired v2 generator still exists")

@@ -158,10 +158,12 @@ h3 {
 }
 
 .hero-support,
+.hero-note,
 .section-heading p,
 .surface-card p,
 .loop-track p,
 .skill-list span,
+.install-note,
 .faq-list p {
   color: var(--muted);
 }
@@ -170,6 +172,13 @@ h3 {
   max-width: 650px;
   margin: 18px 0 0;
   font-size: 1.02rem;
+}
+
+.hero-note,
+.install-note {
+  max-width: 650px;
+  margin: 12px 0 0;
+  font-size: 0.92rem;
 }
 
 .hero-actions {
@@ -468,6 +477,11 @@ blockquote {
   padding: 18px;
 }
 
+.install-note {
+  max-width: 760px;
+  margin-top: 14px;
+}
+
 .code-panel {
   min-height: 260px;
   margin: 0;
@@ -556,37 +570,51 @@ blockquote {
 @media (max-width: 620px) {
   .section-band {
     width: min(100% - 28px, 1180px);
-    padding: 42px 0;
+    padding: 28px 0;
   }
 
   h1 {
-    font-size: clamp(2.35rem, 12vw, 3.35rem);
+    font-size: clamp(2.15rem, 10vw, 2.9rem);
+    line-height: 1.08;
   }
 
   .hero {
-    gap: 28px;
-    padding-top: 28px;
-    padding-bottom: 36px;
+    gap: 18px;
+    padding-top: 20px;
+    padding-bottom: 18px;
   }
 
   .hero-lede {
-    margin-top: 18px;
-    font-size: 1.08rem;
+    margin-top: 14px;
+    font-size: 1rem;
+    line-height: 1.42;
   }
 
   .hero-support {
-    margin-top: 14px;
-    font-size: 0.96rem;
+    margin-top: 10px;
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  .hero-note {
+    margin-top: 8px;
+    font-size: 0.82rem;
+    line-height: 1.5;
   }
 
   .hero-actions {
-    margin-top: 24px;
+    margin-top: 18px;
+    gap: 8px;
+  }
+
+  .button {
+    min-height: 42px;
   }
 
   .hero-visual,
   .flow-art {
-    min-height: 170px;
-    height: 170px;
+    min-height: 240px;
+    height: 240px;
   }
 
   .hero-actions {
@@ -605,7 +633,7 @@ blockquote {
   }
 
   .card-b {
-    bottom: 14px;
+    bottom: 18px;
   }
 
   .skill-list article {

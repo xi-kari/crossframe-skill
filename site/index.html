@@ -13,8 +13,13 @@
       property="og:description"
       content="给 AI 装上的中文结构思考系统：诊断、成文、审查与追问。"
     >
+    <meta property="og:url" content="https://xi-kari.github.io/crossframe-skill/">
     <meta property="og:type" content="website">
-    <meta property="og:image" content="assets/og-image.svg">
+    <meta property="og:image" content="https://xi-kari.github.io/crossframe-skill/assets/og-image.svg">
+    <meta property="og:locale" content="zh_CN">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="theme-color" content="#f7f3ea">
+    <link rel="canonical" href="https://xi-kari.github.io/crossframe-skill/">
     <link rel="icon" href="assets/crossframe-mark.svg" type="image/svg+xml">
     <link rel="stylesheet" href="styles.css">
   </head>
@@ -43,6 +48,9 @@
           </p>
           <p class="hero-support">
             CrossFrame 会先拆清事实、证据、尺度、机制、判断档位和行动边界，再生成可审查、可追问的中文输出。
+          </p>
+          <p class="hero-note">
+            这是项目介绍页；CrossFrame 作为本地 AI skill 使用，推荐从 Codex 或 Claude Code 安装。
           </p>
           <div class="hero-actions">
             <a class="button primary" href="#install">快速开始</a>
@@ -158,13 +166,13 @@
         </div>
         <div class="demo-shell">
           <div class="demo-tabs" role="tablist" aria-label="示例场景">
-            <button class="demo-tab is-active" type="button" role="tab" aria-selected="true" data-demo="philosophy">哲学问题</button>
-            <button class="demo-tab" type="button" role="tab" aria-selected="false" data-demo="history">历史分析</button>
-            <button class="demo-tab" type="button" role="tab" aria-selected="false" data-demo="org">组织复盘</button>
-            <button class="demo-tab" type="button" role="tab" aria-selected="false" data-demo="public">公共议题</button>
-            <button class="demo-tab" type="button" role="tab" aria-selected="false" data-demo="inquiry">完成后追问</button>
+            <button class="demo-tab is-active" type="button" role="tab" aria-selected="true" aria-controls="demo-panel" data-demo="philosophy">哲学问题</button>
+            <button class="demo-tab" type="button" role="tab" aria-selected="false" aria-controls="demo-panel" data-demo="history">历史分析</button>
+            <button class="demo-tab" type="button" role="tab" aria-selected="false" aria-controls="demo-panel" data-demo="org">组织复盘</button>
+            <button class="demo-tab" type="button" role="tab" aria-selected="false" aria-controls="demo-panel" data-demo="public">公共议题</button>
+            <button class="demo-tab" type="button" role="tab" aria-selected="false" aria-controls="demo-panel" data-demo="inquiry">完成后追问</button>
           </div>
-          <article class="demo-panel" aria-live="polite">
+          <article class="demo-panel" role="tabpanel" id="demo-panel" aria-live="polite">
             <div>
               <span class="panel-label">输入</span>
               <p id="demo-input"></p>
@@ -266,12 +274,15 @@
         </div>
         <div class="install-shell">
           <div class="install-tabs" role="tablist" aria-label="安装方式">
-            <button class="install-tab is-active" type="button" role="tab" aria-selected="true" data-install="codex">Codex</button>
-            <button class="install-tab" type="button" role="tab" aria-selected="false" data-install="claude">Claude Code</button>
-            <button class="install-tab" type="button" role="tab" aria-selected="false" data-install="agents">Other Agents</button>
+            <button class="install-tab is-active" type="button" role="tab" aria-selected="true" aria-controls="install-panel" data-install="codex">Codex</button>
+            <button class="install-tab" type="button" role="tab" aria-selected="false" aria-controls="install-panel" data-install="claude">Claude Code</button>
+            <button class="install-tab" type="button" role="tab" aria-selected="false" aria-controls="install-panel" data-install="agents">Other Agents</button>
           </div>
-          <pre class="code-panel"><code id="install-code"></code></pre>
+          <pre class="code-panel" role="tabpanel" id="install-panel"><code id="install-code"></code></pre>
         </div>
+        <p class="install-note">
+          当前一键安装脚本面向 Windows PowerShell；macOS / Linux 用户可按 docs/ADAPTERS.md 手动复制 skills/crossframe*。
+        </p>
       </section>
 
       <section class="section-band faq" aria-labelledby="faq-title">
@@ -291,6 +302,10 @@
           <details>
             <summary>为什么要有 crossframe-inquiry？</summary>
             <p>因为完整分析、成文和 review 结束后，真正有价值的下一步通常是反证、补证、迁移和行动边界确认。</p>
+          </details>
+          <details>
+            <summary>这个网页能直接运行 CrossFrame 吗？</summary>
+            <p>不能。这个页面是介绍页。CrossFrame 作为本地 AI skill 使用，需要安装到 Codex、Claude Code 或其它支持项目规则 / skills 的 agent 中。</p>
           </details>
         </div>
       </section>
