@@ -269,26 +269,27 @@ def check_repo_adapters(repo: Path, label: str) -> None:
         return
 
     adapter_needles = {
-        "AGENTS.md": ["crossframe-history", "crossframe-inquiry", "完成态后继续追问"],
+        "AGENTS.md": ["crossframe-history", "crossframe-inquiry", "完成态后继续追问", "纯致谢"],
         "CLAUDE.md": [
             ".claude/skills/crossframe-inquiry/SKILL.md",
             ".claude/commands/crossframe-inquiry.md",
             "/crossframe-inquiry",
             "skills/crossframe-inquiry/SKILL.md",
+            "纯致谢",
         ],
-        "GEMINI.md": ["crossframe-history", "crossframe-inquiry", "完成后追问"],
-        "CONVENTIONS.md": ["crossframe-inquiry", "14 CrossFrame skills"],
-        "INTERFACES.md": ["skills/crossframe-inquiry/SKILL.md", "14 个 CrossFrame skill"],
-        "llms.txt": ["History skill", "Inquiry skill", "crossframe-inquiry"],
-        ".github/copilot-instructions.md": ["crossframe-history", "crossframe-inquiry", "完成后追问"],
-        ".cursor/rules/crossframe.mdc": ["crossframe-history", "crossframe-inquiry", "post-completion inquiry", "any follow-up without an explicit new-task/exit signal"],
-        ".cursor/rules/crossframe-suite.mdc": ["crossframe-history", "crossframe-inquiry", "post-completion inquiry", "any follow-up without an explicit new-task/exit signal"],
+        "GEMINI.md": ["crossframe-history", "crossframe-inquiry", "完成后追问", "纯致谢"],
+        "CONVENTIONS.md": ["crossframe-inquiry", "14 CrossFrame skills", "pure acknowledgments"],
+        "INTERFACES.md": ["skills/crossframe-inquiry/SKILL.md", "14 个 CrossFrame skill", "纯致谢"],
+        "llms.txt": ["History skill", "Inquiry skill", "crossframe-inquiry", "pure acknowledgments"],
+        ".github/copilot-instructions.md": ["crossframe-history", "crossframe-inquiry", "完成后追问", "纯致谢"],
+        ".cursor/rules/crossframe.mdc": ["crossframe-history", "crossframe-inquiry", "post-completion inquiry", "pure acknowledgment/thanks signal"],
+        ".cursor/rules/crossframe-suite.mdc": ["crossframe-history", "crossframe-inquiry", "post-completion inquiry", "pure acknowledgment/thanks signal"],
         ".cursor/rules/crossframe-essay.mdc": ["skills/crossframe-essay/SKILL.md", "runtime-read-policy.md"],
-        ".continue/rules/crossframe.md": ["history research", "crossframe-inquiry", "post-completion inquiry", "any follow-up without an explicit new-task/exit signal"],
-        ".clinerules/crossframe.md": ["history research", "crossframe-inquiry", "post-completion inquiry", "any follow-up without an explicit new-task/exit signal"],
-        ".roo/rules/crossframe.md": ["history research", "crossframe-inquiry", "post-completion inquiry", "any follow-up without an explicit new-task/exit signal"],
-        ".windsurf/rules/crossframe.md": ["history research", "crossframe-inquiry", "post-completion inquiry", "any follow-up without an explicit new-task/exit signal"],
-        "docs/ADAPTERS.md": ["crossframe-history", "crossframe-inquiry"],
+        ".continue/rules/crossframe.md": ["history research", "crossframe-inquiry", "post-completion inquiry", "pure acknowledgment/thanks signal"],
+        ".clinerules/crossframe.md": ["history research", "crossframe-inquiry", "post-completion inquiry", "pure acknowledgment/thanks signal"],
+        ".roo/rules/crossframe.md": ["history research", "crossframe-inquiry", "post-completion inquiry", "pure acknowledgment/thanks signal"],
+        ".windsurf/rules/crossframe.md": ["history research", "crossframe-inquiry", "post-completion inquiry", "pure acknowledgment/thanks signal"],
+        "docs/ADAPTERS.md": ["crossframe-history", "crossframe-inquiry", "纯致谢"],
         "scripts/install-codex.ps1": ["skills/crossframe-history", "skills/crossframe-inquiry"],
     }
     runtime_ref_adapters = set(adapter_needles) - {"docs/ADAPTERS.md", "scripts/install-codex.ps1"}
@@ -344,14 +345,14 @@ def check_public_release_docs(repo: Path, label: str) -> None:
         return
 
     required_docs = {
-        "README.md": ["14 个显式触发", "source_id -> claim_id", "docs/QUICKSTART.md"],
+        "README.md": ["14 个显式触发", "source_id -> claim_id", "docs/QUICKSTART.md", "framework-CrossFrame_v5.1", "review_%E2%86%92_inquiry"],
         "CHANGELOG.md": ["v5.0.2", "crossframe-history", "crossframe-inquiry", "source_id"],
-        "docs/WHAT_IS_CROSSFRAME.md": ["CrossFrame 是一组给 AI 使用的中文结构思考 skills", "crossframe-inquiry"],
+        "docs/WHAT_IS_CROSSFRAME.md": ["CrossFrame 是一组给 AI 使用的中文结构思考 skills", "一个一分钟例子", "它不是什么", "最推荐怎么用", "crossframe-inquiry"],
         "docs/QUICKSTART.md": ["install-codex.ps1", "--materials-only", "--source-docx"],
         "docs/CONCEPTS.md": ["Claim Ledger", "source_id", "Concept Contract"],
-        "docs/WORKFLOWS.md": ["previous_context -> crossframe-inquiry", "claim ledger / claim-ledger-check"],
-        "docs/EXAMPLES.md": ["历史草稿档", "crossframe-inquiry"],
-        "docs/ADAPTERS.md": ["sync_skill_mirrors.py", "Codex", "Claude Code", "crossframe-history", "crossframe-inquiry"],
+        "docs/WORKFLOWS.md": ["previous_context -> crossframe-inquiry", "claim ledger / claim-ledger-check", "纯致谢"],
+        "docs/EXAMPLES.md": ["历史草稿档", "crossframe-inquiry", "mini 输出示例"],
+        "docs/ADAPTERS.md": ["sync_skill_mirrors.py", "Codex", "Claude Code", "crossframe-history", "crossframe-inquiry", "纯致谢"],
         "docs/SAFETY_AND_LIMITS.md": ["默认不展示内部 reasoning", "工具调用参数"],
         "docs/FAQ.md": ["explicit-only", "--materials-only"],
     }
@@ -380,8 +381,15 @@ def check_public_release_docs(repo: Path, label: str) -> None:
 
     for rel in [
         "skills/crossframe-suite/references/workflow-routing-map.md",
+        "skills/crossframe-suite/protocols/suite-dispatch-protocol.md",
+        "skills/crossframe-suite/SKILL.md",
+        "skills/crossframe-inquiry/SKILL.md",
+        "skills/crossframe-inquiry/protocols/inquiry-protocol.md",
+        "skills/crossframe-inquiry/evals/crossframe-inquiry-smoke-tests.md",
+        "skills/crossframe-suite/evals/crossframe-suite-smoke-tests.md",
     ]:
         text = read(repo / rel)
+        require("纯致谢" in text, f"{label}: {rel} missing pure acknowledgment inquiry exception")
         for marker in ["5.0 混合长文", "5.0混合长文", "complete visible 5.0 dossier"]:
             require(marker not in text, f"{label}: {rel} still has old public copy marker: {marker}")
 
@@ -657,6 +665,7 @@ def check_inquiry_layer(root: Path, label: str) -> None:
         "知识库检索",
         "定向读取 sibling skill",
         "不得把检索材料直接写成新结论",
+        "纯致谢",
     ]:
         require(needle in skill_text, f"{label}: crossframe-inquiry SKILL.md missing marker: {needle}")
     require("3-7 个追问点" not in skill_text, f"{label}: crossframe-inquiry SKILL.md still allows 3-7 inquiry points")
@@ -674,7 +683,8 @@ def check_inquiry_layer(root: Path, label: str) -> None:
         "用户回答后，先摘要",
         "inquiry_delta",
         "完成态后续输入接管",
-        "任何后续用户输入",
+        "任何实质后续用户输入",
+        "纯致谢",
         "上一轮上下文回收",
         "Sibling skill 知识库检索",
         "retrieval_log",
@@ -734,7 +744,8 @@ def check_inquiry_layer(root: Path, label: str) -> None:
         "不得直接再写一篇文章",
         "inquiry_delta",
         "完成态接管",
-        "任何后续输入",
+        "任何实质后续输入",
+        "纯致谢",
         "知识库检索",
         "不得调用全部 sibling skill",
         "retrieval_log",
@@ -743,12 +754,13 @@ def check_inquiry_layer(root: Path, label: str) -> None:
 
     suite_skill = read(root / "crossframe-suite" / "SKILL.md")
     for needle in [
-        "后续任意输入默认进入 crossframe-inquiry 结构追问",
+        "后续实质输入默认进入 crossframe-inquiry 结构追问",
         "追问层归属",
         "追问例外",
         "不默认重新成文",
         "完成态追问接管",
         "post_completion_inquiry_armed",
+        "纯致谢",
         "sibling 知识库检索",
         "- 追问层：不触发 / 触发；追问目标：",
     ]:
@@ -760,10 +772,11 @@ def check_inquiry_layer(root: Path, label: str) -> None:
         "若主目标为 `inquiry` 且已有上游 CrossFrame 输出",
         "不进入默认 essay",
         "post_completion_inquiry_armed=true",
-        "完整链路完成后的下一轮用户输入",
+        "完整链路完成后的下一轮实质用户输入",
+        "纯致谢",
         "允许 `crossframe-inquiry` 做定向 sibling 知识库检索",
         "继续追问、深思、反证、补证、迁移应用、用户反对结论或要求“问我几个问题”：追加 `../../crossframe-inquiry/SKILL.md`",
-        "结构追问层：完成态后的任意后续输入默认启动 `crossframe-inquiry`",
+        "结构追问层：完成态后的实质后续输入默认启动 `crossframe-inquiry`",
     ]:
         require(needle in suite_protocol, f"{label}: suite dispatch missing inquiry marker: {needle}")
 
@@ -777,7 +790,8 @@ def check_inquiry_layer(root: Path, label: str) -> None:
         "这个怎么用到我/我们公司/团队",
         "crossframe -> crossframe-org -> crossframe-review(lite) -> crossframe-inquiry(transfer_conditions)",
         "crossframe-inquiry(action_boundary) -> crossframe-review(lite)",
-        "完整链路完成后的任意后续输入",
+        "完整链路完成后的实质后续输入",
+        "纯致谢",
         "post_completion_inquiry_armed",
     ]:
         require(needle in workflow, f"{label}: workflow routing map missing inquiry route: {needle}")
@@ -796,7 +810,7 @@ def check_inquiry_layer(root: Path, label: str) -> None:
         require(needle in review_template, f"{label}: review report missing inquiry handoff marker: {needle}")
 
     suite_agent = read(root / "crossframe-suite" / "agents" / "openai.yaml")
-    for needle in ["post_completion_inquiry_armed", "next user message", "crossframe-inquiry"]:
+    for needle in ["post_completion_inquiry_armed", "next substantive user message", "crossframe-inquiry", "Pure acknowledgments"]:
         require(needle in suite_agent, f"{label}: suite agent metadata missing post-completion inquiry marker: {needle}")
 
 

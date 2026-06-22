@@ -116,6 +116,8 @@ CrossFrame Essay 仍然必须读取 `skills/crossframe/SKILL.md` 与 `skills/cro
 
 总入口默认对任何 CrossFrame 内容任务成文，并默认是 `full-visible-v5-longform`；显式关闭文章层时才保留原形态。
 
+完整链路已经完成分析、成文和 review 后，下一轮实质输入默认进入 `crossframe-inquiry`；纯致谢、确认收到或结束语（如“谢谢”“好的”“明白了”“先这样”）只轻量收束，不自动展开追问。
+
 ## 必须遵守
 
 1. 中文为权威语义，英文只作传播名或文件名。

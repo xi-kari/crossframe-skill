@@ -34,7 +34,7 @@
 
 若主目标为 `inquiry` 且已有上游 CrossFrame 输出、文章、底稿或 review，不进入默认 essay；只复用上游 claim ledger、机制候选、concept_contracts 和 review warning 生成追问。若缺少上游 `claim ledger`，先做轻量 review 或要求用户提供上游输出，不得凭空生成追问。
 
-若上一轮 suite 已完成完整链路并记录 `post_completion_inquiry_armed=true`，完整链路完成后的下一轮用户输入，无论是否含有“追问”字样，都先判为 `inquiry`。本轮不得重新默认 essay，不得把“嗯 / 然后呢 / 那我呢 / 这能用吗 / 不同意 / 继续”当作孤立新任务；必须交给 `../../crossframe-inquiry/SKILL.md` 回收上一轮 `claim ledger`、机制候选、concept_contracts、source ledger、结构洞察底稿、文章正文和 review warning。只有用户明确说“新任务 / 换主题 / 退出追问 / 不接着上文”时，才解除 `post_completion_inquiry_armed`。
+若上一轮 suite 已完成完整链路并记录 `post_completion_inquiry_armed=true`，完整链路完成后的下一轮实质用户输入，无论是否含有“追问”字样，都先判为 `inquiry`。本轮不得重新默认 essay，不得把“嗯 / 然后呢 / 那我呢 / 这能用吗 / 不同意 / 继续”当作孤立新任务；必须交给 `../../crossframe-inquiry/SKILL.md` 回收上一轮 `claim ledger`、机制候选、concept_contracts、source ledger、结构洞察底稿、文章正文和 review warning。纯致谢、确认收到、结束语或无内容回应（如“谢谢”“好的”“明白了”“先这样”）不自动展开 inquiry，只轻量收束或结束本轮；若用户随后再次提出与上一轮相关的问题，再重新触发 inquiry。只有用户明确说“新任务 / 换主题 / 退出追问 / 不接着上文”时，才解除 `post_completion_inquiry_armed`。
 
 完成态后，允许 `crossframe-inquiry` 做定向 sibling 知识库检索：根据用户后续输入读取 1-3 个相关 sibling skill 的必要协议、references、templates，用于补充追问对象、迁移条件、反证方向和风险边界。不得读取全部 sibling skill，不得把检索材料写成专项判断；如果需要专项结论，回到 suite 调度对应 skill。
 
@@ -92,7 +92,7 @@
 9. 表达生成层：按文章类型读取写作技法，再生成 `文章正文`
 10. 质量闸：`review`
 11. 完成态标记：完整链路交付后写入 `post_completion_inquiry_armed=true`，并保留上一轮 claim ledger、机制候选、概念契约、source ledger、结构洞察底稿、文章正文和 review warning 供下一轮复用。
-12. 结构追问层：完成态后的任意后续输入默认启动 `crossframe-inquiry`；若用户明确要求先追问再写文章，可在 essay 前启动轻量 inquiry，但不得跳过 claim ledger。
+12. 结构追问层：完成态后的实质后续输入默认启动 `crossframe-inquiry`；纯致谢、确认收到、结束语或无内容回应只轻量收束；若用户明确要求先追问再写文章，可在 essay 前启动轻量 inquiry，但不得跳过 claim ledger。
 
 suite 默认文章工作流必须按：`模式/角色选择器 -> suite 路由与专项拆解 -> v5-read-state-capsule -> 源锚点完整性检查 -> claim ledger -> 结构洞察底稿 -> 文章类型选择器 -> 写作技法读取 -> 文章正文 -> 质量闸 -> post_completion_inquiry_armed=true -> 后续输入进入结构追问`。压缩写法可写为：`结构洞察底稿 -> 文章类型选择器 -> 写作技法读取 -> 文章正文 -> 质量闸 -> 完成态追问接管`，但执行顺序不能颠倒。
 

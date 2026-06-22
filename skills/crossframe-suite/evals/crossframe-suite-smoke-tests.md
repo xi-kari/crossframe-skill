@@ -178,7 +178,18 @@ Prompt：用户先显式调用 `/crossframe-suite`，选择 `2+1`，完成结构
 期望：
 
 - 完整链路交付后记录 `post_completion_inquiry_armed=true`。
-- 下一轮用户的任何后续输入默认进入 `crossframe-inquiry`，不要求用户再次说“继续追问”。
+- 下一轮用户的实质后续输入默认进入 `crossframe-inquiry`，不要求用户再次说“继续追问”。
 - 不重新默认进入 `crossframe-essay`，不再生成一篇新文章。
 - `crossframe-inquiry` 必须复用上一轮 claim ledger、机制候选、概念契约、source ledger、结构洞察底稿、文章正文和 review warning。
 - 只有用户明确说“新任务 / 换主题 / 退出追问 / 不接着上文”时，才解除完成态接管。
+
+## 12.1 完成态纯致谢/纯确认不追问
+
+Prompt：用户先显式调用 `/crossframe-suite`，选择 `2+1`，完成结构分析、文章正文和 `crossframe-review`。下一轮用户只说“谢谢，先这样”。
+
+期望：
+
+- 不自动展开 `crossframe-inquiry`。
+- 不生成新的 3-5 个追问问题。
+- 对纯致谢、确认收到、结束语或无内容回应，只轻量收束或结束本轮。
+- 若用户随后再次提出与上一轮相关的问题，再重新触发 `crossframe-inquiry`。

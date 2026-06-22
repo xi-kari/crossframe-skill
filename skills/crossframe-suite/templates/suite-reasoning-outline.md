@@ -41,7 +41,7 @@
 - `不读取`：列 1-3 个容易误触发但本次不需要的 skill，防止全量加载。
 - `质量闸`：完整评审、轻量自检或无需评审，并写原因。
 - `追问层`：不触发 / 触发；若触发，写追问目标，如反证、补证、迁移、行动边界或收束。
-- `完成态追问接管`：当完整链路已经交付 `结构洞察底稿 + 文章正文 + review` 后，写 `post_completion_inquiry_armed=true`，并说明下一轮用户输入默认进入 `crossframe-inquiry`。若用户明确新任务、换主题或退出上文，则写 `post_completion_inquiry_armed=false`。
+- `完成态追问接管`：当完整链路已经交付 `结构洞察底稿 + 文章正文 + review` 后，写 `post_completion_inquiry_armed=true`，并说明下一轮实质用户输入默认进入 `crossframe-inquiry`。若用户明确新任务、换主题、退出上文，或只是纯致谢/确认收到/结束语，则不展开 inquiry。
 
 只要用户没有显式关闭文章层，`输出档位` 默认写 `full-visible-v5-longform`，`工作流` 默认在必要专项 skill 后追加 `crossframe-essay -> crossframe-review`。调度说明要保留顺序：v5-read-state-capsule -> 源锚点完整性检查 -> claim ledger -> 结构洞察底稿 -> 文章类型选择器 -> 写作技法读取 -> 文章正文 -> 质量闸 -> post_completion_inquiry_armed。
 

@@ -10,7 +10,7 @@ For Chinese critical insight articles, long-form essays, commentary, 思想文�
 
 For review, dialogue, casebook, history research, post-completion inquiry, public issue, organization repair, concept teaching, debate, or notebook tasks, use the matching `skills/crossframe-*/SKILL.md` sibling skill before falling back to the generic CrossFrame rule. Follow-up questions, counterexamples, missing evidence, transfer conditions, or action-boundary checks after a completed workflow should use `skills/crossframe-inquiry/SKILL.md`.
 
-After a completed suite workflow has produced diagnosis, article, and review, any follow-up without an explicit new-task/exit signal should use `skills/crossframe-inquiry/SKILL.md` by default. The inquiry layer may retrieve 1-3 relevant sibling skills for question design, counterexamples, transfer conditions, and risk boundaries, but it must not output formal sibling judgments.
+After a completed suite workflow has produced diagnosis, article, and review, any substantive follow-up without an explicit new-task/exit or pure acknowledgment/thanks signal should use `skills/crossframe-inquiry/SKILL.md` by default. Pure acknowledgments or endings such as "谢谢", "好的", "明白了", or "先这样" should only close lightly. The inquiry layer may retrieve 1-3 relevant sibling skills for question design, counterexamples, transfer conditions, and risk boundaries, but it must not output formal sibling judgments.
 
 Required flow:
 

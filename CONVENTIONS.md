@@ -8,6 +8,8 @@ After explicit invocation, use `crossframe-suite` as the preferred CrossFrame en
 
 For any CrossFrame content task through Suite, finish the needed sibling skills first, then append `crossframe-essay -> crossframe-review` and use `full-visible-v5-longform`: complete visible structural dossier plus complete long-form Chinese article. Only skip the article layer when the user explicitly says only/no article/short answer/table/checklist/pure diagnosis/action plan only.
 
+After a completed Suite workflow has produced diagnosis, article, and review, substantive follow-ups route to `crossframe-inquiry`; pure acknowledgments or endings such as "谢谢", "好的", "明白了", or "先这样" only close lightly and do not open inquiry.
+
 After explicit CrossFrame invocation, when the user asks for CrossFrame、跨尺度结构诊断、结构诊断、推演、开放断言、反俘获审查、低条件试探行动、强判断、高反身性、亲密关系、疗愈转移、公共制度、长期演化或概念解释:
 
 1. Read `skills/crossframe/SKILL.md`.

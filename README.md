@@ -10,8 +10,8 @@
 
 ![Language](https://img.shields.io/badge/language-%E4%B8%AD%E6%96%87%E8%BE%93%E5%87%BA-f3d7e6?style=flat-square&labelColor=fff7fb&color=f3d7e6)
 ![Trigger](https://img.shields.io/badge/trigger-explicit_only-d8ebff?style=flat-square&labelColor=fafcff&color=d8ebff)
-![Framework](https://img.shields.io/badge/framework-CrossFrame_v5.0-e4ddff?style=flat-square&labelColor=fffaff&color=e4ddff)
-![Workflow](https://img.shields.io/badge/workflow-diagnosis_%E2%86%92_writing_%E2%86%92_review-d9f2df?style=flat-square&labelColor=fbfffb&color=d9f2df)
+![Framework](https://img.shields.io/badge/framework-CrossFrame_v5.1-e4ddff?style=flat-square&labelColor=fffaff&color=e4ddff)
+![Workflow](https://img.shields.io/badge/workflow-diagnosis_%E2%86%92_writing_%E2%86%92_review_%E2%86%92_inquiry-d9f2df?style=flat-square&labelColor=fbfffb&color=d9f2df)
 ![License](https://img.shields.io/badge/license-MIT-f8efcf?style=flat-square&labelColor=fffdf6&color=f8efcf)
 
 <p align="center">

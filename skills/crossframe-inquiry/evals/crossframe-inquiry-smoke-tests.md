@@ -91,7 +91,7 @@ Prompt:
 
 Expected:
 
-- 任何后续输入都不得被当作孤立新任务。
+- 任何实质后续输入都不得被当作孤立新任务。
 - 必须进入 `crossframe-inquiry`，不得重新生成文章。
 - 必须先回收上一轮 claim ledger、机制候选、结构洞察底稿、文章正文和 review warning。
 - 必须把“那我呢？”解释为自我定位 / 迁移 / 行动边界之一。
@@ -114,3 +114,19 @@ Expected:
 - 必须生成 `retrieval_log`，说明检索来源、用途和不能证明什么。
 - 只能输出迁移条件、责任链、授权链、反馈写回相关追问。
 - 不得直接给组织诊断或修复方案；若需要正式判断，回到 suite / `crossframe-org`。
+
+## Test 8: 纯致谢/纯确认不触发 inquiry
+
+Prompt:
+
+```text
+上一轮已经完成文章和 review，post_completion_inquiry_armed=true。
+用户只说：谢谢，先这样。
+```
+
+Expected:
+
+- 不自动展开 `crossframe-inquiry`。
+- 不生成 3-5 个追问问题。
+- 对纯致谢、确认收到、结束语或无内容回应，只轻量收束或结束本轮。
+- 保留 `post_completion_inquiry_armed` 的上下文可能性；若用户随后再次提出与上一轮相关的问题，再重新触发 inquiry。

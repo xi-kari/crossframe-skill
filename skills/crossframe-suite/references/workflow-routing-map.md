@@ -32,14 +32,15 @@
 
 | 用户信号 | workflow |
 | --- | --- |
-| 完整链路完成后的任意后续输入，且 `post_completion_inquiry_armed=true` | `previous_context -> crossframe-inquiry(post_completion_followup)` |
+| 完整链路完成后的实质后续输入，且 `post_completion_inquiry_armed=true` | `previous_context -> crossframe-inquiry(post_completion_followup)` |
+| “谢谢”“好的”“明白了”“先这样”等纯致谢、确认收到、结束语或无内容回应 | 轻量收束 / 结束本轮，不自动展开 inquiry |
 | “继续追问我”“我该继续想什么”“问我几个问题” | `crossframe -> crossframe-review(lite) -> crossframe-inquiry` |
 | “我不同意这个结论”“还有别的解释吗” | `crossframe -> crossframe-review(lite) -> crossframe-inquiry(counterexample)` |
 | “这个怎么用到另一个案例” | `crossframe -> crossframe-review(lite) -> crossframe-inquiry(transfer_conditions)` |
 | “这个怎么用到我/我们公司/团队” | `crossframe -> crossframe-org -> crossframe-review(lite) -> crossframe-inquiry(transfer_conditions)` |
 | “这个判断能不能行动” | `crossframe -> crossframe-inquiry(action_boundary) -> crossframe-review(lite)` |
 
-完成态接管优先级高于普通默认成文。也就是说：一轮 `crossframe-suite` 已经完成分析、成文和 review 后，下一句“嗯”“继续”“那我呢”“这能不能用”“不太同意”都不是新文章触发词，而是上一轮输出的后续追问入口。除非用户明确说“新任务 / 换主题 / 退出追问 / 不接着上文”，否则保持 `post_completion_inquiry_armed`。
+完成态接管优先级高于普通默认成文。也就是说：一轮 `crossframe-suite` 已经完成分析、成文和 review 后，下一句“嗯”“继续”“那我呢”“这能不能用”“不太同意”都不是新文章触发词，而是上一轮输出的后续追问入口。纯致谢、确认收到、结束语或无内容回应（如“谢谢”“好的”“明白了”“先这样”）不自动展开 inquiry，只轻量收束或结束本轮；若用户随后再次提出与上一轮相关的问题，再重新触发 inquiry。除非用户明确说“新任务 / 换主题 / 退出追问 / 不接着上文”，否则保持 `post_completion_inquiry_armed`。
 
 ## 默认成文规则
 

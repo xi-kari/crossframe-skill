@@ -17,7 +17,7 @@
 
 如果工具不支持 skill 文件夹，也可以只读取 `AGENTS.md`、`CLAUDE.md`、`GEMINI.md` 或 `llms.txt`。但薄入口只负责路由，效果不如完整保留 `skills/crossframe*`。
 
-所有薄适配都必须保留两条新路由：历史材料、史料边界和长时段制度问题进入 `crossframe-history`；完整分析、成文和 review 已完成后，下一轮未明确换题或退出的用户输入默认进入 `crossframe-inquiry`，并可定向检索 1-3 个 sibling skill 的必要材料。
+所有薄适配都必须保留两条新路由：历史材料、史料边界和长时段制度问题进入 `crossframe-history`；完整分析、成文和 review 已完成后，下一轮未明确换题或退出、且不是纯致谢/确认收到/结束语的实质用户输入默认进入 `crossframe-inquiry`，并可定向检索 1-3 个 sibling skill 的必要材料。
 
 维护镜像时运行：
 

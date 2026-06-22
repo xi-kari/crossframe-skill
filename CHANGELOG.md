@@ -1,5 +1,18 @@
 # Changelog
 
+## v5.1.2 - 2026-06-22
+
+### Changed
+
+- README 顶部徽章更新为 `CrossFrame_v5.1`，工作流徽章更新为 `diagnosis -> writing -> review -> inquiry`。
+- `docs/WHAT_IS_CROSSFRAME.md` 增加一分钟例子、“它不是什么”和最推荐用法，提升新用户入口说明。
+- 完成态 `crossframe-inquiry` 接管排除纯致谢、确认收到、结束语或无内容回应，避免把“谢谢 / 好的 / 明白了 / 先这样”自动展开成追问。
+- `docs/EXAMPLES.md` 增加 inquiry mini 输出示例。
+
+### Verification
+
+- 完整性校验新增 README badge、介绍页三块内容、完成态结束语例外和 inquiry 示例检查。
+
 ## v5.1.1 - 2026-06-22
 
 ### Changed

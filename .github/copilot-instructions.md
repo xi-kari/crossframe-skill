@@ -11,7 +11,7 @@
 - 中文文章、长文、评论、思想文章、批判性洞察文章和结构洞察文章任务请遵循 `skills/crossframe-essay/SKILL.md`。
 - 评审、短答复、案例库、历史研究、公共议题、组织修复、概念教学、命题辩论、研究笔记任务请遵循对应 `skills/crossframe-*/SKILL.md`。
 - 多 skill 连续任务请先遵循 `skills/crossframe-suite/SKILL.md`，例如公共评论文章走 `crossframe -> crossframe-public -> crossframe-essay -> crossframe-review`，组织复盘文章走 `crossframe -> crossframe-org -> crossframe-essay -> crossframe-review`，历史研究走 `crossframe -> crossframe-history -> crossframe-essay -> crossframe-review`，完成后追问走 `crossframe -> crossframe-review(lite) -> crossframe-inquiry`；不要一次读取全部 skill。
-- 完整链路已经完成分析、成文和 review 后，下一轮用户未明确说“新任务 / 换主题 / 退出追问 / 不接着上文”时，默认进入 `crossframe-inquiry`；它可以定向检索 1-3 个相关 sibling skill 的必要材料，但不得把检索写成正式专项判断。
+- 完整链路已经完成分析、成文和 review 后，下一轮用户未明确说“新任务 / 换主题 / 退出追问 / 不接着上文”，且不是“谢谢 / 好的 / 明白了 / 先这样”等纯致谢、确认收到或结束语时，默认进入 `crossframe-inquiry`；它可以定向检索 1-3 个相关 sibling skill 的必要材料，但不得把检索写成正式专项判断。
 - 文章任务需要深度、概念上升、引经据典、理论参照或文学互文时，按需读取 `skills/crossframe-essay/protocols/concept-elevation-protocol.md` 与 `skills/crossframe-essay/references/reference-and-allusion-rules.md`。
 - 文章任务自动成文默认读取 `skills/crossframe-essay/protocols/editorial-comrade-voice-protocol.md` 与 `skills/crossframe-essay/references/editorial-voice-principles.md`；只有显式中性报告/备忘录/表格/纯诊断时关闭。
 - 概念解释或思想解释任务也应进入 CrossFrame，但先读 `skills/crossframe/protocols/concept-explanation-protocol.md`。

@@ -14,7 +14,7 @@
 
 ### 完成态后续输入接管
 
-若上一轮 suite 输出已经完成 `crossframe -> ... -> crossframe-essay -> crossframe-review`，并写入 `post_completion_inquiry_armed=true`，则完整链路完成后的任何后续用户输入都先进入本协议。不得要求用户再次说“继续追问”，也不得默认重新进入 essay。
+若上一轮 suite 输出已经完成 `crossframe -> ... -> crossframe-essay -> crossframe-review`，并写入 `post_completion_inquiry_armed=true`，则完整链路完成后的任何实质后续用户输入都先进入本协议。不得要求用户再次说“继续追问”，也不得默认重新进入 essay。纯致谢、确认收到、结束语或无内容回应（如“谢谢”“好的”“明白了”“先这样”）不自动展开 inquiry；只轻量收束或结束本轮。若用户随后再次提出与上一轮相关的问题，再重新触发 inquiry。
 
 先做上一轮上下文回收：
 

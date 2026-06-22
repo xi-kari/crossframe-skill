@@ -83,3 +83,9 @@ previous_context -> crossframe-inquiry
 ```
 
 输出应复用上一轮 `claim ledger` 和 review warnings，给出 3-5 个追问点、反证方向、补证入口、迁移条件和行动边界。
+
+mini 输出示例：
+
+- Q1：如果要反驳中心命题，最强反例是什么？
+- Q2：哪条 claim 最需要补 `source_id`？
+- Q3：这个机制迁移到你的组织时，哪些条件必须相同？
