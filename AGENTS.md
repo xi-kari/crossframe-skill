@@ -12,6 +12,7 @@
 - `skills/crossframe-dialogue/`：答读者问、编辑回信和咨询式短答复。
 - `skills/crossframe-casebook/`：把材料整理成可复用案例库。
 - `skills/crossframe-history/`：历史材料、史料闭合、文明连续史和 archive/FOIA backlog 领域接口层。
+- `skills/crossframe-inquiry/`：已完成 CrossFrame 流程后的结构追问层。
 - `skills/crossframe-public/`：公共议题、平台申诉、制度评论和合规材料专项。
 - `skills/crossframe-org/`：团队、项目、组织修复专项。
 - `skills/crossframe-teach/`：CrossFrame 概念教学解释专项。
@@ -84,6 +85,7 @@ CrossFrame Essay 仍然必须读取 `skills/crossframe/SKILL.md` 与 `skills/cro
 - 答读者问、编辑回信、咨询式短答复、我该怎么看/怎么办：`skills/crossframe-dialogue/SKILL.md`
 - 整理聊天记录、组织材料、项目复盘、公共争议为案例库：`skills/crossframe-casebook/SKILL.md`
 - 历史材料、历史事件、史料互读、长时段演化、archive/FOIA backlog：`skills/crossframe-history/SKILL.md`
+- 完成态后继续追问、反证、补证、迁移应用或行动边界确认：`skills/crossframe-inquiry/SKILL.md`
 - 公共议题、平台申诉、制度评论、机构合规材料、公共承诺兑现：`skills/crossframe-public/SKILL.md`
 - 团队、项目、组织修复、复盘改造、反馈写回、低风险试点：`skills/crossframe-org/SKILL.md`
 - CrossFrame 概念教学、误读纠偏、现实信号、练习题：`skills/crossframe-teach/SKILL.md`
@@ -107,6 +109,7 @@ CrossFrame Essay 仍然必须读取 `skills/crossframe/SKILL.md` 与 `skills/cro
 - 命题辩论：`crossframe -> crossframe-debate -> crossframe-essay(full-visible-v5-longform) -> crossframe-review`
 - 读书研究：`crossframe -> crossframe-notebook -> crossframe-essay(full-visible-v5-longform) -> crossframe-review`
 - 读书后成文：`crossframe -> crossframe-notebook -> crossframe-essay -> crossframe-review`
+- 完成后追问：`crossframe -> crossframe-review(lite) -> crossframe-inquiry`
 
 连续触发只发生在用户显式调用 `crossframe-suite` 之后。此时先给短 `调度提纲`：任务类型、工作流、必读 skill、按需读取、不读取、质量闸。不要为了完整而读取全部 skill。
 
@@ -153,16 +156,17 @@ CrossFrame Essay 仍然必须读取 `skills/crossframe/SKILL.md` 与 `skills/cro
 12. 疗愈转移读取 `skills/crossframe/protocols/healing-transfer-protocol.md`
 13. 公共制度读取 `skills/crossframe/protocols/public-institution-protocol.md`
 14. 历史领域接口读取 `skills/crossframe-history/SKILL.md`
-15. 框架边界读取 `skills/crossframe/protocols/framework-boundary-protocol.md`
-16. 生命周期读取 `skills/crossframe/protocols/lifecycle-diagnosis-protocol.md`
-17. 递进闭环读取 `skills/crossframe/protocols/progression-protocol.md`
-18. 势场与自主解离读取 `skills/crossframe/protocols/field-dissociation-protocol.md`
-19. 治理连续性读取 `skills/crossframe/protocols/governance-continuity-protocol.md`
-20. 超大规模压力测试读取 `skills/crossframe/protocols/large-scale-stress-test-protocol.md`
-21. 对外表达翻译读取 `skills/crossframe/protocols/expression-translation-protocol.md`
-22. 长期演化或理论深水区读取 `skills/crossframe/references/theory-backend-index.md`
-23. 输出前读取 `skills/crossframe/templates/reasoning-outline-output.md` 与对应输出模板
-24. 高风险概念读取 `skills/crossframe/references/concept-cards/` 下的对应卡片
+15. 完成态追问读取 `skills/crossframe-inquiry/SKILL.md`
+16. 框架边界读取 `skills/crossframe/protocols/framework-boundary-protocol.md`
+17. 生命周期读取 `skills/crossframe/protocols/lifecycle-diagnosis-protocol.md`
+18. 递进闭环读取 `skills/crossframe/protocols/progression-protocol.md`
+19. 势场与自主解离读取 `skills/crossframe/protocols/field-dissociation-protocol.md`
+20. 治理连续性读取 `skills/crossframe/protocols/governance-continuity-protocol.md`
+21. 超大规模压力测试读取 `skills/crossframe/protocols/large-scale-stress-test-protocol.md`
+22. 对外表达翻译读取 `skills/crossframe/protocols/expression-translation-protocol.md`
+23. 长期演化或理论深水区读取 `skills/crossframe/references/theory-backend-index.md`
+24. 输出前读取 `skills/crossframe/templates/reasoning-outline-output.md` 与对应输出模板
+25. 高风险概念读取 `skills/crossframe/references/concept-cards/` 下的对应卡片
 
 文章写作额外读取：
 

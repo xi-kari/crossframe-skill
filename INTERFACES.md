@@ -10,13 +10,14 @@
 - `skills/crossframe-dialogue/SKILL.md`
 - `skills/crossframe-casebook/SKILL.md`
 - `skills/crossframe-history/SKILL.md`
+- `skills/crossframe-inquiry/SKILL.md`
 - `skills/crossframe-public/SKILL.md`
 - `skills/crossframe-org/SKILL.md`
 - `skills/crossframe-teach/SKILL.md`
 - `skills/crossframe-debate/SKILL.md`
 - `skills/crossframe-notebook/SKILL.md`
 
-`crossframe-suite` 负责复杂任务的连续调度；`crossframe` 负责结构诊断；`crossframe-essay` 负责把结构诊断转成中文批判性洞察文章；`crossframe-critical` 是只允许点名触发的结构批判长文 skill，不接入 suite 默认链路；其它 `crossframe-*` 负责评审、答复、案例、历史研究、公共议题、组织修复、教学、辩论和研究笔记。其他接口文件只是薄适配层，用来告诉不同 AI 工具如何读取与调用这些 skill。不要把完整协议复制成多份，以免内容漂移。
+`crossframe-suite` 负责复杂任务的连续调度；`crossframe` 负责结构诊断；`crossframe-essay` 负责把结构诊断转成中文批判性洞察文章；`crossframe-critical` 是只允许点名触发的结构批判长文 skill，不接入 suite 默认链路；其它 `crossframe-*` 负责评审、答复、案例、历史研究、追问、公共议题、组织修复、教学、辩论和研究笔记。其他接口文件只是薄适配层，用来告诉不同 AI 工具如何读取与调用这些 skill。不要把完整协议复制成多份，以免内容漂移。
 
 ## 适配原则
 
@@ -27,7 +28,7 @@
 - 用户显式调用 `crossframe-suite` 后，多 skill 连续任务仍然先读取 `skills/crossframe-suite/SKILL.md`；suite 可以按 routing map 联合读取 sibling skill，但不替代专项 skill。
 - `crossframe-suite` 是显式调用后的推荐总入口；只要从总入口进入，默认在必要专项 skill 后追加 `crossframe-essay -> crossframe-review`，输出档位为 `full-visible-v5-longform / 5.0混合长文`。
 - `crossframe-critical` 不进入总入口调度。只有用户明确写 `$crossframe-critical`、`crossframe-critical` 或要求测试这个批判 skill 时才读取它。
-- 当前仓库只包含 13 个 CrossFrame skill；其它仓库的 `crossframe-code` 与 `crossframe-coder` 不属于本适配范围。
+- 当前仓库包含 14 个 CrossFrame skill。
 - 只有用户明确说“只要/不要文章/短答/表格/清单/纯诊断/仅行动方案”时，才关闭默认文章层。
 - 若需要更新框架主体，优先更新 `skills/crossframe/`，再回填薄适配层。
 - 若需要更新文章写作主体，优先更新 `skills/crossframe-essay/`，并确认它仍通过相对路径读取 `skills/crossframe/`。

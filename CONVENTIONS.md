@@ -33,6 +33,6 @@ After explicit CrossFrame Essay or Suite invocation, when the user asks for ф╕нц
 7. Direct quotes must be verifiable; uncertain source text should be paraphrased or mapped as a thought tradition.
 8. Write plain Chinese for ordinary readers and keep CrossFrame terms mostly in the backend. Modern editor-comrade voice should be patient, humble, serious, and decisive, not slogan-like or judgmental.
 
-After explicit invocation of a CrossFrame-adjacent specialized workflow, use the matching sibling skill first: `crossframe-review`, `crossframe-dialogue`, `crossframe-casebook`, `crossframe-history`, `crossframe-public`, `crossframe-org`, `crossframe-teach`, `crossframe-debate`, or `crossframe-notebook`. Each sibling skill remains a light wrapper around `skills/crossframe/` and must not duplicate the canonical framework text.
+After explicit invocation of a CrossFrame-adjacent specialized workflow, use the matching sibling skill first: `crossframe-review`, `crossframe-dialogue`, `crossframe-casebook`, `crossframe-history`, `crossframe-public`, `crossframe-org`, `crossframe-teach`, `crossframe-debate`, `crossframe-notebook`, or `crossframe-inquiry`. Each sibling skill remains a light wrapper around `skills/crossframe/` and must not duplicate the canonical framework text.
 
-This repository adapts exactly 13 CrossFrame skills. Do not add `crossframe-code` or `crossframe-coder`; those belong to another repository.
+This repository adapts exactly 14 CrossFrame skills.
