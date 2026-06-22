@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- 新增 GitHub Actions verify workflow，自动运行 skill integrity、source continuity、claim ledger schema、mirror sync 和 whitespace 检查。
+
+### Changed
+
+- README 顶部版本徽章与首页 footer 对齐到 `v5.1.5`。
+- 首页 Hero CTA 增加“查看文档”入口，指向仓库文档区。
+
 ## v5.1.5 - 2026-06-22
 
 ### Changed

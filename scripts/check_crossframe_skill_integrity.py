@@ -367,7 +367,8 @@ def check_public_release_docs(repo: Path, label: str) -> None:
             "Use Boundary",
             "什么时候适合用 CrossFrame？",
             "开始安装",
-            "查看模拟场景",
+            "查看文档",
+            "https://github.com/xi-kari/crossframe-skill#docs",
             "概念追问",
             "历史接口",
             "组织机制",
@@ -422,6 +423,18 @@ def check_public_release_docs(repo: Path, label: str) -> None:
             "path: site",
             "actions/deploy-pages@v4",
         ],
+        ".github/workflows/verify.yml": [
+            "Verify CrossFrame Repository",
+            "pull_request:",
+            "workflow_dispatch:",
+            "actions/setup-python@v5",
+            'python-version: "3.11"',
+            "python scripts/check_crossframe_skill_integrity.py --repo .",
+            "python scripts/check_source_continuity.py --materials-only --repo .",
+            "python -m json.tool skills/crossframe/schemas/claim-ledger.schema.json > /dev/null",
+            "python scripts/sync_skill_mirrors.py --check",
+            "git diff --check",
+        ],
     }
     for rel, needles in website_files.items():
         path = repo / rel
@@ -442,7 +455,7 @@ def check_public_release_docs(repo: Path, label: str) -> None:
         require(retired_demo_marker not in public_page_text, f"{label}: public page still has sensitive landing demo marker: {retired_demo_marker}")
 
     required_docs = {
-        "README.md": ["14 个显式触发", "source_id -> claim_id", "docs/QUICKSTART.md", "framework-CrossFrame_v5.1", "review_%E2%86%92_inquiry", "https://xi-kari.github.io/crossframe-skill/", "网页介绍"],
+        "README.md": ["14 个显式触发", "source_id -> claim_id", "docs/QUICKSTART.md", "framework-CrossFrame_v5.1.5", "review_%E2%86%92_inquiry", "https://xi-kari.github.io/crossframe-skill/", "网页介绍"],
         "CHANGELOG.md": ["v5.1.5", "v5.1.4", "v5.1.3", "site/", "GitHub Pages", "v5.0.2", "crossframe-history", "crossframe-inquiry", "source_id"],
         "docs/WHAT_IS_CROSSFRAME.md": ["CrossFrame 是一组给 AI 使用的中文结构思考 skills", "一个一分钟例子", "它不是什么", "最推荐怎么用", "crossframe-inquiry"],
         "docs/QUICKSTART.md": ["install-codex.ps1", "--materials-only", "--source-docx"],

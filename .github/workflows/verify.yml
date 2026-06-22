@@ -1,0 +1,36 @@
+name: Verify CrossFrame Repository
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Validate skill integrity
+        run: python scripts/check_crossframe_skill_integrity.py --repo .
+
+      - name: Validate source continuity materials
+        run: python scripts/check_source_continuity.py --materials-only --repo .
+
+      - name: Validate claim ledger schema JSON
+        run: python -m json.tool skills/crossframe/schemas/claim-ledger.schema.json > /dev/null
+
+      - name: Check mirror sync
+        run: python scripts/sync_skill_mirrors.py --check
+
+      - name: Git whitespace check
+        run: git diff --check
