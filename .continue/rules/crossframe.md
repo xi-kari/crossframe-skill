@@ -8,7 +8,7 @@ Use `crossframe-suite` as the default CrossFrame entry. For any CrossFrame conte
 
 For 中文文章、长文、评论、思想文章、批判性洞察文章, or turning CrossFrame analysis into readable prose, use `skills/crossframe-essay/SKILL.md`. Read the CrossFrame routing map, then output `结构洞察底稿` before `文章正文`. When using concept elevation or 引经据典, read `skills/crossframe-essay/protocols/concept-elevation-protocol.md`; references must not replace evidence or responsibility chains. When the user asks for 亲切、编辑、同志口吻、报刊答复 or advice, read `skills/crossframe-essay/protocols/editorial-comrade-voice-protocol.md`; keep the voice warm, serious, and bounded by evidence.
 
-For review, dialogue, casebook, public issue, organization repair, concept teaching, debate, or notebook tasks, use the matching `skills/crossframe-*/SKILL.md` sibling skill before falling back to the generic CrossFrame rule.
+For review, dialogue, casebook, post-completion inquiry, public issue, organization repair, concept teaching, debate, or notebook tasks, use the matching `skills/crossframe-*/SKILL.md` sibling skill before falling back to the generic CrossFrame rule. Follow-up questions, counterexamples, missing evidence, transfer conditions, or action-boundary checks after a completed workflow should use `skills/crossframe-inquiry/SKILL.md`.
 
 Read:
 
@@ -16,7 +16,7 @@ Read:
 2. `skills/crossframe/references/read-routing-map.md`
 3. The protocol and template selected by the route
 4. Concept cards when high-risk concepts carry the judgment
-5. `skills/crossframe/references/integrity-check.md` for one-stop concept fidelity and source-continuity checks in high-risk, public, intimate, long-evolution, deep-analysis, or essay/article tasks
+5. `skills/crossframe/references/runtime-read-policy.md` and `skills/crossframe/references/continuity-closure-map.md` for concept fidelity and source-continuity checks in high-risk, public, intimate, long-evolution, deep-analysis, or essay/article tasks
 
 Output:
 

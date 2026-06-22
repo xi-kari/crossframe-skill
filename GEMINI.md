@@ -22,7 +22,7 @@ CrossFrame skills 在 Gemini CLI 中也是显式调用 only。不要因为普通
 2. `skills/crossframe/SKILL.md`
 3. `skills/crossframe/references/read-routing-map.md`
 4. 对应 `skills/crossframe/protocols/` 文件
-5. 高责任、公共制度、亲密关系、长期演化、深度分析和文章输出，优先读取 `skills/crossframe/references/integrity-check.md`；需要展开源结构时再按需读取 `skills/crossframe/references/continuity-bundles.md`、`skills/crossframe/references/v5-source-spine.md` 与 `skills/crossframe/references/v5-section-digest-index.md`
+5. 高责任、公共制度、亲密关系、长期演化、深度分析和文章输出，优先读取 `skills/crossframe/references/runtime-read-policy.md` 与 `skills/crossframe/references/continuity-closure-map.md`；需要展开源结构时再按需读取 `skills/crossframe/references/continuity-bundles.md`、`skills/crossframe/references/v5-source-spine.md` 与 `skills/crossframe/references/v5-section-digest-index.md`
 6. `skills/crossframe-essay/references/evidence-and-search-rules.md`
 7. 若需要概念上升、引经据典、理论参照或文学互文，读取 `skills/crossframe-essay/protocols/concept-elevation-protocol.md`、`skills/crossframe-essay/references/reference-and-allusion-rules.md`、`skills/crossframe-essay/references/concept-reference-map.md`
 8. 自动成文默认读取 `skills/crossframe-essay/protocols/editorial-comrade-voice-protocol.md` 与 `skills/crossframe-essay/references/editorial-voice-principles.md`；只有显式中性报告/备忘录/表格/纯诊断时关闭
@@ -40,8 +40,8 @@ CrossFrame skills 在 Gemini CLI 中也是显式调用 only。不要因为普通
 4. `skills/crossframe/templates/reasoning-outline-output.md`
 5. `skills/crossframe/templates/user-facing-language.md`
 6. 若使用高风险概念，读取 `skills/crossframe/references/concept-cards/README.md` 与对应概念卡
-7. 高责任、公共制度、亲密关系、长期演化、深度分析和文章输出，优先读取 `skills/crossframe/references/integrity-check.md`；需要展开源结构时再按需读取 `skills/crossframe/references/continuity-bundles.md`、`skills/crossframe/references/v5-source-spine.md` 与 `skills/crossframe/references/v5-section-digest-index.md`
-8. 输出前用 `skills/crossframe/references/integrity-check.md` 做一次性完整性检查；需要审计时再展开 `skills/crossframe/worksheets/concept-fidelity-check.md` 和 `skills/crossframe/worksheets/source-continuity-check.md`
+7. 高责任、公共制度、亲密关系、长期演化、深度分析和文章输出，优先读取 `skills/crossframe/references/runtime-read-policy.md` 与 `skills/crossframe/references/continuity-closure-map.md`；需要展开源结构时再按需读取 `skills/crossframe/references/continuity-bundles.md`、`skills/crossframe/references/v5-source-spine.md` 与 `skills/crossframe/references/v5-section-digest-index.md`
+8. 输出前用 `skills/crossframe/references/runtime-read-policy.md`、`skills/crossframe/references/read-routing-map.md` 和 `skills/crossframe/references/continuity-closure-map.md` 做轻量闭包检查；需要审计时再展开 `skills/crossframe/worksheets/concept-fidelity-check.md` 和 `skills/crossframe/worksheets/source-continuity-check.md`
 
 输出要求：
 

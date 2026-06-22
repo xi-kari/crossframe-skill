@@ -13,7 +13,7 @@ Use `crossframe-suite` as the default CrossFrame entry. For any CrossFrame conte
 
 For 中文文章、长文、评论、思想文章、批判性洞察文章 or structure-to-essay writing, use `skills/crossframe-essay/SKILL.md` first, then read `skills/crossframe/SKILL.md` and `skills/crossframe/references/read-routing-map.md`. Output `结构洞察底稿` before `文章正文`. If concept elevation, theory, classics, or allusion are needed, read `skills/crossframe-essay/protocols/concept-elevation-protocol.md` and keep references verifiable and tied back to reality. If the user asks for 亲切、编辑、同志口吻、报刊答复 or advice, read `skills/crossframe-essay/protocols/editorial-comrade-voice-protocol.md`; use a modern editor voice, not retro slogans or personality judgment.
 
-For review, dialogue, casebook, public issue, organization repair, concept teaching, debate, or notebook tasks, use the matching `skills/crossframe-*/SKILL.md` sibling skill before falling back to the generic CrossFrame rule.
+For review, dialogue, casebook, post-completion inquiry, public issue, organization repair, concept teaching, debate, or notebook tasks, use the matching `skills/crossframe-*/SKILL.md` sibling skill before falling back to the generic CrossFrame rule. Follow-up questions, counterexamples, missing evidence, transfer conditions, or action-boundary checks after a completed workflow should use `skills/crossframe-inquiry/SKILL.md`.
 
 Read order:
 
@@ -23,7 +23,7 @@ Read order:
 4. `skills/crossframe/templates/reasoning-outline-output.md`
 5. `skills/crossframe/templates/user-facing-language.md`
 
-Output a short 推理提纲 first, then a readable Chinese answer. Do not use concept names as conclusions. If a high-risk concept carries the judgment, read the matching card under `skills/crossframe/references/concept-cards/` and use `skills/crossframe/references/integrity-check.md` as the one-stop concept fidelity and source-continuity check.
+Output a short 推理提纲 first, then a readable Chinese answer. Do not use concept names as conclusions. If a high-risk concept carries the judgment, read the matching card under `skills/crossframe/references/concept-cards/` and use `skills/crossframe/references/runtime-read-policy.md` and `skills/crossframe/references/continuity-closure-map.md` as the concept fidelity and source-continuity check.
 
 Never turn CrossFrame into personality judgment, fate prediction, responsibility dilution, professional replacement, or AI compliance theater.
 

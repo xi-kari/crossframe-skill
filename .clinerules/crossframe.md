@@ -8,7 +8,7 @@ Use `crossframe-suite` as the default CrossFrame entry. For any CrossFrame conte
 
 For Chinese critical insight articles, long-form essays, commentary, 思想文章, or structure-to-essay writing, use `skills/crossframe-essay/SKILL.md`. It must read `skills/crossframe/SKILL.md` and `skills/crossframe/references/read-routing-map.md`, then output `结构洞察底稿` before `文章正文`. When depth or 引经据典 is needed, read `skills/crossframe-essay/protocols/concept-elevation-protocol.md`; direct quotes must be verifiable and references must return to concrete reality. When the user asks for 亲切、编辑、同志口吻、报刊答复 or advice, read `skills/crossframe-essay/protocols/editorial-comrade-voice-protocol.md`; keep the voice patient and decisive, not slogan-like or judgmental.
 
-For review, dialogue, casebook, public issue, organization repair, concept teaching, debate, or notebook tasks, use the matching `skills/crossframe-*/SKILL.md` sibling skill before falling back to the generic CrossFrame rule.
+For review, dialogue, casebook, post-completion inquiry, public issue, organization repair, concept teaching, debate, or notebook tasks, use the matching `skills/crossframe-*/SKILL.md` sibling skill before falling back to the generic CrossFrame rule. Follow-up questions, counterexamples, missing evidence, transfer conditions, or action-boundary checks after a completed workflow should use `skills/crossframe-inquiry/SKILL.md`.
 
 Required flow:
 
@@ -19,9 +19,9 @@ Required flow:
 5. Answer in plain Chinese first; keep framework terms as optional mapping.
 
 
-For v5.0 source fidelity, high-responsibility, public institution, intimate relationship, long-term evolution, deep analysis, AI compliance, weak-signal, no-institution, trapped-subject, toolization, or essay/article tasks must read `skills/crossframe/references/integrity-check.md`; when expanded audit is needed, read `skills/crossframe/references/continuity-bundles.md`, `skills/crossframe/references/v5-source-spine.md`, `skills/crossframe/references/v5-section-digest-index.md`, `skills/crossframe/references/v5-term-fidelity.md`, and run `skills/crossframe/worksheets/source-continuity-check.md`. Do not rely on one isolated concept card for these cases.
+For v5.0 source fidelity, high-responsibility, public institution, intimate relationship, long-term evolution, deep analysis, AI compliance, weak-signal, no-institution, trapped-subject, toolization, or essay/article tasks must read `skills/crossframe/references/runtime-read-policy.md`, `skills/crossframe/references/read-routing-map.md`, and `skills/crossframe/references/continuity-closure-map.md`; when expanded audit is needed, read `skills/crossframe/references/continuity-bundles.md`, `skills/crossframe/references/v5-source-spine.md`, `skills/crossframe/references/v5-section-digest-index.md`, `skills/crossframe/references/v5-term-fidelity.md`, and run `skills/crossframe/worksheets/source-continuity-check.md`. Do not rely on one isolated concept card for these cases.
 
-High-risk concepts require their cards in `skills/crossframe/references/concept-cards/` and the merged fidelity check in `skills/crossframe/references/integrity-check.md`.
+High-risk concepts require their cards in `skills/crossframe/references/concept-cards/` and the lightweight closure check in `skills/crossframe/references/continuity-closure-map.md`.
 
 Do not use CrossFrame as a professional substitute, personality judgment, or compliance proof.
 

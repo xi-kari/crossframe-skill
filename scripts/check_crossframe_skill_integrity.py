@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -241,6 +242,15 @@ def skill_root_from_arg(value: str) -> Path:
     return path
 
 
+def repo_root_from_arg(value: str) -> Path:
+    path = Path(value).resolve()
+    if (path / "skills").is_dir():
+        return path
+    if path.name == "skills":
+        return path.parent
+    return path
+
+
 def check_no_retired_dirs(root: Path, label: str) -> None:
     retired = []
     for path in root.glob("crossframe-v5*"):
@@ -252,6 +262,73 @@ def check_no_retired_dirs(root: Path, label: str) -> None:
 def check_required_skill_dirs(root: Path, label: str) -> None:
     missing = [skill for skill in CURRENT_CROSSFRAME_SKILLS if not (root / skill / "SKILL.md").exists()]
     require(not missing, f"{label}: missing current crossframe skills: {', '.join(missing)}")
+
+
+def check_repo_adapters(repo: Path, label: str) -> None:
+    if not (repo / "skills").is_dir():
+        return
+
+    adapter_needles = {
+        "AGENTS.md": ["crossframe-inquiry", "完成态后继续追问"],
+        "CLAUDE.md": [
+            ".claude/skills/crossframe-inquiry/SKILL.md",
+            ".claude/commands/crossframe-inquiry.md",
+            "/crossframe-inquiry",
+            "skills/crossframe-inquiry/SKILL.md",
+        ],
+        "GEMINI.md": ["crossframe-inquiry", "完成后追问"],
+        "CONVENTIONS.md": ["crossframe-inquiry", "14 CrossFrame skills"],
+        "INTERFACES.md": ["skills/crossframe-inquiry/SKILL.md", "14 个 CrossFrame skill"],
+        "llms.txt": ["Inquiry skill", "crossframe-inquiry"],
+        ".github/copilot-instructions.md": ["crossframe-inquiry", "完成后追问"],
+        ".cursor/rules/crossframe.mdc": ["crossframe-inquiry", "post-completion inquiry"],
+        ".cursor/rules/crossframe-suite.mdc": ["crossframe-inquiry", "post-completion inquiry"],
+        ".cursor/rules/crossframe-essay.mdc": ["skills/crossframe-essay/SKILL.md", "runtime-read-policy.md"],
+        ".continue/rules/crossframe.md": ["crossframe-inquiry", "post-completion inquiry"],
+        ".clinerules/crossframe.md": ["crossframe-inquiry", "post-completion inquiry"],
+        ".roo/rules/crossframe.md": ["crossframe-inquiry", "post-completion inquiry"],
+        ".windsurf/rules/crossframe.md": ["crossframe-inquiry", "post-completion inquiry"],
+        "scripts/install-codex.ps1": ["skills/crossframe-inquiry"],
+    }
+    runtime_ref_adapters = set(adapter_needles) - {"scripts/install-codex.ps1"}
+    retired_adapter_refs = [
+        "skills/crossframe/references/integrity-check.md",
+        "`integrity-check.md`",
+    ]
+
+    for rel, needles in adapter_needles.items():
+        path = repo / rel
+        require(path.exists(), f"{label}: missing adapter file: {rel}")
+        text = read(path)
+        for needle in needles:
+            require(needle in text, f"{label}: adapter {rel} missing marker: {needle}")
+        for retired in retired_adapter_refs:
+            require(retired not in text, f"{label}: adapter {rel} references retired file: {retired}")
+        if rel in runtime_ref_adapters:
+            for needle in [
+                "runtime-read-policy.md",
+                "continuity-closure-map.md",
+            ]:
+                require(needle in text, f"{label}: adapter {rel} missing runtime closure marker: {needle}")
+
+    claude_command_dir = repo / ".claude" / "commands"
+    require(claude_command_dir.is_dir(), f"{label}: missing Claude command directory")
+    for command_file in sorted(claude_command_dir.glob("crossframe*.md")):
+        command_text = read(command_file)
+        for retired in retired_adapter_refs:
+            require(retired not in command_text, f"{label}: Claude command {command_file.name} references retired file: {retired}")
+
+    claude_text = read(repo / "CLAUDE.md")
+    command_refs = sorted(set(re.findall(r"`(\.claude/commands/[^`]+\.md)`", claude_text)))
+    require(command_refs, f"{label}: CLAUDE.md has no .claude command references")
+    for ref in command_refs:
+        require((repo / ref).exists(), f"{label}: CLAUDE.md references missing command: {ref}")
+
+    inquiry_command = repo / ".claude" / "commands" / "crossframe-inquiry.md"
+    require(inquiry_command.exists(), f"{label}: missing Claude command for crossframe-inquiry")
+    inquiry_command_text = read(inquiry_command)
+    for needle in ["# /crossframe-inquiry", "skills/crossframe-inquiry/SKILL.md", "post-completion follow-up layer"]:
+        require(needle in inquiry_command_text, f"{label}: crossframe-inquiry command missing marker: {needle}")
 
 
 def check_source_ledger(root: Path, label: str) -> None:
@@ -1242,6 +1319,8 @@ def main() -> int:
     parser.add_argument("--repo", default=".", help="Repository root or skill root.")
     parser.add_argument("--mirror", action="append", default=[], help="Additional skill root to validate.")
     args = parser.parse_args()
+
+    check_repo_adapters(repo_root_from_arg(args.repo), "repo")
 
     roots: list[tuple[Path, str]] = [(skill_root_from_arg(args.repo), "repo")]
     for idx, mirror in enumerate(args.mirror, start=1):
