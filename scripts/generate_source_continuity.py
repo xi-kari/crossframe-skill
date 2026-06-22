@@ -6,8 +6,6 @@ import re
 from dataclasses import dataclass
 from pathlib import Path
 
-from docx import Document
-
 
 @dataclass(frozen=True)
 class Bundle:
@@ -512,6 +510,8 @@ def extract_tables(doc: Document) -> list[dict[str, object]]:
 
 
 def extract_nodes(path: Path) -> tuple[list[dict[str, object]], list[dict[str, object]]]:
+    from docx import Document
+
     doc = Document(str(path))
     paragraphs = [
         {"index": i, "style": para.style.name, "text": normalize(para.text)}
