@@ -3,7 +3,7 @@
 | 工具 | 入口 | 推荐用法 | 注意事项 |
 | --- | --- | --- | --- |
 | Codex | `skills/crossframe*/` | 安装 14 个 skill 后显式点名 `crossframe-suite` | 不被动触发 |
-| Claude Code | `.claude/skills/crossframe*/` + `.claude/commands/crossframe*.md` + `CLAUDE.md` | 使用 `/crossframe-suite`、`/crossframe-essay`、`/crossframe-inquiry` | 仓库命令和全局命令可同步 |
+| Claude Code | `.claude/skills/crossframe*/` + `.claude/commands/crossframe*.md` + `CLAUDE.md` | 使用 `/crossframe-suite`、`/crossframe-essay`、`/crossframe-history`、`/crossframe-inquiry` | 仓库命令和全局命令可同步 |
 | Gemini CLI | `GEMINI.md` | 读取仓库级上下文后按 skill 路由 | 不要一次加载全部 skill |
 | Cursor | `.cursor/rules/crossframe*.mdc` | 规则只做入口提示，主体仍读 `skills/` | `alwaysApply: false` |
 | GitHub Copilot | `.github/copilot-instructions.md` | 仓库内文档分析和维护时使用 | 不能替代完整 skill 文件 |
@@ -16,6 +16,8 @@
 | LLM 索引 | `llms.txt` | 机器可读入口 | 适合快速定位 |
 
 如果工具不支持 skill 文件夹，也可以只读取 `AGENTS.md`、`CLAUDE.md`、`GEMINI.md` 或 `llms.txt`。但薄入口只负责路由，效果不如完整保留 `skills/crossframe*`。
+
+所有薄适配都必须保留两条新路由：历史材料、史料边界和长时段制度问题进入 `crossframe-history`；完整分析、成文和 review 已完成后，下一轮未明确换题或退出的用户输入默认进入 `crossframe-inquiry`，并可定向检索 1-3 个 sibling skill 的必要材料。
 
 维护镜像时运行：
 

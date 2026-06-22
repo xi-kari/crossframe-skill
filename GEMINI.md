@@ -14,7 +14,7 @@ CrossFrame skills 在 Gemini CLI 中也是显式调用 only。不要因为普通
 
 常见链路：普通文章 `crossframe -> crossframe-essay -> crossframe-review`；公共评论 `crossframe -> crossframe-public -> crossframe-essay -> crossframe-review`；组织复盘文章 `crossframe -> crossframe-org -> crossframe-essay -> crossframe-review`；历史研究 `crossframe -> crossframe-history -> crossframe-essay(full-visible-v5-longform) -> crossframe-review`；答读者问 `crossframe -> crossframe-dialogue -> crossframe-essay(full-visible-v5-longform) -> crossframe-review`；读书研究 `crossframe -> crossframe-notebook -> crossframe-essay(full-visible-v5-longform) -> crossframe-review`；完成后追问 `crossframe -> crossframe-review(lite) -> crossframe-inquiry`。不要一次读取全部 skill。
 
-显式调用后优先考虑 `crossframe-suite`。suite 内部按 routing map 联合读取 sibling skills 不算被动触发。只要用户从 suite 总入口进入任何 CrossFrame 内容任务，默认先完成必要专项 skill，再追加 `crossframe-essay -> crossframe-review`，输出 `full-visible-v5-longform / 5.0混合长文`，包含完整可见底稿和完整长文正文。只有用户明确说“只要/不要文章/短答/表格/清单/纯诊断/仅行动方案”时，才关闭默认文章层。
+显式调用后优先考虑 `crossframe-suite`。suite 内部按 routing map 联合读取 sibling skills 不算被动触发。只要用户从 suite 总入口进入任何 CrossFrame 内容任务，默认先完成必要专项 skill，再追加 `crossframe-essay -> crossframe-review`，输出 `full-visible-v5-longform`，包含完整可见底稿和完整长文正文。只有用户明确说“只要/不要文章/短答/表格/清单/纯诊断/仅行动方案”时，才关闭默认文章层。
 
 如果用户显式调用 `crossframe-essay` 或经 `crossframe-suite` 路由到写作，并要求写中文文章、长文、评论、思想文章、批判性洞察文章或结构洞察文章，请读取：
 

@@ -1,5 +1,17 @@
 # Changelog
 
+## v5.1.1 - 2026-06-22
+
+### Changed
+
+- Cursor、Continue、Cline、Roo、Windsurf、Copilot 和通用适配入口补齐 `crossframe-history` 与完成态 `crossframe-inquiry` 路由。
+- 完整链路完成后，未明确换题或退出的下一轮用户输入默认进入 `crossframe-inquiry`；追问层可定向检索 1-3 个 sibling skill 的必要材料。
+- 对外说明统一使用 `full-visible-v5-longform`，不再使用容易误判为旧版的混合长文叫法。
+
+### Verification
+
+- 完整性校验新增适配入口断裂检查、旧叫法禁用检查和 history/inquiry 覆盖检查。
+
 ## v5.1.0 - 2026-06-22
 
 ### Added

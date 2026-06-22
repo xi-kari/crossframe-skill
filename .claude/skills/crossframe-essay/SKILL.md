@@ -82,7 +82,7 @@ CrossFrame Essay 是 `crossframe` 的平行写作 skill，不替代 `crossframe`
 
 ## 默认输出
 
-自动成文默认输出两个连续部分，输出档位为 `full-visible-v5-longform / 5.0混合长文`：
+自动成文默认输出两个连续部分，输出档位为 `full-visible-v5-longform`：
 
 ```text
 # 结构洞察底稿

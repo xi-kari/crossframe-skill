@@ -4,11 +4,13 @@ Use CrossFrame for Chinese cross-scale structural diagnosis of relationships, te
 
 For complex tasks that require multiple CrossFrame sibling skills in sequence, use `skills/crossframe-suite/SKILL.md` first and follow `skills/crossframe-suite/references/workflow-routing-map.md`. Do not trigger all sibling skills at once.
 
-Use `crossframe-suite` as the default CrossFrame entry. For any CrossFrame content task through Suite, finish the needed sibling skills first, then append `crossframe-essay -> crossframe-review` and use `full-visible-v5-longform`: complete visible 5.0 dossier plus complete long-form Chinese article. Only skip the article layer when the user explicitly says only/no article/short answer/table/checklist/pure diagnosis/action plan only.
+Use `crossframe-suite` as the default CrossFrame entry. For any CrossFrame content task through Suite, finish the needed sibling skills first, then append `crossframe-essay -> crossframe-review` and use `full-visible-v5-longform`: complete visible structural dossier plus complete long-form Chinese article. Only skip the article layer when the user explicitly says only/no article/short answer/table/checklist/pure diagnosis/action plan only.
 
 For Chinese critical insight articles, long-form essays, commentary, 思想文章, or structure-to-essay writing, use `skills/crossframe-essay/SKILL.md`. It must read `skills/crossframe/SKILL.md` and `skills/crossframe/references/read-routing-map.md`, then output `结构洞察底稿` before `文章正文`. When depth or 引经据典 is needed, read `skills/crossframe-essay/protocols/concept-elevation-protocol.md`; direct quotes must be verifiable and references must return to concrete reality. When the user asks for 亲切、编辑、同志口吻、报刊答复 or advice, read `skills/crossframe-essay/protocols/editorial-comrade-voice-protocol.md`; keep the voice patient and decisive, not slogan-like or judgmental.
 
-For review, dialogue, casebook, post-completion inquiry, public issue, organization repair, concept teaching, debate, or notebook tasks, use the matching `skills/crossframe-*/SKILL.md` sibling skill before falling back to the generic CrossFrame rule. Follow-up questions, counterexamples, missing evidence, transfer conditions, or action-boundary checks after a completed workflow should use `skills/crossframe-inquiry/SKILL.md`.
+For review, dialogue, casebook, history research, post-completion inquiry, public issue, organization repair, concept teaching, debate, or notebook tasks, use the matching `skills/crossframe-*/SKILL.md` sibling skill before falling back to the generic CrossFrame rule. Follow-up questions, counterexamples, missing evidence, transfer conditions, or action-boundary checks after a completed workflow should use `skills/crossframe-inquiry/SKILL.md`.
+
+After a completed suite workflow has produced diagnosis, article, and review, any follow-up without an explicit new-task/exit signal should use `skills/crossframe-inquiry/SKILL.md` by default. The inquiry layer may retrieve 1-3 relevant sibling skills for question design, counterexamples, transfer conditions, and risk boundaries, but it must not output formal sibling judgments.
 
 Required flow:
 

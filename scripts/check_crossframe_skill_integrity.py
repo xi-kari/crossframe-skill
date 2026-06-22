@@ -269,31 +269,37 @@ def check_repo_adapters(repo: Path, label: str) -> None:
         return
 
     adapter_needles = {
-        "AGENTS.md": ["crossframe-inquiry", "完成态后继续追问"],
+        "AGENTS.md": ["crossframe-history", "crossframe-inquiry", "完成态后继续追问"],
         "CLAUDE.md": [
             ".claude/skills/crossframe-inquiry/SKILL.md",
             ".claude/commands/crossframe-inquiry.md",
             "/crossframe-inquiry",
             "skills/crossframe-inquiry/SKILL.md",
         ],
-        "GEMINI.md": ["crossframe-inquiry", "完成后追问"],
+        "GEMINI.md": ["crossframe-history", "crossframe-inquiry", "完成后追问"],
         "CONVENTIONS.md": ["crossframe-inquiry", "14 CrossFrame skills"],
         "INTERFACES.md": ["skills/crossframe-inquiry/SKILL.md", "14 个 CrossFrame skill"],
-        "llms.txt": ["Inquiry skill", "crossframe-inquiry"],
-        ".github/copilot-instructions.md": ["crossframe-inquiry", "完成后追问"],
-        ".cursor/rules/crossframe.mdc": ["crossframe-inquiry", "post-completion inquiry"],
-        ".cursor/rules/crossframe-suite.mdc": ["crossframe-inquiry", "post-completion inquiry"],
+        "llms.txt": ["History skill", "Inquiry skill", "crossframe-inquiry"],
+        ".github/copilot-instructions.md": ["crossframe-history", "crossframe-inquiry", "完成后追问"],
+        ".cursor/rules/crossframe.mdc": ["crossframe-history", "crossframe-inquiry", "post-completion inquiry", "any follow-up without an explicit new-task/exit signal"],
+        ".cursor/rules/crossframe-suite.mdc": ["crossframe-history", "crossframe-inquiry", "post-completion inquiry", "any follow-up without an explicit new-task/exit signal"],
         ".cursor/rules/crossframe-essay.mdc": ["skills/crossframe-essay/SKILL.md", "runtime-read-policy.md"],
-        ".continue/rules/crossframe.md": ["crossframe-inquiry", "post-completion inquiry"],
-        ".clinerules/crossframe.md": ["crossframe-inquiry", "post-completion inquiry"],
-        ".roo/rules/crossframe.md": ["crossframe-inquiry", "post-completion inquiry"],
-        ".windsurf/rules/crossframe.md": ["crossframe-inquiry", "post-completion inquiry"],
-        "scripts/install-codex.ps1": ["skills/crossframe-inquiry"],
+        ".continue/rules/crossframe.md": ["history research", "crossframe-inquiry", "post-completion inquiry", "any follow-up without an explicit new-task/exit signal"],
+        ".clinerules/crossframe.md": ["history research", "crossframe-inquiry", "post-completion inquiry", "any follow-up without an explicit new-task/exit signal"],
+        ".roo/rules/crossframe.md": ["history research", "crossframe-inquiry", "post-completion inquiry", "any follow-up without an explicit new-task/exit signal"],
+        ".windsurf/rules/crossframe.md": ["history research", "crossframe-inquiry", "post-completion inquiry", "any follow-up without an explicit new-task/exit signal"],
+        "docs/ADAPTERS.md": ["crossframe-history", "crossframe-inquiry"],
+        "scripts/install-codex.ps1": ["skills/crossframe-history", "skills/crossframe-inquiry"],
     }
-    runtime_ref_adapters = set(adapter_needles) - {"scripts/install-codex.ps1"}
+    runtime_ref_adapters = set(adapter_needles) - {"docs/ADAPTERS.md", "scripts/install-codex.ps1"}
     retired_adapter_refs = [
         "skills/crossframe/references/integrity-check.md",
         "`integrity-check.md`",
+    ]
+    old_public_copy_markers = [
+        "5.0 混合长文",
+        "5.0混合长文",
+        "complete visible 5.0 dossier",
     ]
 
     for rel, needles in adapter_needles.items():
@@ -304,6 +310,8 @@ def check_repo_adapters(repo: Path, label: str) -> None:
             require(needle in text, f"{label}: adapter {rel} missing marker: {needle}")
         for retired in retired_adapter_refs:
             require(retired not in text, f"{label}: adapter {rel} references retired file: {retired}")
+        for marker in old_public_copy_markers:
+            require(marker not in text, f"{label}: adapter {rel} still has old public copy marker: {marker}")
         if rel in runtime_ref_adapters:
             for needle in [
                 "runtime-read-policy.md",
@@ -343,7 +351,7 @@ def check_public_release_docs(repo: Path, label: str) -> None:
         "docs/CONCEPTS.md": ["Claim Ledger", "source_id", "Concept Contract"],
         "docs/WORKFLOWS.md": ["previous_context -> crossframe-inquiry", "claim ledger / claim-ledger-check"],
         "docs/EXAMPLES.md": ["历史草稿档", "crossframe-inquiry"],
-        "docs/ADAPTERS.md": ["sync_skill_mirrors.py", "Codex", "Claude Code"],
+        "docs/ADAPTERS.md": ["sync_skill_mirrors.py", "Codex", "Claude Code", "crossframe-history", "crossframe-inquiry"],
         "docs/SAFETY_AND_LIMITS.md": ["默认不展示内部 reasoning", "工具调用参数"],
         "docs/FAQ.md": ["explicit-only", "--materials-only"],
     }
@@ -367,6 +375,15 @@ def check_public_release_docs(repo: Path, label: str) -> None:
         text = read(repo / rel)
         require("内部 reasoning" in text or "internal reasoning" in text, f"{label}: {rel} missing internal reasoning visibility boundary")
         require("工具调用参数" in text or "tool-call parameters" in text, f"{label}: {rel} missing tool-call visibility boundary")
+        for marker in ["5.0 混合长文", "5.0混合长文", "complete visible 5.0 dossier"]:
+            require(marker not in text, f"{label}: {rel} still has old public copy marker: {marker}")
+
+    for rel in [
+        "skills/crossframe-suite/references/workflow-routing-map.md",
+    ]:
+        text = read(repo / rel)
+        for marker in ["5.0 混合长文", "5.0混合长文", "complete visible 5.0 dossier"]:
+            require(marker not in text, f"{label}: {rel} still has old public copy marker: {marker}")
 
     for rel in [
         "scripts/sync_skill_mirrors.py",

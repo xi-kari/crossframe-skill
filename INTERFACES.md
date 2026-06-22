@@ -26,7 +26,7 @@
 - 整套 CrossFrame skill 只能显式触发；用户必须点名 `crossframe-suite`、`crossframe`、某个 `crossframe-*`，或使用 `$crossframe-*` / `/crossframe-*` 命令。
 - 外部初始触发不能是被动的；普通分析、写作、评论、组织修复、读书或辩论任务不应自动召回 CrossFrame。
 - 用户显式调用 `crossframe-suite` 后，多 skill 连续任务仍然先读取 `skills/crossframe-suite/SKILL.md`；suite 可以按 routing map 联合读取 sibling skill，但不替代专项 skill。
-- `crossframe-suite` 是显式调用后的推荐总入口；只要从总入口进入，默认在必要专项 skill 后追加 `crossframe-essay -> crossframe-review`，输出档位为 `full-visible-v5-longform / 5.0混合长文`。
+- `crossframe-suite` 是显式调用后的推荐总入口；只要从总入口进入，默认在必要专项 skill 后追加 `crossframe-essay -> crossframe-review`，输出档位为 `full-visible-v5-longform`。
 - `crossframe-critical` 不进入总入口调度。只有用户明确写 `$crossframe-critical`、`crossframe-critical` 或要求测试这个批判 skill 时才读取它。
 - 当前仓库包含 14 个 CrossFrame skill。
 - 只有用户明确说“只要/不要文章/短答/表格/清单/纯诊断/仅行动方案”时，才关闭默认文章层。

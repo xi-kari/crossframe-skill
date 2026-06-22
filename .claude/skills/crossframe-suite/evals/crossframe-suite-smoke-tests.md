@@ -9,7 +9,7 @@ Prompt：写一篇“解释劳动为什么会耗竭”的文章。
 - 工作流包含 `crossframe -> crossframe-essay -> crossframe-review`。
 - 如果识别为关系困惑，可按需加入亲密关系协议，但不强行加入 `crossframe-public`。
 - 必须先有结构洞察底稿。
-- 输出档位必须是 `full-visible-v5-longform / 5.0混合长文`。
+- 输出档位必须是 `full-visible-v5-longform`。
 - 底稿完整可见，正文默认完整长文，不得只有短答或项目符号。
 - 正文声口默认是现代编辑底色，不能只输出诊断提纲或概念说明。
 - 最后过 `crossframe-review` 时，不得只输出质量闸或评审报告；最终仍必须可见 `结构洞察底稿` 和 `文章正文`。
@@ -33,7 +33,7 @@ Prompt：生命的第一因是什么？
 期望：
 
 - 工作流包含 `crossframe -> crossframe-essay -> crossframe-review`。
-- 输出档位是 `full-visible-v5-longform / 5.0混合长文`。
+- 输出档位是 `full-visible-v5-longform`。
 - 不查源，除非用户要求科学材料。
 - 底稿完整可见：科学层、结构层、意义层；机制候选至少两个；边界清楚。
 - 正文有标题、铺陈、生命/边界/反馈/回应的递进、概念上升和余味结尾。

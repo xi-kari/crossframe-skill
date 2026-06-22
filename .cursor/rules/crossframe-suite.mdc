@@ -4,9 +4,9 @@ globs: "**/*"
 alwaysApply: false
 ---
 
-When a task asks for a complex CrossFrame workflow, such as writing after diagnosis, public commentary, organization repair writing, debate-to-essay, reading-note-to-essay, casebook extraction plus review, post-completion inquiry, or "which CrossFrame skills should trigger in what order", read `skills/crossframe-suite/SKILL.md` first.
+When a task asks for a complex CrossFrame workflow, such as writing after diagnosis, public commentary, organization repair writing, history research-to-essay, debate-to-essay, reading-note-to-essay, casebook extraction plus review, post-completion inquiry, or "which CrossFrame skills should trigger in what order", read `skills/crossframe-suite/SKILL.md` first.
 
-Use this suite rule as the default CrossFrame entry. For any CrossFrame content task through Suite, finish the needed sibling skills first, then append `crossframe-essay -> crossframe-review` and use `full-visible-v5-longform`: complete visible 5.0 dossier plus complete long-form article with the modern editor-comrade base voice. Only skip the article layer when the user explicitly says only/no article/short answer/table/checklist/pure diagnosis/action plan only.
+Use this suite rule as the default CrossFrame entry. For any CrossFrame content task through Suite, finish the needed sibling skills first, then append `crossframe-essay -> crossframe-review` and use `full-visible-v5-longform`: complete visible structural dossier plus complete long-form article with the modern editor-comrade base voice. Only skip the article layer when the user explicitly says only/no article/short answer/table/checklist/pure diagnosis/action plan only.
 
 Required flow:
 
@@ -18,4 +18,4 @@ Required flow:
 
 For high-responsibility, public, intimate, long-evolution, deep-analysis, or article workflows, ensure the underlying `crossframe` step reads `skills/crossframe/references/runtime-read-policy.md`, `skills/crossframe/references/read-routing-map.md`, and `skills/crossframe/references/continuity-closure-map.md`. Use `continuity-bundles.md` and `source-continuity-check.md` only when an expanded audit is needed.
 
-Do not trigger every `crossframe-*` skill at once. Use `crossframe-review` as a quality gate for formal, public, long-form, strong-judgment, or high-responsibility outputs. After a completed workflow, follow-up questions, counterexamples, missing evidence, transfer conditions, or action-boundary checks should route to `crossframe-inquiry`.
+Do not trigger every `crossframe-*` skill at once. Use `crossframe-history` for historical materials, source tiers, periodization, long-duration evolution, and archive/FOIA backlog work. Use `crossframe-review` as a quality gate for formal, public, long-form, strong-judgment, or high-responsibility outputs. After a completed workflow, any follow-up without an explicit new-task/exit signal should route to `crossframe-inquiry`; it may retrieve 1-3 relevant sibling skills for question design, counterexamples, transfer conditions, and risk boundaries.

@@ -60,7 +60,7 @@ def iter_package_files(repo: Path):
 def main() -> int:
     parser = argparse.ArgumentParser(description="Package the public CrossFrame skill suite.")
     parser.add_argument("--repo", default=".", help="Repository root.")
-    parser.add_argument("--version", default="v5.1.0", help="Release version label.")
+    parser.add_argument("--version", default="v5.1.1", help="Release version label.")
     parser.add_argument("--output-dir", default="outputs", help="Directory for the zip artifact.")
     args = parser.parse_args()
 

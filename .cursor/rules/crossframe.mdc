@@ -8,11 +8,13 @@ When a task involves complex relationships, teams, organizations, institutions, 
 
 If the task needs multiple CrossFrame skills in sequence, such as public commentary, organization repair writing, debate-to-essay, reading-note-to-essay, casebook plus review, or post-completion inquiry, read `skills/crossframe-suite/SKILL.md` first and follow `skills/crossframe-suite/references/workflow-routing-map.md`. Do not read every sibling skill at once.
 
-For any CrossFrame content task where the user has not explicitly disabled articles, prefer `crossframe-suite`; it defaults to `full-visible-v5-longform` after the needed sibling skills: complete visible 5.0 dossier plus complete long-form article.
+For any CrossFrame content task where the user has not explicitly disabled articles, prefer `crossframe-suite`; it defaults to `full-visible-v5-longform` after the needed sibling skills: complete visible structural dossier plus complete long-form article.
 
 If the task asks for 中文文章、长文、评论、思想文章、批判性洞察文章, or turning CrossFrame reasoning into readable prose, use `skills/crossframe-essay/SKILL.md` and `.cursor/rules/crossframe-essay.mdc` instead of stopping at this diagnostic rule.
 
 If the task asks for review/audit, short reader reply, casebook, history research, post-completion inquiry, public issue, organization repair, concept teaching, debate analysis, or research notebook, read the matching `skills/crossframe-*/SKILL.md` first: `crossframe-review`, `crossframe-dialogue`, `crossframe-casebook`, `crossframe-history`, `crossframe-inquiry`, `crossframe-public`, `crossframe-org`, `crossframe-teach`, `crossframe-debate`, or `crossframe-notebook`.
+
+After a completed suite workflow has produced diagnosis, article, and review, any follow-up without an explicit new-task/exit signal should route to `skills/crossframe-inquiry/SKILL.md` by default. The inquiry layer may do targeted retrieval from 1-3 relevant sibling skills for question design, counterexamples, transfer conditions, and risk boundaries, but it must not turn that retrieval into a formal sibling judgment.
 
 Use Chinese as the authoritative semantic layer. `CrossFrame` is only the传播名 / skill id.
 

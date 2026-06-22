@@ -4,7 +4,7 @@
 # 结构洞察底稿
 
 ## 0. 输出档位
-- 输出档位：full-visible-v5-longform / 5.0混合长文
+- 输出档位：full-visible-v5-longform
 - 是否完整可见底稿：
 - 是否完整长文正文：
 

@@ -38,7 +38,7 @@
 
 这条限制只约束外部初始触发，不禁止 suite 内部联合调用。用户显式调用 `crossframe-suite` 后，suite 仍然可以按 `workflow-routing-map.md` 读取和串联 `crossframe`、`crossframe-essay`、`crossframe-review` 及其它 sibling skill。
 
-只要用户从 `crossframe-suite` 总入口进入 CrossFrame 内容任务，默认最终输出 `full-visible-v5-longform / 5.0混合长文`：先完成必要专项 skill，再追加 `crossframe-essay -> crossframe-review`，包含完整可见底稿和完整长文正文。只有用户明确说“只要/不要文章/短答/表格/清单/纯诊断/仅行动方案”时，才关闭默认文章层。
+只要用户从 `crossframe-suite` 总入口进入 CrossFrame 内容任务，默认最终输出 `full-visible-v5-longform`：先完成必要专项 skill，再追加 `crossframe-essay -> crossframe-review`，包含完整可见底稿和完整长文正文。只有用户明确说“只要/不要文章/短答/表格/清单/纯诊断/仅行动方案”时，才关闭默认文章层。
 
 显式调用后，按任务内容路由到以下能力：
 
@@ -114,7 +114,7 @@ CrossFrame Essay 仍然必须读取 `skills/crossframe/SKILL.md` 与 `skills/cro
 
 连续触发只发生在用户显式调用 `crossframe-suite` 之后。此时先给短 `调度提纲`：任务类型、工作流、必读 skill、按需读取、不读取、质量闸。不要为了完整而读取全部 skill。
 
-总入口默认对任何 CrossFrame 内容任务成文，并默认是 `full-visible-v5-longform / 5.0混合长文`；显式关闭文章层时才保留原形态。
+总入口默认对任何 CrossFrame 内容任务成文，并默认是 `full-visible-v5-longform`；显式关闭文章层时才保留原形态。
 
 ## 必须遵守
 

@@ -6,7 +6,7 @@ CrossFrame skills are explicit-only. Do not trigger this suite passively for ord
 
 After explicit invocation, use `crossframe-suite` as the preferred CrossFrame entry for complex tasks that need multiple sibling skills in sequence. Read `skills/crossframe-suite/SKILL.md` first and follow `skills/crossframe-suite/references/workflow-routing-map.md`. Suite-directed sibling skill use after explicit invocation is allowed and is not passive triggering. The suite skill only routes; it must not replace the specialized skill bodies.
 
-For any CrossFrame content task through Suite, finish the needed sibling skills first, then append `crossframe-essay -> crossframe-review` and use `full-visible-v5-longform`: complete visible 5.0 dossier plus complete long-form Chinese article. Only skip the article layer when the user explicitly says only/no article/short answer/table/checklist/pure diagnosis/action plan only.
+For any CrossFrame content task through Suite, finish the needed sibling skills first, then append `crossframe-essay -> crossframe-review` and use `full-visible-v5-longform`: complete visible structural dossier plus complete long-form Chinese article. Only skip the article layer when the user explicitly says only/no article/short answer/table/checklist/pure diagnosis/action plan only.
 
 After explicit CrossFrame invocation, when the user asks for CrossFrame、跨尺度结构诊断、结构诊断、推演、开放断言、反俘获审查、低条件试探行动、强判断、高反身性、亲密关系、疗愈转移、公共制度、长期演化或概念解释:
 
