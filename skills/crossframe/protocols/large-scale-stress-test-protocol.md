@@ -1,5 +1,18 @@
 # 超大规模压力测试协议
 
+## runtime hardening
+
+本协议只负责专项推理步骤，不取消 `../SKILL.md` 的主运行链。凡本协议产生中心命题、机制候选、高风险概念判断、行动建议、公共定性、概率排序、退出/处置建议或可成文材料，必须先进入：
+
+```text
+v5-read-state-capsule
+-> source-anchor-integrity-check
+-> concept-fidelity-check
+-> claim ledger
+-> claim-ledger-check
+```
+
+没有 `claim_id` 的判断不得进入本协议输出。高风险概念未通过概念契约时，只能作为解释候选或表达转译，不能承担判断。
 用于处理文明尺度、历史尺度、跨制度长期演化和超大规模圈层问题。它的核心是承认边界，而不是写宏大结论。
 
 ## 触发条件

@@ -20,7 +20,7 @@ disable-model-invocation: true
 
 CrossFrame 不是“把 v5.0 文本塞进上下文”的提示词包，而是一个可执行的结构推理协议。
 
-每次使用都必须先形成内部推理产物，再输出结论。结论可以很短，但不能跳过事实抽取、七闸复核、机制候选、判断档位、源结构连续性和表达闸。
+每次使用都必须先形成内部推理产物，再输出结论。结论可以很短，但不能跳过事实抽取、七闸复核、机制候选、概念契约、判断档位、源结构连续性、claim ledger 和表达闸。
 
 ## 必须执行的顺序
 
@@ -30,13 +30,15 @@ CrossFrame 不是“把 v5.0 文本塞进上下文”的提示词包，而是一
 4. 读取 `references/continuity-closure-map.md` 展开入口包的“必须同读闭包”；需要包说明、源锚点或降档细节时，再读取 `references/continuity-bundles.md` 和对应 `references/continuity-bundles/v5/<bundle-id>.md`。默认最多读取 3 个入口核心包 + 2 个相邻辅助包；这个上限不限制必须同读闭包。高责任、公共制度、组织处置、公开判断必须优先读七闸、强判断八件套、低权力保护、证据降级与行动上限包及其闭包。
 5. 按 `templates/read-state-capsule.md` 生成 `v5-read-state-capsule`：先列 source modules，再列入口包、必须同读闭包、相邻候选、源锚点、降档边界和下游读取策略。suite 不生成胶囊，胶囊由本核心层生成并传给专项 skill、essay 和 review。
 6. 填写内部 intake：对象、尺度、事实、证据缺口、用户用途、受影响对象、观测影响、权力结构、行动上限。
-7. 通过七闸：对象闸、证据闸、尺度闸、责任闸、观测闸、权力闸、行动闸。七闸任一不完整，不能维持强判断。
-8. 形成至少两个机制候选；除非证据足以说明只有一个机制。
-9. 对承担判断作用的概念做完整吸收：读取对应概念卡，并用 `worksheets/concept-fidelity-check.md` 做保真检查。
+7. 通过七闸：对象闸、证据闸、尺度闸、责任闸、观测闸、权力闸、行动闸。七闸必须登记为 `pass / weak / fail / blocked`；任一为 `fail` 或 `blocked`，不能维持强判断。
+8. 形成至少两个机制候选；除非证据足以说明只有一个机制。每个机制候选必须登记 `mechanism_id`，并回指事实、源锚点、反向证据、概念契约和判断档位上限。
+9. 对承担判断作用的概念做完整吸收：读取对应概念卡，并读取 `references/concept-contracts/core-contracts.md` 中对应概念契约；用 `worksheets/concept-fidelity-check.md` 做保真检查。概念卡回答含义，概念契约回答是否允许承担判断。
 10. 用 `worksheets/source-continuity-check.md` 检查是否只读了孤立概念卡、漏掉 v5 相邻约束或需要降档。
 11. 用 `worksheets/source-anchor-integrity-check.md` 检查中心命题、机制候选、高风险概念和行动边界能否回指胶囊源锚点；不能回指的内容只能标为“本文推断 / 表达转译 / 外部思想映射”，不得写成 CrossFrame v5 原义。
-12. 决定判断档位：轻量观察、开放断言、完整诊断、强判断、低条件试探行动、退出转移。若必须联读但未联读，或源锚点不足，不能维持强判断。
-13. 先输出可见推理提纲，再选择模板输出：先说现实语言，再按需要附内部映射。
+12. 按 `templates/claim-ledger.md` 生成 `claim ledger`：中心命题、机制候选、判断档位、行动建议、公共定性、文章转译和高风险概念使用都必须登记 `claim_id`。没有 `claim_id` 的命题不得进入正文或结论。
+13. 用 `worksheets/claim-ledger-check.md` 检查正文前命题台账：若中心命题、行动建议、高风险概念或公共定性缺少事实锚点、源锚点、概念契约、判断档位、撤回条件或发布边界，必须删除、补证、降档，或标为“本文推断 / 表达转译 / 外部思想映射”。
+14. 决定判断档位：轻量观察、开放断言、完整诊断、强判断、低条件试探行动、退出转移。若必须联读但未联读、源锚点不足、概念契约未通过、claim ledger 缺失，不能维持强判断。
+15. 先输出可见推理提纲，再选择模板输出：先说现实语言，再按需要附内部映射。推理提纲不展示完整工作表，但必须显示判断来自事实、机制候选、七闸和命题台账，而不是来自术语套用。
 
 ## 读取规则
 
@@ -65,7 +67,10 @@ CrossFrame 不是“把 v5.0 文本塞进上下文”的提示词包，而是一
 ## 输出规则
 
 - 默认输出短而清楚。除非用户明确要求极简结论，否则先展示一个“推理提纲”；不展示完整工作表。
-- 推理提纲必须包含：诊断对象、事实边界、尺度窗口、七闸复核、机制候选、判断档位、本次读取的概念或保真检查、本次 v5 连续联读包、读态胶囊摘要、下一步观察或行动。
+- 推理提纲必须包含：诊断对象、事实边界、尺度窗口、七闸复核、机制候选、判断档位、命题台账状态、概念契约状态、本次读取的概念或保真检查、本次 v5 连续联读包、读态胶囊摘要、下一步观察或行动。
+- 生成层不得宣布质量闸通过、完全通过、A档、合格或 `substantive_pass`。生成层只能给出自检摘要、待 review 判定的候选产物和必须补读/降档的风险点。
+- 没有进入 `crossframe-review` 前，不得给出 `structural_pass`、`substantive_pass` 或 `publish_boundary` 的通过结论。质量闸归属 review；core、essay、suite 和 sibling skill 只能保留“自检未发现 X / 待 review 抽句复核”这类保守表述。
+- review 看到生成层自称“质量闸通过 / 完全通过 / A档 / 合格 / substantive_pass”时，必须记录为“生成层自我盖章”，并重新执行反向否决最小块。
 - 深度、审计、高责任、公共制度、亲密关系、长期演化和文章输出场景，推理提纲必须显示“本次连续联读包”；普通轻量问题可以写“未触发”。
 - 推理提纲只能写提纲，不写冗长内心推理；它用于让用户看见推理路径，也用于约束后续输出不跳步。
 - 只有用户要求“完整推理过程”“内部映射”“工作表”“审计”时，才展开完整工作表。
@@ -104,6 +109,10 @@ CrossFrame 不是“把 v5.0 文本塞进上下文”的提示词包，而是一
 - 七闸复核：
 - 机制候选：
 - 判断档位：
+- 命题台账：已生成 / 缺失已降档 / 不触发；关键 claim_id：
+- 概念契约：pass / partial / fail；降档决定：
+- 读态胶囊：已生成 / 复用 / 缺失已降档：
+- source_anchor / claim_id 边界：中心命题、机制句、行动建议是否已回指：
 - 本次读取的概念：
 - 本次 v5 连续联读包：
 - 下一步：
@@ -123,7 +132,10 @@ CrossFrame 不是“把 v5.0 文本塞进上下文”的提示词包，而是一
 - `references/continuity-bundles/v5/`：26 个 v5 独立连读包。
 - `references/read-routing-map.md`：按请求类型选择协议、工作表、概念卡和模板。
 - `templates/read-state-capsule.md`：本次 v5 source modules、入口包、必须同读闭包、源锚点和下游读取策略的胶囊模板。
-- `references/crossframe-v2-core.md`、`references/v2-*`、`references/v3-*`：历史基线，仅在版本追踪或回退审计时读取。
+- `templates/claim-ledger.md`：中心命题、机制候选、行动建议、高风险概念和正文短摘的命题台账。
+- `worksheets/claim-ledger-check.md`：检查正文和结论是否只从已登记命题展开。
+- `references/concept-contracts/core-contracts.md`：核心高风险概念的准入、禁止升级、降档和审查契约。
+- `schemas/claim-ledger.schema.json`：命题台账的结构化字段约束，用于脚本和 review 对齐。
 - `references/concepts-minimal-set.md`：最小概念集。
 - `references/framework-ontology-protection.md`：框架本体保护、反领域殖民、反模型殖民和概念改动规则。
 - `references/guardrails.md`：反误用规则。
@@ -139,8 +151,16 @@ CrossFrame 不是“把 v5.0 文本塞进上下文”的提示词包，而是一
 
 以下概念不能只按字面理解；一旦它们承担判断作用，必须读取对应概念卡和 v5 连读包：
 
+高风险概念必须同时通过“概念卡 + 概念契约”双检查：
+
+- 概念卡回答：这个概念在 CrossFrame 中是什么意思。
+- 概念契约回答：本次是否允许用它承担判断、最高能到什么档位、失败时如何降档。
+- 一旦概念进入中心命题、机制候选、行动建议、公共定性或文章点睛句，必须在 `claim ledger` 中登记 `claim_id`。
+- 只读概念卡、不读概念契约时，该概念只能作为解释提示，不能承担判断。
+
 - 承接 / 回流：读 `references/concept-cards/chengjie-huiliu.md`，并联读 `v5-core-concept-integrity-pack`。
-- 开放断言：读 `references/concept-cards/open-assertion.md`，并联读 `v5-open-assertion-proposition-pack`。
+- 开放断言：读 `references/concept-cards/open-assertion.md`，读取 `references/concept-contracts/core-contracts.md#contract-open_assertion`，并联读 `v5-open-assertion-proposition-pack`、`v5-source-evidence-separation-pack`、`v5-evidence-downgrade-action-ceiling-pack`。
+- 只要输出中出现 `open_assertion`、开放断言、可撤回判断、最高开放断言、不能终局裁决、当前只能说、不能证明什么或撤回条件，就触发开放断言概念契约。不得写“概念契约不触发”；若契约无法读取或无法通过，必须降档、删除或标为表达转译。
 - 尺度转移 / 尺度升维：读 `references/concept-cards/scale-transfer.md`，并联读 `v5-cross-scale-context-translation-pack`。
 - 观测反身性：读 `references/concept-cards/reflexivity.md`，并联读 `v5-observation-reflexivity-release-pack`。
 - 权力封闭 / 反俘获：读 `references/concept-cards/power-closure.md`，并联读 `v5-public-power-institution-pack` 与 `v5-low-power-protection-pack`。
@@ -176,3 +196,6 @@ CrossFrame 不是“把 v5.0 文本塞进上下文”的提示词包，而是一
 - 生命周期判断是否写成了局部状态坐标，而不是线性宿命？
 - 本次是否触发 v5 连续联读包，是否避免了只读孤立概念卡？
 - 是否生成 `v5-read-state-capsule`，并让中心命题、机制候选、高风险概念和行动边界回指源锚点？
+- 是否生成 `claim ledger`，并让中心命题、机制候选、行动建议、高风险概念和文章转译都有 `claim_id`？
+- 正文或结论中是否存在没有 `claim_id` 的裸奔命题？
+- 每个承担判断作用的高风险概念，是否同时通过概念卡、概念契约、v5 连续联读包和源锚点检查？

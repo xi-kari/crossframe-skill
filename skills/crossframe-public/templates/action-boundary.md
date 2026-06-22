@@ -1,5 +1,14 @@
 # 行动边界模板
 
+本模板涉及判断或行动建议时必须回指对应 claim_id；无 claim_id 时只能作为边界说明或待核验假设。
+
+## claim 边界
+
+- 对应 claim_id：
+- judgment_grade：
+- action_ceiling：
+- withdrawal_condition：
+
 ## 低风险行动
 
 - 记录：
@@ -29,4 +38,3 @@
 - 何时升级：
 - 何时停止公开扩散：
 - 何时寻求专业帮助：
-

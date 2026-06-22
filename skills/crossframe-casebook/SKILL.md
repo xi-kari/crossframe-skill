@@ -21,6 +21,7 @@ CrossFrame Casebook 是 `crossframe` 的平行案例库 skill，不替代 `cross
 2. 读取 `../crossframe/references/read-routing-map.md`，按材料主题选择需要对齐的 CrossFrame protocol、概念卡和判断档位。
 3. 如果材料触发高责任、公共制度、亲密关系、长期演化、框架治理、AI 现实验证、弱信号/不透明、无法退出、工具化、隐喻/来源透明或文章输出，必须追加读取 `../crossframe/references/continuity-bundles.md`，并按需使用 `../crossframe/worksheets/source-continuity-check.md`；未完成联读时只能降档。
 4. 复用 `../crossframe/templates/read-state-capsule.md` 规定的 `v5-read-state-capsule`，并在高责任、公共、AI/过程性产物、生命周期、无法退出主体或文章输出场景执行 `../crossframe/worksheets/source-anchor-integrity-check.md`。如果胶囊缺失，回到 `../crossframe/SKILL.md` 补齐；本 skill 不重新发明源路由。
+- 若本 skill 产生新的中心命题、机制句、高风险概念判断、公共定性、行动建议、案例复用判断、组织处置建议或可成文材料，必须把这些内容作为 `claim ledger delta` 交回 `../crossframe/templates/claim-ledger.md` 与 `../crossframe/worksheets/claim-ledger-check.md`。本 skill 不得新增未登记判断；若无法登记 `claim_id`、判断档位、行动上限、撤回条件和发布边界，只能删除、降档，或标为“本文推断 / 表达转译 / 外部思想映射”。
 5. 读取 `protocols/material-boundary-protocol.md`，先做来源、事实、推测、隐私和可公开性分层。
 6. 读取 `protocols/casebook-build-protocol.md`，决定本次是新建案例、清洗旧案例、批量索引、比较案例，还是把复盘转成案例库。
 7. 读取 `references/casebook-field-guide.md`，保证每个案例至少沉淀九项：案例摘要、事实边界、材料来源、尺度窗口、机制链、责任链、反向条件、可复用概念、后续观察。

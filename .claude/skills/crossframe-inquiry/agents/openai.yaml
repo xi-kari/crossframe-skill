@@ -1,0 +1,7 @@
+interface:
+  display_name: CrossFrame Inquiry
+  short_description: 把 CrossFrame 诊断、文章和 review 转化为结构追问，帮助用户继续深思、反证、补证和迁移应用。
+  default_prompt: 使用 crossframe-inquiry：复用上游 claim ledger、机制候选、概念契约和 review 结果，为用户生成 3-5 个结构追问。若 suite 上轮设置 post_completion_inquiry_armed=true，任何后续用户输入都先当作上一轮输出的后续追问处理，并回收上游底稿、正文、source ledger 和 review warning。必要时执行 sibling_knowledge_retrieval：定向读取 1-3 个 sibling skill 的协议、references 或 templates，生成 retrieval_log，用检索材料收紧问题和边界；不得调用全部 sibling skill，不得把检索材料当成新结论。用户回答后先摘要为 inquiry_delta，再决定是否回到 claim ledger、review 或 suite。
+policy:
+  allow_implicit_invocation: false
+  suite_routing_allowed: true

@@ -20,10 +20,21 @@
 5. 成本与责任：谁在承担解释、修复、证明、等待或退出成本？
 6. 用户用途：用户是想理解、行动、回信、拒绝、求助、公开表达，还是做强判断？
 
+## 内部 micro claim 检查
+
+短答复不默认展示完整 claim ledger，但只要输出结构判断、批评、行动建议、停止条件或升级条件，内部必须形成 1-3 条 micro claim：
+
+| micro_claim | 对应正文句 | 支持事实 | judgment_grade | action_ceiling | withdrawal_condition |
+| --- | --- | --- | --- | --- | --- |
+| CL |  |  | light_observation / open_assertion / low_condition_action |  |  |
+
+没有 micro claim 的“现在更像是……”“这里要批评的是……”“你可以……”不得输出。
+
 ## 路由
 
 先读 `../crossframe/references/read-routing-map.md`，按用户请求选择后台协议。常见路由：
 
+- 高风险概念：若短答要使用承接/回流、责任链、尺度转移、开放断言、证据成本、权力封闭等概念，必须读取 `../crossframe/references/concept-contracts/core-contracts.md` 中对应契约。未完成契约检查的概念只能作为内部候选，不得进入前台判断或建议。
 - 关系/照护/解释劳动：亲密关系轻量入口、修复副产品、责任链、爱不等于忍耐义务。
 - 团队/组织反复失真：诊断协议、机制候选、证据成本、反馈写回、修复副产品。
 - 公共流程/申诉/平台治理：公共制度专项、反俘获、权力封闭、证据成本。
@@ -48,4 +59,3 @@
 - 极短答复：1 个判断段 + 2 到 3 个行动边界。
 - 编辑回信：可使用 `templates/reader-reply-template.md`。
 - 咨询式回应：可使用 `templates/consultation-response-template.md`。
-

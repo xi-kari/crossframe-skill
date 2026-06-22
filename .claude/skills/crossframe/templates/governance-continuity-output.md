@@ -8,6 +8,9 @@
 - 治理连续性检查：
 - 机制候选：
 - 判断档位：
+- 命题台账：已生成 / 缺失已降档 / 不触发；关键 claim_id：
+- 概念契约：pass / partial / fail；降档决定：
+- source_anchor / claim_id 边界：中心命题、机制句、行动建议是否已回指：
 - 本次读取路径：
 - 下一步：
 
@@ -32,3 +35,16 @@
 **下一步**
 
 优先补：
+## claim_id 输出前检查
+
+- 命题台账：已生成 / 缺失已降档 / 不触发；关键 claim_id：
+- 概念契约：pass / partial / fail；降档决定：
+- source_anchor / claim_id 边界：中心命题、机制句、行动建议是否已回指：
+- 中心命题是否有 claim_id：
+- 机制候选是否有 mechanism_id 并进入 claim ledger：
+- 高风险概念是否有概念契约：
+- 行动建议是否有 action_ceiling：
+- 撤回条件是否写明：
+- 正文或结论是否强于 claim ledger：
+
+没有 `claim_id` 的中心命题、强机制句、高风险概念判断、行动建议或公共定性，不得进入结论。

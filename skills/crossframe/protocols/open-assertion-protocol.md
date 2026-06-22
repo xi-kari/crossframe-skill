@@ -1,5 +1,18 @@
 # 开放断言协议
 
+## runtime hardening
+
+本协议只负责专项推理步骤，不取消 `../SKILL.md` 的主运行链。凡本协议产生中心命题、机制候选、高风险概念判断、行动建议、公共定性、概率排序、退出/处置建议或可成文材料，必须先进入：
+
+```text
+v5-read-state-capsule
+-> source-anchor-integrity-check
+-> concept-fidelity-check
+-> claim ledger
+-> claim-ledger-check
+```
+
+没有 `claim_id` 的判断不得进入本协议输出。高风险概念未通过概念契约时，只能作为解释候选或表达转译，不能承担判断。
 开放断言是 v5.0 的核心输出形态之一；v5.0 还要求检查它是否被权力捕获并需要退场。默认读取 `v5-open-assertion-proposition-pack` 和 `v5-evidence-downgrade-action-ceiling-pack`。
 
 它不是强诊断，也不是“永远条件不足”的回避。它是在证据尚未达到终局判断时，负责任地说出当前最有解释力、但可撤回的一句话判断。
@@ -31,7 +44,7 @@
 
 如果回答依赖拆题、重定义题设、增加“改良版选项”或把原问题改写成更可操作的问题，必须显式声明这一步。输出至少包含两句话：原题设下的判断，以及改写题设下的判断。
 
-方向性开放断言一旦可能影响权利、名誉、资源、处分、求助路径或公共记忆，必须触发 `judgment-responsibility-pack`；如果只是一种抽象思想实验，也要写清不能被外推到现实处置。
+方向性开放断言一旦可能影响权利、名誉、资源、处分、求助路径或公共记忆，必须读取 `references/concept-cards/procedural-judgment-responsibility.md`，并触发 `v5-open-assertion-proposition-pack`、`v5-strong-judgment-eight-pack`、`v5-evidence-downgrade-action-ceiling-pack`；高权力密度时追加 `v5-low-power-protection-pack`。如果只是一种抽象思想实验，也要写清不能被外推到现实处置。
 
 ## 禁止事项
 

@@ -1,5 +1,18 @@
 # 状态坐标与生命周期诊断协议
 
+## runtime hardening
+
+本协议只负责专项推理步骤，不取消 `../SKILL.md` 的主运行链。凡本协议产生中心命题、机制候选、高风险概念判断、行动建议、公共定性、概率排序、退出/处置建议或可成文材料，必须先进入：
+
+```text
+v5-read-state-capsule
+-> source-anchor-integrity-check
+-> concept-fidelity-check
+-> claim ledger
+-> claim-ledger-check
+```
+
+没有 `claim_id` 的判断不得进入本协议输出。高风险概念未通过概念契约时，只能作为解释候选或表达转译，不能承担判断。
 用于把 v5.0 的“状态坐标与全周期演化过程”转成可执行判断。阶段 0-6 只能作为局部状态坐标，不能写成线性宿命、必经路径或终局预言。
 
 默认读取 `v5-state-coordinate-lifecycle-pack`；若涉及长期递进、势场、治理连续性，再追加 `v5-long-evolution-progression-field-pack` 和 `v5-governance-continuity-multicenter-pack`。

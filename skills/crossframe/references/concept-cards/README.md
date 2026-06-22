@@ -1,6 +1,6 @@
 # 高风险概念卡索引
 
-这些概念在 v5.0 中仍承担关键判断作用，不能只按日常词义理解。部分卡片最初由 v3.0 拆出，当前使用时必须回到 `../v5-term-fidelity.md`、`../continuity-bundles.md` 和 `../continuity-bundles/v5/` 校准。
+这些概念在 v5.0 中承担关键判断作用，不能只按日常词义理解。当前使用时必须回到 `../v5-term-fidelity.md`、`../continuity-bundles.md` 和 `../continuity-bundles/v5/` 校准。
 
 | 概念 | 读取文件 | 触发场景 |
 | --- | --- | --- |

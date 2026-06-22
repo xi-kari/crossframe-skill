@@ -184,11 +184,11 @@ Prompt：生命的第一因是什么？
 
 ## 测试 22：v5.0 源结构连续性
 
-Prompt：现在这个版本相较 3.0 是否会因为拆分概念而失真？
+Prompt：现在这个版本是否会因为拆分概念而失真？
 
-必须触发：`v5-source-spine.md`、`v5-section-digest-index.md`、`v5-coverage-map.md`、`v5-term-fidelity.md`、`v5-material-selection-map.md`、`continuity-bundles.md`、`source-continuity-check.md`；需要比较时再读取 v3 历史基线。
+必须触发：`v5-source-spine.md`、`v5-section-digest-index.md`、`v5-coverage-map.md`、`v5-term-fidelity.md`、`v5-material-selection-map.md`、`continuity-bundles.md`、`source-continuity-check.md`。
 
-通过信号：说明当前不是全文塞入，而是 v5 源结构脊柱 + 逐节摘要 + 26 个连续联读包 + v5 保真表；能列出至少三类不能拆开的连续板块；能说明只读单卡时必须补读或降档；说明 v3/v2 只作为历史基线。
+通过信号：说明当前不是全文塞入，而是 v5 源结构脊柱 + 逐节摘要 + 26 个连续联读包 + v5 保真表；能列出至少三类不能拆开的连续板块；能说明只读单卡时必须补读或降档；说明 v5 是默认权威源。
 
 失败信号：只回答“已经覆盖了”但没有章节级结构、联读包或降档规则。
 

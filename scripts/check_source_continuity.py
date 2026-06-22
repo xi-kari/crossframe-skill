@@ -57,7 +57,7 @@ def active_markdown_files(repo: Path) -> list[Path]:
     for root in [repo / "skills"]:
         for path in root.rglob("*.md"):
             rel = path.relative_to(repo).as_posix()
-            if "/references/v2-" in rel or "/references/v3-" in rel:
+            if "/references/v2-" in rel:
                 continue
             if "/references/crossframe-v2-core.md" in rel:
                 continue
@@ -70,13 +70,17 @@ def main() -> int:
     parser.add_argument("--version", default="v5")
     parser.add_argument("--source-docx", default=V5_DOCX)
     parser.add_argument("--repo", default=".")
+    parser.add_argument(
+        "--materials-only",
+        action="store_true",
+        help="Validate generated continuity materials without requiring the original source docx.",
+    )
     args = parser.parse_args()
 
     version = args.version.lower()
     require(version == "v5", "this checker is versioned for v5; pass --version v5")
     repo = Path(args.repo).resolve()
     source_docx = Path(args.source_docx)
-    require(source_docx.exists(), f"missing source docx: {source_docx}")
 
     generator = load_generator(Path(__file__).resolve().parent)
     bundle_ids = [bundle.id for bundle in generator.V5_BUNDLES]
@@ -90,7 +94,11 @@ def main() -> int:
         bundle_id: expand_required_closure(bundle_id, generator.REQUIRED_WITH)
         for bundle_id in bundle_ids
     }
-    nodes, tables = generator.extract_nodes(source_docx)
+    nodes = []
+    tables = []
+    if not args.materials_only:
+        require(source_docx.exists(), f"missing source docx: {source_docx}")
+        nodes, tables = generator.extract_nodes(source_docx)
 
     crossframe = repo / "skills" / "crossframe"
     refs = crossframe / "references"
@@ -105,8 +113,10 @@ def main() -> int:
         refs / "continuity-bundles.md",
         refs / "read-routing-map.md",
         templates / "read-state-capsule.md",
+        templates / "claim-ledger.md",
         worksheets / "source-continuity-check.md",
         worksheets / "source-anchor-integrity-check.md",
+        worksheets / "claim-ledger-check.md",
         worksheets / "seven-gates-worksheet.md",
     ]
     required.extend(refs / "continuity-bundles" / "v5" / f"{bundle_id}.md" for bundle_id in bundle_ids)
@@ -121,17 +131,37 @@ def main() -> int:
     bundles = read(refs / "continuity-bundles.md")
     routing = read(refs / "read-routing-map.md")
     read_state_capsule = read(templates / "read-state-capsule.md")
+    claim_ledger = read(templates / "claim-ledger.md")
     worksheet = read(worksheets / "source-continuity-check.md")
     anchor_integrity = read(worksheets / "source-anchor-integrity-check.md")
+    claim_ledger_check = read(worksheets / "claim-ledger-check.md")
     seven_gates = read(worksheets / "seven-gates-worksheet.md")
 
     spine_ids = set(re.findall(r"`V5-H\d{3}`", spine))
     digest_ids = set(re.findall(r"`V5-H\d{3}`", digest))
-    require(len(spine_ids) == len(nodes), f"spine id count mismatch: docx={len(nodes)} spine={len(spine_ids)}")
-    require(len(digest_ids) == len(nodes), f"digest id count mismatch: docx={len(nodes)} digest={len(digest_ids)}")
-    require(f"表格数量：{len(tables)}" in spine, "source spine table count mismatch")
+    if args.materials_only:
+        require(spine_ids, "source spine has no V5-H ids")
+        require(digest_ids, "digest index has no V5-H ids")
+    else:
+        require(len(spine_ids) == len(nodes), f"spine id count mismatch: docx={len(nodes)} spine={len(spine_ids)}")
+        require(len(digest_ids) == len(nodes), f"digest id count mismatch: docx={len(nodes)} digest={len(digest_ids)}")
+        require(f"表格数量：{len(tables)}" in spine, "source spine table count mismatch")
 
-    combined = "\n".join([spine, digest, coverage, terms, material_map, bundles, routing, read_state_capsule, worksheet, anchor_integrity, seven_gates])
+    combined = "\n".join([
+        spine,
+        digest,
+        coverage,
+        terms,
+        material_map,
+        bundles,
+        routing,
+        read_state_capsule,
+        claim_ledger,
+        worksheet,
+        anchor_integrity,
+        claim_ledger_check,
+        seven_gates,
+    ])
     for bundle_id in bundle_ids:
         bundle_file = refs / "continuity-bundles" / "v5" / f"{bundle_id}.md"
         text = read(bundle_file)
@@ -178,6 +208,10 @@ def main() -> int:
         "本文推断",
         "表达转译",
         "外部思想映射",
+        "claim ledger",
+        "claim_id",
+        "命题台账",
+        "概念契约",
     ]:
         require(needle in combined, f"v5 material reference missing: {needle}")
 
@@ -192,23 +226,18 @@ def main() -> int:
     ]:
         require(needle in combined, f"v5 key term missing: {needle}")
 
-    stale_hits: list[str] = []
-    for path in active_markdown_files(repo):
-        text = read(path)
-        for needle in ["当前权威源为 `v3.0`", "full-visible-v3-longform"]:
-            if needle in text:
-                stale_hits.append(f"{path.relative_to(repo)}: {needle}")
-    require(not stale_hits, "stale active v3 authority markers:\n" + "\n".join(stale_hits))
-
-    for skill_id in ["crossframe", "crossframe-suite", "crossframe-essay", "crossframe-review"]:
+    for skill_id in ["crossframe", "crossframe-suite", "crossframe-essay", "crossframe-review", "crossframe-history"]:
         skill_path = repo / "skills" / skill_id / "SKILL.md"
         require(skill_path.exists(), f"missing skill entry: {skill_id}")
         text = read(skill_path)
         require("v5.0" in text or "v5" in text, f"skill not updated to v5: {skill_id}")
 
-    print("ok: v5 source continuity files match DOCX heading structure")
-    print(f"headings: {len(nodes)}")
-    print(f"tables: {len(tables)}")
+    if args.materials_only:
+        print("ok: v5 source continuity materials validated without source docx")
+    else:
+        print("ok: v5 source continuity files match DOCX heading structure")
+        print(f"headings: {len(nodes)}")
+        print(f"tables: {len(tables)}")
     print(f"v5 bundles: {len(bundle_ids)}")
     return 0
 

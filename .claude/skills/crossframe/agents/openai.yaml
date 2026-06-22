@@ -1,6 +1,4 @@
 interface:
   display_name: "CrossFrame"
-  short_description: "显式点名调用的 CrossFrame 结构诊断入口；不因普通分析任务自动触发。"
-  default_prompt: "Use $crossframe only after the user explicitly invokes it."
-policy:
-  allow_implicit_invocation: false
+  short_description: "跨尺度结构诊断框架 v5.0 的中文结构推理、概念保真与深水区诊断 skill"
+  default_prompt: "使用 CrossFrame 做结构诊断：先抽取事实边界，过七闸，列 mechanism_id，读取必要概念卡与概念契约，生成 v5-read-state-capsule 与 claim ledger，再输出可见推理提纲和人话判断。没有 claim_id 的中心命题不得进入结论。"

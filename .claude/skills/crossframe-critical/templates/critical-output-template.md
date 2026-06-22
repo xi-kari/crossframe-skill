@@ -14,11 +14,17 @@ Use this exact visible structure unless the user explicitly asks for another for
 ## 批判矩阵
 [写成本链、受益链、权力/资源分配、概念遮蔽、再生产机制、弱信号。]
 
+## 批判 claim ledger delta
+
+| claim_id | 批判命题 / 点睛句 | 支持事实或例子 | 批判矩阵字段 | concept_contract | judgment_grade | action_ceiling | withdrawal_condition | publish_boundary |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| CL |  | S / example_id | 成本链 / 受益链 / 权力分配 / 概念遮蔽 / 再生产机制 |  |  |  |  |  |
+
 ## 证据缺口与撤回条件
 [写至少一个反向条件、证据缺口、降档条件或修复条件。]
 
 ## 来源台账摘要
-[真实公共对象、最新事实、机构、平台、政策、人物、公司、数据、AI/过程性产物或强判断必须填写：来源、时间、来源类型、支持命题、不能证明什么、证据档位、使用位置、降档理由、仍需补证处。无须查源时写明原因。]
+[真实公共对象、最新事实、机构、平台、政策、人物、公司、数据、AI/过程性产物或强判断必须填写：source_id、来源、时间、来源类型、支持的 claim_id / 命题、不能证明什么、证据档位、使用位置、降档理由、仍需补证处。无须查源时写明原因。]
 
 # 篇章方案
 
@@ -29,7 +35,10 @@ Use this exact visible structure unless the user explicitly asks for another for
 [读者为何会困惑、被什么表面解释吸引、文章先接住什么问题。]
 
 ## 例子安排
-[至少两个例子；标注是已核验事实、稳定历史/制度模式、用户材料，还是假设/类比。]
+
+| example_id | 例子 | 来源状态 | 支持 claim_id | 不能证明什么 |
+| --- | --- | --- | --- | --- |
+| E1 |  | 已核验 / 用户材料 / 假设类比 / 稳定模式 | CL |  |
 
 ## 段落推进与篇幅
 [默认正文 1800-2800 中文字。规划现实入口、表面解释、结构揭示、批判上升、现实回落、边界、结尾。]

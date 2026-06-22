@@ -1,10 +1,13 @@
 ---
 name: crossframe-teach
-description: "CrossFrame Teach explicit-only concept teaching skill. Use only when the user explicitly names crossframe-teach, $crossframe-teach, /crossframe-teach, or asks to use CrossFrame Teach; do not trigger implicitly for ordinary concept explanations, exercises, examples, or theory-to-plain-language tasks. Suite-directed use after an explicit crossframe-suite invocation is allowed."
-disable-model-invocation: true
+description: 经由 crossframe-suite 调度使用，不独立响应。把 CrossFrame 概念讲给普通人的教学 skill。
+trigger: suite-only
 ---
 
 # CrossFrame Teach
+
+
+> **本 skill 不独立触发。** 所有 CrossFrame 任务统一从 `crossframe-suite` 入口调度。用户无需直接调用本 skill；suite 根据路由规则在需要时自动加载。
 
 如果概念教学要连接文章写作、案例沉淀、读书研究或输出评审，先读取 `../crossframe-suite/SKILL.md` 做总调度；本 skill 只负责教学解释、误读边界和练习。
 
@@ -18,6 +21,7 @@ disable-model-invocation: true
 - `../crossframe/references/read-routing-map.md`
 - 若概念教学触发高责任、公共制度、亲密关系、长期演化、框架治理、AI 现实验证、弱信号/不透明、无法退出、工具化、隐喻/来源透明或文章输出，追加读取 `../crossframe/references/continuity-bundles.md`，并按需使用 `../crossframe/worksheets/source-continuity-check.md`；未完成联读时只能降档。
 - 复用 `../crossframe/templates/read-state-capsule.md` 规定的 `v5-read-state-capsule`，并在高责任、公共、AI/过程性产物、生命周期、无法退出主体或文章输出场景执行 `../crossframe/worksheets/source-anchor-integrity-check.md`。如果胶囊缺失，回到 `../crossframe/SKILL.md` 补齐；本 skill 不重新发明源路由。
+- 若本 skill 产生新的中心命题、机制句、高风险概念判断、公共定性、行动建议、案例复用判断、组织处置建议或可成文材料，必须把这些内容作为 `claim ledger delta` 交回 `../crossframe/templates/claim-ledger.md` 与 `../crossframe/worksheets/claim-ledger-check.md`。本 skill 不得新增未登记判断；若无法登记 `claim_id`、判断档位、行动上限、撤回条件和发布边界，只能删除、降档，或标为“本文推断 / 表达转译 / 外部思想映射”。
 
 不要把 canonical 全文复制进回答。只按本次概念需要读取 canonical 的协议、术语保真材料、概念卡或模板；教学表达使用本 skill 的轻量协议和模板。
 

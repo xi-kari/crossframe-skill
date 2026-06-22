@@ -29,15 +29,16 @@ CrossFrame Essay 是 `crossframe` 的平行写作 skill，不替代 `crossframe`
 5. 用 `../crossframe/worksheets/source-continuity-check.md` 检查是否只读了孤立概念卡；深度文章只在源锚点不足、用户要求源审计或高责任核验时，定向读取 `../crossframe/references/v5-source-spine.md`、`../crossframe/references/v5-section-digest-index.md`、`../crossframe/references/v5-material-selection-map.md` 或 `../crossframe/references/v5-term-fidelity.md` 的相关局部。
 6. 复用 `../crossframe/templates/read-state-capsule.md` 规定的 `v5-read-state-capsule`；若上游未生成，回到 `../crossframe/SKILL.md` 补齐，不在 essay 内重新发明源路由。
 7. 用 `../crossframe/worksheets/source-anchor-integrity-check.md` 检查文章中心命题、机制候选、高风险概念、行动边界和文章转译是否能回指胶囊源锚点；不能回指的内容必须标为“本文推断 / 表达转译 / 外部思想映射”。
-8. 读取 `references/evidence-and-search-rules.md` 和 `../crossframe/references/source-ledger-workflow.md`，决定本次是否需要联网或查源，并统一写入来源台账。
-9. 按需读取 `references/critical-insight-principles.md`。
-10. 如果主题是思想文章、公共议题、复杂关系/组织文章，或用户要求深度、概念上升、引经据典，读取 `protocols/concept-elevation-protocol.md`、`references/reference-and-allusion-rules.md` 和 `references/concept-reference-map.md`。
-11. 按 suite 传入的 `voice_mode` 判断是否读取 `protocols/editorial-comrade-voice-protocol.md` 和 `references/editorial-voice-principles.md`，并在底稿中写出 `正文声口方案`。如果用户明确要求中性报告、备忘录、表格、纯诊断或学术摘要，才可关闭文章声口，并说明关闭原因。
-12. 自动成文时读取 `protocols/essay-protocol.md`，互动打磨时读取 `protocols/interactive-drafting-protocol.md`。
-13. 先生成 `结构洞察底稿`，底稿中写出 `文章类型推荐与待选择`，但不先读取写作技法文件。
-14. 底稿后确认文章类型：若用户或 suite 已显式指定 `article_type`，在底稿中记录并直接采用；若未指定且文章层开启，必须完整渲染 `templates/article-type-selection-dialog.md` 的九个选项、填入基于底稿的推荐项和推荐理由，并等待用户回复；若用户回复“默认/自动/都行”，采用选择器中的推荐项。不得只写“已展示文章类型选择器（1-9）”。
-15. 用户选择文章类型后，再读取技法路由表和技法文件，然后生成 `文章正文`：读取 `references/article-technique-routing-map.md`，默认最多读取 3 个核心技法 + 2 个辅助技法，再读取对应 `references/writing-techniques/*.md` 文件。
-16. 补全底稿中的 `文章类型与写作技法选择` 字段，再从底稿转译出 `文章正文`。
+8. 读取 `../crossframe/templates/claim-ledger.md` 和 `../crossframe/worksheets/claim-ledger-check.md`。从上游 `crossframe` 复用或补齐 `claim ledger`；文章中心命题、机制句、高风险概念句、行动建议、公共定性、概率排序和点睛句都必须绑定 `claim_id`。若上游未生成，回到 `../crossframe/SKILL.md` 补齐，不在 essay 内重新发明判断。
+9. 读取 `references/evidence-and-search-rules.md` 和 `../crossframe/references/source-ledger-workflow.md`，决定本次是否需要联网或查源，并统一写入来源台账。
+10. 按需读取 `references/critical-insight-principles.md`。
+11. 如果主题是思想文章、公共议题、复杂关系/组织文章，或用户要求深度、概念上升、引经据典，读取 `protocols/concept-elevation-protocol.md`、`references/reference-and-allusion-rules.md` 和 `references/concept-reference-map.md`。
+12. 按 suite 传入的 `voice_mode` 判断是否读取 `protocols/editorial-comrade-voice-protocol.md` 和 `references/editorial-voice-principles.md`，并在底稿中写出 `正文声口方案`。如果用户明确要求中性报告、备忘录、表格、纯诊断或学术摘要，才可关闭文章声口，并说明关闭原因。
+13. 自动成文时读取 `protocols/essay-protocol.md`，互动打磨时读取 `protocols/interactive-drafting-protocol.md`。
+14. 先生成 `结构洞察底稿`，底稿中写出 `文章类型推荐与待选择`，但不先读取写作技法文件。
+15. 底稿后确认文章类型：若用户或 suite 已显式指定 `article_type`，在底稿中记录并直接采用；若未指定且文章层开启，必须完整渲染 `templates/article-type-selection-dialog.md` 的九个选项、填入基于底稿的推荐项和推荐理由，并等待用户回复；若用户回复“默认/自动/都行”，采用选择器中的推荐项。文章类型选择器若要求用户选编号、默认项或推荐项，必须等待用户回复；若本次因用户明确授权不暂停，必须写明“继续采用推荐项”再推进。不得只写“已展示文章类型选择器（1-9）”。
+16. 用户选择文章类型后，再读取技法路由表和技法文件，然后生成 `文章正文`：读取 `references/article-technique-routing-map.md`，默认最多读取 3 个核心技法 + 2 个辅助技法，再读取对应 `references/writing-techniques/*.md` 文件。
+17. 补全底稿中的 `文章类型与写作技法选择` 字段，再从底稿转译出 `文章正文`。
 
 ## 读取规则
 
@@ -60,7 +61,7 @@ CrossFrame Essay 是 `crossframe` 的平行写作 skill，不替代 `crossframe`
 ## 硬规则
 
 - 不准只写正文，不出底稿。
-- 不准用检索材料决定文章立场；检索只能佐证、限定、反驳或补现实感。涉及真实公共对象时，不准只写“已查源”，必须列出来源类型、支持的命题、不能证明什么、证据档位、使用位置和降档理由。
+- 不准用检索材料决定文章立场；检索只能佐证、限定、反驳或补现实感。涉及真实公共对象时，不准只写“已查源”，必须列出来源类型、支持的 claim_id / 命题、不能证明什么、证据档位、使用位置和降档理由。
 - 不准把批判写成人格审判、嘲讽、道德宣判或情绪宣泄。
 - 不准把术语当结论。前台说人话，后台保留概念链。
 - 不准伪造原文、出处、页码、作者观点；不确定原句时只能意译或写思想映射。
@@ -71,6 +72,13 @@ CrossFrame Essay 是 `crossframe` 的平行写作 skill，不替代 `crossframe`
 - 文章的段落顺序必须服从信息依赖：读者先需要知道什么，后面的判断才能成立。
 - 不准把完整底稿当成正文；底稿之后必须有完整文章。
 - 不准把 suite 默认文章压缩成 600 字以内短答，除非用户明确要求短答。
+- 不准写不在 `claim ledger` 中的中心命题、强机制句、行动建议、公共定性、概率排序或高风险概念判断。
+- 写作技法只能绑定已有 `claim_id`，不能制造新事实、新判断、新公共定性或隐喻证明。
+- 正文中任何强于台账的句子，必须重写、降档、删除，或标为“本文推断 / 表达转译 / 外部思想映射”。
+- `crossframe-essay` 不得宣布质量闸通过、完全通过、A档、合格或 `substantive_pass`；只能输出自检摘要和待 `crossframe-review` 判定的正文候选。
+- 标题、小标题、中心点睛句和结尾不得强于 `claim ledger`。若标题强于中心 `claim_id` 的判断档位或发布边界，必须降档、改写或标为表达转译，不能用标题先完成强定性。
+- 文章类型选择器若要求用户选编号、默认项或推荐项，必须等待用户回复；若不暂停继续，必须显式说明采用推荐项的依据，不能伪称用户已经选择。
+- 技法读取只能写“已读取本次选用技法”或“所选技法已读取”，并列出实际读取的技法卡。不得写“所有技法已读取”，不得暗示已全量读取 50 个技法文件。
 
 ## 默认输出
 
@@ -90,6 +98,7 @@ CrossFrame Essay 是 `crossframe` 的平行写作 skill，不替代 `crossframe`
 - 读态胶囊摘要：source modules、入口连续联读包、必须同读闭包、相邻候选包、下游读取策略
 - 源结构连续性检查：触发的连续联读包、是否读取源脊柱/逐节摘要、是否存在读少风险
 - 源锚点完整性检查：中心命题、机制候选、高风险概念、行动边界、文章类型转译和写作技法是否能回指胶囊；无法回指内容如何标注或降档
+- 命题台账摘要：claim_id、中心命题、机制候选、概念契约、判断档位、撤回条件、正文位置和发布边界
 - v5.0 源结构保真与概念风险：哪些概念不能孤立读取，哪些相邻约束进入本文判断
 - 尺度窗口与机制候选
 - 责任链、受益链、成本链

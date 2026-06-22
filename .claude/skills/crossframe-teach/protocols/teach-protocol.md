@@ -7,7 +7,8 @@
 1. 先读 `../crossframe/SKILL.md` 和 `../crossframe/references/read-routing-map.md`。
 2. 根据用户要解释的概念，按 routing map 读取必要 canonical 概念卡、术语保真材料或概念解释协议。
 3. 再读本 skill 的 `references/teaching-fidelity.md`。
-4. 如果用户没有给具体概念，先问一个短问题让用户选：概念解释、误读纠偏、现实信号、练习题。
+4. 若用户要解释的是高风险概念，必须同时读取 `../crossframe/references/concept-contracts/core-contracts.md` 中对应契约。教学解释至少覆盖：什么时候允许用、什么时候禁止用、什么时候必须降档、一个自测问题。
+5. 如果用户没有给具体概念，先问一个短问题让用户选：概念解释、误读纠偏、现实信号、练习题。
 
 ## 2. 内部教学图
 

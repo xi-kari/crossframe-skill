@@ -64,6 +64,7 @@ CrossFrame Skill Suite 是一组给 AI 使用的本地 skills。它让 AI 在回
 - `skills/crossframe-critical/`：点名调用的结构批判长文。
 - `skills/crossframe-dialogue/`：读者答复、咨询式短答和编辑回信。
 - `skills/crossframe-casebook/`：案例库条目、脱敏材料和复用索引。
+- `skills/crossframe-history/`：历史材料、文明连续史、史料闭合和 archive/FOIA backlog 的领域接口层。
 - `skills/crossframe-notebook/`：读书、理论、文章和材料互读笔记。
 - `skills/crossframe-teach/`：概念讲解、误读边界和练习。
 - `.claude/skills/`：Claude 兼容镜像。
@@ -278,6 +279,7 @@ skills/crossframe-essay/references/writing-techniques/index.md
 | `crossframe-critical` | 点名调用的结构批判长文 | 批判底稿、批判文章 |
 | `crossframe-dialogue` | 读者答复、咨询式回应、编辑回信 | 短答、回信、咨询答复 |
 | `crossframe-casebook` | 案例整理、脱敏、机制提取 | 案例条目、案例索引 |
+| `crossframe-history` | 历史材料、史料等级、断代尺度、archive/FOIA backlog | 历史接口分析、史料闭合台账、公开边界摘要 |
 | `crossframe-notebook` | 读书、理论、文章和材料互读 | 研究笔记、吸收/冲突表 |
 | `crossframe-teach` | 概念教学、误读边界、练习 | 概念课、小练习 |
 
@@ -332,6 +334,7 @@ skills\crossframe-debate
 skills\crossframe-critical
 skills\crossframe-dialogue
 skills\crossframe-casebook
+skills\crossframe-history
 skills\crossframe-notebook
 skills\crossframe-teach
 ```
@@ -406,6 +409,7 @@ llms.txt
 ```text
 /crossframe-org 2+1，分析团队为什么越复盘越失真。
 /crossframe-debate 2+1，反驳“流程存在就说明组织已经负责”。
+/crossframe-history 2+1，分析唐中后期安史之乱、藩镇与两税法的史料边界和历史接口层。
 /crossframe-notebook 2+1，互读这篇文章和 CrossFrame 的相通与冲突处。
 ```
 

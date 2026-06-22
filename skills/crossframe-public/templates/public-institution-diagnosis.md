@@ -12,6 +12,12 @@
 - 弱信号：
 - 热度信号：
 
+## 公共 claim ledger delta
+
+| claim_id | 公共判断 | source_id / 来源 | 证据档位 | 机制候选 | judgment_grade | action_ceiling | withdrawal_condition | publish_boundary |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| CL |  | S | 已核验事实 / 高成本证据 / 低成本声明 / 弱信号 / 热度信号 | M | open_assertion / full_diagnosis / strong_judgment | 证据边界 / 评论底稿 / 行动边界 / 不得公开定性 |  | internal_only / publishable_with_boundary / blocked |
+
 ## CrossFrame 路由
 
 - 读取入口：

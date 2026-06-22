@@ -18,7 +18,7 @@ Required flow:
 6. Decide whether to search using `skills/crossframe-essay/references/evidence-and-search-rules.md`.
 7. If the topic needs depth, concept elevation, 引经据典, theory, or literary allusion, read `skills/crossframe-essay/protocols/concept-elevation-protocol.md`, `skills/crossframe-essay/references/reference-and-allusion-rules.md`, and `skills/crossframe-essay/references/concept-reference-map.md`.
 8. Automatic article mode reads `skills/crossframe-essay/protocols/editorial-comrade-voice-protocol.md` and `skills/crossframe-essay/references/editorial-voice-principles.md` by default; only close this voice for explicit neutral report, memo, table, pure diagnosis, or academic summary requests.
-9. Output a complete visible `结构洞察底稿` before a complete long-form `文章正文`; default output mode is `full-visible-v3-longform`.
+9. Output a complete visible `结构洞察底稿` before a complete long-form `文章正文`; default output mode is `full-visible-v5-longform`.
 
 Do not write only the article body, and do not let the dossier replace the body. Do not shrink automatic articles into short answers. Public/current/real-world topics require sources and evidence boundaries; private relationship, philosophical, and general essay topics do not browse by default unless requested.
 

@@ -8,11 +8,11 @@ When a task involves complex relationships, teams, organizations, institutions, 
 
 If the task needs multiple CrossFrame skills in sequence, such as public commentary, organization repair writing, debate-to-essay, reading-note-to-essay, or casebook plus review, read `skills/crossframe-suite/SKILL.md` first and follow `skills/crossframe-suite/references/workflow-routing-map.md`. Do not read every sibling skill at once.
 
-For any CrossFrame content task where the user has not explicitly disabled articles, prefer `crossframe-suite`; it defaults to `full-visible-v3-longform` after the needed sibling skills: complete visible 3.0 dossier plus complete long-form article.
+For any CrossFrame content task where the user has not explicitly disabled articles, prefer `crossframe-suite`; it defaults to `full-visible-v5-longform` after the needed sibling skills: complete visible 5.0 dossier plus complete long-form article.
 
 If the task asks for 中文文章、长文、评论、思想文章、批判性洞察文章, or turning CrossFrame reasoning into readable prose, use `skills/crossframe-essay/SKILL.md` and `.cursor/rules/crossframe-essay.mdc` instead of stopping at this diagnostic rule.
 
-If the task asks for review/audit, short reader reply, casebook, public issue, organization repair, concept teaching, debate analysis, or research notebook, read the matching `skills/crossframe-*/SKILL.md` first: `crossframe-review`, `crossframe-dialogue`, `crossframe-casebook`, `crossframe-public`, `crossframe-org`, `crossframe-teach`, `crossframe-debate`, or `crossframe-notebook`.
+If the task asks for review/audit, short reader reply, casebook, history research, public issue, organization repair, concept teaching, debate analysis, or research notebook, read the matching `skills/crossframe-*/SKILL.md` first: `crossframe-review`, `crossframe-dialogue`, `crossframe-casebook`, `crossframe-history`, `crossframe-public`, `crossframe-org`, `crossframe-teach`, `crossframe-debate`, or `crossframe-notebook`.
 
 Use Chinese as the authoritative semantic layer. `CrossFrame` is only the传播名 / skill id.
 
@@ -30,6 +30,6 @@ Do not use concept piles as conclusions. Translate terms such as 承接, 回流,
 
 If any high-risk concept carries the judgment, read `skills/crossframe/references/concept-cards/README.md` and the corresponding concept card before answering. Use `skills/crossframe/references/integrity-check.md` to ensure the compressed output still preserves concept evidence requirements, failure mechanisms, repair actions, and continuous-reading constraints.
 
-If the task involves high responsibility, public institutions, intimate relationships, long-term evolution, deep analysis, or essay/article output, read `skills/crossframe/references/integrity-check.md` first. When an expanded audit is needed, check `skills/crossframe/references/continuity-bundles.md`, `skills/crossframe/references/v3-source-spine.md`, `skills/crossframe/references/v3-section-digest-index.md`, and `skills/crossframe/worksheets/source-continuity-check.md` so the model does not read a single concept card and lose the v3.0 source continuity.
+If the task involves high responsibility, public institutions, intimate relationships, long-term evolution, deep analysis, or essay/article output, read `skills/crossframe/references/integrity-check.md` first. When an expanded audit is needed, check `skills/crossframe/references/continuity-bundles.md`, `skills/crossframe/references/v5-source-spine.md`, `skills/crossframe/references/v5-section-digest-index.md`, and `skills/crossframe/worksheets/source-continuity-check.md` so the model does not read a single concept card and lose the v5.0 source continuity.
 
 For strong judgments use `proposition-verification-protocol.md`; for strategic reactions use `high-reflexivity-protocol.md`; for intimate relationships use `intimate-relationship-protocol.md`; for healing/exit routes use `healing-transfer-protocol.md`; for public institutions use `public-institution-protocol.md`; for framework misuse use `framework-boundary-protocol.md`; for stages use `lifecycle-diagnosis-protocol.md`; for progression use `progression-protocol.md`; for field/dissociation use `field-dissociation-protocol.md`; for governance continuity use `governance-continuity-protocol.md`; for civilization-scale claims use `large-scale-stress-test-protocol.md`.

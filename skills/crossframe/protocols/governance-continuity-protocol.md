@@ -1,5 +1,18 @@
 # 治理连续性协议
 
+## runtime hardening
+
+本协议只负责专项推理步骤，不取消 `../SKILL.md` 的主运行链。凡本协议产生中心命题、机制候选、高风险概念判断、行动建议、公共定性、概率排序、退出/处置建议或可成文材料，必须先进入：
+
+```text
+v5-read-state-capsule
+-> source-anchor-integrity-check
+-> concept-fidelity-check
+-> claim ledger
+-> claim-ledger-check
+```
+
+没有 `claim_id` 的判断不得进入本协议输出。高风险概念未通过概念契约时，只能作为解释候选或表达转译，不能承担判断。
 用于把 v5.0 的调节、预警、偿付约束、多中心治理、承接者生成和代际承接转成可执行检查。默认读取 `v5-governance-continuity-multicenter-pack`，公共制度或平台治理场景追加 `v5-public-power-institution-pack`。
 
 ## 触发条件

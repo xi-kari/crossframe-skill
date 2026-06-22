@@ -1,6 +1,4 @@
 interface:
-  display_name: "CrossFrame Public"
-  short_description: "显式点名调用的 CrossFrame 公共议题与制度证据边界入口。"
-  default_prompt: "Use $crossframe-public only after the user explicitly invokes it."
-policy:
-  allow_implicit_invocation: false
+  display_name: CrossFrame Public
+  short_description: 公共议题、平台申诉、制度评论与合规材料的证据边界诊断。
+  default_prompt: "用 crossframe-public 分析这个公共议题，查源并区分证据边界、程序正义、申诉有效性、弱信号保护、公共承诺偿付和 AI 合规表演风险。如产生新增判断，必须作为 claim ledger delta 交回主链；没有 claim_id 的判断不得进入输出。"

@@ -1,5 +1,18 @@
 # 表达翻译协议
 
+## runtime hardening
+
+本协议只负责专项推理步骤，不取消 `../SKILL.md` 的主运行链。凡本协议产生中心命题、机制候选、高风险概念判断、行动建议、公共定性、概率排序、退出/处置建议或可成文材料，必须先进入：
+
+```text
+v5-read-state-capsule
+-> source-anchor-integrity-check
+-> concept-fidelity-check
+-> claim ledger
+-> claim-ledger-check
+```
+
+没有 `claim_id` 的判断不得进入本协议输出。高风险概念未通过概念契约时，只能作为解释候选或表达转译，不能承担判断。
 用于把 CrossFrame 的后台推理转成普通用户、管理、制度、心理关系或技术治理语境能理解的输出。
 
 v5 默认读取 `v5-domain-translation-normative-source-pack`。公开文章、公共评论、组织处置或平台材料还必须保留 `v5-seven-gates-diagnosis-pack`、证据降级和行动上限，不得用好读性替代判断责任。

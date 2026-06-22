@@ -5,11 +5,13 @@
 ## 流程
 
 1. 界定公共对象：平台、机构、政策、规则、执行流程、申诉渠道、公共承诺或具体事件。
-2. 查源并建证据档位：使用 `references/source-and-evidence-rules.md` 与 `../crossframe/references/source-ledger-workflow.md`，把事实、声明、热度、弱信号和解释分开，并记录来源、时间、来源类型、支持命题、不能证明什么、证据档位、使用位置、降档理由和仍需补证处。
+2. 查源并建证据档位：使用 `references/source-and-evidence-rules.md` 与 `../crossframe/references/source-ledger-workflow.md`，把事实、声明、热度、弱信号和解释分开，并记录source_id、来源、时间、来源类型、支持的 claim_id / 命题、不能证明什么、证据档位、使用位置、降档理由、仍需补证处。
 3. 回读 CrossFrame：按 `../crossframe/references/read-routing-map.md` 进入公共制度、高责任、命题验证、高反身性或框架边界路由。
 4. 过公共七闸：程序正义、申诉有效性、弱信号保护、公共承诺偿付、AI 合规表演风险、权力/反报复风险、行动上限。
 5. 形成至少两个机制候选，例如执行漂移、责任链断裂、申诉通道空转、PR 偿付替代真实偿付、热度挟持事实边界。
 6. 选择输出模式：公共制度诊断、公共评论底稿、证据边界摘要或行动边界。
+
+高风险概念必须读取 `../crossframe/references/concept-contracts/core-contracts.md` 中对应契约。未完成契约检查的公共概念只能作为待核验机制候选，不得进入公共定性、评论中心命题或行动要求。
 
 ## 公共七闸
 

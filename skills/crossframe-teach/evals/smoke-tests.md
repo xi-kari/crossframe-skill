@@ -2,6 +2,8 @@
 
 这些测试用于快速检查 `crossframe-teach` 是否退化。每个测试都应触发本 skill，并在输出中保持“人话解释 -> 概念映射 -> 反例/误读边界 -> 现实观察 -> 练习”的顺序。
 
+通用验收：高风险概念解释必须读取 concept-contracts/core-contracts.md，并说明使用契约、降档条件和自测问题；涉及现实判断时必须能回指 claim_id / claim ledger，没有 claim_id 时只能教学，不得诊断。
+
 ## Test 1: 防术语堆砌
 
 Prompt:

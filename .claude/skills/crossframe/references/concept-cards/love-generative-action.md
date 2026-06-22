@@ -14,7 +14,7 @@
 
 ## 必须联读内容
 
-`v3-love-generative-action-pack` 和 `intimate-love-care-pack`。
+`v5-action-healing-transfer-pack` 和 `v5-love-trapped-trauma-pack`。
 
 ## 证据要求
 

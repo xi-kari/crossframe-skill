@@ -1,0 +1,265 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CrossFrame Claim Ledger",
+  "type": "object",
+  "required": ["ledger_status", "claims"],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "ledger_status": {
+            "const": "drafted"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "claims": {
+            "minItems": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "ledger_status": {
+            "const": "missing"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "claims": {
+            "maxItems": 0
+          }
+        }
+      }
+    }
+  ],
+  "properties": {
+    "ledger_status": {
+      "type": "string",
+      "enum": ["drafted", "missing", "failed"]
+    },
+    "claims": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "claim_type": {
+                  "const": "mechanism_candidate"
+                }
+              }
+            },
+            "then": {
+              "required": ["mechanism_id"]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "claim_type": {
+                  "const": "concept_use"
+                }
+              }
+            },
+            "then": {
+              "required": ["concept_contract"]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "judgment_grade": {
+                  "const": "strong_judgment"
+                }
+              }
+            },
+            "then": {
+              "required": ["source_ledger_id"]
+            }
+          }
+        ],
+        "required": [
+          "claim_id",
+          "text",
+          "claim_type",
+          "support",
+          "judgment_grade",
+          "action_ceiling",
+          "withdrawal_condition",
+          "publish_boundary"
+        ],
+        "properties": {
+          "claim_id": {
+            "type": "string",
+            "pattern": "^CL[0-9]+$"
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1
+          },
+          "claim_type": {
+            "type": "string",
+            "enum": [
+              "fact_boundary",
+              "mechanism_candidate",
+              "open_assertion",
+              "judgment_boundary",
+              "action_ceiling",
+              "concept_use",
+              "expression_translation",
+              "external_mapping",
+              "source_limited_context"
+            ]
+          },
+          "support": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "mechanism_id": {
+            "type": "string"
+          },
+          "concept_contract": {
+            "type": "string"
+          },
+          "source_ledger_id": {
+            "type": "string"
+          },
+          "judgment_grade": {
+            "type": "string",
+            "enum": [
+              "light_observation",
+              "open_assertion",
+              "full_diagnosis",
+              "strong_judgment",
+              "low_condition_action",
+              "exit_transfer"
+            ]
+          },
+          "action_ceiling": {
+            "type": "string"
+          },
+          "withdrawal_condition": {
+            "type": "string",
+            "minLength": 1
+          },
+          "publish_boundary": {
+            "type": "string",
+            "enum": [
+              "internal_only",
+              "publishable_with_boundary",
+              "blocked"
+            ]
+          }
+        }
+      }
+    },
+    "body_mappings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "mapping_status": {
+                  "const": "unmapped"
+                }
+              }
+            },
+            "then": {
+              "required": ["handling"],
+              "properties": {
+                "claim_id": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "mapping_status": {
+                  "enum": [
+                    "same_strength",
+                    "downgraded",
+                    "stronger_than_claim"
+                  ]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "claim_id": {
+                  "type": "string",
+                  "pattern": "^CL[0-9]+$"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "mapping_status": {
+                  "const": "stronger_than_claim"
+                }
+              }
+            },
+            "then": {
+              "required": ["handling"]
+            }
+          }
+        ],
+        "required": ["body_excerpt", "claim_id", "mapping_status"],
+        "additionalProperties": false,
+        "properties": {
+          "body_excerpt": {
+            "type": "string",
+            "minLength": 1
+          },
+          "claim_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^CL[0-9]+$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "mapping_status": {
+            "type": "string",
+            "enum": [
+              "same_strength",
+              "downgraded",
+              "stronger_than_claim",
+              "unmapped"
+            ]
+          },
+          "handling": {
+            "type": "string",
+            "enum": [
+              "keep",
+              "delete",
+              "downgrade",
+              "mark_expression_translation",
+              "needs_rewrite"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

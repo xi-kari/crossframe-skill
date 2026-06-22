@@ -1,6 +1,6 @@
 # 批判文章协议
 
-Use this protocol after `crossframe-critical` is explicitly invoked.
+Use this protocol after `crossframe-suite` routes the task to `crossframe-critical`, or when the user explicitly requests CrossFrame Suite to use the critical path.
 
 ## 1. 结构底稿
 
@@ -8,12 +8,14 @@ Use this protocol after `crossframe-critical` is explicitly invoked.
 
 - 分析对象：本次批判的是事件、概念、话术、制度、平台、组织行为，还是文章命题。
 - 事实边界：哪些是用户给出的事实，哪些只是解释、推测、类比或待查证材料。
-- 来源台账：真实公共对象、最新事实、机构、平台、政策、人物、公司、数据、AI/过程性产物或强判断，必须按 `../crossframe/references/source-ledger-workflow.md` 记录来源、时间、来源类型、支持命题、不能证明什么、证据档位、使用位置、降档理由和仍需补证处。
+- 来源台账：真实公共对象、最新事实、机构、平台、政策、人物、公司、数据、AI/过程性产物或强判断，必须按 `../crossframe/references/source-ledger-workflow.md` 记录source_id、来源、时间、来源类型、支持的 claim_id / 命题、不能证明什么、证据档位、使用位置、降档理由、仍需补证处。
 - CrossFrame 路由：本次需要哪些 CrossFrame protocol、概念卡或连续联读包。
 - 尺度窗口：原问题处在哪个尺度，是否有人偷升、偷降或用宏大尺度取消低尺度责任。
 - 机制候选：至少两个候选机制，除非证据足以说明只有一个。
 - 判断档位：轻量观察、开放断言、完整诊断、强判断、低条件行动或退出转移。
 - 证据缺口：哪些事实不足以支撑强判断。
+
+高风险概念必须读取 `../crossframe/references/concept-contracts/core-contracts.md` 中对应契约。未完成契约检查的批判概念只能作为候选标签，不得进入中心命题、点睛句或行动建议。
 
 ## 2. 批判矩阵
 

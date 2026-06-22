@@ -1,6 +1,6 @@
 ---
 name: crossframe-critical
-description: 经由 crossframe-suite 调度使用，不独立响应。写中文结构批判文章的并行测试 skill。 Use only when the user explicitly invokes `$crossframe-critical`, says "crossframe-critical", or clearly asks to test this critical parallel skill; do not trigger implicitly for ordinary CrossFrame, essay, public, or review tasks.
+description: 经由 crossframe-suite 调度使用，不独立响应。写中文结构批判文章的并行测试 skill。 Suite-directed use is allowed after explicit crossframe-suite invocation when the task asks for structural critique, critical essay, ideology/cost-transfer/benefit-chain analysis, or explicitly names crossframe-critical. Do not trigger from ordinary CrossFrame, essay, public, or review tasks without suite routing.
 trigger: suite-only
 ---
 
@@ -24,6 +24,8 @@ On every trigger, read:
 1. `../crossframe/SKILL.md`
 2. `../crossframe/references/read-routing-map.md`
 3. If the critique touches high-responsibility, public, AI/process artifact, lifecycle, trapped-subject, or article-output scenarios, reuse `../crossframe/templates/read-state-capsule.md` as `v5-read-state-capsule` and run `../crossframe/worksheets/source-anchor-integrity-check.md`; if the capsule is missing, return to `../crossframe/SKILL.md` instead of inventing source routing here.
+- 若本 skill 产生新的中心命题、机制句、高风险概念判断、公共定性、行动建议、案例复用判断、组织处置建议或可成文材料，必须把这些内容作为 `claim ledger delta` 交回 `../crossframe/templates/claim-ledger.md` 与 `../crossframe/worksheets/claim-ledger-check.md`。本 skill 不得新增未登记判断；若无法登记 `claim_id`、判断档位、行动上限、撤回条件和发布边界，只能删除、降档，或标为“本文推断 / 表达转译 / 外部思想映射”。
+- `crossframe-critical` 写正文前必须生成或复用 `claim ledger`；批判矩阵、例子、利益链、成本转移、意识形态分析和点睛句只能绑定已有 `claim_id`。没有 `claim_id` 的批判句不得进入正文。
 4. `protocols/critical-article-protocol.md`
 5. `references/critical-matrix.md`
 6. `references/example-and-evidence-rules.md`

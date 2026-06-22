@@ -5,9 +5,13 @@
 
 - 原命题：
 - 可检验改写：
+- proposition_id：
+- 对应 claim_id：
 - 命题类型：
+- proposition_type：
 - 尺度窗口：
 - 判断档位：
+- judgment_grade：
 - 本次读取：
 - 下一步：
 
@@ -62,6 +66,12 @@
 ## 更稳的表达
 
 把原命题改写成开放断言、条件判断、待核验命题、价值表态或行动边界。
+
+## debate claim bridge
+
+| proposition_id | 论点 / 更稳表达 | proposition_type | 对应 claim_id | concept_contract | judgment_grade | 证据要求 | 撤回条件 |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| P1 |  | fact / causal / value / action / mixed | CL | contract_id / 不适用 | light_observation / open_assertion / full_diagnosis / strong_judgment / low_condition_action / exit_transfer |  |  |
 
 ## 不能拿它做什么
 

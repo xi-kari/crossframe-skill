@@ -2,7 +2,7 @@
 
 本文件决定一次 CrossFrame 调用应该读取哪些材料。默认先读最少必要内容；当概念承担判断作用时，再加载完整概念卡、必要的 v5 source module 局部和必要的连续联读包。
 
-当前权威源为 `v5.0`。`v3.0` 与 `v2.0` 文件只作为历史基线；默认运行先读取 `runtime-read-policy.md`、本文件和 `continuity-closure-map.md`。`v5-source-spine.md`、`v5-section-digest-index.md`、`v5-coverage-map.md` 与 `v5-term-fidelity.md` 只在源锚点不足、高责任源审计、用户要求版本/原文核验或需要具体 V5-H 范围时定向读取相关局部。
+当前权威源为 `v5.0`。默认运行先读取 `runtime-read-policy.md`、本文件和 `continuity-closure-map.md`。`v5-source-spine.md`、`v5-section-digest-index.md`、`v5-coverage-map.md` 与 `v5-term-fidelity.md` 只在源锚点不足、高责任源审计、用户要求版本/原文核验或需要具体 V5-H 范围时定向读取相关局部。
 
 ## v5 source modules
 
@@ -68,26 +68,35 @@
 - 默认最多读取 3 个入口核心包 + 2 个相邻辅助包；这个上限不限制必须同读闭包。若闭包无法读完，必须降档或暂停强判断。
 - 相邻候选包只在硬依赖闭包完成后按题材追加，不能替代必须同读包。
 - 深度、审计、高责任、公共制度、亲密关系、长期演化、框架治理和文章输出场景，必须检查相邻章节；默认通过包文件、闭包图和已有 V5-H 锚点完成，只有锚点不足或需要源审计时，才定向读取 `v5-source-spine.md` 或 `v5-section-digest-index.md` 的相关局部。
-- 若 v5 与历史 v3/v2 的理解冲突，以 v5 为准；只有用户要求版本追踪或回退审计时才读取历史文件。
+- 若旧材料与 v5 的理解冲突，以 v5 为准。
 - 输出前使用 `worksheets/source-continuity-check.md`：若发现只读了单张概念卡，且本文件要求联读，必须补读或降档。
 - 输出前使用 `worksheets/source-anchor-integrity-check.md`：中心命题、机制候选、高风险概念和行动边界无法回指胶囊源锚点时，必须标为本文推断、表达转译或外部思想映射。
 - 成文后如果正文后半段新增现实关系、低权力、创伤、控制、无法退出、长期单方承接、公共处置、责任链、强行动建议或概率排序判断，即使原任务是哲学、读书或概念解释，也要触发对应包的定向补读或显式降档。正文新增判断不能绕过入口路由。
 - 下游 essay、专项 skill 和 review 默认复用 `v5-read-state-capsule`；只有胶囊缺少关键锚点、高责任审计或完整性检查失败时，才按具体锚点定向补读。
 - 正常运行不得读取 `evals/`、`examples/`、完整成功案例或完整失败案例；这些只用于开发验证、压测和调试。
 - `templates/reasoning-outline-output.md` 中的本次连续联读包只列包名，不展开完整工作表。
+- 高风险概念承担判断作用时，读取路径必须是：概念卡 -> 概念契约 -> v5 连续联读包 -> required_closure -> claim ledger。少任一环节，该概念不得进入强判断或正文中心句。
+- `claim ledger` 是正文和 review 的共同中间层；essay 不得绕过它直接把机制候选写成文章命题。
 
 ## 高风险概念触发
 
-| 触发词或判断动作 | 必读概念卡或协议 | 默认 v5 包 |
-| --- | --- | --- |
-| 证据、材料、报告、弱信号、AI 合规、自评 | `concept-cards/evidence-cost.md` | `v5-source-evidence-separation-pack`, `v5-ai-process-artifact-boundary-pack` |
-| 档位、能否强判断、能否处置、能否公开 | `concept-cards/judgment-grades.md` | `v5-evidence-downgrade-action-ceiling-pack`, `v5-strong-judgment-eight-pack` |
-| 尺度升维、换层解释、大局、历史、制度 | `concept-cards/scale-transfer.md` | `v5-cross-scale-context-translation-pack` |
-| 被诊断后变化、表演、反制、策略反应 | `concept-cards/reflexivity.md` | `v5-observation-reflexivity-release-pack` |
-| 爱、牺牲、忍耐、照护、开放行动、承接、回流、创伤、控制、长期单方承接、无法安全表达 | `concept-cards/love-open-action.md`; `protocols/intimate-relationship-protocol.md` | `v5-love-trapped-trauma-pack`, `v5-low-power-protection-pack`, `v5-action-healing-transfer-pack` |
-| 公共承诺、平台治理、制度、分配回流 | `protocols/public-institution-protocol.md` | `v5-public-power-institution-pack` |
-| 阶段、生命周期、回退、混合阶段 | `protocols/lifecycle-diagnosis-protocol.md` | `v5-state-coordinate-lifecycle-pack` |
-| 工具化、公开发布、AI 工具、认证 | `references/framework-ontology-protection.md` | `v5-toolization-accessibility-release-pack` |
+| 触发词或判断动作 | 必读概念卡或协议 | 必读概念契约 | 默认 v5 包 |
+| --- | --- | --- | --- |
+| 证据、材料、报告、弱信号、AI 合规、自评 | `concept-cards/evidence-cost.md` | `concept-contracts/core-contracts.md#contract-evidence_cost` | `v5-source-evidence-separation-pack`, `v5-ai-process-artifact-boundary-pack` |
+| 档位、能否强判断、能否处置、能否公开 | `concept-cards/judgment-grades.md` | `concept-contracts/core-contracts.md#contract-judgment_grades` | `v5-evidence-downgrade-action-ceiling-pack`, `v5-strong-judgment-eight-pack` |
+| 开放断言、可撤回判断、当前只能说、最高开放断言、不能终局裁决、撤回条件、不能证明什么 | `concept-cards/open-assertion.md`; `protocols/open-assertion-protocol.md` | `concept-contracts/core-contracts.md#contract-open_assertion` | `v5-open-assertion-proposition-pack`, `v5-source-evidence-separation-pack`, `v5-evidence-downgrade-action-ceiling-pack` |
+| 尺度升维、换层解释、大局、历史、制度 | `concept-cards/scale-transfer.md` | `concept-contracts/core-contracts.md#contract-scale_transfer` | `v5-cross-scale-context-translation-pack` |
+| 承接、回流、反馈写回、解释劳动、单方吸收成本、修复没有改变条件 | `concept-cards/chengjie-huiliu.md` | `concept-contracts/core-contracts.md#contract-chengjie_huiliu` | `v5-core-concept-integrity-pack`, `v5-anchor-dynamics-structure-process-pack`, `v5-responsibility-intervention-separation-pack` |
+| 被诊断后变化、表演、反制、策略反应 | `concept-cards/reflexivity.md` | `concept-contracts/core-contracts.md#contract-reflexivity` | `v5-observation-reflexivity-release-pack` |
+| 爱、牺牲、忍耐、照护、开放行动、承接、回流、创伤、控制、长期单方承接、无法安全表达 | `concept-cards/love-open-action.md`; `protocols/intimate-relationship-protocol.md` | `concept-contracts/core-contracts.md#contract-love_open_action` | `v5-love-trapped-trauma-pack`, `v5-low-power-protection-pack`, `v5-action-healing-transfer-pack` |
+| 公共承诺、平台治理、制度、分配回流、权力封闭、申诉通道、公共处置 | `protocols/public-institution-protocol.md`; `concept-cards/power-closure.md` | `concept-contracts/core-contracts.md#contract-power_closure` | `v5-public-power-institution-pack`, `v5-low-power-protection-pack`, `v5-evidence-downgrade-action-ceiling-pack` |
+| 阶段、生命周期、回退、混合阶段 | `protocols/lifecycle-diagnosis-protocol.md` | `concept-contracts/core-contracts.md#contract-generic_high_risk_concept` | `v5-state-coordinate-lifecycle-pack` |
+| 工具化、公开发布、AI 工具、认证、使用门槛债、训练材料、技能封装 | `concept-cards/accessibility-toolization-split.md`; `references/framework-ontology-protection.md` | `concept-contracts/core-contracts.md#contract-toolization_accessibility` | `v5-toolization-accessibility-release-pack` |
+| 责任链、主体、问责、干预边界、谁有改变条件 | `concept-cards/responsibility-chain.md` | `concept-contracts/core-contracts.md#contract-responsibility_chain` | `v5-responsibility-intervention-separation-pack`, `v5-evidence-downgrade-action-ceiling-pack` |
+| 低条件行动、低风险试探、小步验证、可撤回行动 | `concept-cards/low-condition-action.md` | `concept-contracts/core-contracts.md#contract-low_condition_action` | `v5-diagnosis-admission-downgrade-exit-pack`, `v5-evidence-downgrade-action-ceiling-pack` |
+| 退出、退出转移、保护性撤离、修复失败后的转移 | `concept-cards/exit-transfer.md` | `concept-contracts/core-contracts.md#contract-exit_transfer` | `v5-action-healing-transfer-pack`, `v5-low-power-protection-pack` |
+| 修复副产品、伪修复、道歉/报告/复盘替代真实改变 | `concept-cards/repair-byproduct.md` | `concept-contracts/core-contracts.md#contract-repair_byproduct` | `v5-action-healing-transfer-pack`, `v5-governance-continuity-multicenter-pack` |
+| 隐喻漂移、来源透明、规范前提、外部理论映射 | `concept-cards/metaphor-source-transparency.md` | `concept-contracts/core-contracts.md#contract-metaphor_source_transparency` | `v5-domain-translation-normative-source-pack` |
 
 ## 输出路由
 

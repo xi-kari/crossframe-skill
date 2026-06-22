@@ -1,5 +1,18 @@
 # 势场与自主解离协议
 
+## runtime hardening
+
+本协议只负责专项推理步骤，不取消 `../SKILL.md` 的主运行链。凡本协议产生中心命题、机制候选、高风险概念判断、行动建议、公共定性、概率排序、退出/处置建议或可成文材料，必须先进入：
+
+```text
+v5-read-state-capsule
+-> source-anchor-integrity-check
+-> concept-fidelity-check
+-> claim ledger
+-> claim-ledger-check
+```
+
+没有 `claim_id` 的判断不得进入本协议输出。高风险概念未通过概念契约时，只能作为解释候选或表达转译，不能承担判断。
 用于分析正负锚点势场、沉积基本盘和保护性退出。
 
 默认读取 `v5-long-evolution-progression-field-pack`。若退出、转移或外部承接涉及低权力主体，追加 `v5-low-power-protection-pack` 和 `v5-action-healing-transfer-pack`。

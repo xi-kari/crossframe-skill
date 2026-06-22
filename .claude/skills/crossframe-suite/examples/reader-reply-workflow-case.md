@@ -16,4 +16,4 @@
 
 ## 为什么这样排
 
-总入口默认要让内容更丰富，所以先用 `crossframe-dialogue` 接住读者处境，再由 `crossframe-essay` 扩成完整可读的编辑答复文章。只有用户明确说“只要三句话短答/不要文章”并显式关闭文章层时，才允许停在 `crossframe-dialogue -> review-lite`。
+总入口默认要让内容更丰富，所以先用 `crossframe-dialogue` 接住读者处境，再由 `crossframe-essay` 扩成完整可读的编辑答复文章。只有用户明确说“只要三句话短答/不要文章”并显式关闭文章层时，才允许停在 `crossframe-dialogue -> crossframe-review(lite)`。

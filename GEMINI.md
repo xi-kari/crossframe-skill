@@ -12,9 +12,9 @@ CrossFrame skills 在 Gemini CLI 中也是显式调用 only。不要因为普通
 2. `skills/crossframe-suite/references/workflow-routing-map.md`
 3. `skills/crossframe-suite/protocols/suite-dispatch-protocol.md`
 
-常见链路：普通文章 `crossframe -> crossframe-essay -> crossframe-review`；公共评论 `crossframe -> crossframe-public -> crossframe-essay -> crossframe-review`；组织复盘文章 `crossframe -> crossframe-org -> crossframe-essay -> crossframe-review`；答读者问 `crossframe -> crossframe-dialogue -> crossframe-essay(full-visible-v3-longform) -> crossframe-review`；读书研究 `crossframe -> crossframe-notebook -> crossframe-essay(full-visible-v3-longform) -> crossframe-review`。不要一次读取全部 skill。
+常见链路：普通文章 `crossframe -> crossframe-essay -> crossframe-review`；公共评论 `crossframe -> crossframe-public -> crossframe-essay -> crossframe-review`；组织复盘文章 `crossframe -> crossframe-org -> crossframe-essay -> crossframe-review`；历史研究 `crossframe -> crossframe-history -> crossframe-essay(full-visible-v5-longform) -> crossframe-review`；答读者问 `crossframe -> crossframe-dialogue -> crossframe-essay(full-visible-v5-longform) -> crossframe-review`；读书研究 `crossframe -> crossframe-notebook -> crossframe-essay(full-visible-v5-longform) -> crossframe-review`。不要一次读取全部 skill。
 
-显式调用后优先考虑 `crossframe-suite`。suite 内部按 routing map 联合读取 sibling skills 不算被动触发。只要用户从 suite 总入口进入任何 CrossFrame 内容任务，默认先完成必要专项 skill，再追加 `crossframe-essay -> crossframe-review`，输出 `full-visible-v3-longform / 3.0混合长文`，包含完整可见底稿和完整长文正文。只有用户明确说“只要/不要文章/短答/表格/清单/纯诊断/仅行动方案”时，才关闭默认文章层。
+显式调用后优先考虑 `crossframe-suite`。suite 内部按 routing map 联合读取 sibling skills 不算被动触发。只要用户从 suite 总入口进入任何 CrossFrame 内容任务，默认先完成必要专项 skill，再追加 `crossframe-essay -> crossframe-review`，输出 `full-visible-v5-longform / 5.0混合长文`，包含完整可见底稿和完整长文正文。只有用户明确说“只要/不要文章/短答/表格/清单/纯诊断/仅行动方案”时，才关闭默认文章层。
 
 如果用户显式调用 `crossframe-essay` 或经 `crossframe-suite` 路由到写作，并要求写中文文章、长文、评论、思想文章、批判性洞察文章或结构洞察文章，请读取：
 
@@ -22,7 +22,7 @@ CrossFrame skills 在 Gemini CLI 中也是显式调用 only。不要因为普通
 2. `skills/crossframe/SKILL.md`
 3. `skills/crossframe/references/read-routing-map.md`
 4. 对应 `skills/crossframe/protocols/` 文件
-5. 高责任、公共制度、亲密关系、长期演化、深度分析和文章输出，优先读取 `skills/crossframe/references/integrity-check.md`；需要展开源结构时再按需读取 `skills/crossframe/references/continuity-bundles.md`、`skills/crossframe/references/v3-source-spine.md` 与 `skills/crossframe/references/v3-section-digest-index.md`
+5. 高责任、公共制度、亲密关系、长期演化、深度分析和文章输出，优先读取 `skills/crossframe/references/integrity-check.md`；需要展开源结构时再按需读取 `skills/crossframe/references/continuity-bundles.md`、`skills/crossframe/references/v5-source-spine.md` 与 `skills/crossframe/references/v5-section-digest-index.md`
 6. `skills/crossframe-essay/references/evidence-and-search-rules.md`
 7. 若需要概念上升、引经据典、理论参照或文学互文，读取 `skills/crossframe-essay/protocols/concept-elevation-protocol.md`、`skills/crossframe-essay/references/reference-and-allusion-rules.md`、`skills/crossframe-essay/references/concept-reference-map.md`
 8. 自动成文默认读取 `skills/crossframe-essay/protocols/editorial-comrade-voice-protocol.md` 与 `skills/crossframe-essay/references/editorial-voice-principles.md`；只有显式中性报告/备忘录/表格/纯诊断时关闭
@@ -40,7 +40,7 @@ CrossFrame skills 在 Gemini CLI 中也是显式调用 only。不要因为普通
 4. `skills/crossframe/templates/reasoning-outline-output.md`
 5. `skills/crossframe/templates/user-facing-language.md`
 6. 若使用高风险概念，读取 `skills/crossframe/references/concept-cards/README.md` 与对应概念卡
-7. 高责任、公共制度、亲密关系、长期演化、深度分析和文章输出，优先读取 `skills/crossframe/references/integrity-check.md`；需要展开源结构时再按需读取 `skills/crossframe/references/continuity-bundles.md`、`skills/crossframe/references/v3-source-spine.md` 与 `skills/crossframe/references/v3-section-digest-index.md`
+7. 高责任、公共制度、亲密关系、长期演化、深度分析和文章输出，优先读取 `skills/crossframe/references/integrity-check.md`；需要展开源结构时再按需读取 `skills/crossframe/references/continuity-bundles.md`、`skills/crossframe/references/v5-source-spine.md` 与 `skills/crossframe/references/v5-section-digest-index.md`
 8. 输出前用 `skills/crossframe/references/integrity-check.md` 做一次性完整性检查；需要审计时再展开 `skills/crossframe/worksheets/concept-fidelity-check.md` 和 `skills/crossframe/worksheets/source-continuity-check.md`
 
 输出要求：
@@ -51,13 +51,14 @@ CrossFrame skills 在 Gemini CLI 中也是显式调用 only。不要因为普通
 - 中文概念不强行英文化。
 - 前台少术语，后台不能少读必要概念。
 - 强判断、高反身性、亲密关系、疗愈转移、公共制度、框架边界、生命周期、递进、势场解离、治理连续性、超大规模压力测试和长期演化问题，按 `read-routing-map.md` 读取对应深水区模块。
-- 需要连续保真的场景，必须检查 3.0 连续联读包，避免只读单概念卡导致失真。
+- 需要连续保真的场景，必须检查 5.0 连续联读包，避免只读单概念卡导致失真。
 
 如果用户显式点名以下专项 skill，或经 `crossframe-suite` 路由到以下专项任务，优先读取对应平行 skill，再按该 skill 的说明读取 `skills/crossframe/SKILL.md` 与路由图：
 
 - 评审、审查、打分、抓坏输出：`skills/crossframe-review/SKILL.md`
 - 答读者问、编辑回信、咨询式短答复：`skills/crossframe-dialogue/SKILL.md`
 - 案例库、材料沉淀、复盘转案例：`skills/crossframe-casebook/SKILL.md`
+- 历史材料、历史事件、史料互读、长时段演化、archive/FOIA backlog：`skills/crossframe-history/SKILL.md`
 - 公共议题、平台申诉、制度评论、合规材料：`skills/crossframe-public/SKILL.md`
 - 组织修复、反馈写回、复盘改造、低风险试点：`skills/crossframe-org/SKILL.md`
 - 概念教学、误读纠偏、练习题：`skills/crossframe-teach/SKILL.md`

@@ -1,6 +1,7 @@
 interface:
   display_name: "CrossFrame Critical"
-  short_description: "显式调用的结构批判长文 skill：先做 CrossFrame 底稿，再写有现实例子和篇幅规划的批判文章。"
-  default_prompt: "Use $crossframe-critical to write a structural critique essay with a visible dossier, article plan, concrete examples, and full Chinese body text."
+  short_description: "经由 CrossFrame Suite 路由的结构批判长文 skill：先做 CrossFrame 底稿，再写有现实例子和篇幅规划的批判文章。"
+  default_prompt: "Use $crossframe-critical to write a structural critique essay with a visible dossier, article plan, concrete examples, and full Chinese body text. 如产生新增判断，必须作为 claim ledger delta 交回主链；没有 claim_id 的判断不得进入输出。"
 policy:
   allow_implicit_invocation: false
+  suite_routing_allowed: true

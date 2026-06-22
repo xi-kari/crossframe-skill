@@ -14,6 +14,10 @@
 
 先读 `../crossframe/SKILL.md` 与 `../crossframe/references/read-routing-map.md`。不要复制其内容到本 skill；只把本次案例需要的 protocol、概念卡和判断档位记录到案例的“路由记录”中。
 
+## 2.1 高风险概念契约
+
+当案例使用承接/回流、责任链、尺度转移、开放断言、证据成本、权力封闭等高风险概念时，必须读取 `../crossframe/references/concept-contracts/core-contracts.md` 中对应契约。未完成契约检查的概念只能作为候选标签，不得进入案例结论、可复用概念或行动建议。
+
 ## 3. 案例成型步骤
 
 1. 划定对象：这是关系案例、组织案例、项目复盘、公共争议，还是混合案例。

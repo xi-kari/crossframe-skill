@@ -14,7 +14,7 @@
 
 ## 必须联读内容
 
-`v3-no-institution-middle-path-pack`，亲密场景追加 `intimate-love-care-pack`。
+`v5-diagnosis-admission-downgrade-exit-pack` 与 `v5-low-power-protection-pack`，亲密场景追加 `v5-love-trapped-trauma-pack`。
 
 ## 证据要求
 

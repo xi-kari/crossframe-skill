@@ -59,6 +59,18 @@
 - 无法回指内容：本文推断 / 表达转译 / 外部思想映射
 - 降档决定：
 
+## 3.25 命题台账摘要
+
+| claim_id | 可见命题 / 正文短摘 | claim_type | 支持事实 / source_anchor | 机制候选 | 概念契约 | 来源台账 | judgment_grade | action_ceiling | 撤回条件 | 正文位置 | publish_boundary |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| CL1 |  | fact_boundary / mechanism_candidate / open_assertion / judgment_boundary / action_ceiling / concept_use / expression_translation / external_mapping / source_limited_context | F / V5-H / bundle_id | M | contract_id | S / 不适用 | light_observation / open_assertion / full_diagnosis / strong_judgment / low_condition_action / exit_transfer | 观察 / 补证 / 低风险试探 / 暂停建议 / 不得行动 |  | 段落 / 小节 | internal_only / publishable_with_boundary / blocked |
+
+- 结构化字段使用 `claim-ledger.schema.json` 的 normalized value；中文只作为可见标签。
+- 命题台账状态：完整 / 缺失 / 局部缺失
+- 裸奔命题：无 / 有
+- 正文不得新增的判断：
+- 需要降档的判断：
+
 ## 3.3 v5.0 源结构保真与概念风险
 - 本次判断依赖的源连续板块：
 - 不能省略的相邻约束：
@@ -101,17 +113,18 @@
 - 本次是否查源：
 - 查源原因/不查源原因：
 - 来源台账摘要：
+  - source_id：
   - 来源：
   - 时间：发布时间 / 事件时间 / 版本时间 / 材料日期 / 访问时间；不得写成“官方页面”等来源描述
   - 来源类型：原始材料 / 官方文本 / 平台规则 / 司法监管审计 / 当事方声明 / 可信媒体 / 数据 / 用户自给材料 / 其他
-  - 支持的命题：
+  - 支持的 claim_id / 命题：
   - 不能证明什么：
   - 使用位置：标题 / 段落编号 / 正文短摘 / 命题强度；不得只写“正文自然提及”
   - 证据档位：已核验事实 / 高成本证据 / 低成本声明 / 弱信号 / 热度信号 / 解释判断
   - 降档理由：
   - 仍需补证处：
 - 仍不能证明什么：
-- 台账硬校验：九字段完整 / 字段合并待补 / 时间伪填待补 / 使用位置过粗待补
+- 台账硬校验：十字段完整 / 字段合并待补 / 时间伪填待补 / 使用位置过粗待补
 - 来源族上限：多源交叉 / 单一来源族 / 二手入口 / 未完成调查 / 未来节点未落地
 - 用途边界：内部压测可用 / 待核验分析 / 可发布需补证 / 不得用于强判断
 
@@ -175,6 +188,8 @@
 
 ## 12. 文章转译方案
 - 中心命题：
+- 中心命题 claim_id：
+- 段落 claim_id 分配：
 - 开头入口：
 - 递进顺序：
 - 概念上升与参照插入位置：

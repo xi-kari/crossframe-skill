@@ -13,6 +13,8 @@
 
 如果这一步没有完成，不允许进入 CrossFrame 概念映射。
 
+高风险概念必须读取 `../crossframe/references/concept-contracts/core-contracts.md` 中对应契约。未完成契约检查的外部概念或 CrossFrame 概念只能作为互读候选，不得进入可吸收处、claim ledger delta 或 canonical 改写建议。
+
 ## B. CrossFrame 读取原文本
 
 再回答“CrossFrame 从这里能看见什么”：
@@ -40,6 +42,8 @@
 - 改写吸收：需翻译为 CrossFrame 的结构问题后才能吸收。
 - 边界吸收：只能作为误用防线、反例或不可越界规则。
 - 暂不吸收：证据不足、语义冲突、领域专属性太强，或会破坏框架边界。
+
+可吸收处不得直接改写 canonical。只能作为 `absorption_candidate`。若会改变概念边界、判断档位、证据规则或行动上限，必须进入 claim ledger delta 和 review。
 
 ## E. 互读检查
 

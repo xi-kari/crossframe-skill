@@ -12,7 +12,7 @@
 6. 读取 `skills/crossframe-essay/references/evidence-and-search-rules.md`，判断是否需要查源。
 7. 如果主题需要深度、思想文章、概念上升、引经据典或理论参照，读取 `skills/crossframe-essay/protocols/concept-elevation-protocol.md`、`skills/crossframe-essay/references/reference-and-allusion-rules.md` 和 `skills/crossframe-essay/references/concept-reference-map.md`。
 8. 自动成文默认读取 `skills/crossframe-essay/protocols/editorial-comrade-voice-protocol.md` 与 `skills/crossframe-essay/references/editorial-voice-principles.md`；只有显式中性报告、备忘录、表格、纯诊断或学术摘要时关闭。
-9. 默认执行 `full-visible-v3-longform`：先输出完整可见 `结构洞察底稿`，再输出完整长文 `文章正文`。
+9. 默认执行 `full-visible-v5-longform`：先输出完整可见 `结构洞察底稿`，再输出完整长文 `文章正文`。
 10. 如果用户要求互动打磨，只给候选开头、文章骨架和下一步，不一次性写完整文。
 
 引用要求：直接引用必须可核验；不确定原句时只做意译或思想映射；经典/理论参照必须回到现实责任链。

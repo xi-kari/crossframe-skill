@@ -19,11 +19,13 @@ disable-model-invocation: true
 3. 读取 `../crossframe/references/runtime-read-policy.md` 与 `../crossframe/references/continuity-closure-map.md`，判断本应触发哪些 v5.0 连续联读包；只有需要包说明、源锚点或闭包细节时，再定向读取 `../crossframe/references/continuity-bundles.md` 或具体包文件。
 4. 若评审对象是深度、审计、高责任、公共制度、亲密关系、长期演化或文章类输出，读取或检查 `../crossframe/templates/read-state-capsule.md` 规定的 `v5-read-state-capsule` 是否存在并被下游复用。
 5. 按需读取 `../crossframe/worksheets/source-continuity-check.md` 与 `../crossframe/worksheets/source-anchor-integrity-check.md`，检查闭包是否完整、中心命题和行动边界是否能回指胶囊源锚点。
-6. 若评审对象是文章、长文、评论、思想文章、报刊答复或“现代编辑同志口吻”输出，按需读取 `../crossframe-essay/SKILL.md`。
-7. 读取本目录的 `protocols/review-protocol.md` 和 `templates/review-report.md`。
-8. 若涉及文章底稿、引用、检索材料或声口，追加读取 `protocols/article-review-protocol.md`。
-9. 若涉及公共事实、真实机构、平台、政策、人物、公司、最新事实、AI/过程性产物、批判文章或来源使用，读取 `../crossframe/references/source-ledger-workflow.md`，检查来源台账字段是否完整。
-10. 按需读取本目录 `references/` 中的评分表、失败类型表和证据边界清单。
+6. 若评审对象包含文章正文、公共评论、行动建议、强机制句、高风险概念或高责任判断，读取 `../crossframe/templates/claim-ledger.md` 与 `../crossframe/worksheets/claim-ledger-check.md`，检查正文是否只从已登记 `claim_id` 展开。
+7. 若评审对象是文章、长文、评论、思想文章、报刊答复或“现代编辑同志口吻”输出，按需读取 `../crossframe-essay/SKILL.md`。
+8. 读取本目录的 `protocols/review-protocol.md` 和 `templates/review-report.md`。
+9. 若涉及文章底稿、引用、检索材料或声口，追加读取 `protocols/article-review-protocol.md`。
+10. 若涉及公共事实、真实机构、平台、政策、人物、公司、最新事实、AI/过程性产物、批判文章或来源使用，读取 `../crossframe/references/source-ledger-workflow.md`，检查来源台账字段是否完整。
+11. 若评审对象是历史、历史制度、文明连续史、王朝制度、历史领域接口、史料闭合或 archive/FOIA backlog，读取 `../crossframe-history/SKILL.md` 与 `../crossframe-history/protocols/history-source-ledger-protocol.md`，检查历史输出档位、具体史料台账和调用完成硬闸。
+12. 按需读取本目录 `references/` 中的评分表、失败类型表和证据边界清单。
 
 不要把 CrossFrame 主 skill、文章 skill、eval、examples 或完整案例复制到本 skill 输出中。评审时只引用必要规则名、触发点和证据位置。若 `v5-read-state-capsule` 已存在，下游默认复用胶囊，不得为了评审而重复整块读取源索引。
 
@@ -38,6 +40,7 @@ disable-model-invocation: true
 - 对承担判断作用的高风险概念做保真检查，而不是把术语当结论。
 - 对属于 v5.0 连续板块的高风险概念做源结构连续性检查，而不是只读单张概念卡。
 - 对中心命题、机制候选、高风险概念、行动边界、文章类型转译和写作技法做源锚点完整性检查；不能回指胶囊的内容不得写成 CrossFrame v5 原义。
+- 检查是否存在 `claim ledger`，以及正文中心命题、机制句、高风险概念、行动建议、公共定性、概率排序和点睛句是否能回指对应 `claim_id`。
 - 给出可撤回条件、下一步观察或低条件行动边界。
 - 文章类输出必须先有结构洞察底稿，再写正文。
 
@@ -62,7 +65,12 @@ disable-model-invocation: true
 - 选择器压缩失败：模式/角色或文章类型选择器没有完整渲染选项、推荐项和等待用户回复。
 - 技法越界失败：写作技法新增事实、强判断、点睛句或隐喻证明，越过底稿和胶囊源边界。
 - 来源用途越界失败：把热度、机构声明、PR 文案、AI 生成材料、自评文本或二手转述写成已核验事实。
-- 来源台账缺失：公共、批判、文章或高责任输出涉及真实对象，却没有来源、时间、来源类型、支持命题、不能证明什么、证据档位、使用位置、降档理由和仍需补证处。
+- 来源台账缺失：公共、批判、文章或高责任输出涉及真实对象，却没有source_id、来源、时间、来源类型、支持的 claim_id / 命题、不能证明什么、证据档位、使用位置、降档理由、仍需补证处。
+- 命题台账缺失：文章、公共判断、高责任判断或行动建议没有 `claim ledger`，导致正文直接从术语、技法或概念感生成。
+- 正文裸奔命题：正文中承担判断作用的中心句、机制句、高风险概念、行动建议、公共定性、概率排序或点睛句没有对应 `claim_id`。
+- 历史史料台账伪完成：历史输出只写“官方文件、回忆录、现代研究、公开史料”等来源族，或只声明 H0/H1/H2/H3 而没有具体史料、材料距离、不能证明什么和仍需补证处。
+- 历史调用表演化：历史输出写“已读取、已闭包、源锚点已回指、质量闸通过”，但没有具体史料台账、输出档位、解释质量、失败登记和升降级条件。
+- 历史档位越级：没有具体史料台账却写成完整历史接口分析或正式历史分析；只有 source path/finding aid 却写成事实闭合。
 - v5 现实保护失败：涉及 AI 过程性产物、弱信号、不透明、无制度基础设施、无法退出、恶意合规、隐喻漂移、工具化或开放断言退场，却没有读取对应 v5 概念卡和联读包。
 
 ## 输出协议
@@ -88,6 +96,7 @@ disable-model-invocation: true
 - A/B 或小修可过时，把问题反馈给上游修正，最终可见交付仍是 `# 结构洞察底稿` + `# 文章正文`，最多追加一行短质量闸摘要。
 - C/D/F 或硬失败时，阻断发布并要求回到对应上游补底稿、补证据边界或重写正文；若用户没有要求只看评审，不得只输出评审报告来替代修复后的文章。
 - `templates/review-report.md` 只在用户显式要求完整评审报告、只评审已有输出，或硬失败需要说明阻断原因时作为主输出。
+- 历史输出的质量闸摘要必须写出 `历史输出档位`。没有具体史料台账时，即使正文完整，也只能写 `历史草稿档 / draft_pass` 或 `structural_pass`，不得写 `substantive_pass` 或“完整通过”。
 
 ## 合格判定
 
@@ -100,6 +109,14 @@ disable-model-invocation: true
 - F：0-39 或触发硬失败，高风险失败。
 
 触发人格审判、伪造引用、跳过文章底稿、强判断越级、证据边界完全缺失、连续性保真失败时，即使文字流畅，也不能判为合格。
+
+没有 `claim ledger` 的文章类、高责任、公共判断或行动建议输出，最高只能判 B / structural_pass；不得判 `substantive_pass`。若正文出现无 `claim_id` 的强判断、公共定性或行动建议，最高 C；若影响名誉、权利、资源、处分或公共记忆，直接 F。
+
+历史输出追加评分上限：
+
+- 只有来源族、现代概述或常识背景，最高只能 C；若还自称“完整历史接口分析/质量闸通过”，最高 D。
+- 有具体 source path 但未读原件，最高只能 B；若把 source path、finding aid、archive-access 或 FOIA backlog 写成 closure，最高 C，严重时 F。
+- 有具体史料台账但缺解释质量、失败登记或升降级条件，最高只能 B。
 
 ## 修复原则
 

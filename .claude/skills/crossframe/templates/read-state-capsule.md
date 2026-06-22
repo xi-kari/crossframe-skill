@@ -54,10 +54,32 @@ v5-read-state-capsule
   - 文章类型转译可用源锚点：
   - 写作技法不能越过的源边界：
   - 需要标为“本文推断 / 表达转译 / 外部思想映射”的内容：
+- concept_contracts：
+  - concept_id：
+  - concept_card：
+  - contract_source：
+  - required_closure：
+  - allowed_when：
+  - forbidden_when：
+  - required_inputs：
+  - downgrade_if：
+  - current_status：pass / partial / fail
+  - 降档决定：
+- claim_ledger_state：
+  - ledger_status：drafted / missing / failed
+  - required_claim_types：
+  - covered_claim_ids：
+  - unsupported_claims：
+  - naked_body_claims：
+  - downgrade_decisions：
 - post_body_risk_sweep：
   - 正文高风险概念短摘：
+  - 类型：中心命题 / 机制句 / 高风险概念 / 行动建议 / 概率排序 / 点睛句
+  - 对应 claim_id：
+  - 是否强于 claim ledger：
   - 是否已在 source_grounding 登记：
   - 对应源锚点 / 连读包：
+  - 概念契约状态：pass / partial / fail / 不适用
   - 处理：保留 / 补读 / 删除 / 降档 / 标为表达转译
 - downstream_read_policy：
   - 默认只读本胶囊和本 skill 协议：
@@ -74,7 +96,9 @@ v5-read-state-capsule
 - `required_closure` 不能只写“已读完”。必须按“入口包 -> 直接闭包 -> 递归新增闭包 -> 未读包与降档理由”记录，供 review 复核闭包是否真的展开。
 - 每条承担判断作用的中心命题、机制候选、高风险概念、行动边界、文章类型转译和写作技法使用，至少关联一个源锚点、章节范围或连读包。
 - 不能从源锚点推出的内容，必须标成“本文推断”“表达转译”或“外部思想映射”。
-- 成文后必须执行 `post_body_risk_sweep`：抽取正文中承担判断作用的高风险概念和行动建议，反查是否已在 `source_grounding` 登记。未登记时只能补读、删除、降档或标为表达转译。
+- 成文后必须执行 `post_body_risk_sweep`：抽取正文中承担判断作用的中心命题、机制句、高风险概念、行动建议、概率排序和点睛句，先反查 `claim_id`，再反查 `source_grounding`、来源台账和概念契约。没有 `claim_id` 或强于台账时，只能补台账、删除、降档或标为表达转译。
+- 只要本次使用高风险概念承担判断，`concept_contracts` 必须登记概念卡、契约来源、必须同读闭包、当前状态和降档决定。
+- 只要本次进入正文、公共评论、组织复盘、行动建议、强判断或高责任判断，`claim_ledger_state` 必须登记命题台账状态。没有命题台账时，下游 essay 不得生成正文，review 不得判 `substantive_pass`。
 - 胶囊应尽量短；普通文章任务控制在 800-1500 中文字，高责任审计可更长。
 - 胶囊可在结构洞察底稿中摘要显示；正文不得出现 `v5-read-state-capsule` 标题或流程说明。
 

@@ -1,6 +1,4 @@
 interface:
-  display_name: "CrossFrame Notebook"
-  short_description: "显式点名调用的 CrossFrame 读书、理论和文章研究笔记入口。"
-  default_prompt: "Use $crossframe-notebook only after the user explicitly invokes it."
-policy:
-  allow_implicit_invocation: false
+  display_name: CrossFrame Notebook
+  short_description: 读书、理论和文章研究笔记：关联、不同、冲突、吸收与框架反馈。
+  default_prompt: "用 crossframe-notebook 阅读这本书、文章、理论或摘录，做一份双向 CrossFrame 研究笔记：保留原文主张，比较关联与不同，标出冲突、可吸收和不可吸收处，并把问题反馈给框架。如产生新增判断，必须作为 claim ledger delta 交回主链；没有 claim_id 的判断不得进入输出。"

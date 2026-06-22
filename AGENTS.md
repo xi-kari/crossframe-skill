@@ -11,6 +11,7 @@
 - `skills/crossframe-review/`：评审 CrossFrame 输出是否真推理、守证据和边界。
 - `skills/crossframe-dialogue/`：答读者问、编辑回信和咨询式短答复。
 - `skills/crossframe-casebook/`：把材料整理成可复用案例库。
+- `skills/crossframe-history/`：历史材料、史料闭合、文明连续史和 archive/FOIA backlog 领域接口层。
 - `skills/crossframe-public/`：公共议题、平台申诉、制度评论和合规材料专项。
 - `skills/crossframe-org/`：团队、项目、组织修复专项。
 - `skills/crossframe-teach/`：CrossFrame 概念教学解释专项。
@@ -19,13 +20,13 @@
 - `skills/crossframe/protocols/`：诊断、推演、开放断言、反俘获、低条件行动协议。
 - `skills/crossframe/worksheets/`：intake、五闸、证据账本、机制候选等推理发动机。
 - `skills/crossframe/references/read-routing-map.md`：按请求类型决定要读哪些协议、工作表、概念卡和模板。
-- `skills/crossframe/references/v3-term-fidelity.md`：v3.0 术语保真层，防止压缩后概念失真。
-- `skills/crossframe/references/v3-source-spine.md`：v3.0 DOCX 源结构脊柱，记录章节顺序、相邻关系和承接状态。
-- `skills/crossframe/references/v3-section-digest-index.md`：逐节保真摘要索引，防止读少或断章。
-- `skills/crossframe/references/integrity-check.md`：本地 v3.1 日常完整性检查入口，合并连续联读包、概念保真和源结构连续性检查。
+- `skills/crossframe/references/v5-term-fidelity.md`：v5.0 术语保真层，防止压缩后概念失真。
+- `skills/crossframe/references/v5-source-spine.md`：v5.0 DOCX 源结构脊柱，记录章节顺序、相邻关系和承接状态。
+- `skills/crossframe/references/v5-section-digest-index.md`：逐节保真摘要索引，防止读少或断章。
+- `skills/crossframe/references/integrity-check.md`：本地 v5.0 日常完整性检查入口，合并连续联读包、概念保真和源结构连续性检查。
 - `skills/crossframe/references/continuity-bundles.md`：连续联读包历史详参，规定哪些概念不能只读单卡。
 - `skills/crossframe/references/theory-backend-index.md`：长期演化、根假设、阶段、递进、多中心治理等深水区索引。
-- `skills/crossframe/references/v3-coverage-map.md`：v3.0 重要模块到 skill 文件的覆盖地图，维护时用于查漏。
+- `skills/crossframe/references/v5-coverage-map.md`：v5.0 重要模块到 skill 文件的覆盖地图，维护时用于查漏。
 - `skills/crossframe/templates/`：用户可见输出模板，默认包含推理提纲。
 - 适配层：`CLAUDE.md`、`.claude/skills/crossframe*/SKILL.md`、`.claude/commands/crossframe*.md`、`GEMINI.md`、`.cursor/rules/crossframe*.mdc`、`.github/copilot-instructions.md`、`.windsurf/rules/crossframe.md`、`.clinerules/crossframe.md`、`.roo/rules/crossframe.md`、`.continue/rules/crossframe.md`、`CONVENTIONS.md`、`.aider.conf.yml`、`llms.txt`。
 
@@ -35,7 +36,7 @@
 
 这条限制只约束外部初始触发，不禁止 suite 内部联合调用。用户显式调用 `crossframe-suite` 后，suite 仍然可以按 `workflow-routing-map.md` 读取和串联 `crossframe`、`crossframe-essay`、`crossframe-review` 及其它 sibling skill。
 
-只要用户从 `crossframe-suite` 总入口进入 CrossFrame 内容任务，默认最终输出 `full-visible-v3-longform / 3.0混合长文`：先完成必要专项 skill，再追加 `crossframe-essay -> crossframe-review`，包含完整可见底稿和完整长文正文。只有用户明确说“只要/不要文章/短答/表格/清单/纯诊断/仅行动方案”时，才关闭默认文章层。
+只要用户从 `crossframe-suite` 总入口进入 CrossFrame 内容任务，默认最终输出 `full-visible-v5-longform / 5.0混合长文`：先完成必要专项 skill，再追加 `crossframe-essay -> crossframe-review`，包含完整可见底稿和完整长文正文。只有用户明确说“只要/不要文章/短答/表格/清单/纯诊断/仅行动方案”时，才关闭默认文章层。
 
 显式调用后，按任务内容路由到以下能力：
 
@@ -74,7 +75,7 @@ CrossFrame Essay 仍然必须读取 `skills/crossframe/SKILL.md` 与 `skills/cro
 
 如果启用概念上升，先从结构机制抽象上位概念，再选择中西经典、历史经验、理论或文学互文，最后回落到现实责任链。直接引用必须可核验；不确定原句时只做意译或思想映射。
 
-自动成文默认启用 `full-visible-v3-longform` 和现代编辑底色，先在底稿中写出 `正文声口方案`，再成文。问题型主题用答复体，公共评论、思想文章和概念文章用评论体。只有用户明确要求短答、中性报告、备忘录、表格、清单、纯诊断或学术摘要时才关闭；不要复古口号化，不要把亲切写成和稀泥，也不要把严厉写成人格审判。
+自动成文默认启用 `full-visible-v5-longform` 和现代编辑底色，先在底稿中写出 `正文声口方案`，再成文。问题型主题用答复体，公共评论、思想文章和概念文章用评论体。只有用户明确要求短答、中性报告、备忘录、表格、清单、纯诊断或学术摘要时才关闭；不要复古口号化，不要把亲切写成和稀泥，也不要把严厉写成人格审判。
 
 ## 显式调用其它平行 skill
 
@@ -82,6 +83,7 @@ CrossFrame Essay 仍然必须读取 `skills/crossframe/SKILL.md` 与 `skills/cro
 - 点名结构批判长文、要求批判底稿 + 篇章方案 + 1800-2800 字正文；用户明确点名 `crossframe-critical`：`skills/crossframe-critical/SKILL.md`
 - 答读者问、编辑回信、咨询式短答复、我该怎么看/怎么办：`skills/crossframe-dialogue/SKILL.md`
 - 整理聊天记录、组织材料、项目复盘、公共争议为案例库：`skills/crossframe-casebook/SKILL.md`
+- 历史材料、历史事件、史料互读、长时段演化、archive/FOIA backlog：`skills/crossframe-history/SKILL.md`
 - 公共议题、平台申诉、制度评论、机构合规材料、公共承诺兑现：`skills/crossframe-public/SKILL.md`
 - 团队、项目、组织修复、复盘改造、反馈写回、低风险试点：`skills/crossframe-org/SKILL.md`
 - CrossFrame 概念教学、误读纠偏、现实信号、练习题：`skills/crossframe-teach/SKILL.md`
@@ -94,20 +96,21 @@ CrossFrame Essay 仍然必须读取 `skills/crossframe/SKILL.md` 与 `skills/cro
 
 默认链路：
 
-- 结构诊断：`crossframe -> crossframe-essay(full-visible-v3-longform) -> crossframe-review`
+- 结构诊断：`crossframe -> crossframe-essay(full-visible-v5-longform) -> crossframe-review`
 - 普通洞察文章：`crossframe -> crossframe-essay -> crossframe-review`
 - 公共评论文章：`crossframe -> crossframe-public -> crossframe-essay -> crossframe-review`
 - 组织复盘/修复文章：`crossframe -> crossframe-org -> crossframe-essay -> crossframe-review`
-- 答读者问：`crossframe -> crossframe-dialogue -> crossframe-essay(full-visible-v3-longform) -> crossframe-review`
-- 案例沉淀：`crossframe -> crossframe-casebook -> crossframe-essay(full-visible-v3-longform) -> crossframe-review`
-- 概念教学：`crossframe -> crossframe-teach -> crossframe-essay(full-visible-v3-longform) -> crossframe-review`
-- 命题辩论：`crossframe -> crossframe-debate -> crossframe-essay(full-visible-v3-longform) -> crossframe-review`
-- 读书研究：`crossframe -> crossframe-notebook -> crossframe-review`
+- 答读者问：`crossframe -> crossframe-dialogue -> crossframe-essay(full-visible-v5-longform) -> crossframe-review`
+- 案例沉淀：`crossframe -> crossframe-casebook -> crossframe-essay(full-visible-v5-longform) -> crossframe-review`
+- 历史研究：`crossframe -> crossframe-history -> crossframe-essay(full-visible-v5-longform) -> crossframe-review`
+- 概念教学：`crossframe -> crossframe-teach -> crossframe-essay(full-visible-v5-longform) -> crossframe-review`
+- 命题辩论：`crossframe -> crossframe-debate -> crossframe-essay(full-visible-v5-longform) -> crossframe-review`
+- 读书研究：`crossframe -> crossframe-notebook -> crossframe-essay(full-visible-v5-longform) -> crossframe-review`
 - 读书后成文：`crossframe -> crossframe-notebook -> crossframe-essay -> crossframe-review`
 
 连续触发只发生在用户显式调用 `crossframe-suite` 之后。此时先给短 `调度提纲`：任务类型、工作流、必读 skill、按需读取、不读取、质量闸。不要为了完整而读取全部 skill。
 
-总入口默认对任何 CrossFrame 内容任务成文，并默认是 `full-visible-v3-longform / 3.0混合长文`；显式关闭文章层时才保留原形态。
+总入口默认对任何 CrossFrame 内容任务成文，并默认是 `full-visible-v5-longform / 5.0混合长文`；显式关闭文章层时才保留原形态。
 
 ## 必须遵守
 
@@ -137,7 +140,7 @@ CrossFrame Essay 仍然必须读取 `skills/crossframe/SKILL.md` 与 `skills/cro
 0. 复杂多交付任务先读 [skills/crossframe-suite/SKILL.md](skills/crossframe-suite/SKILL.md) 与 `skills/crossframe-suite/references/workflow-routing-map.md`
 1. [skills/crossframe/SKILL.md](skills/crossframe/SKILL.md)
 2. 先读取 `skills/crossframe/references/read-routing-map.md` 确定本次路由
-2.1 需要连续保真时优先读取 `skills/crossframe/references/integrity-check.md`；需要追踪原文相邻结构时，再读取 `skills/crossframe/references/continuity-bundles.md`、`skills/crossframe/references/v3-source-spine.md`、`skills/crossframe/references/v3-section-digest-index.md` 与 `skills/crossframe/worksheets/source-continuity-check.md`
+2.1 需要连续保真时优先读取 `skills/crossframe/references/integrity-check.md`；需要追踪原文相邻结构时，再读取 `skills/crossframe/references/continuity-bundles.md`、`skills/crossframe/references/v5-source-spine.md`、`skills/crossframe/references/v5-section-digest-index.md` 与 `skills/crossframe/worksheets/source-continuity-check.md`
 3. 普通诊断读取 `skills/crossframe/protocols/diagnosis-protocol.md`
 4. 推演读取 `skills/crossframe/protocols/inference-protocol.md`
 5. 开放断言读取 `skills/crossframe/protocols/open-assertion-protocol.md`
@@ -149,16 +152,17 @@ CrossFrame Essay 仍然必须读取 `skills/crossframe/SKILL.md` 与 `skills/cro
 11. 亲密关系读取 `skills/crossframe/protocols/intimate-relationship-protocol.md`
 12. 疗愈转移读取 `skills/crossframe/protocols/healing-transfer-protocol.md`
 13. 公共制度读取 `skills/crossframe/protocols/public-institution-protocol.md`
-14. 框架边界读取 `skills/crossframe/protocols/framework-boundary-protocol.md`
-15. 生命周期读取 `skills/crossframe/protocols/lifecycle-diagnosis-protocol.md`
-16. 递进闭环读取 `skills/crossframe/protocols/progression-protocol.md`
-17. 势场与自主解离读取 `skills/crossframe/protocols/field-dissociation-protocol.md`
-18. 治理连续性读取 `skills/crossframe/protocols/governance-continuity-protocol.md`
-19. 超大规模压力测试读取 `skills/crossframe/protocols/large-scale-stress-test-protocol.md`
-20. 对外表达翻译读取 `skills/crossframe/protocols/expression-translation-protocol.md`
-21. 长期演化或理论深水区读取 `skills/crossframe/references/theory-backend-index.md`
-22. 输出前读取 `skills/crossframe/templates/reasoning-outline-output.md` 与对应输出模板
-23. 高风险概念读取 `skills/crossframe/references/concept-cards/` 下的对应卡片
+14. 历史领域接口读取 `skills/crossframe-history/SKILL.md`
+15. 框架边界读取 `skills/crossframe/protocols/framework-boundary-protocol.md`
+16. 生命周期读取 `skills/crossframe/protocols/lifecycle-diagnosis-protocol.md`
+17. 递进闭环读取 `skills/crossframe/protocols/progression-protocol.md`
+18. 势场与自主解离读取 `skills/crossframe/protocols/field-dissociation-protocol.md`
+19. 治理连续性读取 `skills/crossframe/protocols/governance-continuity-protocol.md`
+20. 超大规模压力测试读取 `skills/crossframe/protocols/large-scale-stress-test-protocol.md`
+21. 对外表达翻译读取 `skills/crossframe/protocols/expression-translation-protocol.md`
+22. 长期演化或理论深水区读取 `skills/crossframe/references/theory-backend-index.md`
+23. 输出前读取 `skills/crossframe/templates/reasoning-outline-output.md` 与对应输出模板
+24. 高风险概念读取 `skills/crossframe/references/concept-cards/` 下的对应卡片
 
 文章写作额外读取：
 
@@ -184,7 +188,7 @@ CrossFrame Essay 仍然必须读取 `skills/crossframe/SKILL.md` 与 `skills/cro
 - 不要把薄适配层扩写成另一份完整正文。
 - 适配层必须保持薄入口：说明触发条件、读取顺序、输出闸，不复制完整协议。
 - 新增概念前先确认它是否能进入工作表、闸门或模板，否则不要升格。
-- 防失真材料优先放在 `references/` 和概念卡中，不要把 v3.0 全文塞回 `SKILL.md`。
-- 新增或补齐 v3.0 概念时，同步更新 `skills/crossframe/references/v3-coverage-map.md`。
+- 防失真材料优先放在 `references/` 和概念卡中，不要把 v5.0 全文塞回 `SKILL.md`。
+- 新增或补齐 v5.0 概念时，同步更新 `skills/crossframe/references/v5-coverage-map.md`。
 - 新增文章写作规则时，优先更新 `skills/crossframe-essay/`，不要把文章协议复制到根适配层。
 - 改完后运行 skill 验证，并确认本地安装目录需要同步时已同步。

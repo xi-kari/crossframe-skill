@@ -11,6 +11,7 @@
 - 至少提出一个反馈给 CrossFrame 的问题。
 - 没有伪造引用、页码、版本或作者观点。
 - 没有把理论比较变成现实强判断或人格审判。
+- 可吸收处必须标注 source_id、是否影响概念契约和对应 claim_id / claim ledger；没有 claim_id 的洞察只能作为 absorption_candidate，不得直接改写 canonical。
 
 ## Test 1：书籍理论摘要
 

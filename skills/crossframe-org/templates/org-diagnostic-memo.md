@@ -7,11 +7,19 @@
 - 事实边界：
 - 尺度窗口：
 - 机制候选：
+- 命题台账：
+- 概念契约：
 - 判断档位：
 - 本次读取：
 - 下一步：
 
 # 组织诊断备忘录
+
+## 组织 claim ledger delta
+
+| claim_id | 组织判断 / 行动建议 | 机制候选 | 支持事实 | 概念契约 | judgment_grade | action_ceiling | withdrawal_condition | publish_boundary |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| CL |  | M |  | contract_id / 不适用 |  |  |  |  |
 
 ## 一句话判断
 

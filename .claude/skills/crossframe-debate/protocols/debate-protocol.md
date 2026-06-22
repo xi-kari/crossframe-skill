@@ -19,9 +19,12 @@
 - 尺度：个人、关系、组织、制度、公共记忆、哲学概念等。
 - 时间窗口：当前、长期、某一阶段、未来预测。
 - 影响对象：谁受益、谁受损、谁承担成本。
-- 判断档位：事实判断、因果判断、价值判断、行动建议、强判断或开放断言。
+- proposition_type：事实命题、因果命题、价值命题、行动命题、混合命题。
+- judgment_grade：light_observation / open_assertion / full_diagnosis / strong_judgment / low_condition_action / exit_transfer。
 
 如果原句只是情绪、口号或偏好，先说明它还不是完整命题，再给可检验改写。
+
+高风险概念必须读取 `../crossframe/references/concept-contracts/core-contracts.md` 中对应契约。未完成契约检查的概念只能作为命题候选或表达候选，不得进入论证结论、强反驳或行动边界。
 
 ## 3. 正反双方最好版本
 

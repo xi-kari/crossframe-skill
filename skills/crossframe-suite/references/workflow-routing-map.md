@@ -6,21 +6,40 @@
 
 | 用户目标 | 默认工作流 | 说明 |
 |---|---|---|
-| 结构诊断 | `crossframe -> crossframe-essay(full-visible-v5-longform, editorial-base) -> crossframe-review` | 先诊断，再默认成文；只有用户说“只要纯诊断/不要文章”才停在诊断。 |
-| 开放式可读分析 | `crossframe -> crossframe-essay(full-visible-v5-longform, editorial-base) -> crossframe-review` | 用户只说分析、怎么看、讲讲、写一下且未指定格式时，默认输出完整可见底稿 + 完整长文正文。 |
-| 普通洞察文章 | `crossframe -> crossframe-essay(full-visible-v5-longform, editorial-base) -> crossframe-review` | 先诊断，再完整底稿，再长文正文，再评审；默认不是短答或冷诊断腔。 |
+| 结构诊断 | `crossframe -> crossframe-essay(full-visible-v5-longform, voice_mode from suite) -> crossframe-review` | 先诊断，再默认成文；只有用户说“只要纯诊断/不要文章”才停在诊断。 |
+| 开放式可读分析 | `crossframe -> crossframe-essay(full-visible-v5-longform, voice_mode from suite) -> crossframe-review` | 用户只说分析、怎么看、讲讲、写一下且未指定格式时，默认输出完整可见底稿 + 完整长文正文。 |
+| 普通洞察文章 | `crossframe -> crossframe-essay(full-visible-v5-longform, voice_mode from suite) -> crossframe-review` | 先诊断，再完整底稿，再长文正文，再评审；默认不是短答或冷诊断腔。 |
 | 公共评论文章 | `crossframe -> crossframe-public -> crossframe-essay -> crossframe-review` | 公共事实和证据边界必须在成文前完成。 |
 | 组织复盘文章 | `crossframe -> crossframe-org -> crossframe-essay -> crossframe-review` | 先看责任链、授权链、反馈写回，再成文。 |
-| 答读者问 | `crossframe -> crossframe-dialogue -> crossframe-essay(full-visible-v5-longform, editorial-reply) -> crossframe-review` | 先短答复接住问题，再默认扩成文章；只有明确要短答才停在 dialogue。 |
+| 答读者问 | `crossframe -> crossframe-dialogue -> crossframe-essay(full-visible-v5-longform, voice_mode from suite) -> crossframe-review` | 先短答复接住问题，再默认扩成文章；只有明确要短答才停在 dialogue。 |
 | 编辑同志口吻长答 | `crossframe -> crossframe-dialogue -> crossframe-essay -> crossframe-review` | 先回信式判断，再扩成长文。 |
-| 案例沉淀 | `crossframe -> crossframe-casebook -> crossframe-essay(full-visible-v5-longform, editorial-base) -> crossframe-review` | 先沉淀案例，再默认成文。 |
+| 案例沉淀 | `crossframe -> crossframe-casebook -> crossframe-essay(full-visible-v5-longform, voice_mode from suite) -> crossframe-review` | 先沉淀案例，再默认成文。 |
 | 案例后成文 | `crossframe -> crossframe-casebook -> crossframe-essay -> crossframe-review` | 案例是文章材料，不替代文章判断。 |
-| 概念教学 | `crossframe -> crossframe-teach -> crossframe-essay(full-visible-v5-longform, editorial-base) -> crossframe-review` | 先教学解释，再默认成文。 |
-| 命题辩论 | `crossframe -> crossframe-debate -> crossframe-essay(full-visible-v5-longform, editorial-base) -> crossframe-review` | 先拆命题和证据要求，再默认成文。 |
+| 概念教学 | `crossframe -> crossframe-teach -> crossframe-essay(full-visible-v5-longform, voice_mode from suite) -> crossframe-review` | 先教学解释，再默认成文。 |
+| 命题辩论 | `crossframe -> crossframe-debate -> crossframe-essay(full-visible-v5-longform, voice_mode from suite) -> crossframe-review` | 先拆命题和证据要求，再默认成文。 |
 | 辩论后成文 | `crossframe -> crossframe-debate -> crossframe-essay -> crossframe-review` | 论证完成后再写文章。 |
-| 读书研究 | `crossframe -> crossframe-notebook -> crossframe-essay(full-visible-v5-longform, editorial-base) -> crossframe-review` | 先输出关联、不同、可吸收处、冲突处，再默认成文。 |
+| 读书研究 | `crossframe -> crossframe-notebook -> crossframe-essay(full-visible-v5-longform, voice_mode from suite) -> crossframe-review` | 先输出关联、不同、可吸收处、冲突处，再默认成文。 |
 | 读书后成文 | `crossframe -> crossframe-notebook -> crossframe-essay -> crossframe-review` | 研究笔记先于文章。 |
-| 评审已有输出 | `crossframe-review -> crossframe-essay(full-visible-v5-longform, editorial-base) -> crossframe-review-lite` | 先给评审结论，再默认写成可读文章；只有“只要评审/不要文章”才停在 review。 |
+| 历史研究/史料互读 | `crossframe -> crossframe-history -> crossframe-essay(full-visible-v5-longform, voice_mode from suite) -> crossframe-review` | 先处理史料档位、断代尺度、历史因果降级和 archive/FOIA backlog，再默认成文；没有具体史料台账时只能标为历史草稿档。 |
+| 历史研究后成文 | `crossframe -> crossframe-history -> crossframe-essay -> crossframe-review` | 历史接口分析先于文章；成文不得把草稿档写成完整历史分析。 |
+| 结构批判文章 | `crossframe -> crossframe-critical -> crossframe-essay(full-visible-v5-longform, voice_mode from suite) -> crossframe-review` | 批判矩阵、例子和点睛句必须先绑定已有 claim_id，再进入文章层。 |
+| critical 后成文 | `crossframe -> crossframe-critical -> crossframe-essay -> crossframe-review` | 批判底稿先于文章；不得用强语气替代 claim ledger 和来源台账。 |
+| 评审已有输出 | `crossframe-review -> crossframe-essay(full-visible-v5-longform, voice_mode from suite) -> crossframe-review(lite)` | 先给评审结论，再默认写成可读文章；只有“只要评审/不要文章”才停在 review。 |
+
+声口由 suite 的 `voice_mode` 和 `topic_sensitivity` 传递，不在 `workflow-routing-map` 固定。
+
+## 追问层路由
+
+| 用户信号 | workflow |
+| --- | --- |
+| 完整链路完成后的任意后续输入，且 `post_completion_inquiry_armed=true` | `previous_context -> crossframe-inquiry(post_completion_followup)` |
+| “继续追问我”“我该继续想什么”“问我几个问题” | `crossframe -> crossframe-review(lite) -> crossframe-inquiry` |
+| “我不同意这个结论”“还有别的解释吗” | `crossframe -> crossframe-review(lite) -> crossframe-inquiry(counterexample)` |
+| “这个怎么用到另一个案例” | `crossframe -> crossframe-review(lite) -> crossframe-inquiry(transfer_conditions)` |
+| “这个怎么用到我/我们公司/团队” | `crossframe -> crossframe-org -> crossframe-review(lite) -> crossframe-inquiry(transfer_conditions)` |
+| “这个判断能不能行动” | `crossframe -> crossframe-inquiry(action_boundary) -> crossframe-review(lite)` |
+
+完成态接管优先级高于普通默认成文。也就是说：一轮 `crossframe-suite` 已经完成分析、成文和 review 后，下一句“嗯”“继续”“那我呢”“这能不能用”“不太同意”都不是新文章触发词，而是上一轮输出的后续追问入口。除非用户明确说“新任务 / 换主题 / 退出追问 / 不接着上文”，否则保持 `post_completion_inquiry_armed`。
 
 ## 默认成文规则
 
@@ -41,12 +60,12 @@
 此时默认链路是：
 
 ```text
-crossframe -> source-continuity-check -> v5-read-state-capsule -> source-anchor-integrity-check -> crossframe-essay(full-visible-v5-longform, editorial-base) -> crossframe-review
+crossframe -> source-continuity-check -> v5-read-state-capsule -> source-anchor-integrity-check -> claim-ledger-check -> crossframe-essay(full-visible-v5-longform, voice_mode from suite) -> crossframe-review
 ```
 
-`source-continuity-check`、`v5-read-state-capsule` 和 `source-anchor-integrity-check` 都不是独立 skill，而是 `crossframe` 内部的源结构状态链：先确认是否读对连续联读包，再生成读态胶囊，最后检查中心命题、机制候选、高风险概念和行动边界是否能回指胶囊源锚点。v3/v2 文件只在需要历史版本对照时读取。
+`source-continuity-check`、`v5-read-state-capsule`、`source-anchor-integrity-check` 和 `claim-ledger-check` 都不是独立 skill，而是 `crossframe` 内部的源结构状态链：先确认是否读对连续联读包，再生成读态胶囊，再检查中心命题、机制候选、高风险概念和行动边界是否能回指胶囊源锚点，最后用 `claim ledger` 确认中心命题、机制句、行动建议、公共定性、文章转译和高风险概念判断都有 `claim_id`。
 
-`editorial-base` 表示自动成文默认启用 `crossframe-essay` 的现代编辑底色：先接住问题，再共同分析结构，必要时严厉批评不当做法，最后给出清醒、有分寸的意见。问题型主题用答复体；公共评论、思想文章、概念文章用评论体。只有用户明确要求中性报告、备忘录、表格、清单、纯诊断或学术摘要时，才关闭这一声口。
+`voice_mode from suite` 表示正文声口由 `output-mode-selector.md`、角色和 `topic_sensitivity` 判定，不在工作流字符串里固定。问题型主题可用答复体；公共评论、思想文章、概念文章可用评论体；中性报告、备忘录、表格、清单、纯诊断或学术摘要按用户显式要求关闭文章声口。
 
 `full-visible-v5-longform` 表示底稿完整可见，至少展示对象、事实边界、尺度窗口、机制候选、v5 连续联读包、源结构保真、概念风险、反向条件、声口方案和文章转译方案；正文默认 1200-2200 中文字，有标题、铺陈、概念上升、经典/理论参照或思想映射、现实回落、边界段和余味结尾。
 
@@ -89,6 +108,21 @@ crossframe -> source-continuity-check -> v5-read-state-capsule -> source-anchor-
 
 - 聊天记录、项目材料、复盘材料、事件链、案例库、可复用案例。
 
+### 追加 `crossframe-history`
+
+- 历史、史料、年表、历史事件、历史人物、历史制度、王朝制度、文明连续史、长时段演化、历史比较、历史案例。
+- 需要区分正史/编年/实录/档案/出土材料/现代解读的证据档位。
+- 需要处理 archive-access、FOIA backlog、finding aid、source path、史料闭合、断代边界或历史因果降级。
+- 用户要求把 CrossFrame v5 主干翻译到历史领域接口，或讨论历史领域适配器候选。
+- 历史链路必须输出历史档位：只有来源族、现代概述或常识背景时，停在历史草稿档；有具体史料台账、失败登记和升降级条件后，才可称历史接口分析档。
+
+### 追加 `crossframe-critical`
+
+- 结构批判文章、批判性长文、意识形态/成本转移/利益链分析。
+- 用户显式点名 `crossframe-critical`。
+- 文章需要批判矩阵、例子安排、点睛句或批判性段落推进时，先完成 `crossframe-critical`，再进入 `crossframe-essay`。
+- critical 是 suite-only 时，必须经 suite 路由；批判命题、例子和点睛句必须绑定 `claim_id`，没有 claim ledger 的批判句不得进入正文。
+
 ### 追加 v5.0 源连续性保护
 
 - 框架是否失效、是否应降级/转接/退场：触发 `v5-framework-self-diagnosis-falsification-pack`。
@@ -115,7 +149,7 @@ crossframe -> source-continuity-check -> v5-read-state-capsule -> source-anchor-
 
 - 写文章、长文、评论、随笔、思想文章、洞察文章、报刊答复体。
 - 用户要求概念上升、引经据典、现代编辑同志口吻。
-- suite 默认对任何 CrossFrame 内容任务都追加，并默认传入 `editorial-base` 声口要求；不要等用户再次说“请写成文章”。
+- suite 默认对任何 CrossFrame 内容任务都追加，并默认传入 `voice_mode` 与 `topic_sensitivity`；不要等用户再次说“请写成文章”。
 - suite 默认成文必须同时传入 `full-visible-v5-longform` 输出档位；不要把任何未显式关闭文章层的内容任务压缩成短答。
 
 ### 追加 `crossframe-review`
@@ -136,6 +170,7 @@ crossframe -> source-continuity-check -> v5-read-state-capsule -> source-anchor-
 
 - 不要因为出现“公共”一词就读取全部公共协议；先判断是否涉及真实公共事实或制度责任。
 - 不要因为文章需要漂亮就读取 `notebook`；只有需要外部文本、理论参照或读书比较时才读。
+- 不要因为材料里出现过去时间、旧案例或“历史上”一词就读取 `history`；只有需要历史材料、断代尺度、史料等级、历史机制或长时段比较时才读。
 - 不要因为短答复要有温度就跳过 `dialogue`；但若用户没有明确要求“只要短答”，`dialogue` 后仍默认追加 `essay`。
 - 不要把 `review` 输出给用户，除非用户要求评审报告或发现硬失败。
 - 不要把所有 sibling skill 都列进“本次读取”，未读取的要写在“不读取”里。

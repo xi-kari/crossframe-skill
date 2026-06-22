@@ -1,5 +1,18 @@
 # 公共制度与高权力密度专项协议
 
+## runtime hardening
+
+本协议只负责专项推理步骤，不取消 `../SKILL.md` 的主运行链。凡本协议产生中心命题、机制候选、高风险概念判断、行动建议、公共定性、概率排序、退出/处置建议或可成文材料，必须先进入：
+
+```text
+v5-read-state-capsule
+-> source-anchor-integrity-check
+-> concept-fidelity-check
+-> claim ledger
+-> claim-ledger-check
+```
+
+没有 `claim_id` 的判断不得进入本协议输出。高风险概念未通过概念契约时，只能作为解释候选或表达转译，不能承担判断。
 用于组织、制度、平台、公共议题和社会形态中的高权力密度、解释竞争、分配回流、承接成本和公共承诺问题。
 
 本协议研究结构，不研究立场；吸收检查器，不吸收总钥匙。

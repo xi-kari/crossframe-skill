@@ -12,12 +12,15 @@
 - 连续联读包：
 - 读态胶囊：
 - 源锚点检查：
+- 命题台账：
 - 主题敏感度：
 - 正文声口：
 - 文章类型：
 - 输出档位：
 - 不读取：
 - 质量闸：
+- 追问层：
+- 完成态追问接管：
 ```
 
 ## 字段说明
@@ -30,24 +33,27 @@
 - `连续联读包`：只列 `continuity-bundles.md` 中本次触发的包名；未触发时写“未触发”。
 - `读态胶囊`：写“由 crossframe 生成 / 复用已有胶囊 / 不需要”。suite 不生成胶囊。
 - `源锚点检查`：写“需要 / 不需要”，需要时说明中心命题、机制候选、高风险概念或行动边界要回指胶囊。
+- `命题台账`：写“由 crossframe 生成 / 复用已有台账 / 不需要”。进入文章层、高责任判断、公共判断、行动建议或高风险概念判断时必须写“需要”，并说明正文和 review 必须回指 `claim_id`。
 - `主题敏感度`：写 `low / normal / vulnerable / high-stakes`；若为 `vulnerable` 或 `high-stakes`，说明先承接人或先审计的保护动作。
 - `正文声口`：按角色和 `topic_sensitivity` 写“中性分析体 / 中性决定体 / 答复体 / 评论体”；显式要求编辑口吻时说明覆盖原因。
 - `文章类型`：只有文章层开启时填写。用户未显式指定时，先生成结构洞察底稿，再完整展示文章类型选择器的九个选项，并给出推荐项和推荐理由；用户回复“默认/自动/都行”后写推荐项结果。
 - `输出档位`：suite 默认写 `full-visible-v5-longform / 5.0混合长文`；只有用户显式要求短答、表格、清单、纯诊断或不要文章时写对应交付物。
 - `不读取`：列 1-3 个容易误触发但本次不需要的 skill，防止全量加载。
 - `质量闸`：完整评审、轻量自检或无需评审，并写原因。
+- `追问层`：不触发 / 触发；若触发，写追问目标，如反证、补证、迁移、行动边界或收束。
+- `完成态追问接管`：当完整链路已经交付 `结构洞察底稿 + 文章正文 + review` 后，写 `post_completion_inquiry_armed=true`，并说明下一轮用户输入默认进入 `crossframe-inquiry`。若用户明确新任务、换主题或退出上文，则写 `post_completion_inquiry_armed=false`。
 
-只要用户没有显式关闭文章层，`输出档位` 默认写 `full-visible-v5-longform / 5.0混合长文`，`工作流` 默认在必要专项 skill 后追加 `crossframe-essay -> crossframe-review`。调度说明要保留顺序：v5-read-state-capsule -> 源锚点完整性检查 -> 结构洞察底稿 -> 文章类型选择器 -> 写作技法读取 -> 文章正文 -> 质量闸。
+只要用户没有显式关闭文章层，`输出档位` 默认写 `full-visible-v5-longform / 5.0混合长文`，`工作流` 默认在必要专项 skill 后追加 `crossframe-essay -> crossframe-review`。调度说明要保留顺序：v5-read-state-capsule -> 源锚点完整性检查 -> claim ledger -> 结构洞察底稿 -> 文章类型选择器 -> 写作技法读取 -> 文章正文 -> 质量闸 -> post_completion_inquiry_armed。
 
 批量压测或控制器汇总时，不得把“文件级流程完整”写成总“通过”。必须拆开：
 
 ```text
-- structural_pass：标题、底稿、正文、胶囊、来源台账、技法、质量闸是否存在
-- substantive_pass：中心命题、来源台账、胶囊锚点、技法落地和正文是否互相支撑
-- publish_boundary：内部压测 / 待核验分析 / 可发布需补证 / 不得用于强判断
+- structural_pass 待 review 判定：标题、底稿、正文、胶囊、来源台账、命题台账、技法、质量闸是否存在
+- substantive_pass 待 review 判定：中心命题、命题台账、来源台账、胶囊锚点、概念契约、技法落地和正文是否互相支撑
+- publish_boundary 待 review 判定：内部压测 / 待核验分析 / 可发布需补证 / 不得用于强判断
 ```
 
-若控制器只做结构 smoke check，只能写 `structural_pass=true`，不能写 `substantive_pass=true` 或笼统“全部通过”。
+若控制器只做结构 smoke check，只能写“结构字段存在，待 review 判定”，不能写 `structural_pass=true`、`substantive_pass=true` 或笼统“全部通过”。
 
 ## 轻量版
 

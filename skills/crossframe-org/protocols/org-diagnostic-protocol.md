@@ -12,8 +12,10 @@
    - 一个来自执行层行为也可以，但不能只有执行层行为。
    - 至少一个必须检查授权、资源、目标或接口。
 6. 检查中层承接负荷：中层是否在无授权地吸收组织矛盾。
-7. 判断档位：开放断言、组织诊断备忘录、低条件行动、需要命题验证、暂缓判断。
+7. 判断档位使用主 schema：`light_observation / open_assertion / full_diagnosis / strong_judgment / low_condition_action / exit_transfer`。`组织诊断备忘录` 只是输出类型，不是判断档位。
 8. 给出下一步：观察项、写回动作、低风险试点或停止错误加速。
+
+高风险概念必须读取 `../crossframe/references/concept-contracts/core-contracts.md` 中对应契约。未完成契约检查的组织概念只能作为机制候选，不得进入组织判断、停止条件或处置建议。
 
 ## 必须输出的诊断变量
 

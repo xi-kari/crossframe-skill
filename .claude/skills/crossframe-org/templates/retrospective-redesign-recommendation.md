@@ -1,7 +1,13 @@
 # 复盘改造建议模板
 
+本改造建议必须回指某个 `claim_id`；若无 `claim_id`，只能作为观察项或假设，不得作为组织处置建议。
+
 ```text
 # 复盘改造建议
+
+- 对应 claim_id：
+- judgment_grade：
+- action_ceiling：
 
 ## 当前复盘为什么失真
 
