@@ -10,6 +10,7 @@
 
 - README 顶部版本徽章与首页 footer 对齐到 `v5.1.5`。
 - 首页 Hero CTA 增加“查看文档”入口，指向仓库文档区。
+- 首页增加 no-JS fallback，说明交互示例需要 JavaScript，并引导用户查看 README 和 docs。
 
 ## v5.1.5 - 2026-06-22
 
