@@ -331,6 +331,60 @@ def check_repo_adapters(repo: Path, label: str) -> None:
         require(needle in inquiry_command_text, f"{label}: crossframe-inquiry command missing marker: {needle}")
 
 
+def check_public_release_docs(repo: Path, label: str) -> None:
+    if not (repo / "skills").is_dir():
+        return
+
+    required_docs = {
+        "README.md": ["14 个显式触发", "source_id -> claim_id", "docs/QUICKSTART.md"],
+        "CHANGELOG.md": ["v5.0.2", "crossframe-history", "crossframe-inquiry", "source_id"],
+        "docs/WHAT_IS_CROSSFRAME.md": ["CrossFrame 是一组给 AI 使用的中文结构思考 skills", "crossframe-inquiry"],
+        "docs/QUICKSTART.md": ["install-codex.ps1", "--materials-only", "--source-docx"],
+        "docs/CONCEPTS.md": ["Claim Ledger", "source_id", "Concept Contract"],
+        "docs/WORKFLOWS.md": ["previous_context -> crossframe-inquiry", "claim ledger / claim-ledger-check"],
+        "docs/EXAMPLES.md": ["历史草稿档", "crossframe-inquiry"],
+        "docs/ADAPTERS.md": ["sync_skill_mirrors.py", "Codex", "Claude Code"],
+        "docs/SAFETY_AND_LIMITS.md": ["默认不展示内部 reasoning", "工具调用参数"],
+        "docs/FAQ.md": ["explicit-only", "--materials-only"],
+    }
+    for rel, needles in required_docs.items():
+        path = repo / rel
+        require(path.exists(), f"{label}: missing public doc: {rel}")
+        text = read(path)
+        for needle in needles:
+            require(needle in text, f"{label}: public doc {rel} missing marker: {needle}")
+
+    for rel in [
+        "AGENTS.md",
+        "CLAUDE.md",
+        "GEMINI.md",
+        "CONVENTIONS.md",
+        "INTERFACES.md",
+        "llms.txt",
+        ".github/copilot-instructions.md",
+        "skills/crossframe-suite/SKILL.md",
+    ]:
+        text = read(repo / rel)
+        require("内部 reasoning" in text or "internal reasoning" in text, f"{label}: {rel} missing internal reasoning visibility boundary")
+        require("工具调用参数" in text or "tool-call parameters" in text, f"{label}: {rel} missing tool-call visibility boundary")
+
+    for rel in [
+        "scripts/sync_skill_mirrors.py",
+        "scripts/package_crossframe_skill.py",
+    ]:
+        require((repo / rel).exists(), f"{label}: missing release maintenance script: {rel}")
+
+    require(not (repo / "scripts" / "check_v2_continuity.py").exists(), f"{label}: retired v2 checker still exists")
+    require(not (repo / "scripts" / "generate_v2_continuity.py").exists(), f"{label}: retired v2 generator still exists")
+    for rel in [
+        "scripts/check_source_continuity.py",
+        "scripts/generate_source_continuity.py",
+    ]:
+        text = read(repo / rel)
+        require("E:\\世界模型" not in text, f"{label}: {rel} still contains private source-docx path")
+        require("--source-docx" in text, f"{label}: {rel} missing explicit source-docx argument")
+
+
 def check_source_ledger(root: Path, label: str) -> None:
     ledger = root / "crossframe" / "references" / "source-ledger-workflow.md"
     require(ledger.exists(), f"{label}: missing source-ledger-workflow.md")
@@ -1321,6 +1375,7 @@ def main() -> int:
     args = parser.parse_args()
 
     check_repo_adapters(repo_root_from_arg(args.repo), "repo")
+    check_public_release_docs(repo_root_from_arg(args.repo), "repo")
 
     roots: list[tuple[Path, str]] = [(skill_root_from_arg(args.repo), "repo")]
     for idx, mirror in enumerate(args.mirror, start=1):

@@ -1,6 +1,6 @@
 # CrossFrame v5 Source Spine
 
-- 权威源：`E:\世界模型\跨尺度结构诊断框架v5.0.docx`
+- 权威源：`跨尺度结构诊断框架v5.0.docx`
 - SHA256：`c73ffaf4248b2fc5badde0ca7fd8bb6126f5766e79040503729efee5957e1ce0`
 - 标题节点：386
 - 表格数量：58

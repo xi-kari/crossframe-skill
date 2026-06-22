@@ -7,9 +7,6 @@ import sys
 from pathlib import Path
 
 
-V5_DOCX = r"E:\世界模型\跨尺度结构诊断框架v5.0.docx"
-
-
 def load_generator(script_dir: Path):
     module_path = script_dir / "generate_source_continuity.py"
     spec = importlib.util.spec_from_file_location("generate_source_continuity", module_path)
@@ -68,7 +65,7 @@ def active_markdown_files(repo: Path) -> list[Path]:
 def main() -> int:
     parser = argparse.ArgumentParser(description="Check CrossFrame v5 source continuity files.")
     parser.add_argument("--version", default="v5")
-    parser.add_argument("--source-docx", default=V5_DOCX)
+    parser.add_argument("--source-docx")
     parser.add_argument("--repo", default=".")
     parser.add_argument(
         "--materials-only",
@@ -80,7 +77,7 @@ def main() -> int:
     version = args.version.lower()
     require(version == "v5", "this checker is versioned for v5; pass --version v5")
     repo = Path(args.repo).resolve()
-    source_docx = Path(args.source_docx)
+    source_docx = Path(args.source_docx) if args.source_docx else None
 
     generator = load_generator(Path(__file__).resolve().parent)
     bundle_ids = [bundle.id for bundle in generator.V5_BUNDLES]
@@ -97,6 +94,8 @@ def main() -> int:
     nodes = []
     tables = []
     if not args.materials_only:
+        require(args.source_docx, "pass --source-docx, or use --materials-only for public repository validation")
+        require(source_docx is not None, "missing source docx argument")
         require(source_docx.exists(), f"missing source docx: {source_docx}")
         nodes, tables = generator.extract_nodes(source_docx)
 

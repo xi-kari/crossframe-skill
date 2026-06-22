@@ -1,0 +1,61 @@
+# 快速开始
+
+## 1. 安装到 Codex
+
+在仓库根目录运行：
+
+```powershell
+.\scripts\install-codex.ps1
+```
+
+它会安装 14 个 `crossframe-*` skills 到 `$HOME\.codex\skills`。
+
+## 2. Claude Code
+
+Claude Code 项目内使用：
+
+```text
+/crossframe-suite 分析这个团队为什么复盘很多但没有真实修复
+/crossframe-essay 写一篇关于平台治理的中文评论文章
+/crossframe-inquiry 基于刚才的文章继续追问反证和迁移条件
+```
+
+需要迁移到别的项目时，复制：
+
+```text
+.claude/skills/crossframe*
+.claude/commands/crossframe*.md
+CLAUDE.md
+skills/crossframe*
+```
+
+## 3. 其他 AI 工具
+
+不支持 skill 文件夹的工具，可以先读取对应薄入口：
+
+```text
+AGENTS.md
+CLAUDE.md
+GEMINI.md
+llms.txt
+docs/ADAPTERS.md
+```
+
+效果最好的是完整保留 `skills/crossframe*` 目录，因为真实规则、协议、模板和检查表都在 skill 主体里。
+
+## 4. 本地验证
+
+公开仓库日常验证不需要本机私有 DOCX：
+
+```powershell
+python scripts\check_crossframe_skill_integrity.py --repo .
+python scripts\check_source_continuity.py --materials-only --repo .
+python -m json.tool skills\crossframe\schemas\claim-ledger.schema.json
+git diff --check
+```
+
+如果你持有原始 v5.0 DOCX，可以运行完整源一致性检查：
+
+```powershell
+python scripts\check_source_continuity.py --version v5 --source-docx <path-to-v5-docx> --repo .
+```

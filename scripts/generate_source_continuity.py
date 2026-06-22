@@ -9,9 +9,6 @@ from pathlib import Path
 from docx import Document
 
 
-V5_DOCX = r"E:\世界模型\跨尺度结构诊断框架v5.0.docx"
-
-
 @dataclass(frozen=True)
 class Bundle:
     id: str
@@ -637,7 +634,7 @@ def render_source_spine(nodes: list[dict[str, object]], tables: list[dict[str, o
     lines = [
         "# CrossFrame v5 Source Spine",
         "",
-        f"- 权威源：`{source_docx}`",
+        f"- 权威源：`{source_docx.name}`",
         f"- SHA256：`{sha256(source_docx)}`",
         f"- 标题节点：{len(nodes)}",
         f"- 表格数量：{len(tables)}",
@@ -665,7 +662,7 @@ def render_digest(nodes: list[dict[str, object]], source_docx: Path) -> str:
     lines = [
         "# CrossFrame v5 Section Digest Index",
         "",
-        f"权威源：`{source_docx}`",
+        f"权威源：`{source_docx.name}`",
         "",
         "本文件逐标题节点保存 v5 的保真摘要、段落范围、相邻节点和默认连读包。摘要是研究笔记，不替代原文。",
         "",
@@ -1170,7 +1167,7 @@ def generate(repo: Path, source_docx: Path) -> None:
 def main() -> int:
     parser = argparse.ArgumentParser(description="Generate CrossFrame source continuity files from a DOCX.")
     parser.add_argument("--version", default="v5")
-    parser.add_argument("--source-docx", default=V5_DOCX)
+    parser.add_argument("--source-docx", required=True)
     parser.add_argument("--repo", default=".")
     args = parser.parse_args()
 

@@ -20,6 +20,8 @@ Do not copy the full v5.0 text into adapters. Do not duplicate the full skill bo
 
 CrossFrame must not become personality judgment, fate prediction, professional advice replacement, responsibility dilution, or AI compliance theater.
 
+Visible output must not expose internal reasoning, tool-call parameters, path trial-and-error, stack traces, or English self-planning. Show only the needed outline, evidence boundary, judgment grade, answer, review summary, and next step.
+
 For v5 local fidelity, use `skills/crossframe/references/runtime-read-policy.md`, `skills/crossframe/references/read-routing-map.md`, and `skills/crossframe/references/continuity-closure-map.md` before final output when high-risk concepts, public/institutional responsibility, intimate relationships, long-term evolution, deep analysis, AI compliance, weak signals, or essay/article output are involved. Expand to `continuity-bundles.md`, `concept-fidelity-check.md`, and `source-continuity-check.md` only when an audit or source-structure trace needs details.
 
 After explicit CrossFrame Essay or Suite invocation, when the user asks for 中文文章、长文、评论、思想文章、批判性洞察文章 or structure-to-essay writing:
