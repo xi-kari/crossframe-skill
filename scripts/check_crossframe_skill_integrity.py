@@ -386,7 +386,7 @@ def check_public_release_docs(repo: Path, label: str) -> None:
             "这个网页能直接运行 CrossFrame 吗？",
             "为什么首页示例都是虚构或匿名的？",
             "它会让 AI 变慢吗？",
-            "CrossFrame Skill Suite · v5.1.5 · explicit-only",
+            "CrossFrame Skill Suite · v5.1.6 · explicit-only",
         ],
         "site/styles.css": [
             "--bg: #f7f3ea",
@@ -462,8 +462,8 @@ def check_public_release_docs(repo: Path, label: str) -> None:
         require(retired_demo_marker not in public_page_text, f"{label}: public page still has sensitive landing demo marker: {retired_demo_marker}")
 
     required_docs = {
-        "README.md": ["14 个显式触发", "source_id -> claim_id", "docs/QUICKSTART.md", "framework-CrossFrame_v5.1.5", "review_%E2%86%92_inquiry", "https://xi-kari.github.io/crossframe-skill/", "网页介绍", "install-codex.sh"],
-        "CHANGELOG.md": ["v5.1.5", "v5.1.4", "v5.1.3", "site/", "GitHub Pages", "v5.0.2", "crossframe-history", "crossframe-inquiry", "source_id"],
+        "README.md": ["14 个显式触发", "source_id -> claim_id", "docs/QUICKSTART.md", "framework-CrossFrame_v5.1.6", "review_%E2%86%92_inquiry", "https://xi-kari.github.io/crossframe-skill/", "网页介绍", "install-codex.sh"],
+        "CHANGELOG.md": ["v5.1.6", "v5.1.5", "v5.1.4", "v5.1.3", "site/", "GitHub Pages", "v5.0.2", "crossframe-history", "crossframe-inquiry", "source_id"],
         "docs/WHAT_IS_CROSSFRAME.md": ["CrossFrame 是一组给 AI 使用的中文结构思考 skills", "一个一分钟例子", "它不是什么", "最推荐怎么用", "crossframe-inquiry"],
         "docs/QUICKSTART.md": ["install-codex.ps1", "install-codex.sh", "--materials-only", "--source-docx"],
         "docs/CONCEPTS.md": ["Claim Ledger", "source_id", "Concept Contract"],
@@ -518,7 +518,7 @@ def check_public_release_docs(repo: Path, label: str) -> None:
 
     package_script = read(repo / "scripts" / "package_crossframe_skill.py")
     require('"site"' in package_script, f"{label}: package script does not include site directory")
-    require('default="v5.1.5"' in package_script, f"{label}: package script default version is not v5.1.5")
+    require('default="v5.1.6"' in package_script, f"{label}: package script default version is not v5.1.6")
 
     require(not (repo / "scripts" / "check_v2_continuity.py").exists(), f"{label}: retired v2 checker still exists")
     require(not (repo / "scripts" / "generate_v2_continuity.py").exists(), f"{label}: retired v2 generator still exists")
