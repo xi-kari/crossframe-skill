@@ -59,7 +59,12 @@ const demos = {
 const installs = {
   codex: `git clone https://github.com/xi-kari/crossframe-skill
 cd crossframe-skill
+
+# Windows PowerShell
 .\\scripts\\install-codex.ps1
+
+# macOS / Linux
+bash scripts/install-codex.sh
 
 # Start with:
 /crossframe-suite 分析这个团队为什么复盘很多但没有真实修复`,

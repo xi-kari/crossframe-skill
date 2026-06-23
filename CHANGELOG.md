@@ -5,12 +5,14 @@
 ### Added
 
 - 新增 GitHub Actions verify workflow，自动运行 skill integrity、source continuity、claim ledger schema、mirror sync 和 whitespace 检查。
+- 新增 `scripts/install-codex.sh`，为 macOS / Linux 提供 Codex Bash 安装入口。
 
 ### Changed
 
 - README 顶部版本徽章与首页 footer 对齐到 `v5.1.5`。
 - 首页 Hero CTA 增加“查看文档”入口，指向仓库文档区。
 - 首页增加 no-JS fallback，说明交互示例需要 JavaScript，并引导用户查看 README 和 docs。
+- 首页 Install 区改为同时展示 Windows PowerShell 与 macOS / Linux Bash 安装方式。
 
 ## v5.1.5 - 2026-06-22
 

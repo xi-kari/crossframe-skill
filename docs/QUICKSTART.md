@@ -4,11 +4,19 @@
 
 在仓库根目录运行：
 
+Windows PowerShell：
+
 ```powershell
 .\scripts\install-codex.ps1
 ```
 
-它会安装 14 个 `crossframe-*` skills 到 `$HOME\.codex\skills`。
+macOS / Linux：
+
+```bash
+bash scripts/install-codex.sh
+```
+
+它会安装 14 个 `crossframe-*` skills 到 `$HOME/.codex/skills`。
 
 ## 2. Claude Code
 

@@ -216,7 +216,7 @@ def joined_markdown(path: Path) -> str:
 
 
 def iter_text_files(root: Path):
-    suffixes = {".md", ".py", ".json", ".txt", ".ps1", ".yaml", ".yml"}
+    suffixes = {".md", ".py", ".json", ".txt", ".ps1", ".sh", ".yaml", ".yml"}
     for skill in CURRENT_CROSSFRAME_SKILLS:
         skill_dir = root / skill
         if not skill_dir.is_dir():
@@ -291,8 +291,9 @@ def check_repo_adapters(repo: Path, label: str) -> None:
         ".windsurf/rules/crossframe.md": ["history research", "crossframe-inquiry", "post-completion inquiry", "pure acknowledgment/thanks signal"],
         "docs/ADAPTERS.md": ["crossframe-history", "crossframe-inquiry", "纯致谢"],
         "scripts/install-codex.ps1": ["skills/crossframe-history", "skills/crossframe-inquiry"],
+        "scripts/install-codex.sh": ["skills/crossframe-history", "skills/crossframe-inquiry"],
     }
-    runtime_ref_adapters = set(adapter_needles) - {"docs/ADAPTERS.md", "scripts/install-codex.ps1"}
+    runtime_ref_adapters = set(adapter_needles) - {"docs/ADAPTERS.md", "scripts/install-codex.ps1", "scripts/install-codex.sh"}
     retired_adapter_refs = [
         "skills/crossframe/references/integrity-check.md",
         "`integrity-check.md`",
@@ -380,8 +381,8 @@ def check_public_release_docs(repo: Path, label: str) -> None:
             "data-install=\"codex\"",
             "aria-controls=\"demo-panel\"",
             "role=\"tabpanel\" id=\"demo-panel\"",
-            "当前一键安装脚本面向 Windows PowerShell",
-            "到对应 agent 的 skills 目录",
+            "一键安装脚本覆盖 Windows PowerShell 与 macOS / Linux Bash",
+            "到对应 skills 目录",
             "这个网页能直接运行 CrossFrame 吗？",
             "为什么首页示例都是虚构或匿名的？",
             "它会让 AI 变慢吗？",
@@ -415,6 +416,8 @@ def check_public_release_docs(repo: Path, label: str) -> None:
             "虚构平台",
             "匿名结构分析",
             "const installs",
+            ".\\\\scripts\\\\install-codex.ps1",
+            "bash scripts/install-codex.sh",
             "setDemo",
             "setInstall",
         ],
@@ -459,14 +462,14 @@ def check_public_release_docs(repo: Path, label: str) -> None:
         require(retired_demo_marker not in public_page_text, f"{label}: public page still has sensitive landing demo marker: {retired_demo_marker}")
 
     required_docs = {
-        "README.md": ["14 个显式触发", "source_id -> claim_id", "docs/QUICKSTART.md", "framework-CrossFrame_v5.1.5", "review_%E2%86%92_inquiry", "https://xi-kari.github.io/crossframe-skill/", "网页介绍"],
+        "README.md": ["14 个显式触发", "source_id -> claim_id", "docs/QUICKSTART.md", "framework-CrossFrame_v5.1.5", "review_%E2%86%92_inquiry", "https://xi-kari.github.io/crossframe-skill/", "网页介绍", "install-codex.sh"],
         "CHANGELOG.md": ["v5.1.5", "v5.1.4", "v5.1.3", "site/", "GitHub Pages", "v5.0.2", "crossframe-history", "crossframe-inquiry", "source_id"],
         "docs/WHAT_IS_CROSSFRAME.md": ["CrossFrame 是一组给 AI 使用的中文结构思考 skills", "一个一分钟例子", "它不是什么", "最推荐怎么用", "crossframe-inquiry"],
-        "docs/QUICKSTART.md": ["install-codex.ps1", "--materials-only", "--source-docx"],
+        "docs/QUICKSTART.md": ["install-codex.ps1", "install-codex.sh", "--materials-only", "--source-docx"],
         "docs/CONCEPTS.md": ["Claim Ledger", "source_id", "Concept Contract"],
         "docs/WORKFLOWS.md": ["previous_context -> crossframe-inquiry", "claim ledger / claim-ledger-check", "纯致谢"],
         "docs/EXAMPLES.md": ["首页只使用安全模拟样例", "真实/高敏主题", "source_id", "claim_id", "evidence grade", "withdrawal condition", "publish_boundary", "历史草稿档", "crossframe-inquiry", "mini 输出示例"],
-        "docs/ADAPTERS.md": ["sync_skill_mirrors.py", "Codex", "Claude Code", "crossframe-history", "crossframe-inquiry", "纯致谢"],
+        "docs/ADAPTERS.md": ["sync_skill_mirrors.py", "install-codex.sh", "Codex", "Claude Code", "crossframe-history", "crossframe-inquiry", "纯致谢"],
         "docs/SAFETY_AND_LIMITS.md": ["默认不展示内部 reasoning", "工具调用参数"],
         "docs/FAQ.md": ["explicit-only", "--materials-only"],
     }

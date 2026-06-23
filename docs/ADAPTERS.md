@@ -2,7 +2,7 @@
 
 | 工具 | 入口 | 推荐用法 | 注意事项 |
 | --- | --- | --- | --- |
-| Codex | `skills/crossframe*/` | 安装 14 个 skill 后显式点名 `crossframe-suite` | 不被动触发 |
+| Codex | `skills/crossframe*/` | Windows 运行 `scripts/install-codex.ps1`，macOS / Linux 运行 `scripts/install-codex.sh`，安装后显式点名 `crossframe-suite` | 不被动触发 |
 | Claude Code | `.claude/skills/crossframe*/` + `.claude/commands/crossframe*.md` + `CLAUDE.md` | 使用 `/crossframe-suite`、`/crossframe-essay`、`/crossframe-history`、`/crossframe-inquiry` | 仓库命令和全局命令可同步 |
 | Gemini CLI | `GEMINI.md` | 读取仓库级上下文后按 skill 路由 | 不要一次加载全部 skill |
 | Cursor | `.cursor/rules/crossframe*.mdc` | 规则只做入口提示，主体仍读 `skills/` | `alwaysApply: false` |
@@ -27,3 +27,5 @@ python scripts\sync_skill_mirrors.py
 ```
 
 默认会同步仓库内 `skills/crossframe*` 到 `.claude/skills`。
+
+Codex 的两个安装脚本都会安装同一组 14 个 `crossframe-*` skills，并在覆盖已有目录前做临时备份；安装失败时回滚原目录。

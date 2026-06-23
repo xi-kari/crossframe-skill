@@ -64,8 +64,16 @@ CrossFrame Skill Suite 是一组给 AI agent 使用的中文结构诊断与成�
 
 Codex 安装：
 
+Windows PowerShell：
+
 ```powershell
 .\scripts\install-codex.ps1
+```
+
+macOS / Linux：
+
+```bash
+bash scripts/install-codex.sh
 ```
 
 Claude Code 项目内常用命令：
