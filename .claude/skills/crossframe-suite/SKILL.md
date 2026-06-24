@@ -61,6 +61,16 @@ crossframe -> [needed sibling skills] -> crossframe-essay(full-visible-v5-longfo
 
 `full-visible-v5-longform` 的意思是：v5.0 连续联读包、源结构保真、概念风险和反向条件要在底稿中可见；但这些后台检查不能吞掉正文。正文仍必须写成完整文章，有标题、铺陈、概念上升、现实回落、边界和余味。
 
+## 输出体积预算
+
+suite 支持 3 个可见体积档位。体积档位只控制前台展开程度，不降低事实边界、命题台账、概念契约、source anchor 和 review 要求。
+
+- `brief-visible`：调度提纲 + 关键判断 + 风险边界；适合用户明确要求短答、三句话、只要方向或只要下一步。
+- `standard-visible`：结构洞察底稿 + 短正文 + review 摘要；适合用户要可读输出但不需要完整长文。
+- `full-visible-v5-longform`：完整可见底稿 + 完整长文正文 + review；默认档位，适合公开文章、复杂公共/组织/历史/关系分析和需要给别人读的输出。
+
+若用户显式说“简短版 / brief-visible / 标准版 / standard-visible / 不要长文”，必须在调度提纲的 `输出档位` 中记录，并相应压缩正文体积；若用户未指定，保持 `full-visible-v5-longform`。
+
 `crossframe-review` 是质量闸，不是默认成文链路的最终写作者。只要文章层未关闭，最终可见交付必须仍然包含 `# 结构洞察底稿` 和 `# 文章正文`；质量闸通过时只追加极短结论或内部通过，不得只输出评审报告。只有用户明确要求“只要评审/完整评审报告/不要文章”，或质量闸发现硬失败且必须阻断发布时，才允许把评审报告作为主输出。
 
 只有在用户明确说“只要/不要文章/不要成文/短答/三句话/表格/清单/原始评审/原始案例库/原始备忘录/纯诊断/仅行动方案”时，才关闭默认文章层。此时应保留用户指定的交付物。
@@ -110,7 +120,7 @@ crossframe -> [needed sibling skills] -> crossframe-essay(full-visible-v5-longfo
 - 基础先行：多数复杂任务先由 `crossframe` 建立事实边界、尺度窗口、机制候选和判断档位。
 - 场景追加：只读取本次必要的专项 skill，不把全部 skill 一起触发。
 - 成文后置：写文章前先有结构洞察底稿；公共、组织、辩论、读书等专项判断先完成，再进入 `crossframe-essay`。
-- 默认成文：suite 被触发时，最终输出默认走 `crossframe-essay`，输出档位固定为 `full-visible-v5-longform`；专项产物先做，文章后置。
+- 默认成文：suite 被触发时，最终输出默认走 `crossframe-essay`，输出档位默认是 `full-visible-v5-longform`；用户显式要求 `brief-visible` 或 `standard-visible` 时可降体积，但不得省略事实边界、claim ledger、source anchor 和 review 摘要。
 - 纯追问例外：用户显式要继续追问、反证、补证、迁移、行动边界或收束，且已有上游 CrossFrame 输出时，不进入默认成文链路，不默认重新成文。
 - 完成态追问接管：完整链路完成后，后续实质用户输入默认不是新分析请求，而是上一轮输出的追问入口；必须追加 `crossframe-inquiry` 并复用上游上下文。纯致谢、确认收到、结束语或无内容回应只轻量收束，不自动展开追问。
 - 模式/角色先行：suite 开头只确认输出模式与角色；没有触发词时展示 `templates/mode-selection-dialog.md` 并等待回复，不直接开始。

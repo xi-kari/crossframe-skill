@@ -1,0 +1,15 @@
+{
+  "ledger_status": "missing",
+  "claims": [
+    {
+      "claim_id": "CL1",
+      "text": "台账标记缺失时不能同时保留 claims。",
+      "claim_type": "fact_boundary",
+      "support": ["source_anchor:S1"],
+      "judgment_grade": "light_observation",
+      "action_ceiling": "只能补台账",
+      "withdrawal_condition": "补齐台账后重审。",
+      "publish_boundary": "internal_only"
+    }
+  ]
+}

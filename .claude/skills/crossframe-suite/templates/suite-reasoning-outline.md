@@ -37,13 +37,13 @@
 - `主题敏感度`：写 `low / normal / vulnerable / high-stakes`；若为 `vulnerable` 或 `high-stakes`，说明先承接人或先审计的保护动作。
 - `正文声口`：按角色和 `topic_sensitivity` 写“中性分析体 / 中性决定体 / 答复体 / 评论体”；显式要求编辑口吻时说明覆盖原因。
 - `文章类型`：只有文章层开启时填写。用户未显式指定时，先生成结构洞察底稿，再完整展示文章类型选择器的九个选项，并给出推荐项和推荐理由；用户回复“默认/自动/都行”后写推荐项结果。
-- `输出档位`：suite 默认写 `full-visible-v5-longform`；只有用户显式要求短答、表格、清单、纯诊断或不要文章时写对应交付物。
+- `输出档位`：写 `brief-visible`、`standard-visible` 或 `full-visible-v5-longform`。suite 默认写 `full-visible-v5-longform`；用户显式要求短答、三句话、只要方向或只要下一步时写 `brief-visible`；用户要求标准版、不要长文或“可读但别太长”时写 `standard-visible`；用户要求表格、清单、纯诊断或不要文章时写对应交付物。
 - `不读取`：列 1-3 个容易误触发但本次不需要的 skill，防止全量加载。
 - `质量闸`：完整评审、轻量自检或无需评审，并写原因。
 - `追问层`：不触发 / 触发；若触发，写追问目标，如反证、补证、迁移、行动边界或收束。
 - `完成态追问接管`：当完整链路已经交付 `结构洞察底稿 + 文章正文 + review` 后，写 `post_completion_inquiry_armed=true`，并说明下一轮实质用户输入默认进入 `crossframe-inquiry`。若用户明确新任务、换主题、退出上文，或只是纯致谢/确认收到/结束语，则不展开 inquiry。
 
-只要用户没有显式关闭文章层，`输出档位` 默认写 `full-visible-v5-longform`，`工作流` 默认在必要专项 skill 后追加 `crossframe-essay -> crossframe-review`。调度说明要保留顺序：v5-read-state-capsule -> 源锚点完整性检查 -> claim ledger -> 结构洞察底稿 -> 文章类型选择器 -> 写作技法读取 -> 文章正文 -> 质量闸 -> post_completion_inquiry_armed。
+只要用户没有显式关闭文章层，`输出档位` 默认写 `full-visible-v5-longform`，`工作流` 默认在必要专项 skill 后追加 `crossframe-essay -> crossframe-review`。若用户显式选择 `brief-visible` 或 `standard-visible`，可以压缩前台体积，但调度说明仍要保留顺序：v5-read-state-capsule -> 源锚点完整性检查 -> claim ledger -> 结构洞察底稿 -> 文章类型选择器 -> 写作技法读取 -> 文章正文 -> 质量闸 -> post_completion_inquiry_armed。
 
 批量压测或控制器汇总时，不得把“文件级流程完整”写成总“通过”。必须拆开：
 

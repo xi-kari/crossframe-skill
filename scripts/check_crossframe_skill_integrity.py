@@ -290,8 +290,8 @@ def check_repo_adapters(repo: Path, label: str) -> None:
         ".roo/rules/crossframe.md": ["history research", "crossframe-inquiry", "post-completion inquiry", "pure acknowledgment/thanks signal"],
         ".windsurf/rules/crossframe.md": ["history research", "crossframe-inquiry", "post-completion inquiry", "pure acknowledgment/thanks signal"],
         "docs/ADAPTERS.md": ["crossframe-history", "crossframe-inquiry", "纯致谢"],
-        "scripts/install-codex.ps1": ["skills/crossframe-history", "skills/crossframe-inquiry"],
-        "scripts/install-codex.sh": ["skills/crossframe-history", "skills/crossframe-inquiry"],
+        "scripts/install-codex.ps1": ["skills/crossframe-history", "skills/crossframe-inquiry", "Invoke-CodexSkillInstaller", "Get-Command python"],
+        "scripts/install-codex.sh": ["skills/crossframe-history", "skills/crossframe-inquiry", "for skill_path in", "done"],
     }
     runtime_ref_adapters = set(adapter_needles) - {"docs/ADAPTERS.md", "scripts/install-codex.ps1", "scripts/install-codex.sh"}
     retired_adapter_refs = [
@@ -334,10 +334,16 @@ def check_repo_adapters(repo: Path, label: str) -> None:
     for ref in command_refs:
         require((repo / ref).exists(), f"{label}: CLAUDE.md references missing command: {ref}")
 
+    history_command = repo / ".claude" / "commands" / "crossframe-history.md"
+    require(history_command.exists(), f"{label}: missing Claude command for crossframe-history")
+    history_command_text = read(history_command)
+    for needle in ["# /crossframe-history", "This explicit command is allowed", "skills/crossframe-history/SKILL.md"]:
+        require(needle in history_command_text, f"{label}: crossframe-history command missing marker: {needle}")
+
     inquiry_command = repo / ".claude" / "commands" / "crossframe-inquiry.md"
     require(inquiry_command.exists(), f"{label}: missing Claude command for crossframe-inquiry")
     inquiry_command_text = read(inquiry_command)
-    for needle in ["# /crossframe-inquiry", "skills/crossframe-inquiry/SKILL.md", "post-completion follow-up layer"]:
+    for needle in ["# /crossframe-inquiry", "This explicit command is allowed", "skills/crossframe-inquiry/SKILL.md", "post-completion follow-up layer"]:
         require(needle in inquiry_command_text, f"{label}: crossframe-inquiry command missing marker: {needle}")
 
 
@@ -379,14 +385,16 @@ def check_public_release_docs(repo: Path, label: str) -> None:
             "公共证据",
             "data-demo=\"philosophy\"",
             "data-install=\"codex\"",
+            "id=\"install-code\">git clone https://github.com/xi-kari/crossframe-skill",
             "aria-controls=\"demo-panel\"",
             "role=\"tabpanel\" id=\"demo-panel\"",
             "一键安装脚本覆盖 Windows PowerShell 与 macOS / Linux Bash",
             "到对应 skills 目录",
+            "安装页签需要 JavaScript",
             "这个网页能直接运行 CrossFrame 吗？",
             "为什么首页示例都是虚构或匿名的？",
             "它会让 AI 变慢吗？",
-            "CrossFrame Skill Suite · v5.1.6 · explicit-only",
+            "CrossFrame Skill Suite · v5.1.7 · explicit-only",
         ],
         "site/styles.css": [
             "--bg: #f7f3ea",
@@ -418,6 +426,10 @@ def check_public_release_docs(repo: Path, label: str) -> None:
             "const installs",
             ".\\\\scripts\\\\install-codex.ps1",
             "bash scripts/install-codex.sh",
+            "keydown",
+            "ArrowRight",
+            "Home",
+            "tabIndex",
             "setDemo",
             "setInstall",
         ],
@@ -438,8 +450,14 @@ def check_public_release_docs(repo: Path, label: str) -> None:
             'python-version: "3.11"',
             "python scripts/check_crossframe_skill_integrity.py --repo .",
             "python scripts/check_source_continuity.py --materials-only --repo .",
+            "bash -n scripts/install-codex.sh",
+            "python -m py_compile scripts/*.py",
+            "Validate PowerShell installer syntax",
             "python -m json.tool skills/crossframe/schemas/claim-ledger.schema.json > /dev/null",
+            "python -m pip install jsonschema",
+            "python scripts/validate_claim_ledger_schema_fixtures.py --repo .",
             "python scripts/sync_skill_mirrors.py --check",
+            "python scripts/package_crossframe_skill.py --repo . --version ci",
             "git diff --check",
         ],
     }
@@ -462,12 +480,12 @@ def check_public_release_docs(repo: Path, label: str) -> None:
         require(retired_demo_marker not in public_page_text, f"{label}: public page still has sensitive landing demo marker: {retired_demo_marker}")
 
     required_docs = {
-        "README.md": ["14 个显式触发", "source_id -> claim_id", "docs/QUICKSTART.md", "framework-CrossFrame_v5.1.6", "review_%E2%86%92_inquiry", "https://xi-kari.github.io/crossframe-skill/", "网页介绍", "install-codex.sh"],
-        "CHANGELOG.md": ["v5.1.6", "v5.1.5", "v5.1.4", "v5.1.3", "site/", "GitHub Pages", "v5.0.2", "crossframe-history", "crossframe-inquiry", "source_id"],
+        "README.md": ["14 个 `crossframe-*` skills", "安全边界先行", "source_id -> claim_id", "docs/QUICKSTART.md", "framework-CrossFrame_v5.1.7", "review_%E2%86%92_inquiry", "https://xi-kari.github.io/crossframe-skill/", "网页介绍", "install-codex.sh", "validate_claim_ledger_schema_fixtures.py", "sync_skill_mirrors.py --check", "bash -n scripts/install-codex.sh", "python -m py_compile scripts/*.py", "brief-visible", "standard-visible"],
+        "CHANGELOG.md": ["v5.1.7", "v5.1.6", "v5.1.5", "v5.1.4", "v5.1.3", "site/", "GitHub Pages", "v5.0.2", "crossframe-history", "crossframe-inquiry", "source_id"],
         "docs/WHAT_IS_CROSSFRAME.md": ["CrossFrame 是一组给 AI 使用的中文结构思考 skills", "一个一分钟例子", "它不是什么", "最推荐怎么用", "crossframe-inquiry"],
-        "docs/QUICKSTART.md": ["install-codex.ps1", "install-codex.sh", "--materials-only", "--source-docx"],
+        "docs/QUICKSTART.md": ["install-codex.ps1", "install-codex.sh", "--materials-only", "--source-docx", "validate_claim_ledger_schema_fixtures.py", "sync_skill_mirrors.py --check", "bash -n scripts/install-codex.sh", "python -m py_compile scripts/*.py"],
         "docs/CONCEPTS.md": ["Claim Ledger", "source_id", "Concept Contract"],
-        "docs/WORKFLOWS.md": ["previous_context -> crossframe-inquiry", "claim ledger / claim-ledger-check", "纯致谢"],
+        "docs/WORKFLOWS.md": ["previous_context -> crossframe-inquiry", "claim ledger / claim-ledger-check", "纯致谢", "brief-visible", "standard-visible"],
         "docs/EXAMPLES.md": ["首页只使用安全模拟样例", "真实/高敏主题", "source_id", "claim_id", "evidence grade", "withdrawal condition", "publish_boundary", "历史草稿档", "crossframe-inquiry", "mini 输出示例"],
         "docs/ADAPTERS.md": ["sync_skill_mirrors.py", "install-codex.sh", "Codex", "Claude Code", "crossframe-history", "crossframe-inquiry", "纯致谢"],
         "docs/SAFETY_AND_LIMITS.md": ["默认不展示内部 reasoning", "工具调用参数"],
@@ -513,12 +531,13 @@ def check_public_release_docs(repo: Path, label: str) -> None:
     for rel in [
         "scripts/sync_skill_mirrors.py",
         "scripts/package_crossframe_skill.py",
+        "scripts/validate_claim_ledger_schema_fixtures.py",
     ]:
         require((repo / rel).exists(), f"{label}: missing release maintenance script: {rel}")
 
     package_script = read(repo / "scripts" / "package_crossframe_skill.py")
     require('"site"' in package_script, f"{label}: package script does not include site directory")
-    require('default="v5.1.6"' in package_script, f"{label}: package script default version is not v5.1.6")
+    require('default="v5.1.7"' in package_script, f"{label}: package script default version is not v5.1.7")
 
     require(not (repo / "scripts" / "check_v2_continuity.py").exists(), f"{label}: retired v2 checker still exists")
     require(not (repo / "scripts" / "generate_v2_continuity.py").exists(), f"{label}: retired v2 generator still exists")
@@ -559,10 +578,20 @@ def check_claim_ledger(root: Path, label: str) -> None:
     template = root / "crossframe" / "templates" / "claim-ledger.md"
     worksheet = root / "crossframe" / "worksheets" / "claim-ledger-check.md"
     schema = root / "crossframe" / "schemas" / "claim-ledger.schema.json"
+    fixture_dir = root / "crossframe" / "schemas" / "fixtures"
     contracts = root / "crossframe" / "references" / "concept-contracts" / "core-contracts.md"
 
     for path in [template, worksheet, schema, contracts]:
         require(path.exists(), f"{label}: missing claim-ledger hardening file: {path.relative_to(root)}")
+    require(fixture_dir.is_dir(), f"{label}: missing claim-ledger schema fixtures directory")
+    for fixture in [
+        "valid-basic-ledger.json",
+        "invalid-stronger-without-handling.json",
+        "invalid-mechanism-without-id.json",
+        "invalid-strong-judgment-without-source-ledger.json",
+        "invalid-missing-ledger-with-claims.json",
+    ]:
+        require((fixture_dir / fixture).exists(), f"{label}: missing claim-ledger schema fixture: {fixture}")
 
     template_text = read(template)
     for field in CLAIM_LEDGER_FIELDS:
@@ -633,6 +662,8 @@ def check_claim_ledger(root: Path, label: str) -> None:
     suite_skill = read(root / "crossframe-suite" / "SKILL.md")
     for needle in ["命题台账归属", "crossframe-review` 必须抽句回指 `claim_id`"]:
         require(needle in suite_skill, f"{label}: suite skill missing claim ledger routing marker: {needle}")
+    for needle in ["## 输出体积预算", "brief-visible", "standard-visible", "full-visible-v5-longform"]:
+        require(needle in suite_skill, f"{label}: suite skill missing output volume marker: {needle}")
     for needle in ["- 读态胶囊：", "- 源锚点检查：", "- 命题台账："]:
         require(needle in suite_skill, f"{label}: suite skill output outline missing field: {needle}")
 
@@ -643,12 +674,16 @@ def check_claim_ledger(root: Path, label: str) -> None:
     suite_outline = read(root / "crossframe-suite" / "templates" / "suite-reasoning-outline.md")
     for needle in ["- 命题台账：", "正文和 review 必须回指 `claim_id`", "源锚点完整性检查 -> claim ledger -> 结构洞察底稿"]:
         require(needle in suite_outline, f"{label}: suite outline missing claim ledger marker: {needle}")
+    for needle in ["brief-visible", "standard-visible", "用户显式选择"]:
+        require(needle in suite_outline, f"{label}: suite outline missing output volume marker: {needle}")
     for needle in ["胶囊、来源台账、命题台账、技法", "中心命题、命题台账、来源台账、胶囊锚点、概念契约"]:
         require(needle in suite_outline, f"{label}: suite outline pass definition missing claim ledger marker: {needle}")
 
     workflow_map = read(root / "crossframe-suite" / "references" / "workflow-routing-map.md")
     for needle in ["claim-ledger-check", "claim ledger", "voice_mode"]:
         require(needle in workflow_map, f"{label}: workflow routing map missing claim ledger / voice_mode marker: {needle}")
+    for needle in ["### 输出体积预算", "brief-visible", "standard-visible"]:
+        require(needle in workflow_map, f"{label}: workflow routing map missing output volume marker: {needle}")
     require("editorial-base" not in workflow_map, f"{label}: workflow routing map still contains retired editorial-base voice marker")
 
     reasoning_outline = read(root / "crossframe" / "templates" / "reasoning-outline-output.md")
@@ -723,8 +758,26 @@ def check_claim_ledger(root: Path, label: str) -> None:
             stronger_requires_handling = True
     require(stronger_requires_handling, f"{label}: body_mappings stronger_than_claim must require handling")
 
+    schema_validator = schema.parents[3] / "scripts" / "validate_claim_ledger_schema_fixtures.py"
+    if schema_validator.exists():
+        validator_text = read(schema_validator)
+        for needle in ["Draft202012Validator", "valid-", "invalid-", "iter_errors"]:
+            require(needle in validator_text, f"{label}: claim ledger fixture validator missing marker: {needle}")
+
 
 def check_history_adapter(root: Path, label: str) -> None:
+    history_skill = read(root / "crossframe-history" / "SKILL.md")
+    for needle in [
+        "trigger: explicit-or-suite",
+        "不应被普通任务隐式触发",
+        "允许用户显式调用 `/crossframe-history`",
+    ]:
+        require(needle in history_skill, f"{label}: history skill trigger semantics missing marker: {needle}")
+
+    history_agent = read(root / "crossframe-history" / "agents" / "openai.yaml")
+    for needle in ["allow_implicit_invocation: false", "explicit_command_allowed: true", "suite_routing_allowed: true"]:
+        require(needle in history_agent, f"{label}: history agent policy missing marker: {needle}")
+
     suite_dispatch = read(root / "crossframe-suite" / "protocols" / "suite-dispatch-protocol.md")
     for needle in [
         "`history`：历史研究",
@@ -767,8 +820,9 @@ def check_inquiry_layer(root: Path, label: str) -> None:
     skill_text = read(inquiry_root / "SKILL.md")
     for needle in [
         "name: crossframe-inquiry",
-        "trigger: suite-only",
-        "不独立响应",
+        "trigger: explicit-or-suite",
+        "不在普通任务中隐式启动",
+        "用户显式调用 `/crossframe-inquiry`",
         "claim ledger",
         "mechanism_candidates",
         "concept_contracts",
@@ -790,6 +844,10 @@ def check_inquiry_layer(root: Path, label: str) -> None:
     ]:
         require(needle in skill_text, f"{label}: crossframe-inquiry SKILL.md missing marker: {needle}")
     require("3-7 个追问点" not in skill_text, f"{label}: crossframe-inquiry SKILL.md still allows 3-7 inquiry points")
+
+    agent_text = read(inquiry_root / "agents" / "openai.yaml")
+    for needle in ["allow_implicit_invocation: false", "explicit_command_allowed: true", "suite_routing_allowed: true"]:
+        require(needle in agent_text, f"{label}: crossframe-inquiry agent policy missing marker: {needle}")
 
     protocol = read(inquiry_root / "protocols" / "inquiry-protocol.md")
     for needle in [

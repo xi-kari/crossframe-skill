@@ -99,6 +99,7 @@ function setDemo(key) {
     const active = button.dataset.demo === key;
     button.classList.toggle("is-active", active);
     button.setAttribute("aria-selected", String(active));
+    button.tabIndex = active ? 0 : -1;
   });
 
   document.getElementById("demo-input").textContent = demo.input;
@@ -124,18 +125,42 @@ function setInstall(key) {
     const active = button.dataset.install === key;
     button.classList.toggle("is-active", active);
     button.setAttribute("aria-selected", String(active));
+    button.tabIndex = active ? 0 : -1;
   });
 
   document.getElementById("install-code").textContent = code;
 }
 
-document.querySelectorAll(".demo-tab").forEach((button) => {
-  button.addEventListener("click", () => setDemo(button.dataset.demo));
-});
+function bindTabs(selector, dataKey, setActive) {
+  const tabs = [...document.querySelectorAll(selector)];
+  const moveKeys = ["ArrowRight", "ArrowDown", "ArrowLeft", "ArrowUp", "Home", "End"];
 
-document.querySelectorAll(".install-tab").forEach((button) => {
-  button.addEventListener("click", () => setInstall(button.dataset.install));
-});
+  tabs.forEach((button, index) => {
+    button.addEventListener("click", () => setActive(button.dataset[dataKey]));
+    button.addEventListener("keydown", (event) => {
+      if (!moveKeys.includes(event.key)) return;
+
+      event.preventDefault();
+      let nextIndex = index;
+      if (event.key === "ArrowRight" || event.key === "ArrowDown") {
+        nextIndex = (index + 1) % tabs.length;
+      } else if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
+        nextIndex = (index - 1 + tabs.length) % tabs.length;
+      } else if (event.key === "Home") {
+        nextIndex = 0;
+      } else if (event.key === "End") {
+        nextIndex = tabs.length - 1;
+      }
+
+      const next = tabs[nextIndex];
+      setActive(next.dataset[dataKey]);
+      next.focus();
+    });
+  });
+}
+
+bindTabs(".demo-tab", "demo", setDemo);
+bindTabs(".install-tab", "install", setInstall);
 
 setDemo("philosophy");
 setInstall("codex");

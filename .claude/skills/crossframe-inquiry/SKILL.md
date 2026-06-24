@@ -1,7 +1,7 @@
 ---
 name: crossframe-inquiry
-description: 经由 crossframe-suite 调度使用，不独立响应。把 CrossFrame 诊断、文章、review、claim ledger 和机制候选转化为结构追问，帮助用户继续深思、反证、补证、迁移应用或收束。
-trigger: suite-only
+description: 经由 crossframe-suite 完成态接管或用户显式命令使用，不隐式响应。把 CrossFrame 诊断、文章、review、claim ledger 和机制候选转化为结构追问，帮助用户继续深思、反证、补证、迁移应用或收束。
+trigger: explicit-or-suite
 disable-model-invocation: true
 ---
 
@@ -15,9 +15,10 @@ disable-model-invocation: true
 
 ## 启动条件
 
-只在 suite 调度下启动：
+不在普通任务中隐式启动；只在以下条件下启动：
 
 - 上一轮 `crossframe-suite` 已完成 `crossframe -> ... -> crossframe-essay -> crossframe-review`，并写入 `post_completion_inquiry_armed=true`；此后完成态后续输入默认进入本 skill。
+- 用户显式调用 `/crossframe-inquiry`、`crossframe-inquiry`，且当前上下文已有 CrossFrame 输出、文章、review、claim ledger 或机制候选可供追问。
 - 用户在 CrossFrame 输出后问“继续追问我”“我该继续想什么”“帮我继续思考”“更深一点”“下一步怎么分析”。
 - 用户反对结论、要求反证、补证、迁移到另一个案例、行动边界或自我定位。
 - review 后仍有未闭合 claim、证据缺口、概念契约 partial/fail、正文强度风险或可迁移问题。

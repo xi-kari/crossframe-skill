@@ -1,0 +1,67 @@
+{
+  "ledger_status": "drafted",
+  "claims": [
+    {
+      "claim_id": "CL1",
+      "text": "这个输出只能作为开放断言，不能写成终局判断。",
+      "claim_type": "open_assertion",
+      "support": ["source_anchor:S1"],
+      "judgment_grade": "open_assertion",
+      "action_ceiling": "只能补证或降档表达",
+      "withdrawal_condition": "如果补充来源不能支持该方向判断，则撤回。",
+      "publish_boundary": "publishable_with_boundary"
+    },
+    {
+      "claim_id": "CL2",
+      "text": "复盘失效可能来自反馈写回链断裂。",
+      "claim_type": "mechanism_candidate",
+      "support": ["source_anchor:S2"],
+      "mechanism_id": "M1",
+      "judgment_grade": "full_diagnosis",
+      "action_ceiling": "只能提出低风险试点",
+      "withdrawal_condition": "如果反馈写回链有明确闭环证据，则撤回该机制候选。",
+      "publish_boundary": "internal_only"
+    },
+    {
+      "claim_id": "CL3",
+      "text": "这里使用开放断言概念，必须保留撤回条件。",
+      "claim_type": "concept_use",
+      "support": ["concept_contract:open_assertion"],
+      "concept_contract": "contract-open_assertion",
+      "judgment_grade": "open_assertion",
+      "action_ceiling": "只能解释概念边界",
+      "withdrawal_condition": "如果正文不再使用开放断言概念，则删除。",
+      "publish_boundary": "publishable_with_boundary"
+    },
+    {
+      "claim_id": "CL4",
+      "text": "该强判断仅在来源台账 S4 可核验时成立。",
+      "claim_type": "judgment_boundary",
+      "support": ["source_anchor:S4"],
+      "source_ledger_id": "S4",
+      "judgment_grade": "strong_judgment",
+      "action_ceiling": "不得超过来源可证明范围",
+      "withdrawal_condition": "如果 S4 无法核验或不能支持该判断，则撤回。",
+      "publish_boundary": "blocked"
+    }
+  ],
+  "body_mappings": [
+    {
+      "body_excerpt": "这个输出只能作为开放断言。",
+      "claim_id": "CL1",
+      "mapping_status": "same_strength"
+    },
+    {
+      "body_excerpt": "这个组织必须公开追责。",
+      "claim_id": "CL4",
+      "mapping_status": "stronger_than_claim",
+      "handling": "needs_rewrite"
+    },
+    {
+      "body_excerpt": "这只是一个没有命题支撑的表达性过渡句。",
+      "claim_id": null,
+      "mapping_status": "unmapped",
+      "handling": "mark_expression_translation"
+    }
+  ]
+}

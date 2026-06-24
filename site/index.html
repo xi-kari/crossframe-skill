@@ -327,11 +327,24 @@
             <button class="install-tab" type="button" role="tab" aria-selected="false" aria-controls="install-panel" data-install="claude">Claude Code</button>
             <button class="install-tab" type="button" role="tab" aria-selected="false" aria-controls="install-panel" data-install="agents">Other Agents</button>
           </div>
-          <pre class="code-panel" role="tabpanel" id="install-panel"><code id="install-code"></code></pre>
+          <pre class="code-panel" role="tabpanel" id="install-panel"><code id="install-code">git clone https://github.com/xi-kari/crossframe-skill
+cd crossframe-skill
+
+# Windows PowerShell
+.\scripts\install-codex.ps1
+
+# macOS / Linux
+bash scripts/install-codex.sh
+
+# Start with:
+/crossframe-suite 分析这个团队为什么复盘很多但没有真实修复</code></pre>
         </div>
         <p class="install-note">
           一键安装脚本覆盖 Windows PowerShell 与 macOS / Linux Bash；其它 agent 可按 docs/ADAPTERS.md 手动复制 skills/crossframe* 到对应 skills 目录。
         </p>
+        <noscript>
+          <p class="noscript-note">安装页签需要 JavaScript；无 JavaScript 时可先使用默认 Codex 命令，或在 GitHub README 和 docs 中查看完整说明。</p>
+        </noscript>
       </section>
 
       <section class="section-band faq" aria-labelledby="faq-title">
@@ -369,7 +382,7 @@
     </main>
 
     <footer class="site-footer">
-      <span>CrossFrame Skill Suite · v5.1.6 · explicit-only</span>
+      <span>CrossFrame Skill Suite · v5.1.7 · explicit-only</span>
       <a href="https://github.com/xi-kari/crossframe-skill">GitHub</a>
       <a href="https://github.com/xi-kari/crossframe-skill/blob/main/docs/QUICKSTART.md">Quickstart</a>
       <a href="https://github.com/xi-kari/crossframe-skill/blob/main/LICENSE">MIT License</a>

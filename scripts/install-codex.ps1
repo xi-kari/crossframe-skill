@@ -5,9 +5,28 @@ param(
 $ErrorActionPreference = "Stop"
 
 $installer = Join-Path $HOME ".codex\skills\.system\skill-installer\scripts\install-skill-from-github.py"
+$pyLauncher = Get-Command py -ErrorAction SilentlyContinue
+$pythonExe = Get-Command python -ErrorAction SilentlyContinue
 
 if (-not (Test-Path -LiteralPath $installer)) {
   throw "Codex skill installer not found: $installer"
+}
+
+if (-not $pyLauncher -and -not $pythonExe) {
+  throw "Python not found. Install Python Launcher `py` or make `python` available on PATH."
+}
+
+function Invoke-CodexSkillInstaller {
+  param(
+    [string]$SkillPath
+  )
+
+  if ($pyLauncher) {
+    & $pyLauncher.Source -3 $installer --repo $Repo --path $SkillPath
+    return
+  }
+
+  & $pythonExe.Source $installer --repo $Repo --path $SkillPath
 }
 
 $skills = @(
@@ -45,7 +64,7 @@ foreach ($skillPath in $skills) {
   }
 
   try {
-    py -3 $installer --repo $Repo --path $skillPath
+    Invoke-CodexSkillInstaller -SkillPath $skillPath
     if ($LASTEXITCODE -ne 0) {
       throw "Installer failed for $skillName with exit code $LASTEXITCODE"
     }

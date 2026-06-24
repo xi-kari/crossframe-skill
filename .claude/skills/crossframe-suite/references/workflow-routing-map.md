@@ -70,6 +70,16 @@ crossframe -> source-continuity-check -> v5-read-state-capsule -> source-anchor-
 
 `full-visible-v5-longform` 表示底稿完整可见，至少展示对象、事实边界、尺度窗口、机制候选、v5 连续联读包、源结构保真、概念风险、反向条件、声口方案和文章转译方案；正文默认 1200-2200 中文字，有标题、铺陈、概念上升、经典/理论参照或思想映射、现实回落、边界段和余味结尾。
 
+### 输出体积预算
+
+| 档位 | 可见内容 | 适用信号 |
+| --- | --- | --- |
+| `brief-visible` | 调度提纲 + 关键判断 + 风险边界 | “短答 / 三句话 / 只要方向 / 只要下一步 / brief-visible” |
+| `standard-visible` | 结构洞察底稿 + 短正文 + review 摘要 | “标准版 / 不要长文 / 给我一个可读但别太长的版本 / standard-visible” |
+| `full-visible-v5-longform` | 完整可见底稿 + 完整长文正文 + review | 未指定时默认；公开文章、复杂公共/组织/历史/关系分析、给别人读的输出 |
+
+体积档位不改变底层质量要求。即使是 `brief-visible`，也必须保留事实边界、关键 `claim_id`、判断档位、撤回条件和行动上限；即使是 `standard-visible`，也不得把 review 摘要删成“已通过”。
+
 关闭默认文章层的信号：
 
 - “只要评审/只要原始评审/不要文章”

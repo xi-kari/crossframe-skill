@@ -26,11 +26,55 @@ jobs:
       - name: Validate source continuity materials
         run: python scripts/check_source_continuity.py --materials-only --repo .
 
+      - name: Validate script syntax
+        run: |
+          bash -n scripts/install-codex.sh
+          python -m py_compile scripts/*.py
+
+      - name: Validate PowerShell installer syntax
+        shell: pwsh
+        run: |
+          $tokens = $null
+          $errors = $null
+          [System.Management.Automation.Language.Parser]::ParseFile("scripts/install-codex.ps1", [ref] $tokens, [ref] $errors) > $null
+          if ($errors.Count -gt 0) {
+            $errors | ForEach-Object { Write-Error $_ }
+            exit 1
+          }
+
       - name: Validate claim ledger schema JSON
         run: python -m json.tool skills/crossframe/schemas/claim-ledger.schema.json > /dev/null
 
+      - name: Install schema validator
+        run: python -m pip install jsonschema
+
+      - name: Validate claim ledger schema fixtures
+        run: python scripts/validate_claim_ledger_schema_fixtures.py --repo .
+
       - name: Check mirror sync
         run: python scripts/sync_skill_mirrors.py --check
+
+      - name: Package smoke test
+        run: |
+          python scripts/package_crossframe_skill.py --repo . --version ci
+          python - <<'PY'
+          import zipfile
+          from pathlib import Path
+
+          zips = sorted(Path("outputs").glob("crossframe-skill-suite-ci-*.zip"))
+          if not zips:
+              raise SystemExit("package smoke did not create a ci zip")
+          with zipfile.ZipFile(zips[-1]) as archive:
+              names = set(archive.namelist())
+          for name in [
+              "scripts/install-codex.sh",
+              "scripts/install-codex.ps1",
+              ".github/workflows/verify.yml",
+          ]:
+              if name not in names:
+                  raise SystemExit(f"package smoke missing: {name}")
+          print(f"ok: package smoke -> {zips[-1]}")
+          PY
 
       - name: Git whitespace check
         run: git diff --check

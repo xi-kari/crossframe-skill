@@ -55,10 +55,15 @@ docs/ADAPTERS.md
 
 公开仓库日常验证不需要本机私有 DOCX：
 
-```powershell
-python scripts\check_crossframe_skill_integrity.py --repo .
-python scripts\check_source_continuity.py --materials-only --repo .
-python -m json.tool skills\crossframe\schemas\claim-ledger.schema.json
+```bash
+python scripts/check_crossframe_skill_integrity.py --repo .
+python scripts/check_source_continuity.py --materials-only --repo .
+python -m json.tool skills/crossframe/schemas/claim-ledger.schema.json
+python -m pip install jsonschema
+python scripts/validate_claim_ledger_schema_fixtures.py --repo .
+python scripts/sync_skill_mirrors.py --check
+bash -n scripts/install-codex.sh
+python -m py_compile scripts/*.py
 git diff --check
 ```
 

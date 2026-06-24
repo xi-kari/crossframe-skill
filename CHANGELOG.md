@@ -2,6 +2,24 @@
 
 ## Unreleased
 
+## v5.1.7 - 2026-06-24
+
+### Added
+
+- 新增 claim ledger schema fixtures 与 `scripts/validate_claim_ledger_schema_fixtures.py`，用 `jsonschema` 校验好样例通过、坏样例失败。
+- GitHub Actions verify workflow 新增 Bash/Python/PowerShell 脚本语法检查、schema fixture 校验和发布包烟测。
+
+### Changed
+
+- `crossframe-history` 与 `crossframe-inquiry` 触发语义统一为 `explicit-or-suite`：允许显式命令或 suite 路由，不允许普通任务隐式触发。
+- README、Quickstart 与 WORKFLOWS 同步补齐本地验证命令、安全边界和输出体积预算。
+- `scripts/install-codex.ps1` 增加 `py -3` / `python` fallback。
+- 网站 Demo / Install tabs 增加方向键、Home、End 键盘切换支持，并为 no-JS 场景保留可读提示和默认安装命令。
+
+### Verification
+
+- 完整性校验新增 CI 覆盖、schema fixtures、explicit-or-suite 语义、安装脚本 fallback 和网站键盘 tab 检查。
+
 ## v5.1.6 - 2026-06-23
 
 ### Added

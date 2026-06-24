@@ -1,0 +1,15 @@
+{
+  "ledger_status": "drafted",
+  "claims": [
+    {
+      "claim_id": "CL1",
+      "text": "该强判断已经可以发布。",
+      "claim_type": "judgment_boundary",
+      "support": ["source_anchor:S1"],
+      "judgment_grade": "strong_judgment",
+      "action_ceiling": "不得超过来源可证明范围",
+      "withdrawal_condition": "如果来源无法核验，则撤回。",
+      "publish_boundary": "blocked"
+    }
+  ]
+}

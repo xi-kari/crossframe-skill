@@ -1,0 +1,15 @@
+{
+  "ledger_status": "drafted",
+  "claims": [
+    {
+      "claim_id": "CL1",
+      "text": "复盘失效可能来自反馈写回链断裂。",
+      "claim_type": "mechanism_candidate",
+      "support": ["source_anchor:S1"],
+      "judgment_grade": "full_diagnosis",
+      "action_ceiling": "只能提出低风险试点",
+      "withdrawal_condition": "如果反馈写回链有闭环证据，则撤回。",
+      "publish_boundary": "internal_only"
+    }
+  ]
+}

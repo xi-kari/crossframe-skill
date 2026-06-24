@@ -4,6 +4,8 @@
 
 文章类型不在本选择器中选择。若本次工作流最终进入 `crossframe-essay`，并且用户没有显式关闭文章层，也没有显式指定文章类型，必须先生成结构洞察底稿，再在正文生成前展示 `../crossframe-essay/templates/article-type-selection-dialog.md`。
 
+输出体积预算也不在 `2+1` 模式/角色选择中混选。用户可以另行显式指定 `brief-visible`、`standard-visible` 或 `full-visible-v5-longform`；未指定时由 suite 默认采用 `full-visible-v5-longform`。
+
 ## 一、输出模式（4 档）
 
 | 模式 | 触发词 | 内部行为 |

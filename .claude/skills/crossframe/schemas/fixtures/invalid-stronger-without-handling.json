@@ -1,0 +1,22 @@
+{
+  "ledger_status": "drafted",
+  "claims": [
+    {
+      "claim_id": "CL1",
+      "text": "这个组织必须公开追责。",
+      "claim_type": "judgment_boundary",
+      "support": ["source_anchor:S1"],
+      "judgment_grade": "open_assertion",
+      "action_ceiling": "只能补证或降档",
+      "withdrawal_condition": "如果来源不能支持公开追责，则撤回。",
+      "publish_boundary": "blocked"
+    }
+  ],
+  "body_mappings": [
+    {
+      "body_excerpt": "这个组织必须公开追责。",
+      "claim_id": "CL1",
+      "mapping_status": "stronger_than_claim"
+    }
+  ]
+}

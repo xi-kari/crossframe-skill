@@ -1,12 +1,12 @@
 ---
 name: crossframe-history
-description: 经由 crossframe-suite 调度使用，不独立响应。历史、文明连续史、王朝制度、史料闭合、archive-access/FOIA backlog 与历史领域接口边界的中文专项 skill。
-trigger: suite-only
+description: 经由 crossframe-suite 调度或用户显式命令使用，不隐式响应。历史、文明连续史、王朝制度、史料闭合、archive-access/FOIA backlog 与历史领域接口边界的中文专项 skill。
+trigger: explicit-or-suite
 ---
 
 # CrossFrame History
 
-> **本 skill 不独立触发。** 所有 CrossFrame 任务统一从 `crossframe-suite` 入口调度；只有用户明确点名 `/crossframe-history`、`crossframe-history` 或 suite 路由到历史领域时才读取本 skill。
+> **本 skill 不应被普通任务隐式触发。** 推荐从 `crossframe-suite` 入口调度；但允许用户显式调用 `/crossframe-history`、`crossframe-history`，或由 suite 路由到历史领域时读取本 skill。
 
 CrossFrame History 是 `crossframe` 的历史/文明连续史领域接口层。它负责把 v5 主干变量接入历史材料、断代尺度、史料等级、制度连续性/断裂和 archive-access/FOIA backlog；它不发布正式历史适配器，不修改 v5 主干变量，不把本地 C5 收敛写成百科式历史完成。
 
