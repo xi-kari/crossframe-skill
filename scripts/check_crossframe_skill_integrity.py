@@ -1969,6 +1969,66 @@ def check_quality_gate_hardening(root: Path, label: str) -> None:
         require(needle in review_rubric, f"{label}: review rubric missing pass-boundary marker: {needle}")
 
 
+def check_expression_layer_hardening(root: Path, label: str) -> None:
+    crossframe_skill = read(root / "crossframe" / "SKILL.md")
+    for needle in [
+        "先输出现实诊断第一段，再给可见结构映射提纲",
+        "现实诊断第一段必须回答",
+        "结构映射提纲必须包含",
+        "现实中发生了什么、为什么卡住、谁承担成本和下一步看什么",
+    ]:
+        require(needle in crossframe_skill, f"{label}: crossframe SKILL missing expression-layer marker: {needle}")
+    for retired in ["先输出可见推理提纲", "先展示一个“推理提纲”", "默认输出前置一个简短提纲"]:
+        require(retired not in crossframe_skill, f"{label}: crossframe SKILL still has retired expression order: {retired}")
+
+    user_language = read(root / "crossframe" / "templates" / "user-facing-language.md")
+    for needle in [
+        "先给现实诊断第一段",
+        "再给结构映射提纲",
+        "第一段必须回答现实中发生了什么、为什么卡住、谁在承担成本、下一步看什么信号或行动边界",
+    ]:
+        require(needle in user_language, f"{label}: user-facing language missing expression-layer marker: {needle}")
+
+    output_templates = [
+        "concept-explanation-output.md",
+        "expression-translation-output.md",
+        "field-dissociation-output.md",
+        "framework-boundary-output.md",
+        "full-diagnosis-output.md",
+        "governance-continuity-output.md",
+        "healing-transfer-output.md",
+        "high-reflexivity-output.md",
+        "inference-output.md",
+        "intimate-relationship-output.md",
+        "large-scale-stress-output.md",
+        "lifecycle-output.md",
+        "open-assertion-output.md",
+        "progression-output.md",
+        "public-institution-output.md",
+        "quick-diagnosis-output.md",
+        "reasoning-outline-output.md",
+        "strong-judgment-output.md",
+    ]
+    for filename in output_templates:
+        rel = f"crossframe/templates/{filename}"
+        text = read(root / rel)
+        require("现实第一段" in text, f"{label}: {rel} missing reality-first section")
+        require("结构映射提纲" in text, f"{label}: {rel} missing structure-mapping outline")
+        first_reality = text.find("现实第一段")
+        first_mapping = text.find("结构映射提纲")
+        require(first_reality != -1 and first_mapping != -1 and first_reality < first_mapping, f"{label}: {rel} must place reality-first before structure-mapping")
+        for retired in ["## 推理提纲", "## 0. 推理提纲", "**推理提纲**", "## 先说人话"]:
+            require(retired not in text, f"{label}: {rel} still has retired expression heading: {retired}")
+
+    smoke = read(root / "crossframe" / "evals" / "crossframe-smoke-tests.md")
+    for needle in ["现实诊断第一段优先", "结构映射提纲必须在现实第一段之后", "第一段删掉术语后无法独立成立"]:
+        require(needle in smoke, f"{label}: crossframe smoke tests missing expression-layer regression: {needle}")
+
+    anti_imitation = read(root / "crossframe" / "evals" / "crossframe-anti-imitation-tests.md")
+    for needle in ["先列提纲但没有现实第一段", "结构映射提纲只能放在现实第一段之后", "不得用“推理提纲 / 承接 / 回流 / 开放断言”作为第一屏入口"]:
+        require(needle in anti_imitation, f"{label}: anti-imitation tests missing expression-layer regression: {needle}")
+
+
 def check_root(root: Path, label: str) -> None:
     require(root.is_dir(), f"{label}: skill root does not exist: {root}")
     check_no_retired_dirs(root, label)
@@ -1987,6 +2047,7 @@ def check_root(root: Path, label: str) -> None:
     check_techniques(root, label)
     check_evals(root, label)
     check_quality_gate_hardening(root, label)
+    check_expression_layer_hardening(root, label)
     check_freeze_cleanup(root, label)
     check_no_trailing_whitespace(root, label)
 
