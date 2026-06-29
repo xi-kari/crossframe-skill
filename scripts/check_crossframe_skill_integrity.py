@@ -215,6 +215,18 @@ def joined_markdown(path: Path) -> str:
     return "\n".join(read(child) for child in sorted(path.glob("*.md")))
 
 
+def iter_schema_object_nodes(value, path: str = "root"):
+    if isinstance(value, dict):
+        # Predicate schemas under if/contains intentionally stay open so they can match full records.
+        if value.get("type") == "object" and "/contains" not in path and "/if" not in path:
+            yield path, value
+        for key, child in value.items():
+            yield from iter_schema_object_nodes(child, f"{path}/{key}")
+    elif isinstance(value, list):
+        for idx, child in enumerate(value):
+            yield from iter_schema_object_nodes(child, f"{path}/{idx}")
+
+
 def iter_text_files(root: Path):
     suffixes = {".md", ".py", ".json", ".txt", ".ps1", ".sh", ".yaml", ".yml"}
     for skill in CURRENT_CROSSFRAME_SKILLS:
@@ -454,8 +466,14 @@ def check_public_release_docs(repo: Path, label: str) -> None:
             "python -m py_compile scripts/*.py",
             "Validate PowerShell installer syntax",
             "python -m json.tool skills/crossframe/schemas/claim-ledger.schema.json > /dev/null",
+            "python -m json.tool skills/crossframe/schemas/seven-gates-quant.schema.json > /dev/null",
+            "python -m json.tool skills/crossframe/schemas/evidence-ledger-v6.schema.json > /dev/null",
+            "python -m json.tool skills/crossframe/schemas/calibration-anchor.schema.json > /dev/null",
+            "python -m json.tool skills/crossframe/schemas/mechanism-update.schema.json > /dev/null",
+            "python -m json.tool skills/crossframe/schemas/counterexample-register.schema.json > /dev/null",
             "python -m pip install jsonschema",
             "python scripts/validate_claim_ledger_schema_fixtures.py --repo .",
+            "python scripts/validate_v6_quantification_schema_fixtures.py --repo .",
             "python scripts/sync_skill_mirrors.py --check",
             "python scripts/package_crossframe_skill.py --repo . --version ci",
             "git diff --check",
@@ -480,10 +498,10 @@ def check_public_release_docs(repo: Path, label: str) -> None:
         require(retired_demo_marker not in public_page_text, f"{label}: public page still has sensitive landing demo marker: {retired_demo_marker}")
 
     required_docs = {
-        "README.md": ["14 个 `crossframe-*` skills", "安全边界先行", "source_id -> claim_id", "docs/QUICKSTART.md", "framework-CrossFrame_v5.1.7", "review_%E2%86%92_inquiry", "https://xi-kari.github.io/crossframe-skill/", "网页介绍", "install-codex.sh", "validate_claim_ledger_schema_fixtures.py", "sync_skill_mirrors.py --check", "bash -n scripts/install-codex.sh", "python -m py_compile scripts/*.py", "brief-visible", "standard-visible"],
+        "README.md": ["14 个 `crossframe-*` skills", "安全边界先行", "source_id -> claim_id", "docs/QUICKSTART.md", "framework-CrossFrame_v5.1.7", "review_%E2%86%92_inquiry", "https://xi-kari.github.io/crossframe-skill/", "网页介绍", "install-codex.sh", "validate_claim_ledger_schema_fixtures.py", "validate_v6_quantification_schema_fixtures.py", "不是总分系统、预测模型、认证系统或处置工具", "sync_skill_mirrors.py --check", "bash -n scripts/install-codex.sh", "python -m py_compile scripts/*.py", "brief-visible", "standard-visible"],
         "CHANGELOG.md": ["v5.1.7", "v5.1.6", "v5.1.5", "v5.1.4", "v5.1.3", "site/", "GitHub Pages", "v5.0.2", "crossframe-history", "crossframe-inquiry", "source_id"],
         "docs/WHAT_IS_CROSSFRAME.md": ["CrossFrame 是一组给 AI 使用的中文结构思考 skills", "一个一分钟例子", "它不是什么", "最推荐怎么用", "crossframe-inquiry"],
-        "docs/QUICKSTART.md": ["install-codex.ps1", "install-codex.sh", "--materials-only", "--source-docx", "validate_claim_ledger_schema_fixtures.py", "sync_skill_mirrors.py --check", "bash -n scripts/install-codex.sh", "python -m py_compile scripts/*.py"],
+        "docs/QUICKSTART.md": ["install-codex.ps1", "install-codex.sh", "--materials-only", "--source-docx", "validate_claim_ledger_schema_fixtures.py", "validate_v6_quantification_schema_fixtures.py", "sync_skill_mirrors.py --check", "bash -n scripts/install-codex.sh", "python -m py_compile scripts/*.py"],
         "docs/CONCEPTS.md": ["Claim Ledger", "source_id", "Concept Contract"],
         "docs/WORKFLOWS.md": ["previous_context -> crossframe-inquiry", "claim ledger / claim-ledger-check", "纯致谢", "brief-visible", "standard-visible"],
         "docs/EXAMPLES.md": ["首页只使用安全模拟样例", "真实/高敏主题", "source_id", "claim_id", "evidence grade", "withdrawal condition", "publish_boundary", "历史草稿档", "crossframe-inquiry", "mini 输出示例"],
@@ -763,6 +781,109 @@ def check_claim_ledger(root: Path, label: str) -> None:
         validator_text = read(schema_validator)
         for needle in ["Draft202012Validator", "valid-", "invalid-", "iter_errors"]:
             require(needle in validator_text, f"{label}: claim ledger fixture validator missing marker: {needle}")
+
+
+def check_v6_quantification_foundation(root: Path, label: str) -> None:
+    schema_targets = {
+        "seven-gates-quant.schema.json": "CrossFrame V6 Seven-Gates Quant Profile",
+        "evidence-ledger-v6.schema.json": "CrossFrame V6 Evidence Ledger",
+        "calibration-anchor.schema.json": "CrossFrame V6 Calibration Anchor",
+        "mechanism-update.schema.json": "CrossFrame V6 Mechanism Update",
+        "counterexample-register.schema.json": "CrossFrame V6 Counterexample Register",
+    }
+    fixture_targets = [
+        "seven-gates-quant",
+        "evidence-ledger-v6",
+        "calibration-anchor",
+        "mechanism-update",
+        "counterexample-register",
+    ]
+    worksheet_targets = {
+        "crossframe/references/construct-map-v6.md": [
+            "object_boundary_clarity",
+            "evidence_support_degree",
+            "scale_consistency",
+            "responsibility_chain_traceability",
+            "observation_reflexivity_risk",
+            "low_power_counterexample_entry",
+            "action_ceiling_clarity",
+            "feedback_writeback_degree",
+            "repair_window_feasibility",
+            "counterexample_writeback_strength",
+        ],
+        "crossframe/worksheets/seven-gates-quant-rubric.md": [
+            "分值只能解释状态来源",
+            "不得单独用于处分",
+            "强制降档规则",
+        ],
+        "crossframe/worksheets/evidence-ledger-v6.md": [
+            "不能证明什么",
+            "AI/过程性产物不能证明现实安全",
+            "同源材料不能通过数量叠加变成独立证据",
+        ],
+        "crossframe/worksheets/calibration-anchor-card.md": [
+            "校准锚点先于评分",
+            "高责任升级条件",
+            "撤回条件",
+        ],
+        "crossframe/worksheets/mechanism-update-rules.md": [
+            "不输出总排序",
+            "一条证据只能更新它实际命中的机制边",
+            "不能替代命题台账",
+        ],
+        "crossframe/worksheets/counterexample-register.md": [
+            "治理事件",
+            "misuse",
+            "high_harm",
+            "版本写回",
+        ],
+    }
+
+    schema_dir = root / "crossframe" / "schemas"
+    for filename, title in schema_targets.items():
+        path = schema_dir / filename
+        require(path.exists(), f"{label}: missing v6 quantification schema: {path.relative_to(root)}")
+        schema_obj = json.loads(read(path))
+        require(schema_obj.get("$schema") == "https://json-schema.org/draft/2020-12/schema", f"{label}: {filename} missing draft 2020-12 schema marker")
+        require(schema_obj.get("title") == title, f"{label}: {filename} has wrong title")
+        require(schema_obj.get("additionalProperties") is False, f"{label}: {filename} root must set additionalProperties=false")
+        object_nodes = list(iter_schema_object_nodes(schema_obj))
+        require(object_nodes, f"{label}: {filename} has no object schema nodes")
+        for node_path, node in object_nodes:
+            require(node.get("additionalProperties") is False, f"{label}: {filename} object schema must close additionalProperties at {node_path}")
+
+    fixture_root = schema_dir / "fixtures" / "v6"
+    for fixture_id in fixture_targets:
+        fixture_dir = fixture_root / fixture_id
+        require(fixture_dir.is_dir(), f"{label}: missing v6 fixture directory: {fixture_dir.relative_to(root)}")
+        valid = sorted(fixture_dir.glob("valid-*.json"))
+        invalid = sorted(fixture_dir.glob("invalid-*.json"))
+        require(valid, f"{label}: v6 fixture directory missing valid fixture: {fixture_id}")
+        require(invalid, f"{label}: v6 fixture directory missing invalid fixture: {fixture_id}")
+
+    for rel, needles in worksheet_targets.items():
+        path = root / rel
+        require(path.exists(), f"{label}: missing v6 quantification file: {rel}")
+        text = read(path)
+        for needle in needles:
+            require(needle in text, f"{label}: {rel} missing v6 marker: {needle}")
+
+    repo = schema_dir.parents[2]
+    schema_validator = repo / "scripts" / "validate_v6_quantification_schema_fixtures.py"
+    if (repo / "scripts").is_dir():
+        require(schema_validator.exists(), f"{label}: missing v6 fixture validator: {schema_validator.relative_to(repo)}")
+        validator_text = read(schema_validator)
+        for needle in [
+            "FORBIDDEN_SCORE_KEYS",
+            "EXPECTED_ERROR_MARKERS",
+            "strong_judgment requires source_ledger_id",
+            "low cost evidence cannot support strong_judgment",
+            "power gate below 3 cannot allow public pressure",
+            "misuse or high_harm counterexample requires action_ceiling_change",
+            "valid-",
+            "invalid-",
+        ]:
+            require(needle in validator_text, f"{label}: v6 fixture validator missing marker: {needle}")
 
 
 def check_history_adapter(root: Path, label: str) -> None:
@@ -1566,6 +1687,7 @@ def check_root(root: Path, label: str) -> None:
     check_required_skill_dirs(root, label)
     check_source_ledger(root, label)
     check_claim_ledger(root, label)
+    check_v6_quantification_foundation(root, label)
     check_history_adapter(root, label)
     check_inquiry_layer(root, label)
     check_suite_routes_all_siblings(root, label)

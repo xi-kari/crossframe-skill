@@ -61,6 +61,7 @@ python scripts/check_source_continuity.py --materials-only --repo .
 python -m json.tool skills/crossframe/schemas/claim-ledger.schema.json
 python -m pip install jsonschema
 python scripts/validate_claim_ledger_schema_fixtures.py --repo .
+python scripts/validate_v6_quantification_schema_fixtures.py --repo .
 python scripts/sync_skill_mirrors.py --check
 bash -n scripts/install-codex.sh
 python -m py_compile scripts/*.py

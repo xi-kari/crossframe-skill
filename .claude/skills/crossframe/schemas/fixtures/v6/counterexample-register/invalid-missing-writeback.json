@@ -1,0 +1,13 @@
+{
+  "counterexample_id": "CE2",
+  "related_claim_ids": ["CL2"],
+  "related_construct_ids": ["counterexample_writeback_strength"],
+  "related_mechanism_ids": ["M1"],
+  "source_id": "S-counterexample-2",
+  "counterexample_type": "repeated",
+  "impact_scope": "重复反例显示锚点过松。",
+  "text_consequence": "应修订锚点。",
+  "tool_consequence": "应修订校验器。",
+  "action_ceiling_change": "降级到开放断言。",
+  "withdrawal_condition": "未写回版本时撤回。"
+}

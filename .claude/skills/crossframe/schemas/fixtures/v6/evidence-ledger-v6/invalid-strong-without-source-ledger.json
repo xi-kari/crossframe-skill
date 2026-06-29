@@ -1,0 +1,23 @@
+{
+  "ledger_id": "ELV62",
+  "case_id": "case-invalid-strong-source",
+  "evidence_items": [
+    {
+      "evidence_id": "EV3",
+      "source_id": "S3",
+      "claim_id": "CL3",
+      "evidence_cost": "high",
+      "directness": "direct",
+      "independence": "independent",
+      "verifiability": "verifiable",
+      "counterevidence_status": "searched",
+      "diagnostic_force": "strong",
+      "mechanism_edge": "M2:ME1",
+      "judgment_grade": "strong_judgment",
+      "downgrade_reason": "错误地缺少来源台账。",
+      "withdrawal_condition": "来源无法核验时撤回。",
+      "action_ceiling": "不得处置。",
+      "cannot_prove": "不能证明外部安全。"
+    }
+  ]
+}

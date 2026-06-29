@@ -1,0 +1,81 @@
+{
+  "record_id": "SGQ1",
+  "case_id": "case-org-feedback-001",
+  "gates": [
+    {
+      "gate_id": "object",
+      "gate_state": "pass",
+      "score": 3,
+      "anchor_evidence": ["intake:对象为一次组织复盘流程，不判断个人品格"],
+      "downgrade_reason": "对象边界清楚，但尚未覆盖复盘后的长期变化。",
+      "max_judgment_grade": "full_diagnosis",
+      "action_ceiling": "只能评价本次复盘流程的结构边界。",
+      "withdrawal_condition": "如果对象被扩大到整体组织文化，应重跑对象闸。"
+    },
+    {
+      "gate_id": "evidence",
+      "gate_state": "weak",
+      "score": 2,
+      "anchor_evidence": ["source:S1", "source:S2"],
+      "downgrade_reason": "有两类来源，但反例搜索不完整。",
+      "max_judgment_grade": "open_assertion",
+      "action_ceiling": "只能提出补证清单和开放断言。",
+      "withdrawal_condition": "如果补充材料显示反馈已写回规则，应撤回反馈断裂机制。"
+    },
+    {
+      "gate_id": "scale",
+      "gate_state": "weak",
+      "score": 2,
+      "anchor_evidence": ["scale:团队流程与组织授权边界均被提及"],
+      "downgrade_reason": "团队尺度与组织制度尺度仍有转译缺口。",
+      "max_judgment_grade": "open_assertion",
+      "action_ceiling": "不得把团队复盘缺口外推为整体制度失效。",
+      "withdrawal_condition": "如果授权链材料补齐，可重跑尺度闸。"
+    },
+    {
+      "gate_id": "responsibility",
+      "gate_state": "pass",
+      "score": 3,
+      "anchor_evidence": ["responsibility:记录了主持者、负责人和执行者"],
+      "downgrade_reason": "责任链可追踪，但受益链仍需补证。",
+      "max_judgment_grade": "full_diagnosis",
+      "action_ceiling": "只能提出低风险角色边界调整。",
+      "withdrawal_condition": "如果受益链显示另有关键责任主体，应修订机制候选。"
+    },
+    {
+      "gate_id": "observation",
+      "gate_state": "pass",
+      "score": 3,
+      "anchor_evidence": ["reflexivity:评分结果暂不公开，只作内部审计"],
+      "downgrade_reason": "已设置内部使用边界，但缺发布后影响记录。",
+      "max_judgment_grade": "full_diagnosis",
+      "action_ceiling": "不得公开点名或形成处分依据。",
+      "withdrawal_condition": "如果评分本身改变参与者表达，应记录观测反应并重跑。"
+    },
+    {
+      "gate_id": "power",
+      "gate_state": "weak",
+      "score": 2,
+      "anchor_evidence": ["appeal:有申诉入口但缺反报复说明"],
+      "downgrade_reason": "低权力反例入口不足。",
+      "max_judgment_grade": "open_assertion",
+      "action_ceiling": "不得公开施压或要求低权力主体继续暴露。",
+      "withdrawal_condition": "如果建立独立反例入口并验证有效，可重跑权力闸。",
+      "allows_public_pressure": false
+    },
+    {
+      "gate_id": "action",
+      "gate_state": "pass",
+      "score": 3,
+      "anchor_evidence": ["action:行动只限补证、低风险试点和停止条件"],
+      "downgrade_reason": "行动边界清楚，但尚无外部复核。",
+      "max_judgment_grade": "full_diagnosis",
+      "action_ceiling": "只能做低风险、可撤回、可观察的小范围试点。",
+      "withdrawal_condition": "如果行动被用于处分或排名，应暂停该输出。"
+    }
+  ],
+  "max_judgment_grade": "open_assertion",
+  "action_ceiling": "当前最高只能开放断言和补证，不得处置或公开定性。",
+  "withdrawal_condition": "任一关键反例成立或低权力入口被证明无效时撤回判断。",
+  "publish_boundary": "internal_only"
+}

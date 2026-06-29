@@ -98,11 +98,14 @@ python scripts/check_source_continuity.py --materials-only --repo .
 python -m json.tool skills/crossframe/schemas/claim-ledger.schema.json
 python -m pip install jsonschema
 python scripts/validate_claim_ledger_schema_fixtures.py --repo .
+python scripts/validate_v6_quantification_schema_fixtures.py --repo .
 python scripts/sync_skill_mirrors.py --check
 bash -n scripts/install-codex.sh
 python -m py_compile scripts/*.py
 git diff --check
 ```
+
+v6 量化基础层只是内部审计层：它用锚点评分、schema fixtures 和降档检查暴露不确定性、撤回条件和行动上限。它不是总分系统、预测模型、认证系统或处置工具。
 
 完整上手说明见 [docs/QUICKSTART.md](docs/QUICKSTART.md)。
 

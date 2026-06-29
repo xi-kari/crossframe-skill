@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CrossFrame V6 Evidence Ledger",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["ledger_id", "case_id", "evidence_items"],
+  "properties": {
+    "ledger_id": {
+      "type": "string",
+      "pattern": "^ELV6[0-9]+$"
+    },
+    "case_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "evidence_items": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "required": ["judgment_grade"],
+              "properties": {
+                "judgment_grade": {
+                  "const": "strong_judgment"
+                }
+              }
+            },
+            "then": {
+              "required": ["source_ledger_id"]
+            }
+          }
+        ],
+        "required": [
+          "evidence_id",
+          "source_id",
+          "claim_id",
+          "evidence_cost",
+          "directness",
+          "independence",
+          "verifiability",
+          "counterevidence_status",
+          "diagnostic_force",
+          "mechanism_edge",
+          "downgrade_reason",
+          "withdrawal_condition",
+          "action_ceiling",
+          "cannot_prove"
+        ],
+        "properties": {
+          "evidence_id": {
+            "type": "string",
+            "pattern": "^EV[0-9]+$"
+          },
+          "source_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "source_ledger_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "claim_id": {
+            "type": "string",
+            "pattern": "^CL[0-9]+$"
+          },
+          "evidence_cost": {
+            "type": "string",
+            "enum": ["low", "medium", "high"]
+          },
+          "directness": {
+            "type": "string",
+            "enum": ["direct", "indirect", "background"]
+          },
+          "independence": {
+            "type": "string",
+            "enum": ["independent", "related", "same_source_family"]
+          },
+          "verifiability": {
+            "type": "string",
+            "enum": ["verifiable", "partly_verifiable", "not_verifiable"]
+          },
+          "counterevidence_status": {
+            "type": "string",
+            "enum": ["searched", "partial", "missing", "unsafe_to_collect"]
+          },
+          "diagnostic_force": {
+            "type": "string",
+            "enum": ["weak", "moderate", "strong", "decisive_candidate"]
+          },
+          "mechanism_edge": {
+            "type": "string",
+            "minLength": 1
+          },
+          "judgment_grade": {
+            "type": "string",
+            "enum": [
+              "light_observation",
+              "open_assertion",
+              "full_diagnosis",
+              "strong_judgment",
+              "low_condition_action",
+              "exit_transfer"
+            ]
+          },
+          "downgrade_reason": {
+            "type": "string",
+            "minLength": 1
+          },
+          "withdrawal_condition": {
+            "type": "string",
+            "minLength": 1
+          },
+          "action_ceiling": {
+            "type": "string",
+            "minLength": 1
+          },
+          "cannot_prove": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}

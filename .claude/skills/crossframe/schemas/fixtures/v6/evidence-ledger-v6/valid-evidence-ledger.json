@@ -1,0 +1,41 @@
+{
+  "ledger_id": "ELV61",
+  "case_id": "case-org-feedback-001",
+  "evidence_items": [
+    {
+      "evidence_id": "EV1",
+      "source_id": "AI-SUMMARY-1",
+      "claim_id": "CL1",
+      "evidence_cost": "low",
+      "directness": "background",
+      "independence": "same_source_family",
+      "verifiability": "partly_verifiable",
+      "counterevidence_status": "missing",
+      "diagnostic_force": "weak",
+      "mechanism_edge": "M1:ME1",
+      "judgment_grade": "light_observation",
+      "downgrade_reason": "AI 摘要只是过程性产物，不能当作现实证明。",
+      "withdrawal_condition": "若无法回到原始材料核验，则删除该证据项。",
+      "action_ceiling": "只能提示需要查看原始材料。",
+      "cannot_prove": "不能证明现实安全、修复完成、责任链成立或反例不存在。"
+    },
+    {
+      "evidence_id": "EV2",
+      "source_id": "S2",
+      "source_ledger_id": "SL2",
+      "claim_id": "CL2",
+      "evidence_cost": "high",
+      "directness": "direct",
+      "independence": "independent",
+      "verifiability": "verifiable",
+      "counterevidence_status": "partial",
+      "diagnostic_force": "moderate",
+      "mechanism_edge": "M1:ME2",
+      "judgment_grade": "full_diagnosis",
+      "downgrade_reason": "反例搜索仍不完整，不能升级强判断。",
+      "withdrawal_condition": "若后续记录显示反馈已改变规则和资源配置，则撤回反馈断裂机制。",
+      "action_ceiling": "只能提出低风险试点和补证要求。",
+      "cannot_prove": "不能单独证明组织已经修复，也不能证明全部责任链。"
+    }
+  ]
+}

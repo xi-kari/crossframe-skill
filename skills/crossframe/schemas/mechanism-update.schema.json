@@ -1,0 +1,145 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CrossFrame V6 Mechanism Update",
+  "type": "object",
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "update_direction": {
+            "const": "withdraw"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "counterevidence": {
+            "minItems": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": ["judgment_grade"],
+        "properties": {
+          "judgment_grade": {
+            "const": "strong_judgment"
+          }
+        }
+      },
+      "then": {
+        "required": ["source_ledger_id"]
+      }
+    }
+  ],
+  "required": [
+    "mechanism_id",
+    "mechanism_edge_id",
+    "description",
+    "supporting_facts",
+    "counterevidence",
+    "diagnostic_force",
+    "update_direction",
+    "current_state",
+    "can_explain",
+    "cannot_explain",
+    "observable_predictions",
+    "withdrawal_condition",
+    "claim_id",
+    "action_ceiling"
+  ],
+  "properties": {
+    "mechanism_id": {
+      "type": "string",
+      "pattern": "^M[0-9]+$"
+    },
+    "mechanism_edge_id": {
+      "type": "string",
+      "pattern": "^ME[0-9]+$"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1
+    },
+    "supporting_facts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "counterevidence": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "diagnostic_force": {
+      "type": "string",
+      "enum": ["weak", "moderate", "strong", "decisive_candidate"]
+    },
+    "update_direction": {
+      "type": "string",
+      "enum": ["strengthen", "weaken", "neutral", "pending", "withdraw"]
+    },
+    "current_state": {
+      "type": "string",
+      "minLength": 1
+    },
+    "can_explain": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "cannot_explain": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "observable_predictions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "withdrawal_condition": {
+      "type": "string",
+      "minLength": 1
+    },
+    "claim_id": {
+      "type": "string",
+      "pattern": "^CL[0-9]+$"
+    },
+    "judgment_grade": {
+      "type": "string",
+      "enum": [
+        "light_observation",
+        "open_assertion",
+        "full_diagnosis",
+        "strong_judgment",
+        "low_condition_action",
+        "exit_transfer"
+      ]
+    },
+    "source_ledger_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "action_ceiling": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

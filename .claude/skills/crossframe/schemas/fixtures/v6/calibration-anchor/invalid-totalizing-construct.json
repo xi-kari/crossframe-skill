@@ -1,0 +1,22 @@
+{
+  "construct_id": "organization_health",
+  "name_zh": "组织健康",
+  "definition": "错误地试图给组织整体健康打分。",
+  "not_this": "不应存在这种总分构念。",
+  "neighbor_concepts": ["误用反例"],
+  "anchors": {
+    "0": "无",
+    "1": "无",
+    "2": "无",
+    "3": "无",
+    "4": "无"
+  },
+  "minimum_evidence": "无",
+  "high_responsibility_upgrade_conditions": "无",
+  "misuse_risks": ["总分化"],
+  "withdrawal_condition": "发现总分化时撤回。",
+  "v5_source_anchors": ["v5-use-boundary-governance-pack"],
+  "worksheets": ["counterexample-register.md"],
+  "schema_fields": ["health_score"],
+  "health_score": 87
+}

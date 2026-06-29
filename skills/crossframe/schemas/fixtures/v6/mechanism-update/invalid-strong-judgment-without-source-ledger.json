@@ -1,0 +1,17 @@
+{
+  "mechanism_id": "M3",
+  "mechanism_edge_id": "ME3",
+  "description": "错误地将机制更新升级为强判断。",
+  "supporting_facts": ["source:S1"],
+  "counterevidence": ["source:S2"],
+  "diagnostic_force": "strong",
+  "update_direction": "strengthen",
+  "current_state": "错误强判断。",
+  "can_explain": ["局部现象"],
+  "cannot_explain": ["制度尺度变化"],
+  "observable_predictions": ["下一轮继续重复"],
+  "withdrawal_condition": "来源台账缺失时撤回。",
+  "claim_id": "CL6",
+  "judgment_grade": "strong_judgment",
+  "action_ceiling": "不得处置。"
+}
