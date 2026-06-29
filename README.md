@@ -100,6 +100,7 @@ python -m pip install jsonschema
 python scripts/validate_claim_ledger_schema_fixtures.py --repo .
 python scripts/validate_v6_quantification_schema_fixtures.py --repo .
 python scripts/check_v6_casebook_trials.py --repo .
+python scripts/check_v6_publication_bundle.py --repo .
 python scripts/sync_skill_mirrors.py --check
 bash -n scripts/install-codex.sh
 python -m py_compile scripts/*.py
@@ -109,6 +110,8 @@ git diff --check
 v6 量化基础层只是内部审计层：它用锚点评分、schema fixtures 和降档检查暴露不确定性、撤回条件和行动上限。它不是总分系统、预测模型、认证系统或处置工具。
 
 v6 案例库验证是失败发现 shakedown：它用组织、关系、公共争议和误用反例试跑来暴露降档压力、评分者分歧、锚点修订和模板阻断需求。它不能证明框架现实正确，也不能替代调查、受影响位置反馈或外部复核。
+
+v6 发布源稿见 [docs/CROSSFRAME_V6.md](docs/CROSSFRAME_V6.md)，工具原型说明见 [docs/V6_TOOL_PROTOTYPE.md](docs/V6_TOOL_PROTOTYPE.md)。
 
 完整上手说明见 [docs/QUICKSTART.md](docs/QUICKSTART.md)。
 

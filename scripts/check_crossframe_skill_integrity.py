@@ -475,6 +475,7 @@ def check_public_release_docs(repo: Path, label: str) -> None:
             "python scripts/validate_claim_ledger_schema_fixtures.py --repo .",
             "python scripts/validate_v6_quantification_schema_fixtures.py --repo .",
             "python scripts/check_v6_casebook_trials.py --repo .",
+            "python scripts/check_v6_publication_bundle.py --repo .",
             "python scripts/sync_skill_mirrors.py --check",
             "python scripts/package_crossframe_skill.py --repo . --version ci",
             "git diff --check",
@@ -499,10 +500,10 @@ def check_public_release_docs(repo: Path, label: str) -> None:
         require(retired_demo_marker not in public_page_text, f"{label}: public page still has sensitive landing demo marker: {retired_demo_marker}")
 
     required_docs = {
-        "README.md": ["14 个 `crossframe-*` skills", "安全边界先行", "source_id -> claim_id", "docs/QUICKSTART.md", "framework-CrossFrame_v5.1.7", "review_%E2%86%92_inquiry", "https://xi-kari.github.io/crossframe-skill/", "网页介绍", "install-codex.sh", "validate_claim_ledger_schema_fixtures.py", "validate_v6_quantification_schema_fixtures.py", "check_v6_casebook_trials.py", "不是总分系统、预测模型、认证系统或处置工具", "失败发现", "sync_skill_mirrors.py --check", "bash -n scripts/install-codex.sh", "python -m py_compile scripts/*.py", "brief-visible", "standard-visible"],
+        "README.md": ["14 个 `crossframe-*` skills", "安全边界先行", "source_id -> claim_id", "docs/QUICKSTART.md", "framework-CrossFrame_v5.1.7", "review_%E2%86%92_inquiry", "https://xi-kari.github.io/crossframe-skill/", "网页介绍", "install-codex.sh", "validate_claim_ledger_schema_fixtures.py", "validate_v6_quantification_schema_fixtures.py", "check_v6_casebook_trials.py", "check_v6_publication_bundle.py", "docs/CROSSFRAME_V6.md", "docs/V6_TOOL_PROTOTYPE.md", "不是总分系统、预测模型、认证系统或处置工具", "失败发现", "sync_skill_mirrors.py --check", "bash -n scripts/install-codex.sh", "python -m py_compile scripts/*.py", "brief-visible", "standard-visible"],
         "CHANGELOG.md": ["v5.1.7", "v5.1.6", "v5.1.5", "v5.1.4", "v5.1.3", "site/", "GitHub Pages", "v5.0.2", "crossframe-history", "crossframe-inquiry", "source_id"],
         "docs/WHAT_IS_CROSSFRAME.md": ["CrossFrame 是一组给 AI 使用的中文结构思考 skills", "一个一分钟例子", "它不是什么", "最推荐怎么用", "crossframe-inquiry"],
-        "docs/QUICKSTART.md": ["install-codex.ps1", "install-codex.sh", "--materials-only", "--source-docx", "validate_claim_ledger_schema_fixtures.py", "validate_v6_quantification_schema_fixtures.py", "check_v6_casebook_trials.py", "sync_skill_mirrors.py --check", "bash -n scripts/install-codex.sh", "python -m py_compile scripts/*.py"],
+        "docs/QUICKSTART.md": ["install-codex.ps1", "install-codex.sh", "--materials-only", "--source-docx", "validate_claim_ledger_schema_fixtures.py", "validate_v6_quantification_schema_fixtures.py", "check_v6_casebook_trials.py", "check_v6_publication_bundle.py", "build_v6_publication_bundle.py", "sync_skill_mirrors.py --check", "bash -n scripts/install-codex.sh", "python -m py_compile scripts/*.py"],
         "docs/CONCEPTS.md": ["Claim Ledger", "source_id", "Concept Contract"],
         "docs/WORKFLOWS.md": ["previous_context -> crossframe-inquiry", "claim ledger / claim-ledger-check", "纯致谢", "brief-visible", "standard-visible"],
         "docs/EXAMPLES.md": ["首页只使用安全模拟样例", "真实/高敏主题", "source_id", "claim_id", "evidence grade", "withdrawal condition", "publish_boundary", "历史草稿档", "crossframe-inquiry", "mini 输出示例"],
@@ -965,6 +966,90 @@ def check_v6_casebook_validation(root: Path, label: str) -> None:
             "ok: v6 casebook validation trials passed",
         ]:
             require(needle in checker_text, f"{label}: v6 casebook checker missing marker: {needle}")
+
+
+def check_v6_publication_prototype(root: Path, label: str) -> None:
+    repo = root.parent
+    if (repo / "docs").is_dir():
+        docs = {
+            "docs/CROSSFRAME_V6.md": [
+                "# 跨尺度结构诊断框架 v6.0",
+                "## 发布边界",
+                "## 判断档位与行动上限",
+                "## 反例、撤回与治理写回",
+                "## 案例库验证与评分者一致性",
+                "## 工具原型",
+                "本工具只帮助整理结构判断",
+                "skills/crossframe/references/construct-map-v6.md",
+                "skills/crossframe-casebook/examples/v6-quant-trials/validation-summary.md",
+                "scripts/validate_v6_quantification_schema_fixtures.py",
+                "scripts/check_v6_casebook_trials.py",
+            ],
+            "docs/V5_TO_V6_CHANGES.md": [
+                "v6.0 不替换 v5.0",
+                "七闸复核",
+                "反例、撤回、版本写回",
+                "评分者一致性只说明协议稳定性",
+            ],
+            "docs/V6_TOOL_PROTOTYPE.md": [
+                "v6.0 工具原型",
+                "scripts/build_v6_publication_bundle.py",
+                "scripts/check_v6_publication_bundle.py",
+                "Smoke Test 期望",
+                "不能单独授权处置",
+            ],
+        }
+        for rel, needles in docs.items():
+            path = repo / rel
+            require(path.exists(), f"{label}: missing v6 publication doc: {rel}")
+            text = read(path)
+            for needle in needles:
+                require(needle in text, f"{label}: {rel} missing v6 publication marker: {needle}")
+
+    references = {
+        "crossframe/references/judgment-action-matrix-v6.md": [
+            "强制降档规则",
+            "`open_assertion`",
+            "`block_publication`",
+            "案例库试跑或 checker 通过",
+        ],
+        "crossframe/references/falsification-governance-v6.md": [
+            "反例分级",
+            "评分者分歧治理",
+            "误用复核",
+            "停止使用条件",
+        ],
+    }
+    for rel, needles in references.items():
+        path = root / rel
+        require(path.exists(), f"{label}: missing v6 publication reference: {rel}")
+        text = read(path)
+        for needle in needles:
+            require(needle in text, f"{label}: {rel} missing v6 publication marker: {needle}")
+
+    if (repo / "scripts").is_dir():
+        scripts = {
+        "scripts/build_v6_publication_bundle.py": [
+            "BUNDLE_SOURCE_FILES",
+            "PROTOTYPE_AUDIT_FILES",
+            "crossframe-v6.0-publication",
+            "manifest.json",
+            "sha256",
+            ],
+            "scripts/check_v6_publication_bundle.py": [
+            "REQUIRED_HEADINGS",
+            "TOOL_BOUNDARY",
+            "FORBIDDEN_LANGUAGE",
+            "MAX_NEGATION_DISTANCE",
+            "ok: v6 publication bundle checks passed",
+        ],
+        }
+        for rel, needles in scripts.items():
+            path = repo / rel
+            require(path.exists(), f"{label}: missing v6 publication script: {rel}")
+            text = read(path)
+            for needle in needles:
+                require(needle in text, f"{label}: {rel} missing v6 publication marker: {needle}")
 
 
 def check_history_adapter(root: Path, label: str) -> None:
@@ -1770,6 +1855,7 @@ def check_root(root: Path, label: str) -> None:
     check_claim_ledger(root, label)
     check_v6_quantification_foundation(root, label)
     check_v6_casebook_validation(root, label)
+    check_v6_publication_prototype(root, label)
     check_history_adapter(root, label)
     check_inquiry_layer(root, label)
     check_suite_routes_all_siblings(root, label)

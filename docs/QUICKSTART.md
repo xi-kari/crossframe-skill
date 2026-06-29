@@ -63,6 +63,7 @@ python -m pip install jsonschema
 python scripts/validate_claim_ledger_schema_fixtures.py --repo .
 python scripts/validate_v6_quantification_schema_fixtures.py --repo .
 python scripts/check_v6_casebook_trials.py --repo .
+python scripts/check_v6_publication_bundle.py --repo .
 python scripts/sync_skill_mirrors.py --check
 bash -n scripts/install-codex.sh
 python -m py_compile scripts/*.py
@@ -70,6 +71,14 @@ git diff --check
 ```
 
 `check_v6_casebook_trials.py` 只检查 v6 案例库试跑是否保留降档、分歧、反例和反误用边界；它不是发布证明，也不是现实正确性证明。
+
+生成 v6 发布 bundle：
+
+```powershell
+python scripts\build_v6_publication_bundle.py --repo .
+```
+
+`check_v6_publication_bundle.py` 会生成 ignored `outputs/` bundle 并核对 manifest、章节、来源引用和反误用语言；通过只说明发布源稿结构可审计，不说明现实判断正确。
 
 如果你持有原始 v5.0 DOCX，可以运行完整源一致性检查：
 

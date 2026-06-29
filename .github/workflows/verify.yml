@@ -62,6 +62,9 @@ jobs:
       - name: Validate v6 casebook trials
         run: python scripts/check_v6_casebook_trials.py --repo .
 
+      - name: Validate v6 publication bundle
+        run: python scripts/check_v6_publication_bundle.py --repo .
+
       - name: Check mirror sync
         run: python scripts/sync_skill_mirrors.py --check
 
