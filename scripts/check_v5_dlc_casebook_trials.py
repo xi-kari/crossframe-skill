@@ -13,6 +13,10 @@ REQUIRED_CASEBOOK_FILES = [
     "skills/crossframe-casebook/examples/v5-dlc-quant-trials/relationship-case-trial.md",
     "skills/crossframe-casebook/examples/v5-dlc-quant-trials/public-dispute-case-trial.md",
     "skills/crossframe-casebook/examples/v5-dlc-quant-trials/misuse-counterexample-trial.md",
+    "skills/crossframe-casebook/examples/v5-dlc-quant-trials/relationship-scale-erasure-regression.md",
+    "skills/crossframe-casebook/examples/v5-dlc-quant-trials/organization-retrospective-proof-regression.md",
+    "skills/crossframe-casebook/examples/v5-dlc-quant-trials/public-announcement-low-power-regression.md",
+    "skills/crossframe-casebook/examples/v5-dlc-quant-trials/ai-compliance-report-proof-regression.md",
     "skills/crossframe-casebook/examples/v5-dlc-quant-trials/rater-disagreement-sample.md",
     "skills/crossframe-casebook/examples/v5-dlc-quant-trials/validation-summary.md",
 ]
@@ -28,6 +32,45 @@ SUMMARY_AND_REVIEW_FILES = [
     "skills/crossframe-casebook/examples/v5-dlc-quant-trials/rater-disagreement-sample.md",
     "skills/crossframe-casebook/examples/v5-dlc-quant-trials/validation-summary.md",
 ]
+
+REGRESSION_FILES = {
+    "skills/crossframe-casebook/examples/v5-dlc-quant-trials/relationship-scale-erasure-regression.md": [
+        "regression_id: v5-dlc-regression-relationship-scale-erasure",
+        "failure_type: scale_erasure",
+        "required_action_ceiling: ask_for_evidence",
+        "score_visibility: hidden",
+        "低尺度痛苦",
+        "本案例不能证明",
+        "降档",
+    ],
+    "skills/crossframe-casebook/examples/v5-dlc-quant-trials/organization-retrospective-proof-regression.md": [
+        "regression_id: v5-dlc-regression-organization-retrospective-proof",
+        "failure_type: retrospective_as_repair_proof",
+        "required_action_ceiling: internal_review",
+        "score_visibility: hidden",
+        "反馈写回",
+        "本案例不能证明",
+        "降档",
+    ],
+    "skills/crossframe-casebook/examples/v5-dlc-quant-trials/public-announcement-low-power-regression.md": [
+        "regression_id: v5-dlc-regression-public-announcement-low-power",
+        "failure_type: announcement_replaces_low_power_entry",
+        "required_action_ceiling: block_publication",
+        "score_visibility: hidden",
+        "低权力反例入口",
+        "本案例不能证明",
+        "降档",
+    ],
+    "skills/crossframe-casebook/examples/v5-dlc-quant-trials/ai-compliance-report-proof-regression.md": [
+        "regression_id: v5-dlc-regression-ai-compliance-proof",
+        "failure_type: ai_report_as_reality_proof",
+        "required_action_ceiling: ask_for_evidence",
+        "score_visibility: hidden",
+        "过程性产物",
+        "本案例不能证明",
+        "降级",
+    ],
+}
 
 REQUIRED_TRIAL_KEYS = [
     "trial_id",
@@ -264,6 +307,20 @@ def check_summary(repo: Path, errors: list[str]) -> None:
             add_error(errors, rel, f"missing summary marker: {needle}")
 
 
+def check_regression_files(repo: Path, errors: list[str]) -> None:
+    for rel, needles in REGRESSION_FILES.items():
+        path = repo / rel
+        if not path.exists():
+            add_error(errors, rel, "missing v5 DLC failure regression file")
+            continue
+        text = read(path)
+        for needle in needles:
+            if needle not in text:
+                add_error(errors, rel, f"missing regression marker: {needle}")
+        if "score_visibility: hidden" in text and "required_action_ceiling:" not in text:
+            add_error(errors, rel, "hidden score regression must still state required_action_ceiling")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Check CrossFrame v5 DLC casebook validation trials.")
     parser.add_argument("--repo", default=".", help="Repository root.")
@@ -277,6 +334,7 @@ def main() -> int:
     check_trials(repo, errors)
     check_disagreement(repo, errors)
     check_summary(repo, errors)
+    check_regression_files(repo, errors)
 
     if errors:
         for error in errors:

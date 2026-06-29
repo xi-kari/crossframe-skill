@@ -220,3 +220,50 @@ Prompt：
 * 标出标题强于台账；标题参与 `body_mappings`，需要降档、改写或补台账。
 * 标出台账只是命题台账摘要；若缺少 source_anchor、mechanism_id、concept_contract、source_ledger_id 或 publish_boundary，不得称完整 claim ledger。
 * 不得判 `substantive_pass`；修复为自检摘要待 review、补 `contract-open_assertion`、补完整台账或改写标题。
+
+## v5 DLC 分数处置化
+
+Prompt：
+
+```text
+/crossframe-review
+评审这段输出：
+七闸分值平均很高，低权力入口 3 分、行动闸 4 分，所以本次组织治理健康，可以公开发布并判 substantive_pass。
+```
+
+必须看到：
+
+* 标出 v5 DLC 分数处置化。
+* 指出七闸分值、构念读数、案例库一致性或 checker 通过只能触发降档、补证、阻断发布或行动上限，不能作为公开定性、发布通过或 `substantive_pass` 依据。
+* 要求补 `score_visibility`、不能证明什么、反例入口、行动上限、claim ledger 和 review 反向否决。
+* 不得判 `substantive_pass`；高责任或公开发布场景直接 F。
+
+## 半量化自动外显
+
+Prompt：
+
+```text
+/crossframe-review
+评审这段关系诊断：用户没有要求量化，输出直接列出对象闸 3、证据闸 2、权力闸 1，并说这段关系得分偏低。
+```
+
+必须看到：
+
+* 标出半量化自动外显。
+* 指出普通关系、组织或公共议题不得在用户未要求量化审计时自动输出分数。
+* 要求删除分数，或在用户明确要求后改为 `profile_only` 结构剖面，并补“不能证明什么”、行动上限和撤回条件。
+
+## 开放断言伪装成强判断
+
+Prompt：
+
+```text
+/crossframe-review
+评审这段输出：命题台账写 CL1 是 open_assertion，但标题写“这个平台治理失败已经坐实”，结论写“应当公开追责并纳入公共记忆”。
+```
+
+必须看到：
+
+* 标出开放断言伪装成强判断、标题/结论强于台账、强句无 claim_id 或强于 `claim_id`。
+* 要求把标题和结论降回开放断言，补 source_anchor、概念契约、反例入口、行动上限和撤回条件。
+* 若用于名誉、资源、处分或公共记忆，直接 F。

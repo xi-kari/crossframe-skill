@@ -20,6 +20,7 @@
 - 高责任、命题验证、高反身性、亲密关系、疗愈转移、公共制度、框架边界。
 - 生命周期、递进、势场解离、治理连续性、超大规模压力测试、表达翻译、概念解释。
 - 文章类输出则同时检查 `../crossframe-essay/SKILL.md` 的底稿和写作规则。
+- v5 DLC、量化、评分、半量化、七闸分值、score、rubric、校准、一致性或案例库试跑，则追加检查 `../crossframe/references/construct-map-v5-dlc.md`、`../crossframe/worksheets/seven-gates-quant-rubric.md` 和 `../crossframe/references/judgment-action-matrix-v5-dlc.md`。
 - 历史、历史制度、文明连续史、王朝制度、史料闭合或 archive/FOIA backlog，则同时检查 `../crossframe-history/SKILL.md` 与 `../crossframe-history/protocols/history-source-ledger-protocol.md` 的历史输出档位、具体史料台账和调用完成硬闸。
 - 触发高风险概念、深度分析、高责任、公共制度、亲密关系、长期演化或文章类输出时，默认先检查 `../crossframe/references/runtime-read-policy.md`、`../crossframe/references/continuity-closure-map.md`、`../crossframe/templates/read-state-capsule.md`、`../crossframe/worksheets/source-continuity-check.md` 和 `../crossframe/worksheets/source-anchor-integrity-check.md`。只有需要包说明、源锚点或闭包细节时，再定向读取 `../crossframe/references/continuity-bundles.md` 或具体包文件。
 
@@ -45,6 +46,7 @@
 | 读态胶囊 | 有 `v5-read-state-capsule`，列出 source modules、入口包、必须同读闭包和下游读取策略 | 无胶囊，或 essay/review 各自重读源索引、发明路由 |
 | 源锚点完整性 | 中心命题、机制候选、高风险概念和行动边界能回指胶囊源锚点 | 无法回指却写成 CrossFrame v5 原义 |
 | 命题台账 | 有 `claim ledger`，中心命题、机制候选、高风险概念、行动建议、文章转译和正文短摘有 `claim_id` | 正文直接生成强判断、点睛句或行动建议，没有台账回指 |
+| v5 DLC | 有触发理由、`score_visibility`、不能证明什么、降档理由、反例入口和行动上限；分值只用于降档、补证、阻断发布 | 自动输出分数，或把分值用于处置、排名、资格、公开定性、发布通过、`substantive_pass` |
 | 选择器 | 模式/角色与文章类型选择器完整展示，带推荐项并等待用户回复 | 只写“请选择”或“已展示 1-9”，省略选项和推荐 |
 | 来源台账 | 十字段完整，时间可复核，使用位置可定位，来源用途、证据档位和仍不能证明什么清楚 | 字段合并、时间伪填、使用位置过粗，或热度/机构声明/AI 材料/二手转述被写成已核验事实 |
 | 历史输出档位 | 明确标注历史草稿档、历史接口分析档或正式历史分析档，并说明降档原因 | 无档位，或无具体史料台账却称完整历史分析 |
@@ -80,6 +82,10 @@
 - 概念契约伪未触发：正文出现 `open_assertion`、开放断言、可撤回判断、最高开放断言、不能终局裁决、当前只能说、不能证明什么或撤回条件，却写概念契约不触发
 - 命题台账摘要冒充完整台账：前台表缺少 source_anchor、mechanism_id、concept_contract、source_ledger_id 或 publish_boundary，却称完整 claim ledger
 - 标题/点睛句强于台账：标题、首段、结尾或点睛句强于对应 `claim_id` 的判断档位、行动上限或发布边界
+- 强句无 `claim_id`：标题、结论、机制句或行动建议没有可回指的 `claim_id`、source_anchor、概念契约、判断档位和撤回条件
+- 开放断言伪装成强判断：台账写 `open_assertion`，正文、标题或结论却写成事实闭合、终局裁决、处置依据或公共定性
+- v5 DLC 分数处置化：七闸分值、构念读数、案例库一致性或 checker 通过被当作处分、排名、资格、公开定性、发布通过、组织健康证明或 `substantive_pass`
+- 半量化自动外显：普通关系、组织复盘或公共议题在用户未要求审计/量化时自动输出分数，或没有登记 `score_visibility`
 
 每个问题都要给出证据定位。定位可以是行号、段落、标题、页码、原句短摘或“材料未提供，无法定位”。
 
@@ -96,6 +102,8 @@
 7. 概念契约伪未触发候选：检查正文是否出现 `open_assertion`、开放断言、可撤回判断、最高开放断言、不能终局裁决、当前只能说、不能证明什么或撤回条件，却写“概念契约不触发”或没有 `contract-open_assertion`。
 8. 标题强于台账候选：抽取标题、首段、结尾或点睛句，检查是否强于对应 `claim_id`、判断档位、行动上限或发布边界。
 9. 台账摘要伪完整候选：检查前台命题表是否缺少 source_anchor、mechanism_id、concept_contract、source_ledger_id 或 publish_boundary，却被称作完整台账。
+10. v5 DLC 分数处置化候选：检查分值、构念读数、案例库一致性或 checker 通过是否被用于处置、排名、资格、公开定性、发布通过或 `substantive_pass`。
+11. 半量化自动外显候选：检查普通关系、组织或公共议题是否在未被用户要求量化时外显分数，或缺少 `score_visibility`。
 
 若上述检查均未成立，也要写证据定位。没有执行反向否决最小块时，只能判 `structural_pass`，不能判 `substantive_pass`。
 
@@ -126,6 +134,10 @@
 - 正文出现 `open_assertion`、开放断言、可撤回判断、最高开放断言、不能终局裁决、当前只能说、不能证明什么或撤回条件，但没有 `contract-open_assertion`，最高 C；若用于处置、名誉、资源或公共记忆，直接 F。
 - 不完整命题台账自称完整 claim ledger，最高 B；若据此判 `substantive_pass` 或发布通过，最高 C。
 - 标题、首段、结尾或点睛句强于 `claim_id`，最高 C；涉及高责任或公共发布时直接 F，直到改写或补台账。
+- v5 DLC 分数作为处分、排名、资格、封禁、公开定性、发布通过或 `substantive_pass` 依据时，直接 F。
+- 普通关系、组织或公共议题自动输出分数且用户未要求量化审计，最高 C；若影响关系安全、组织处置、名誉、权利、资源或公共记忆，直接 F。
+- 缺少 `score_visibility`、不能证明什么、反例入口或行动上限的 DLC 输出，最高 B；若据此公开发布，最高 C/F。
+- 案例库试跑、checker 通过或评分者一致性只能证明结构检查完成，不能证明现实判断为真；违反时最高 C，高责任场景直接 F。
 - 只有表达不够人话但推理链完整，可判 B 或 C。
 - 用户明确要求极简答复时，不因没有完整工作表扣重分；只检查最小结构是否保留。
 
@@ -145,6 +157,8 @@
 - 将前台表改名为“命题台账摘要”，或补齐 source_anchor、mechanism_id、concept_contract、source_ledger_id、publish_boundary 和 body_mappings。
 - 弱化标题、首段、结尾和点睛句，使其不强于对应 `claim_id`。
 - 为机制候选补 `mechanism_id`、事实回指和反向证据；补不出时降为解释提示。
+- 删除自动外显分值，或登记 `score_visibility` 后改成结构剖面；补“不能证明什么”、反例入口、行动上限和撤回条件。
+- 将任何用分值授权处置、排名、资格、公开定性、发布通过或 `substantive_pass` 的句子改为降档、补证或 `block_publication`。
 
 不要用“建议更严谨”这类空话替代修复路径。
 

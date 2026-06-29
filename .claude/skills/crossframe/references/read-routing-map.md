@@ -13,6 +13,18 @@
 - `v5-material-selection-map.md`：从用户请求进入 v5 包、协议和模板的选择图。
 - `continuity-closure-map.md`：运行时轻量闭包图，默认用于递归展开必须同读包。
 
+## v5.0 半量化 DLC 运行时路由
+
+半量化 DLC 是 v5 主流程之后的可选审计层。默认不触发；只有命中以下路由，才读取 DLC 文件。
+
+| 触发条件 | 读取文件 | 可见输出 | 禁止动作 |
+| --- | --- | --- | --- |
+| 用户明确说量化 / 评分 / 半量化 / 打分 / 比较 / 排序 / 校准 / 一致性 / rubric / audit / DLC / 七闸分值 / 案例库试跑 | `references/construct-map-v5-dlc.md`; `worksheets/seven-gates-quant-rubric.md`; `references/judgment-action-matrix-v5-dlc.md`; 按需读 `worksheets/evidence-ledger-v5-dlc.md`, `worksheets/mechanism-update-rules.md`, `worksheets/counterexample-register.md` | 结构剖面、降档理由、证据缺口、反例入口、行动上限、撤回条件 | 输出对象总分、关系分、组织健康分、文明阶段分、预测概率或发布合格分 |
+| 高责任、处分、名誉、资源、权利、公共记忆、真实机构/平台/人物、AI 合规或公开发布前边界审计 | 同上，但默认 `score_visibility: hidden` | 内部降档、补证、阻断公开、收窄行动上限 | 用分值授权处分、封禁、开除、公开定性、发布通过或 `substantive_pass` |
+| 普通亲密关系、组织复盘、公共议题 | 不因题材自动读取 DLC；只有用户要求审计/量化时读取 | 若用户要求，可给 `profile_only` 剖面 | 自动输出分数，或把分数写成关系/组织/公共对象评价 |
+
+触发后仍必须先完成 v5 主流程：对象边界、事实/证据分离、七闸状态、机制候选、concept contract、source_anchor、claim ledger 和判断档位。DLC 分数只能解释 `pass / weak / fail / blocked` 的来源，不能自动升级档位。
+
 ## v5 连读包索引
 
 | 连读包 | 中文名 | 触发场景 | 必须同读闭包 |
@@ -60,6 +72,8 @@
 | 文章 / 评论 / 可读输出 | ../crossframe-essay/SKILL.md; templates/user-facing-language.md | `v5-domain-translation-normative-source-pack`, `v5-seven-gates-diagnosis-pack` |
 | 框架自诊 / 证伪 / 版本治理 | protocols/framework-boundary-protocol.md; references/framework-ontology-protection.md | `v5-framework-self-diagnosis-falsification-pack`, `v5-root-assumptions-meta-rules-pack` |
 | 工具化 / 公开发布 / 技能封装 | references/framework-ontology-protection.md; worksheets/source-continuity-check.md | `v5-toolization-accessibility-release-pack`, `v5-use-boundary-governance-pack` |
+| 量化 / 评分 / 半量化 / 校准 / 一致性 / DLC 审计 | references/construct-map-v5-dlc.md; worksheets/seven-gates-quant-rubric.md; references/judgment-action-matrix-v5-dlc.md | 按原请求先走对应 v5 连读包；DLC 只附加降档、补证和行动上限剖面 |
+| 高责任发布前边界审计 | references/construct-map-v5-dlc.md; worksheets/seven-gates-quant-rubric.md; references/judgment-action-matrix-v5-dlc.md | `v5-evidence-downgrade-action-ceiling-pack`, `v5-low-power-protection-pack`, `v5-strong-judgment-eight-pack`；`score_visibility: hidden` |
 
 ## 连续联读执行规则
 
@@ -77,6 +91,8 @@
 - `templates/reasoning-outline-output.md` 中的本次连续联读包只列包名，不展开完整工作表。
 - 高风险概念承担判断作用时，读取路径必须是：概念卡 -> 概念契约 -> v5 连续联读包 -> required_closure -> claim ledger。少任一环节，该概念不得进入强判断或正文中心句。
 - `claim ledger` 是正文和 review 的共同中间层；essay 不得绕过它直接把机制候选写成文章命题。
+- v5 DLC 不参与连续联读闭包替代。它只在主流程和必要联读包完成后附加审计；若主流程缺 `claim_id`、source_anchor、低权力反例入口或行动上限，DLC 必须降档或阻断公开。
+- DLC 可见性必须记录为 `score_visibility: hidden / profile_only / user_requested_profile`。普通关系、组织和公共议题不得自动输出分数；高责任边界审计默认隐藏分值。
 
 ## 高风险概念触发
 

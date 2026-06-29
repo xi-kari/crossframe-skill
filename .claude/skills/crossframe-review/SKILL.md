@@ -20,12 +20,13 @@ disable-model-invocation: true
 4. 若评审对象是深度、审计、高责任、公共制度、亲密关系、长期演化或文章类输出，读取或检查 `../crossframe/templates/read-state-capsule.md` 规定的 `v5-read-state-capsule` 是否存在并被下游复用。
 5. 按需读取 `../crossframe/worksheets/source-continuity-check.md` 与 `../crossframe/worksheets/source-anchor-integrity-check.md`，检查闭包是否完整、中心命题和行动边界是否能回指胶囊源锚点。
 6. 若评审对象包含文章正文、公共评论、行动建议、强机制句、高风险概念或高责任判断，读取 `../crossframe/templates/claim-ledger.md` 与 `../crossframe/worksheets/claim-ledger-check.md`，检查正文是否只从已登记 `claim_id` 展开。
-7. 若评审对象是文章、长文、评论、思想文章、报刊答复或“现代编辑同志口吻”输出，按需读取 `../crossframe-essay/SKILL.md`。
-8. 读取本目录的 `protocols/review-protocol.md` 和 `templates/review-report.md`。
-9. 若涉及文章底稿、引用、检索材料或声口，追加读取 `protocols/article-review-protocol.md`。
-10. 若涉及公共事实、真实机构、平台、政策、人物、公司、最新事实、AI/过程性产物、批判文章或来源使用，读取 `../crossframe/references/source-ledger-workflow.md`，检查来源台账字段是否完整。
-11. 若评审对象是历史、历史制度、文明连续史、王朝制度、历史领域接口、史料闭合或 archive/FOIA backlog，读取 `../crossframe-history/SKILL.md` 与 `../crossframe-history/protocols/history-source-ledger-protocol.md`，检查历史输出档位、具体史料台账和调用完成硬闸。
-12. 按需读取本目录 `references/` 中的评分表、失败类型表和证据边界清单。
+7. 若评审对象出现 v5 DLC、量化、评分、半量化、七闸分值、score、rubric、校准、一致性、案例库试跑或自动化 checker，读取 `../crossframe/references/construct-map-v5-dlc.md`、`../crossframe/worksheets/seven-gates-quant-rubric.md` 与 `../crossframe/references/judgment-action-matrix-v5-dlc.md`，检查分值是否只用于降档、补证、阻断发布和行动上限。
+8. 若评审对象是文章、长文、评论、思想文章、报刊答复或“现代编辑同志口吻”输出，按需读取 `../crossframe-essay/SKILL.md`。
+9. 读取本目录的 `protocols/review-protocol.md` 和 `templates/review-report.md`。
+10. 若涉及文章底稿、引用、检索材料或声口，追加读取 `protocols/article-review-protocol.md`。
+11. 若涉及公共事实、真实机构、平台、政策、人物、公司、最新事实、AI/过程性产物、批判文章或来源使用，读取 `../crossframe/references/source-ledger-workflow.md`，检查来源台账字段是否完整。
+12. 若评审对象是历史、历史制度、文明连续史、王朝制度、历史领域接口、史料闭合或 archive/FOIA backlog，读取 `../crossframe-history/SKILL.md` 与 `../crossframe-history/protocols/history-source-ledger-protocol.md`，检查历史输出档位、具体史料台账和调用完成硬闸。
+13. 按需读取本目录 `references/` 中的评分表、失败类型表和证据边界清单。
 
 不要把 CrossFrame 主 skill、文章 skill、eval、examples 或完整案例复制到本 skill 输出中。评审时只引用必要规则名、触发点和证据位置。若 `v5-read-state-capsule` 已存在，下游默认复用胶囊，不得为了评审而重复整块读取源索引。
 
@@ -41,6 +42,7 @@ disable-model-invocation: true
 - 对属于 v5.0 连续板块的高风险概念做源结构连续性检查，而不是只读单张概念卡。
 - 对中心命题、机制候选、高风险概念、行动边界、文章类型转译和写作技法做源锚点完整性检查；不能回指胶囊的内容不得写成 CrossFrame v5 原义。
 - 检查是否存在 `claim ledger`，以及正文中心命题、机制句、高风险概念、行动建议、公共定性、概率排序和点睛句是否能回指对应 `claim_id`。
+- 若输出使用 v5 DLC 或分值，检查 `score_visibility`、触发理由、不能证明什么、降档理由、行动上限和反例入口；分值不得作为处置、排名、资格、公开定性、发布通过或 `substantive_pass` 的依据。
 - 给出可撤回条件、下一步观察或低条件行动边界。
 - 文章类输出必须先有结构洞察底稿，再写正文。
 
@@ -68,6 +70,10 @@ disable-model-invocation: true
 - 来源台账缺失：公共、批判、文章或高责任输出涉及真实对象，却没有source_id、来源、时间、来源类型、支持的 claim_id / 命题、不能证明什么、证据档位、使用位置、降档理由、仍需补证处。
 - 命题台账缺失：文章、公共判断、高责任判断或行动建议没有 `claim ledger`，导致正文直接从术语、技法或概念感生成。
 - 正文裸奔命题：正文中承担判断作用的中心句、机制句、高风险概念、行动建议、公共定性、概率排序或点睛句没有对应 `claim_id`。
+- 强句无 `claim_id`：标题、结论、机制句或行动建议用了强判断语气，但没有可回指的 `claim_id`、source_anchor、概念契约、判断档位和撤回条件。
+- 开放断言伪装成强判断：台账写 `open_assertion`，正文、标题或结论却写成事实闭合、终局裁决、处置依据或公共定性。
+- v5 DLC 分数处置化：把七闸分值、构念读数、案例库一致性或 checker 通过当作处分、排名、资格、公开定性、发布通过、组织健康证明或 `substantive_pass` 的依据。
+- 半量化自动外显：普通关系、组织复盘或公共议题在用户未要求审计/量化时自动输出分数，或没有登记 `score_visibility`。
 - 历史史料台账伪完成：历史输出只写“官方文件、回忆录、现代研究、公开史料”等来源族，或只声明 H0/H1/H2/H3 而没有具体史料、材料距离、不能证明什么和仍需补证处。
 - 历史调用表演化：历史输出写“已读取、已闭包、源锚点已回指、质量闸通过”，但没有具体史料台账、输出档位、解释质量、失败登记和升降级条件。
 - 历史档位越级：没有具体史料台账却写成完整历史接口分析或正式历史分析；只有 source path/finding aid 却写成事实闭合。
@@ -111,6 +117,13 @@ disable-model-invocation: true
 触发人格审判、伪造引用、跳过文章底稿、强判断越级、证据边界完全缺失、连续性保真失败时，即使文字流畅，也不能判为合格。
 
 没有 `claim ledger` 的文章类、高责任、公共判断或行动建议输出，最高只能判 B / structural_pass；不得判 `substantive_pass`。若正文出现无 `claim_id` 的强判断、公共定性或行动建议，最高 C；若影响名誉、权利、资源、处分或公共记忆，直接 F。
+
+v5 DLC 追加评分上限：
+
+- DLC 分数作为处分、排名、资格、封禁、公开定性、发布通过或 `substantive_pass` 依据时，直接 F。
+- 普通关系、组织或公共议题自动输出分数且用户未要求量化审计，最高 C；若影响关系安全、组织处置、名誉、权利、资源或公共记忆，直接 F。
+- 缺少 `score_visibility`、不能证明什么、反例入口或行动上限时，最高 B；若据此公开发布，最高 C/F。
+- 案例库试跑、checker 通过或评分者一致性只能证明工具结构检查完成，不能证明现实判断为真；违反时最高 C，高责任场景直接 F。
 
 历史输出追加评分上限：
 

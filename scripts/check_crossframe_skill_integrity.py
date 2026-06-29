@@ -961,11 +961,125 @@ def check_v5_dlc_casebook_validation(root: Path, label: str) -> None:
         for needle in [
             "REQUIRED_DOMAINS",
             "FORBIDDEN_LANGUAGE",
+            "REGRESSION_FILES",
+            "check_regression_files",
             "need at least two formal trials with embedded rater_a/rater_b readings",
             "need at least one downgrade, anchor revision, or template revision",
             "ok: v5 DLC casebook validation trials passed",
         ]:
             require(needle in checker_text, f"{label}: v5 DLC casebook checker missing marker: {needle}")
+
+
+def check_v5_dlc_runtime_integration(root: Path, label: str) -> None:
+    runtime_targets = {
+        "crossframe/SKILL.md": [
+            "## v5.0 半量化 DLC 运行时闸",
+            "v5_dlc: not_triggered",
+            "普通关系、组织和公共议题不得自动输出分数",
+            "score_visibility",
+            "DLC 分值只能触发降档、补证、反例入口、行动上限收窄或 `block_publication`",
+        ],
+        "crossframe/references/read-routing-map.md": [
+            "## v5.0 半量化 DLC 运行时路由",
+            "量化 / 评分 / 半量化 / 打分 / 比较",
+            "高责任发布前边界审计",
+            "score_visibility: hidden / profile_only / user_requested_profile",
+        ],
+        "crossframe/references/runtime-read-policy.md": [
+            "## v5 DLC 读取边界",
+            "默认不读取 v5 DLC 半量化文件",
+            "score_visibility: hidden / profile_only / user_requested_profile",
+            "不能授权处分",
+        ],
+        "crossframe/references/construct-map-v5-dlc.md": [
+            "## 运行时接入边界",
+            "普通关系、组织和公共议题不得自动输出分数",
+            "`score_visibility`",
+        ],
+        "crossframe/worksheets/seven-gates-quant-rubric.md": [
+            "本表只有在 runtime 明确触发 v5 DLC 时使用",
+            "DLC 分数处置化失败",
+            "score_visibility:",
+        ],
+        "crossframe/references/judgment-action-matrix-v5-dlc.md": [
+            "v5 DLC 分数被用作处分",
+            "`score_visibility` 缺失",
+            "普通关系、组织和公共议题不得自动输出分数",
+        ],
+    }
+    for rel, needles in runtime_targets.items():
+        text = read(root / rel)
+        for needle in needles:
+            require(needle in text, f"{label}: v5 DLC runtime integration missing {needle!r} in {rel}")
+
+    review_targets = {
+        "crossframe-review/SKILL.md": [
+            "v5 DLC 分数处置化",
+            "半量化自动外显",
+            "强句无 `claim_id`",
+            "开放断言伪装成强判断",
+            "v5 DLC 追加评分上限",
+        ],
+        "crossframe-review/protocols/review-protocol.md": [
+            "v5 DLC 分数处置化候选",
+            "半量化自动外显候选",
+            "v5 DLC 分数作为处分、排名、资格、封禁、公开定性、发布通过或 `substantive_pass`",
+        ],
+        "crossframe-review/templates/review-report.md": [
+            "v5 DLC 触发与 score_visibility",
+            "| v5 DLC 分数处置化候选 |",
+            "| 半量化自动外显候选 |",
+        ],
+        "crossframe-review/references/review-rubric.md": [
+            "v5 DLC 分数处置化",
+            "半量化自动外显",
+            "开放断言伪装成强判断",
+            "强句无 `claim_id`",
+        ],
+        "crossframe-review/references/failure-taxonomy.md": [
+            "## v5 DLC 分数处置化",
+            "## 半量化自动外显",
+            "## 开放断言伪装成强判断",
+            "## 强句无 claim_id",
+            "## 标题/结论强于台账",
+        ],
+        "crossframe-review/evals/crossframe-review-smoke-tests.md": [
+            "## v5 DLC 分数处置化",
+            "## 半量化自动外显",
+            "## 开放断言伪装成强判断",
+        ],
+    }
+    for rel, needles in review_targets.items():
+        text = read(root / rel)
+        for needle in needles:
+            require(needle in text, f"{label}: v5 DLC review hardening missing {needle!r} in {rel}")
+
+    regression_targets = {
+        "crossframe-casebook/examples/v5-dlc-quant-trials/relationship-scale-erasure-regression.md": [
+            "regression_id: v5-dlc-regression-relationship-scale-erasure",
+            "低尺度痛苦",
+            "score_visibility: hidden",
+        ],
+        "crossframe-casebook/examples/v5-dlc-quant-trials/organization-retrospective-proof-regression.md": [
+            "regression_id: v5-dlc-regression-organization-retrospective-proof",
+            "反馈写回",
+            "score_visibility: hidden",
+        ],
+        "crossframe-casebook/examples/v5-dlc-quant-trials/public-announcement-low-power-regression.md": [
+            "regression_id: v5-dlc-regression-public-announcement-low-power",
+            "低权力反例入口",
+            "required_action_ceiling: block_publication",
+        ],
+        "crossframe-casebook/examples/v5-dlc-quant-trials/ai-compliance-report-proof-regression.md": [
+            "regression_id: v5-dlc-regression-ai-compliance-proof",
+            "过程性产物",
+            "required_action_ceiling: ask_for_evidence",
+        ],
+    }
+    for rel, needles in regression_targets.items():
+        text = read(root / rel)
+        for needle in needles:
+            require(needle in text, f"{label}: v5 DLC failure regression missing {needle!r} in {rel}")
 
 
 def check_v5_dlc_publication_prototype(root: Path, label: str) -> None:
@@ -1863,6 +1977,7 @@ def check_root(root: Path, label: str) -> None:
     check_claim_ledger(root, label)
     check_v5_dlc_quantification_foundation(root, label)
     check_v5_dlc_casebook_validation(root, label)
+    check_v5_dlc_runtime_integration(root, label)
     check_v5_dlc_publication_prototype(root, label)
     check_history_adapter(root, label)
     check_inquiry_layer(root, label)

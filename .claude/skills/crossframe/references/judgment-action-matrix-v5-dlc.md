@@ -8,6 +8,10 @@
 - 高分不能自动升级判断档位。
 - 任一关键闸失败时，判断必须降档，行动上限必须收窄。
 - 高责任场景即使七闸都显示较强，也必须追加强判断八件套、来源台账、受影响位置反馈和外部复核。
+- 运行时未触发 v5 DLC 时，不得补写分值或量化矩阵。
+- 普通关系、组织和公共议题不得自动输出分数；用户要求量化时，只能输出结构剖面和证据缺口。
+- 高责任场景的分值只能触发降档、补证、阻断发布或收窄行动上限，不能作为处置、排名、资格、公开定性、发布通过或 `substantive_pass` 依据。
+- 每次使用本矩阵必须登记 `score_visibility: hidden / profile_only / user_requested_profile`。
 
 ## 判断档位
 
@@ -47,6 +51,9 @@
 | 来源台账缺少“不能证明什么” | `open_assertion` | `ask_for_evidence` |
 | 反例搜索缺失且会影响公共记忆 | `open_assertion` | `block_publication` |
 | 案例库试跑或 checker 通过 | 不提高档位 | 不提高行动上限 |
+| v5 DLC 分数被用作处分、排名、资格、公开定性、发布通过或 `substantive_pass` 依据 | `light_observation` | `block_publication` |
+| 普通关系、组织或公共议题自动外显分数且用户未要求量化审计 | `open_assertion` | `ask_for_evidence` |
+| `score_visibility` 缺失或与高责任边界不符 | `open_assertion` | `block_publication` |
 
 ## 高责任强判断候选
 
