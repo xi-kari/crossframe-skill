@@ -24,6 +24,7 @@ BUNDLE_SOURCE_FILES = [
 
 PROTOTYPE_AUDIT_FILES = [
     "scripts/build_v6_publication_bundle.py",
+    "scripts/build_v6_docx.py",
     "scripts/check_v6_publication_bundle.py",
     "scripts/validate_v6_quantification_schema_fixtures.py",
     "scripts/check_v6_casebook_trials.py",

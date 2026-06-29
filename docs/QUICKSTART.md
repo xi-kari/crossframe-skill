@@ -78,6 +78,12 @@ git diff --check
 python scripts\build_v6_publication_bundle.py --repo .
 ```
 
+生成 v6 DOCX 发布稿：
+
+```powershell
+python scripts\build_v6_docx.py --repo .
+```
+
 `check_v6_publication_bundle.py` 会生成 ignored `outputs/` bundle 并核对 manifest、章节、来源引用和反误用语言；通过只说明发布源稿结构可审计，不说明现实判断正确。
 
 如果你持有原始 v5.0 DOCX，可以运行完整源一致性检查：

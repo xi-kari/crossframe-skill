@@ -503,7 +503,7 @@ def check_public_release_docs(repo: Path, label: str) -> None:
         "README.md": ["14 个 `crossframe-*` skills", "安全边界先行", "source_id -> claim_id", "docs/QUICKSTART.md", "framework-CrossFrame_v5.1.7", "review_%E2%86%92_inquiry", "https://xi-kari.github.io/crossframe-skill/", "网页介绍", "install-codex.sh", "validate_claim_ledger_schema_fixtures.py", "validate_v6_quantification_schema_fixtures.py", "check_v6_casebook_trials.py", "check_v6_publication_bundle.py", "docs/CROSSFRAME_V6.md", "docs/V6_TOOL_PROTOTYPE.md", "不是总分系统、预测模型、认证系统或处置工具", "失败发现", "sync_skill_mirrors.py --check", "bash -n scripts/install-codex.sh", "python -m py_compile scripts/*.py", "brief-visible", "standard-visible"],
         "CHANGELOG.md": ["v5.1.7", "v5.1.6", "v5.1.5", "v5.1.4", "v5.1.3", "site/", "GitHub Pages", "v5.0.2", "crossframe-history", "crossframe-inquiry", "source_id"],
         "docs/WHAT_IS_CROSSFRAME.md": ["CrossFrame 是一组给 AI 使用的中文结构思考 skills", "一个一分钟例子", "它不是什么", "最推荐怎么用", "crossframe-inquiry"],
-        "docs/QUICKSTART.md": ["install-codex.ps1", "install-codex.sh", "--materials-only", "--source-docx", "validate_claim_ledger_schema_fixtures.py", "validate_v6_quantification_schema_fixtures.py", "check_v6_casebook_trials.py", "check_v6_publication_bundle.py", "build_v6_publication_bundle.py", "sync_skill_mirrors.py --check", "bash -n scripts/install-codex.sh", "python -m py_compile scripts/*.py"],
+        "docs/QUICKSTART.md": ["install-codex.ps1", "install-codex.sh", "--materials-only", "--source-docx", "validate_claim_ledger_schema_fixtures.py", "validate_v6_quantification_schema_fixtures.py", "check_v6_casebook_trials.py", "check_v6_publication_bundle.py", "build_v6_publication_bundle.py", "build_v6_docx.py", "sync_skill_mirrors.py --check", "bash -n scripts/install-codex.sh", "python -m py_compile scripts/*.py"],
         "docs/CONCEPTS.md": ["Claim Ledger", "source_id", "Concept Contract"],
         "docs/WORKFLOWS.md": ["previous_context -> crossframe-inquiry", "claim ledger / claim-ledger-check", "纯致谢", "brief-visible", "standard-visible"],
         "docs/EXAMPLES.md": ["首页只使用安全模拟样例", "真实/高敏主题", "source_id", "claim_id", "evidence grade", "withdrawal condition", "publish_boundary", "历史草稿档", "crossframe-inquiry", "mini 输出示例"],
@@ -994,6 +994,7 @@ def check_v6_publication_prototype(root: Path, label: str) -> None:
             "docs/V6_TOOL_PROTOTYPE.md": [
                 "v6.0 工具原型",
                 "scripts/build_v6_publication_bundle.py",
+                "scripts/build_v6_docx.py",
                 "scripts/check_v6_publication_bundle.py",
                 "Smoke Test 期望",
                 "不能单独授权处置",
@@ -1029,12 +1030,18 @@ def check_v6_publication_prototype(root: Path, label: str) -> None:
 
     if (repo / "scripts").is_dir():
         scripts = {
-        "scripts/build_v6_publication_bundle.py": [
+            "scripts/build_v6_publication_bundle.py": [
             "BUNDLE_SOURCE_FILES",
             "PROTOTYPE_AUDIT_FILES",
             "crossframe-v6.0-publication",
             "manifest.json",
             "sha256",
+            ],
+            "scripts/build_v6_docx.py": [
+            "DOCX_SOURCE_FILES",
+            "TOOL_BOUNDARY",
+            "compact_reference_guide",
+            "跨尺度结构诊断框架v6.0.docx",
             ],
             "scripts/check_v6_publication_bundle.py": [
             "REQUIRED_HEADINGS",

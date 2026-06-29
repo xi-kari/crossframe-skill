@@ -101,7 +101,7 @@ v6.0 在来源台账和证据台账中增加证据成本、直接性、独立性
 
 ## 工具原型
 
-第一版工具原型包括：Markdown 工作表、JSON schema、fixtures、`scripts/validate_v6_quantification_schema_fixtures.py`、`scripts/check_v6_casebook_trials.py`、`scripts/check_v6_publication_bundle.py` 和 `scripts/build_v6_publication_bundle.py`。
+第一版工具原型包括：Markdown 工作表、JSON schema、fixtures、`scripts/validate_v6_quantification_schema_fixtures.py`、`scripts/check_v6_casebook_trials.py`、`scripts/check_v6_publication_bundle.py`、`scripts/build_v6_publication_bundle.py` 和 `scripts/build_v6_docx.py`。
 
 工具原型只能做结构校验、缺口暴露、降档提醒和发布前边界检查。它不替代人工审查。使用说明见 `docs/V6_TOOL_PROTOTYPE.md`。
 
