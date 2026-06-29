@@ -59,6 +59,9 @@ jobs:
           python scripts/validate_claim_ledger_schema_fixtures.py --repo .
           python scripts/validate_v6_quantification_schema_fixtures.py --repo .
 
+      - name: Validate v6 casebook trials
+        run: python scripts/check_v6_casebook_trials.py --repo .
+
       - name: Check mirror sync
         run: python scripts/sync_skill_mirrors.py --check
 
