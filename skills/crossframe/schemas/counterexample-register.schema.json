@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "CrossFrame V6 Counterexample Register",
+  "title": "CrossFrame V5 DLC Counterexample Register",
   "type": "object",
   "additionalProperties": false,
   "allOf": [

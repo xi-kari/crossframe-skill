@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "CrossFrame V6 Seven-Gates Quant Profile",
+  "title": "CrossFrame V5 DLC Seven-Gates Quant Profile",
   "type": "object",
   "additionalProperties": false,
   "required": [

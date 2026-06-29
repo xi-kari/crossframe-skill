@@ -467,15 +467,15 @@ def check_public_release_docs(repo: Path, label: str) -> None:
             "Validate PowerShell installer syntax",
             "python -m json.tool skills/crossframe/schemas/claim-ledger.schema.json > /dev/null",
             "python -m json.tool skills/crossframe/schemas/seven-gates-quant.schema.json > /dev/null",
-            "python -m json.tool skills/crossframe/schemas/evidence-ledger-v6.schema.json > /dev/null",
+            "python -m json.tool skills/crossframe/schemas/evidence-ledger-v5-dlc.schema.json > /dev/null",
             "python -m json.tool skills/crossframe/schemas/calibration-anchor.schema.json > /dev/null",
             "python -m json.tool skills/crossframe/schemas/mechanism-update.schema.json > /dev/null",
             "python -m json.tool skills/crossframe/schemas/counterexample-register.schema.json > /dev/null",
             "python -m pip install jsonschema",
             "python scripts/validate_claim_ledger_schema_fixtures.py --repo .",
-            "python scripts/validate_v6_quantification_schema_fixtures.py --repo .",
-            "python scripts/check_v6_casebook_trials.py --repo .",
-            "python scripts/check_v6_publication_bundle.py --repo .",
+            "python scripts/validate_v5_dlc_quantification_schema_fixtures.py --repo .",
+            "python scripts/check_v5_dlc_casebook_trials.py --repo .",
+            "python scripts/check_v5_dlc_publication_bundle.py --repo .",
             "python scripts/sync_skill_mirrors.py --check",
             "python scripts/package_crossframe_skill.py --repo . --version ci",
             "git diff --check",
@@ -500,10 +500,10 @@ def check_public_release_docs(repo: Path, label: str) -> None:
         require(retired_demo_marker not in public_page_text, f"{label}: public page still has sensitive landing demo marker: {retired_demo_marker}")
 
     required_docs = {
-        "README.md": ["14 个 `crossframe-*` skills", "安全边界先行", "source_id -> claim_id", "docs/QUICKSTART.md", "framework-CrossFrame_v5.1.7", "review_%E2%86%92_inquiry", "https://xi-kari.github.io/crossframe-skill/", "网页介绍", "install-codex.sh", "validate_claim_ledger_schema_fixtures.py", "validate_v6_quantification_schema_fixtures.py", "check_v6_casebook_trials.py", "check_v6_publication_bundle.py", "docs/CROSSFRAME_V6.md", "docs/V6_TOOL_PROTOTYPE.md", "不是总分系统、预测模型、认证系统或处置工具", "失败发现", "sync_skill_mirrors.py --check", "bash -n scripts/install-codex.sh", "python -m py_compile scripts/*.py", "brief-visible", "standard-visible"],
+        "README.md": ["14 个 `crossframe-*` skills", "安全边界先行", "source_id -> claim_id", "docs/QUICKSTART.md", "framework-CrossFrame_v5.1.7", "review_%E2%86%92_inquiry", "https://xi-kari.github.io/crossframe-skill/", "网页介绍", "install-codex.sh", "validate_claim_ledger_schema_fixtures.py", "validate_v5_dlc_quantification_schema_fixtures.py", "check_v5_dlc_casebook_trials.py", "check_v5_dlc_publication_bundle.py", "docs/CROSSFRAME_V5_DLC.md", "docs/V5_DLC_TOOL_PROTOTYPE.md", "不是总分系统、预测模型、认证系统或处置工具", "失败发现", "sync_skill_mirrors.py --check", "bash -n scripts/install-codex.sh", "python -m py_compile scripts/*.py", "brief-visible", "standard-visible"],
         "CHANGELOG.md": ["v5.1.7", "v5.1.6", "v5.1.5", "v5.1.4", "v5.1.3", "site/", "GitHub Pages", "v5.0.2", "crossframe-history", "crossframe-inquiry", "source_id"],
         "docs/WHAT_IS_CROSSFRAME.md": ["CrossFrame 是一组给 AI 使用的中文结构思考 skills", "一个一分钟例子", "它不是什么", "最推荐怎么用", "crossframe-inquiry"],
-        "docs/QUICKSTART.md": ["install-codex.ps1", "install-codex.sh", "--materials-only", "--source-docx", "validate_claim_ledger_schema_fixtures.py", "validate_v6_quantification_schema_fixtures.py", "check_v6_casebook_trials.py", "check_v6_publication_bundle.py", "build_v6_publication_bundle.py", "build_v6_docx.py", "sync_skill_mirrors.py --check", "bash -n scripts/install-codex.sh", "python -m py_compile scripts/*.py"],
+        "docs/QUICKSTART.md": ["install-codex.ps1", "install-codex.sh", "--materials-only", "--source-docx", "validate_claim_ledger_schema_fixtures.py", "validate_v5_dlc_quantification_schema_fixtures.py", "check_v5_dlc_casebook_trials.py", "check_v5_dlc_publication_bundle.py", "build_v5_dlc_publication_bundle.py", "build_v5_dlc_docx.py", "sync_skill_mirrors.py --check", "bash -n scripts/install-codex.sh", "python -m py_compile scripts/*.py"],
         "docs/CONCEPTS.md": ["Claim Ledger", "source_id", "Concept Contract"],
         "docs/WORKFLOWS.md": ["previous_context -> crossframe-inquiry", "claim ledger / claim-ledger-check", "纯致谢", "brief-visible", "standard-visible"],
         "docs/EXAMPLES.md": ["首页只使用安全模拟样例", "真实/高敏主题", "source_id", "claim_id", "evidence grade", "withdrawal condition", "publish_boundary", "历史草稿档", "crossframe-inquiry", "mini 输出示例"],
@@ -785,23 +785,23 @@ def check_claim_ledger(root: Path, label: str) -> None:
             require(needle in validator_text, f"{label}: claim ledger fixture validator missing marker: {needle}")
 
 
-def check_v6_quantification_foundation(root: Path, label: str) -> None:
+def check_v5_dlc_quantification_foundation(root: Path, label: str) -> None:
     schema_targets = {
-        "seven-gates-quant.schema.json": "CrossFrame V6 Seven-Gates Quant Profile",
-        "evidence-ledger-v6.schema.json": "CrossFrame V6 Evidence Ledger",
-        "calibration-anchor.schema.json": "CrossFrame V6 Calibration Anchor",
-        "mechanism-update.schema.json": "CrossFrame V6 Mechanism Update",
-        "counterexample-register.schema.json": "CrossFrame V6 Counterexample Register",
+        "seven-gates-quant.schema.json": "CrossFrame V5 DLC Seven-Gates Quant Profile",
+        "evidence-ledger-v5-dlc.schema.json": "CrossFrame V5 DLC Evidence Ledger",
+        "calibration-anchor.schema.json": "CrossFrame V5 DLC Calibration Anchor",
+        "mechanism-update.schema.json": "CrossFrame V5 DLC Mechanism Update",
+        "counterexample-register.schema.json": "CrossFrame V5 DLC Counterexample Register",
     }
     fixture_targets = [
         "seven-gates-quant",
-        "evidence-ledger-v6",
+        "evidence-ledger-v5-dlc",
         "calibration-anchor",
         "mechanism-update",
         "counterexample-register",
     ]
     worksheet_targets = {
-        "crossframe/references/construct-map-v6.md": [
+        "crossframe/references/construct-map-v5-dlc.md": [
             "object_boundary_clarity",
             "evidence_support_degree",
             "scale_consistency",
@@ -818,7 +818,7 @@ def check_v6_quantification_foundation(root: Path, label: str) -> None:
             "不得单独用于处分",
             "强制降档规则",
         ],
-        "crossframe/worksheets/evidence-ledger-v6.md": [
+        "crossframe/worksheets/evidence-ledger-v5-dlc.md": [
             "不能证明什么",
             "AI/过程性产物不能证明现实安全",
             "同源材料不能通过数量叠加变成独立证据",
@@ -844,7 +844,7 @@ def check_v6_quantification_foundation(root: Path, label: str) -> None:
     schema_dir = root / "crossframe" / "schemas"
     for filename, title in schema_targets.items():
         path = schema_dir / filename
-        require(path.exists(), f"{label}: missing v6 quantification schema: {path.relative_to(root)}")
+        require(path.exists(), f"{label}: missing v5 DLC quantification schema: {path.relative_to(root)}")
         schema_obj = json.loads(read(path))
         require(schema_obj.get("$schema") == "https://json-schema.org/draft/2020-12/schema", f"{label}: {filename} missing draft 2020-12 schema marker")
         require(schema_obj.get("title") == title, f"{label}: {filename} has wrong title")
@@ -854,26 +854,26 @@ def check_v6_quantification_foundation(root: Path, label: str) -> None:
         for node_path, node in object_nodes:
             require(node.get("additionalProperties") is False, f"{label}: {filename} object schema must close additionalProperties at {node_path}")
 
-    fixture_root = schema_dir / "fixtures" / "v6"
+    fixture_root = schema_dir / "fixtures" / "v5-dlc"
     for fixture_id in fixture_targets:
         fixture_dir = fixture_root / fixture_id
-        require(fixture_dir.is_dir(), f"{label}: missing v6 fixture directory: {fixture_dir.relative_to(root)}")
+        require(fixture_dir.is_dir(), f"{label}: missing v5 DLC fixture directory: {fixture_dir.relative_to(root)}")
         valid = sorted(fixture_dir.glob("valid-*.json"))
         invalid = sorted(fixture_dir.glob("invalid-*.json"))
-        require(valid, f"{label}: v6 fixture directory missing valid fixture: {fixture_id}")
-        require(invalid, f"{label}: v6 fixture directory missing invalid fixture: {fixture_id}")
+        require(valid, f"{label}: v5 DLC fixture directory missing valid fixture: {fixture_id}")
+        require(invalid, f"{label}: v5 DLC fixture directory missing invalid fixture: {fixture_id}")
 
     for rel, needles in worksheet_targets.items():
         path = root / rel
-        require(path.exists(), f"{label}: missing v6 quantification file: {rel}")
+        require(path.exists(), f"{label}: missing v5 DLC quantification file: {rel}")
         text = read(path)
         for needle in needles:
-            require(needle in text, f"{label}: {rel} missing v6 marker: {needle}")
+            require(needle in text, f"{label}: {rel} missing v5 DLC marker: {needle}")
 
     repo = schema_dir.parents[2]
-    schema_validator = repo / "scripts" / "validate_v6_quantification_schema_fixtures.py"
+    schema_validator = repo / "scripts" / "validate_v5_dlc_quantification_schema_fixtures.py"
     if (repo / "scripts").is_dir():
-        require(schema_validator.exists(), f"{label}: missing v6 fixture validator: {schema_validator.relative_to(repo)}")
+        require(schema_validator.exists(), f"{label}: missing v5 DLC fixture validator: {schema_validator.relative_to(repo)}")
         validator_text = read(schema_validator)
         for needle in [
             "FORBIDDEN_SCORE_KEYS",
@@ -885,60 +885,60 @@ def check_v6_quantification_foundation(root: Path, label: str) -> None:
             "valid-",
             "invalid-",
         ]:
-            require(needle in validator_text, f"{label}: v6 fixture validator missing marker: {needle}")
+            require(needle in validator_text, f"{label}: v5 DLC fixture validator missing marker: {needle}")
 
 
-def check_v6_casebook_validation(root: Path, label: str) -> None:
+def check_v5_dlc_casebook_validation(root: Path, label: str) -> None:
     targets = {
-        "crossframe-casebook/references/v6-casebook-validation-protocol.md": [
+        "crossframe-casebook/references/v5-dlc-casebook-validation-protocol.md": [
             "失败",
             "评分者独立性",
             "降档与写回触发",
             "禁止性声明",
         ],
-        "crossframe-casebook/templates/v6-quant-case-trial-template.md": [
+        "crossframe-casebook/templates/v5-dlc-quant-case-trial-template.md": [
             "trial_id:",
             "七闸半量化剖面",
             "证据台账摘记",
             "本案例不能证明",
         ],
-        "crossframe-casebook/templates/v6-rater-disagreement-record-template.md": [
+        "crossframe-casebook/templates/v5-dlc-rater-disagreement-record-template.md": [
             "conflict_id:",
             "rater_a 原始读数",
             "rater_b 原始读数",
             "校准处理",
         ],
-        "crossframe-casebook/examples/v6-quant-trials/organization-case-trial.md": [
+        "crossframe-casebook/examples/v5-dlc-quant-trials/organization-case-trial.md": [
             "case_domain: organization",
             "rater_record: embedded",
             "responsibility_chain_traceability",
             "本案例不能证明",
         ],
-        "crossframe-casebook/examples/v6-quant-trials/relationship-case-trial.md": [
+        "crossframe-casebook/examples/v5-dlc-quant-trials/relationship-case-trial.md": [
             "case_domain: relationship",
             "judgment_grade: open_assertion",
             "action_ceiling: ask_for_evidence",
             "本案例不能证明",
         ],
-        "crossframe-casebook/examples/v6-quant-trials/public-dispute-case-trial.md": [
+        "crossframe-casebook/examples/v5-dlc-quant-trials/public-dispute-case-trial.md": [
             "case_domain: public_dispute",
             "downgrade_triggered: true",
             "action_ceiling: block_publication",
             "low_power_counterexample_entry",
         ],
-        "crossframe-casebook/examples/v6-quant-trials/misuse-counterexample-trial.md": [
+        "crossframe-casebook/examples/v5-dlc-quant-trials/misuse-counterexample-trial.md": [
             "case_domain: misuse_counterexample",
             "trial_status: counterexample",
             "template_revision_required: true",
             "尺度闸 fail",
         ],
-        "crossframe-casebook/examples/v6-quant-trials/rater-disagreement-sample.md": [
+        "crossframe-casebook/examples/v5-dlc-quant-trials/rater-disagreement-sample.md": [
             "conflict_type: action_ceiling",
             "rater_a_action_ceiling: block_publication",
             "rater_b_action_ceiling: publish_with_boundary",
             "不强行合并",
         ],
-        "crossframe-casebook/examples/v6-quant-trials/validation-summary.md": [
+        "crossframe-casebook/examples/v5-dlc-quant-trials/validation-summary.md": [
             "第一轮 shakedown",
             "降档与写回",
             "评分者一致性发现",
@@ -948,73 +948,74 @@ def check_v6_casebook_validation(root: Path, label: str) -> None:
 
     for rel, needles in targets.items():
         path = root / rel
-        require(path.exists(), f"{label}: missing v6 casebook validation file: {rel}")
+        require(path.exists(), f"{label}: missing v5 DLC casebook validation file: {rel}")
         text = read(path)
         for needle in needles:
-            require(needle in text, f"{label}: {rel} missing v6 casebook marker: {needle}")
+            require(needle in text, f"{label}: {rel} missing v5 DLC casebook marker: {needle}")
 
     repo = root.parent
-    checker = repo / "scripts" / "check_v6_casebook_trials.py"
+    checker = repo / "scripts" / "check_v5_dlc_casebook_trials.py"
     if (repo / "scripts").is_dir():
-        require(checker.exists(), f"{label}: missing v6 casebook checker: {checker.relative_to(repo)}")
+        require(checker.exists(), f"{label}: missing v5 DLC casebook checker: {checker.relative_to(repo)}")
         checker_text = read(checker)
         for needle in [
             "REQUIRED_DOMAINS",
             "FORBIDDEN_LANGUAGE",
             "need at least two formal trials with embedded rater_a/rater_b readings",
             "need at least one downgrade, anchor revision, or template revision",
-            "ok: v6 casebook validation trials passed",
+            "ok: v5 DLC casebook validation trials passed",
         ]:
-            require(needle in checker_text, f"{label}: v6 casebook checker missing marker: {needle}")
+            require(needle in checker_text, f"{label}: v5 DLC casebook checker missing marker: {needle}")
 
 
-def check_v6_publication_prototype(root: Path, label: str) -> None:
+def check_v5_dlc_publication_prototype(root: Path, label: str) -> None:
     repo = root.parent
     if (repo / "docs").is_dir():
         docs = {
-            "docs/CROSSFRAME_V6.md": [
-                "# 跨尺度结构诊断框架 v6.0",
+            "docs/CROSSFRAME_V5_DLC.md": [
+                "# 跨尺度结构诊断框架 v5.0 半量化 DLC",
                 "## 发布边界",
+                "## 与 v5.0 原文的关系",
                 "## 判断档位与行动上限",
                 "## 反例、撤回与治理写回",
                 "## 案例库验证与评分者一致性",
                 "## 工具原型",
                 "本工具只帮助整理结构判断",
-                "skills/crossframe/references/construct-map-v6.md",
-                "skills/crossframe-casebook/examples/v6-quant-trials/validation-summary.md",
-                "scripts/validate_v6_quantification_schema_fixtures.py",
-                "scripts/check_v6_casebook_trials.py",
+                "skills/crossframe/references/construct-map-v5-dlc.md",
+                "skills/crossframe-casebook/examples/v5-dlc-quant-trials/validation-summary.md",
+                "scripts/validate_v5_dlc_quantification_schema_fixtures.py",
+                "scripts/check_v5_dlc_casebook_trials.py",
             ],
-            "docs/V5_TO_V6_CHANGES.md": [
-                "v6.0 不替换 v5.0",
+            "docs/V5_DLC_INTEGRATION_NOTES.md": [
+                "半量化 DLC 不替换 v5.0",
                 "七闸复核",
                 "反例、撤回、版本写回",
                 "评分者一致性只说明协议稳定性",
             ],
-            "docs/V6_TOOL_PROTOTYPE.md": [
-                "v6.0 工具原型",
-                "scripts/build_v6_publication_bundle.py",
-                "scripts/build_v6_docx.py",
-                "scripts/check_v6_publication_bundle.py",
+            "docs/V5_DLC_TOOL_PROTOTYPE.md": [
+                "v5.0 半量化 DLC 工具原型",
+                "scripts/build_v5_dlc_publication_bundle.py",
+                "scripts/build_v5_dlc_docx.py",
+                "scripts/check_v5_dlc_publication_bundle.py",
                 "Smoke Test 期望",
                 "不能单独授权处置",
             ],
         }
         for rel, needles in docs.items():
             path = repo / rel
-            require(path.exists(), f"{label}: missing v6 publication doc: {rel}")
+            require(path.exists(), f"{label}: missing v5 DLC publication doc: {rel}")
             text = read(path)
             for needle in needles:
-                require(needle in text, f"{label}: {rel} missing v6 publication marker: {needle}")
+                require(needle in text, f"{label}: {rel} missing v5 DLC publication marker: {needle}")
 
     references = {
-        "crossframe/references/judgment-action-matrix-v6.md": [
+        "crossframe/references/judgment-action-matrix-v5-dlc.md": [
             "强制降档规则",
             "`open_assertion`",
             "`block_publication`",
             "案例库试跑或 checker 通过",
         ],
-        "crossframe/references/falsification-governance-v6.md": [
+        "crossframe/references/falsification-governance-v5-dlc.md": [
             "反例分级",
             "评分者分歧治理",
             "误用复核",
@@ -1023,40 +1024,40 @@ def check_v6_publication_prototype(root: Path, label: str) -> None:
     }
     for rel, needles in references.items():
         path = root / rel
-        require(path.exists(), f"{label}: missing v6 publication reference: {rel}")
+        require(path.exists(), f"{label}: missing v5 DLC publication reference: {rel}")
         text = read(path)
         for needle in needles:
-            require(needle in text, f"{label}: {rel} missing v6 publication marker: {needle}")
+            require(needle in text, f"{label}: {rel} missing v5 DLC publication marker: {needle}")
 
     if (repo / "scripts").is_dir():
         scripts = {
-            "scripts/build_v6_publication_bundle.py": [
+            "scripts/build_v5_dlc_publication_bundle.py": [
             "BUNDLE_SOURCE_FILES",
             "PROTOTYPE_AUDIT_FILES",
-            "crossframe-v6.0-publication",
+            "crossframe-v5-dlc-publication",
             "manifest.json",
             "sha256",
             ],
-            "scripts/build_v6_docx.py": [
+            "scripts/build_v5_dlc_docx.py": [
             "DOCX_SOURCE_FILES",
             "TOOL_BOUNDARY",
             "compact_reference_guide",
-            "跨尺度结构诊断框架v6.0.docx",
+            "跨尺度结构诊断框架v5.0半量化DLC.docx",
             ],
-            "scripts/check_v6_publication_bundle.py": [
+            "scripts/check_v5_dlc_publication_bundle.py": [
             "REQUIRED_HEADINGS",
             "TOOL_BOUNDARY",
             "FORBIDDEN_LANGUAGE",
             "MAX_NEGATION_DISTANCE",
-            "ok: v6 publication bundle checks passed",
+            "ok: v5 DLC publication bundle checks passed",
         ],
         }
         for rel, needles in scripts.items():
             path = repo / rel
-            require(path.exists(), f"{label}: missing v6 publication script: {rel}")
+            require(path.exists(), f"{label}: missing v5 DLC publication script: {rel}")
             text = read(path)
             for needle in needles:
-                require(needle in text, f"{label}: {rel} missing v6 publication marker: {needle}")
+                require(needle in text, f"{label}: {rel} missing v5 DLC publication marker: {needle}")
 
 
 def check_history_adapter(root: Path, label: str) -> None:
@@ -1860,9 +1861,9 @@ def check_root(root: Path, label: str) -> None:
     check_required_skill_dirs(root, label)
     check_source_ledger(root, label)
     check_claim_ledger(root, label)
-    check_v6_quantification_foundation(root, label)
-    check_v6_casebook_validation(root, label)
-    check_v6_publication_prototype(root, label)
+    check_v5_dlc_quantification_foundation(root, label)
+    check_v5_dlc_casebook_validation(root, label)
+    check_v5_dlc_publication_prototype(root, label)
     check_history_adapter(root, label)
     check_inquiry_layer(root, label)
     check_suite_routes_all_siblings(root, label)
