@@ -39,6 +39,7 @@ $skills = @(
   "skills/crossframe-casebook",
   "skills/crossframe-history",
   "skills/crossframe-inquiry",
+  "skills/crossframe-max",
   "skills/crossframe-public",
   "skills/crossframe-org",
   "skills/crossframe-teach",

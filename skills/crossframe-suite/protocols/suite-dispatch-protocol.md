@@ -4,6 +4,8 @@
 
 ## 0. 模式与角色判定
 
+若用户点名 `crossframe-max`、`/crossframe-max`、`$crossframe-max`，或明确要求“最大算力 / 全尺度穷尽推演 / 不设字数限制完整解释”，本协议不启动 `2+1` 模式/角色选择器，直接转交 `../../crossframe-max/SKILL.md`。`crossframe-max` 是独立模式，不是 suite 的体积档位，也不走普通文章类型选择器。
+
 读取 `../references/output-mode-selector.md`，根据用户触发词自动判定本次的 `analysis_mode`（保守/客观/激进/批判）、`role`（学术专家/实践工匠/战略决策者/大众传播/批判反思者/未来探索者）和 `topic_sensitivity`（low/normal/vulnerable/high-stakes）。
 
 若用户在本次对话中未使用任何模式或角色触发关键词，也没有给出 `2+1` 这类数字组合，AI 必须完整渲染 `../templates/mode-selection-dialog.md` 的 4 个输出模式和 6 个角色选项，并在此处停止等待用户回复后再继续；不得只写“请选择模式/角色”或省略默认推荐。默认值（客观 + 学术专家）仅在用户明确回复“默认”“直接开始”“随便”“都行”“不用选”等放弃选择的措辞时生效。

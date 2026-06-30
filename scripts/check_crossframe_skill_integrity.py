@@ -16,6 +16,7 @@ CURRENT_CROSSFRAME_SKILLS = [
     "crossframe-essay",
     "crossframe-history",
     "crossframe-inquiry",
+    "crossframe-max",
     "crossframe-notebook",
     "crossframe-org",
     "crossframe-public",
@@ -281,29 +282,33 @@ def check_repo_adapters(repo: Path, label: str) -> None:
         return
 
     adapter_needles = {
-        "AGENTS.md": ["crossframe-history", "crossframe-inquiry", "完成态后继续追问", "纯致谢"],
+        "AGENTS.md": ["crossframe-history", "crossframe-inquiry", "crossframe-max", "局部世界", "完成态后继续追问", "纯致谢"],
         "CLAUDE.md": [
             ".claude/skills/crossframe-inquiry/SKILL.md",
+            ".claude/skills/crossframe-max/SKILL.md",
             ".claude/commands/crossframe-inquiry.md",
+            ".claude/commands/crossframe-max.md",
             "/crossframe-inquiry",
+            "/crossframe-max",
             "skills/crossframe-inquiry/SKILL.md",
+            "skills/crossframe-max/SKILL.md",
             "纯致谢",
         ],
-        "GEMINI.md": ["crossframe-history", "crossframe-inquiry", "完成后追问", "纯致谢"],
-        "CONVENTIONS.md": ["crossframe-inquiry", "14 CrossFrame skills", "pure acknowledgments"],
-        "INTERFACES.md": ["skills/crossframe-inquiry/SKILL.md", "14 个 CrossFrame skill", "纯致谢"],
-        "llms.txt": ["History skill", "Inquiry skill", "crossframe-inquiry", "pure acknowledgments"],
-        ".github/copilot-instructions.md": ["crossframe-history", "crossframe-inquiry", "完成后追问", "纯致谢"],
-        ".cursor/rules/crossframe.mdc": ["crossframe-history", "crossframe-inquiry", "post-completion inquiry", "pure acknowledgment/thanks signal"],
-        ".cursor/rules/crossframe-suite.mdc": ["crossframe-history", "crossframe-inquiry", "post-completion inquiry", "pure acknowledgment/thanks signal"],
+        "GEMINI.md": ["crossframe-history", "crossframe-inquiry", "crossframe-max", "完成后追问", "纯致谢"],
+        "CONVENTIONS.md": ["crossframe-inquiry", "crossframe-max", "15 CrossFrame skills", "pure acknowledgments"],
+        "INTERFACES.md": ["skills/crossframe-inquiry/SKILL.md", "skills/crossframe-max/SKILL.md", "15 个 CrossFrame skill", "纯致谢"],
+        "llms.txt": ["History skill", "Inquiry skill", "Max skill", "crossframe-inquiry", "crossframe-max", "pure acknowledgments"],
+        ".github/copilot-instructions.md": ["crossframe-history", "crossframe-inquiry", "crossframe-max", "完成后追问", "纯致谢"],
+        ".cursor/rules/crossframe.mdc": ["crossframe-history", "crossframe-inquiry", "crossframe-max", "post-completion inquiry", "pure acknowledgment/thanks signal"],
+        ".cursor/rules/crossframe-suite.mdc": ["crossframe-history", "crossframe-inquiry", "crossframe-max", "post-completion inquiry", "pure acknowledgment/thanks signal"],
         ".cursor/rules/crossframe-essay.mdc": ["skills/crossframe-essay/SKILL.md", "runtime-read-policy.md"],
-        ".continue/rules/crossframe.md": ["history research", "crossframe-inquiry", "post-completion inquiry", "pure acknowledgment/thanks signal"],
-        ".clinerules/crossframe.md": ["history research", "crossframe-inquiry", "post-completion inquiry", "pure acknowledgment/thanks signal"],
-        ".roo/rules/crossframe.md": ["history research", "crossframe-inquiry", "post-completion inquiry", "pure acknowledgment/thanks signal"],
-        ".windsurf/rules/crossframe.md": ["history research", "crossframe-inquiry", "post-completion inquiry", "pure acknowledgment/thanks signal"],
-        "docs/ADAPTERS.md": ["crossframe-history", "crossframe-inquiry", "纯致谢"],
-        "scripts/install-codex.ps1": ["skills/crossframe-history", "skills/crossframe-inquiry", "Invoke-CodexSkillInstaller", "Get-Command python"],
-        "scripts/install-codex.sh": ["skills/crossframe-history", "skills/crossframe-inquiry", "for skill_path in", "done"],
+        ".continue/rules/crossframe.md": ["history research", "crossframe-inquiry", "crossframe-max", "post-completion inquiry", "pure acknowledgment/thanks signal"],
+        ".clinerules/crossframe.md": ["history research", "crossframe-inquiry", "crossframe-max", "post-completion inquiry", "pure acknowledgment/thanks signal"],
+        ".roo/rules/crossframe.md": ["history research", "crossframe-inquiry", "crossframe-max", "post-completion inquiry", "pure acknowledgment/thanks signal"],
+        ".windsurf/rules/crossframe.md": ["history research", "crossframe-inquiry", "crossframe-max", "post-completion inquiry", "pure acknowledgment/thanks signal"],
+        "docs/ADAPTERS.md": ["crossframe-history", "crossframe-inquiry", "crossframe-max", "15 个 `crossframe-*` skills", "纯致谢"],
+        "scripts/install-codex.ps1": ["skills/crossframe-history", "skills/crossframe-inquiry", "skills/crossframe-max", "Invoke-CodexSkillInstaller", "Get-Command python"],
+        "scripts/install-codex.sh": ["skills/crossframe-history", "skills/crossframe-inquiry", "skills/crossframe-max", "for skill_path in", "done"],
     }
     runtime_ref_adapters = set(adapter_needles) - {"docs/ADAPTERS.md", "scripts/install-codex.ps1", "scripts/install-codex.sh"}
     retired_adapter_refs = [
@@ -358,6 +363,34 @@ def check_repo_adapters(repo: Path, label: str) -> None:
     for needle in ["# /crossframe-inquiry", "This explicit command is allowed", "skills/crossframe-inquiry/SKILL.md", "post-completion follow-up layer"]:
         require(needle in inquiry_command_text, f"{label}: crossframe-inquiry command missing marker: {needle}")
 
+    max_command = repo / ".claude" / "commands" / "crossframe-max.md"
+    require(max_command.exists(), f"{label}: missing Claude command for crossframe-max")
+    max_command_text = read(max_command)
+    for needle in ["# /crossframe-max", "This explicit command is allowed", "skills/crossframe-max/SKILL.md", "independent mode", "local world", "template-fidelity gate", "max-source-frontier", "max-transcendence-window", "max-continuation-ledger", "max-red-team-pass", "max-position-matrix", "max-path-confidence-layers", "max-unexhaustible-declaration", "max-output-layers", "max-continuation-index", "max-dossier", "max-essay"]:
+        require(needle in max_command_text, f"{label}: crossframe-max command missing marker: {needle}")
+
+    max_artifact_validator = repo / "scripts" / "check_crossframe_max_artifacts.py"
+    require(max_artifact_validator.exists(), f"{label}: missing crossframe-max artifact validator")
+    max_artifact_validator_text = read(max_artifact_validator)
+    for needle in [
+        "check_crossframe_max_artifacts",
+        "max-dossier.md",
+        "max-essay.md",
+        "max-continuation-ledger.md",
+        "max-continuation-index.md",
+        "template-fidelity gate",
+        "REQUIRED_DOSSIER_HEADINGS",
+        "REQUIRED_ESSAY_MARKERS",
+        "REQUIRED_LEDGER_MARKERS",
+        "REQUIRED_INDEX_MARKERS",
+        "source_anchor",
+        "claim_id",
+        "claim ledger",
+        "max-output-layers",
+        "max-continuation-index",
+    ]:
+        require(needle in max_artifact_validator_text, f"{label}: crossframe-max artifact validator missing marker: {needle}")
+
 
 def check_public_release_docs(repo: Path, label: str) -> None:
     if not (repo / "skills").is_dir():
@@ -375,6 +408,8 @@ def check_public_release_docs(repo: Path, label: str) -> None:
             "claim_id",
             "concept contract",
             "crossframe-inquiry",
+            "crossframe-max",
+            "15 个 skills",
             "https://xi-kari.github.io/crossframe-skill/assets/og-image.png",
             "twitter:image",
             "rel=\"canonical\"",
@@ -500,14 +535,14 @@ def check_public_release_docs(repo: Path, label: str) -> None:
         require(retired_demo_marker not in public_page_text, f"{label}: public page still has sensitive landing demo marker: {retired_demo_marker}")
 
     required_docs = {
-        "README.md": ["14 个 `crossframe-*` skills", "安全边界先行", "source_id -> claim_id", "docs/QUICKSTART.md", "framework-CrossFrame_v5.1.7", "review_%E2%86%92_inquiry", "https://xi-kari.github.io/crossframe-skill/", "网页介绍", "install-codex.sh", "validate_claim_ledger_schema_fixtures.py", "validate_v5_dlc_quantification_schema_fixtures.py", "check_v5_dlc_casebook_trials.py", "check_v5_dlc_publication_bundle.py", "docs/CROSSFRAME_V5_DLC.md", "docs/V5_DLC_TOOL_PROTOTYPE.md", "不是总分系统、预测模型、认证系统或处置工具", "失败发现", "sync_skill_mirrors.py --check", "bash -n scripts/install-codex.sh", "python -m py_compile scripts/*.py", "brief-visible", "standard-visible"],
+        "README.md": ["15 个 `crossframe-*` skills", "crossframe-max", "局部世界", "安全边界先行", "source_id -> claim_id", "docs/QUICKSTART.md", "framework-CrossFrame_v5.1.7", "review_%E2%86%92_inquiry", "https://xi-kari.github.io/crossframe-skill/", "网页介绍", "install-codex.sh", "validate_claim_ledger_schema_fixtures.py", "validate_v5_dlc_quantification_schema_fixtures.py", "check_v5_dlc_casebook_trials.py", "check_v5_dlc_publication_bundle.py", "docs/CROSSFRAME_V5_DLC.md", "docs/V5_DLC_TOOL_PROTOTYPE.md", "不是总分系统、预测模型、认证系统或处置工具", "失败发现", "sync_skill_mirrors.py --check", "bash -n scripts/install-codex.sh", "python -m py_compile scripts/*.py", "brief-visible", "standard-visible"],
         "CHANGELOG.md": ["v5.1.7", "v5.1.6", "v5.1.5", "v5.1.4", "v5.1.3", "site/", "GitHub Pages", "v5.0.2", "crossframe-history", "crossframe-inquiry", "source_id"],
-        "docs/WHAT_IS_CROSSFRAME.md": ["CrossFrame 是一组给 AI 使用的中文结构思考 skills", "一个一分钟例子", "它不是什么", "最推荐怎么用", "crossframe-inquiry"],
+        "docs/WHAT_IS_CROSSFRAME.md": ["CrossFrame 是一组给 AI 使用的中文结构思考 skills", "一个一分钟例子", "它不是什么", "最推荐怎么用", "crossframe-inquiry", "crossframe-max"],
         "docs/QUICKSTART.md": ["install-codex.ps1", "install-codex.sh", "--materials-only", "--source-docx", "validate_claim_ledger_schema_fixtures.py", "validate_v5_dlc_quantification_schema_fixtures.py", "check_v5_dlc_casebook_trials.py", "check_v5_dlc_publication_bundle.py", "build_v5_dlc_publication_bundle.py", "build_v5_dlc_docx.py", "sync_skill_mirrors.py --check", "bash -n scripts/install-codex.sh", "python -m py_compile scripts/*.py"],
         "docs/CONCEPTS.md": ["Claim Ledger", "source_id", "Concept Contract"],
-        "docs/WORKFLOWS.md": ["previous_context -> crossframe-inquiry", "claim ledger / claim-ledger-check", "纯致谢", "brief-visible", "standard-visible"],
+        "docs/WORKFLOWS.md": ["previous_context -> crossframe-inquiry", "crossframe-max -> crossframe-review", "claim ledger / claim-ledger-check", "纯致谢", "brief-visible", "standard-visible"],
         "docs/EXAMPLES.md": ["首页只使用安全模拟样例", "真实/高敏主题", "source_id", "claim_id", "evidence grade", "withdrawal condition", "publish_boundary", "历史草稿档", "crossframe-inquiry", "mini 输出示例"],
-        "docs/ADAPTERS.md": ["sync_skill_mirrors.py", "install-codex.sh", "Codex", "Claude Code", "crossframe-history", "crossframe-inquiry", "纯致谢"],
+        "docs/ADAPTERS.md": ["sync_skill_mirrors.py", "install-codex.sh", "Codex", "Claude Code", "crossframe-history", "crossframe-inquiry", "crossframe-max", "纯致谢"],
         "docs/SAFETY_AND_LIMITS.md": ["默认不展示内部 reasoning", "工具调用参数"],
         "docs/FAQ.md": ["explicit-only", "--materials-only"],
     }
@@ -1801,6 +1836,7 @@ def check_freeze_cleanup(root: Path, label: str) -> None:
             "质量闸归属",
             "生成层是否自我盖章",
             "`structural_pass`、`substantive_pass` 和 `publish_boundary` 只能由 review 判定",
+            "直接让路给 `../crossframe-max/SKILL.md`",
         ],
         "crossframe-suite/agents/openai.yaml": [
             "crossframe-inquiry",
@@ -1810,6 +1846,7 @@ def check_freeze_cleanup(root: Path, label: str) -> None:
         "crossframe-suite/protocols/suite-dispatch-protocol.md": [
             "生成层自检摘要：已修正 X，待 review 判定",
             "不得写“质量闸通过 / 完全通过 / substantive_pass”",
+            "直接转交 `../../crossframe-max/SKILL.md`",
         ],
         "crossframe-suite/templates/suite-reasoning-outline.md": [
             "structural_pass 待 review 判定",
@@ -2029,6 +2066,301 @@ def check_expression_layer_hardening(root: Path, label: str) -> None:
         require(needle in anti_imitation, f"{label}: anti-imitation tests missing expression-layer regression: {needle}")
 
 
+def check_crossframe_max_skill(root: Path, label: str) -> None:
+    max_root = root / "crossframe-max"
+    required_files = [
+        "SKILL.md",
+        "protocols/max-worldview-protocol.md",
+        "templates/max-dossier-output.md",
+        "templates/max-essay-output.md",
+        "evals/crossframe-max-smoke-tests.md",
+        "agents/openai.yaml",
+    ]
+    for rel in required_files:
+        require((max_root / rel).exists(), f"{label}: missing crossframe-max file: {rel}")
+
+    skill_text = read(max_root / "SKILL.md")
+    for needle in [
+        "name: crossframe-max",
+        "Use when",
+        "explicit-only",
+        "不走 `crossframe-suite` 的 `2+1` 模式/角色选择器",
+        "不走普通文章类型选择器",
+        "世界观层先行",
+        "诊断层是世界观进入事件后的分析动作",
+        "疗愈、行动和成文属于应用层",
+        "把对象当作一个局部世界",
+        "把一件事当作一个局部世界来对待",
+        "局部世界建模",
+        "演化路径推演",
+        "max-worldview-capsule",
+        "max-source-frontier",
+        "max-transcendence-window",
+        "max-continuation-ledger",
+        "max-run-state",
+        "max-red-team-pass",
+        "max-position-matrix",
+        "max-path-confidence-layers",
+        "max-unexhaustible-declaration",
+        "max-output-layers",
+        "max-continuation-index",
+        "max-local-world-model",
+        "max-path-tree",
+        "max-dossier",
+        "max-essay",
+        "v5-root-assumptions-meta-rules-pack",
+        "v5-anchor-dynamics-structure-process-pack",
+        "v5-state-coordinate-lifecycle-pack",
+        "v5-long-evolution-progression-field-pack",
+        "v5-framework-self-diagnosis-falsification-pack",
+        "concept-cards/README.md",
+        "concept-contracts/core-contracts.md",
+        "主动检索",
+        "反向检索",
+        "未找到也要登记",
+        "来源类型分层",
+        "资料快照时间",
+        "缺席主体检查",
+        "检索反身性",
+        "停止条件",
+        "资料穷尽不等于现实穷尽",
+        "不能假装穷尽现实真相",
+        "不能解释，不等于出于超越性",
+        "开放行动能力",
+        "非工具性",
+        "非占有性",
+        "真实成本但不转化成债权",
+        "保留对方的自由",
+        "不取消边界",
+        "不得要求受害者继续忍耐",
+        "误读为爱",
+        "已读材料",
+        "已展开路径",
+        "未展开路径",
+        "已撤回判断",
+        "下一轮续写入口",
+        "如果这套解释是错的",
+        "框架偏好遮蔽",
+        "解释力幻觉",
+        "行动者",
+        "承接者",
+        "受害者",
+        "旁观者",
+        "制度主体",
+        "沉默者",
+        "退出者",
+        "未来主体",
+        "事实路径",
+        "机制候选路径",
+        "低置信想象实验",
+        "纯反事实路径",
+        "价值性解释路径",
+        "不能把所有可能写成同一种强度",
+        "内心动机",
+        "未来自由行动",
+        "沉默主体经验",
+        "未公开材料",
+        "历史偶然性",
+        "穷尽一切从狂妄改成诚实",
+        "结构底稿",
+        "完整长文",
+        "续写索引",
+        "template-fidelity gate",
+        "模板忠实度硬闸",
+        "模板是 contract，不是参考",
+        "逐项填充",
+        "不得合并标题",
+        "不得跳过空栏",
+        "不得把单独文件当作 dossier 内部章节替代",
+        "缺任何一级标题都不得宣布完成",
+        "scripts/check_crossframe_max_artifacts.py",
+    ]:
+        require(needle in skill_text, f"{label}: crossframe-max SKILL.md missing marker: {needle}")
+    require("2+1" in skill_text and "模式/角色选择器" in skill_text, f"{label}: crossframe-max must explicitly bypass suite selector")
+
+    protocol_text = read(max_root / "protocols" / "max-worldview-protocol.md")
+    for needle in [
+        "世界观层",
+        "诊断层",
+        "应用层",
+        "局部世界",
+        "运行规律",
+        "演化推演",
+        "概念命中、运行规律、问题结构、处理路径和演化分支",
+        "概念命中不是词命中",
+        "结构变量命中",
+        "concept card -> concept contract -> v5 continuity closure -> claim ledger",
+        "max-source-frontier",
+        "max-transcendence-window",
+        "max-continuation-ledger",
+        "max-red-team-pass",
+        "max-position-matrix",
+        "max-path-confidence-layers",
+        "max-unexhaustible-declaration",
+        "max-output-layers",
+        "超越性窗口",
+        "不能解释只能先标成未知",
+        "超越性痕迹",
+        "创伤重复",
+        "控制",
+        "补偿",
+        "角色依赖",
+        "道德表演",
+        "撤回条件",
+        "事实、解释、机制候选、路径推演和想象实验",
+        "支持材料、反对材料、缺失材料、冲突材料、不可访问材料",
+        "资料饱和",
+        "未穷尽资料队列",
+        "状态坐标与生命周期",
+        "递进模式",
+        "双向势场",
+        "自主解离",
+        "多中心治理",
+        "观测反身性",
+        "非线性路径库",
+        "连续运行状态",
+        "反向推演 / 自我攻击回合",
+        "主体位置矩阵",
+        "路径置信分层",
+        "不可穷尽声明",
+        "输出分层模式",
+        "模板忠实度检查",
+        "模板截断",
+        "单独文件不能替代",
+    ]:
+        require(needle in protocol_text, f"{label}: crossframe-max protocol missing marker: {needle}")
+
+    dossier_text = read(max_root / "templates" / "max-dossier-output.md")
+    for needle in [
+        "max-worldview-capsule",
+        "max-source-frontier",
+        "max-transcendence-window",
+        "max-continuation-ledger",
+        "max-red-team-pass",
+        "max-position-matrix",
+        "max-path-confidence-layers",
+        "max-unexhaustible-declaration",
+        "max-output-layers",
+        "max-continuation-index",
+        "max-local-world-model",
+        "max-concept-graph",
+        "max-scale-map",
+        "max-path-tree",
+        "问题定位",
+        "处理问题",
+        "反例与撤回条件",
+        "主动检索",
+        "反向检索",
+        "未找到也要登记",
+        "资料快照时间",
+        "缺席主体检查",
+        "检索反身性",
+        "未穷尽资料队列",
+        "不可升格的未知",
+        "开放行动信号",
+        "误读风险",
+        "撤回条件",
+        "已读材料",
+        "已展开路径",
+        "未展开路径",
+        "已撤回判断",
+        "下一轮续写入口",
+        "解释力幻觉",
+        "框架偏好遮蔽",
+        "行动者",
+        "承接者",
+        "受害者",
+        "旁观者",
+        "制度主体",
+        "沉默者",
+        "退出者",
+        "未来主体",
+        "事实路径",
+        "机制候选路径",
+        "低置信想象实验",
+        "纯反事实路径",
+        "价值性解释路径",
+        "内心动机",
+        "未来自由行动",
+        "沉默主体经验",
+        "未公开材料",
+        "历史偶然性",
+        "结构底稿",
+        "完整长文",
+        "续写索引",
+        "未展开完的路径队列",
+    ]:
+        require(needle in dossier_text, f"{label}: crossframe-max dossier template missing marker: {needle}")
+
+    essay_text = read(max_root / "templates" / "max-essay-output.md")
+    for needle in [
+        "# max-essay",
+        "不设默认字数上限",
+        "完整解释",
+        "演化路径",
+        "不能用摘要替代正文",
+        "不把框架写成现实终审",
+        "超越性窗口",
+        "不能解释不等于超越性",
+        "不把爱写成忍耐义务",
+        "连续运行状态",
+        "反向推演",
+        "主体位置矩阵",
+        "路径置信分层",
+        "不可穷尽声明",
+        "输出分层",
+        "续写索引",
+    ]:
+        require(needle in essay_text, f"{label}: crossframe-max essay template missing marker: {needle}")
+
+    eval_text = read(max_root / "evals" / "crossframe-max-smoke-tests.md")
+    for needle in [
+        "世界观层不能被诊断层替代",
+        "词命中误用",
+        "局部世界建模缺失",
+        "演化推演缺失",
+        "只搜支持材料",
+        "未找到证据误作证据不存在",
+        "推演与证据混同",
+        "缺席主体被材料遮蔽",
+        "无限检索无停止条件",
+        "不可解释误判为超越性",
+        "爱被写成忍耐义务",
+        "道德表演误读为爱",
+        "超越性取消责任链",
+        "多轮续写漂移",
+        "解释力幻觉未自我攻击",
+        "强势主体吞没位置矩阵",
+        "路径置信混写",
+        "原则上不可穷尽被假装穷尽",
+        "超长输出缺少续写索引",
+        "max-dossier 截断",
+        "单独 continuation-index 代替 dossier 内部章节",
+        "CL1-CL5 无 source_anchor",
+        "模板标题合并或改名",
+        "误走 suite 选择器",
+        "普通文章类型选择器误触发",
+    ]:
+        require(needle in eval_text, f"{label}: crossframe-max evals missing regression: {needle}")
+
+    agent_text = read(max_root / "agents" / "openai.yaml")
+    for needle in [
+        "max-worldview-capsule",
+        "max-source-frontier",
+        "max-transcendence-window",
+        "max-continuation-ledger",
+        "max-red-team-pass",
+        "max-position-matrix",
+        "max-path-confidence-layers",
+        "max-unexhaustible-declaration",
+        "max-output-layers",
+        "max-continuation-index",
+        "template-fidelity gate",
+        "scripts/check_crossframe_max_artifacts.py",
+    ]:
+        require(needle in agent_text, f"{label}: crossframe-max agent prompt missing marker: {needle}")
+
+
 def check_root(root: Path, label: str) -> None:
     require(root.is_dir(), f"{label}: skill root does not exist: {root}")
     check_no_retired_dirs(root, label)
@@ -2048,6 +2380,7 @@ def check_root(root: Path, label: str) -> None:
     check_evals(root, label)
     check_quality_gate_hardening(root, label)
     check_expression_layer_hardening(root, label)
+    check_crossframe_max_skill(root, label)
     check_freeze_cleanup(root, label)
     check_no_trailing_whitespace(root, label)
 

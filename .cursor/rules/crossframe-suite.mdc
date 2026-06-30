@@ -6,6 +6,8 @@ alwaysApply: false
 
 When a task asks for a complex CrossFrame workflow, such as writing after diagnosis, public commentary, organization repair writing, history research-to-essay, debate-to-essay, reading-note-to-essay, casebook extraction plus review, post-completion inquiry, or "which CrossFrame skills should trigger in what order", read `skills/crossframe-suite/SKILL.md` first.
 
+If the user explicitly asks for `crossframe-max`, maximum CrossFrame mode, exhaustive structural projection, full-scale world-model interpretation, or no word-limit complete explanation, do not use the suite selector. Read `skills/crossframe-max/SKILL.md` instead.
+
 Use this suite rule as the default CrossFrame entry. For any CrossFrame content task through Suite, finish the needed sibling skills first, then append `crossframe-essay -> crossframe-review` and use `full-visible-v5-longform`: complete visible structural dossier plus complete long-form article with the modern editor-comrade base voice. Only skip the article layer when the user explicitly says only/no article/short answer/table/checklist/pure diagnosis/action plan only.
 
 Required flow:

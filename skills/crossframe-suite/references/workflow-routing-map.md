@@ -22,6 +22,7 @@
 | 读书后成文 | `crossframe -> crossframe-notebook -> crossframe-essay -> crossframe-review` | 研究笔记先于文章。 |
 | 历史研究/史料互读 | `crossframe -> crossframe-history -> crossframe-essay(full-visible-v5-longform, voice_mode from suite) -> crossframe-review` | 先处理史料档位、断代尺度、历史因果降级和 archive/FOIA backlog，再默认成文；没有具体史料台账时只能标为历史草稿档。 |
 | 历史研究后成文 | `crossframe -> crossframe-history -> crossframe-essay -> crossframe-review` | 历史接口分析先于文章；成文不得把草稿档写成完整历史分析。 |
+| 显式最大化推演 | `crossframe-max -> crossframe-review` | `crossframe-max` 是独立模式；点名 max 时 suite 不启动 `2+1` 选择器，也不启动普通文章类型选择器。 |
 | 结构批判文章 | `crossframe -> crossframe-critical -> crossframe-essay(full-visible-v5-longform, voice_mode from suite) -> crossframe-review` | 批判矩阵、例子和点睛句必须先绑定已有 claim_id，再进入文章层。 |
 | critical 后成文 | `crossframe -> crossframe-critical -> crossframe-essay -> crossframe-review` | 批判底稿先于文章；不得用强语气替代 claim ledger 和来源台账。 |
 | 评审已有输出 | `crossframe-review -> crossframe-essay(full-visible-v5-longform, voice_mode from suite) -> crossframe-review(lite)` | 先给评审结论，再默认写成可读文章；只有“只要评审/不要文章”才停在 review。 |

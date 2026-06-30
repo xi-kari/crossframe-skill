@@ -16,7 +16,7 @@ macOS / Linux：
 bash scripts/install-codex.sh
 ```
 
-它会安装 14 个 `crossframe-*` skills 到 `$HOME/.codex/skills`。
+它会安装 15 个 `crossframe-*` skills 到 `$HOME/.codex/skills`。
 
 ## 2. Claude Code
 
@@ -24,6 +24,7 @@ Claude Code 项目内使用：
 
 ```text
 /crossframe-suite 分析这个团队为什么复盘很多但没有真实修复
+/crossframe-max 把这件事当作一个局部世界，做全尺度结构推演并写完整解释
 /crossframe-essay 写一篇关于平台治理的中文评论文章
 /crossframe-inquiry 基于刚才的文章继续追问反证和迁移条件
 ```

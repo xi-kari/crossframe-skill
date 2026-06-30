@@ -13,6 +13,7 @@
 - `skills/crossframe-casebook/`：把材料整理成可复用案例库。
 - `skills/crossframe-history/`：历史材料、史料闭合、文明连续史和 archive/FOIA backlog 领域接口层。
 - `skills/crossframe-inquiry/`：已完成 CrossFrame 流程后的结构追问层。
+- `skills/crossframe-max/`：显式点名的最大化结构推演入口，把一件事当作局部世界展开世界观、运行规律、问题结构、处理路径和演化分支；不走 suite 的 `2+1` 选择器。
 - `skills/crossframe-public/`：公共议题、平台申诉、制度评论和合规材料专项。
 - `skills/crossframe-org/`：团队、项目、组织修复专项。
 - `skills/crossframe-teach/`：CrossFrame 概念教学解释专项。
@@ -39,6 +40,8 @@
 这条限制只约束外部初始触发，不禁止 suite 内部联合调用。用户显式调用 `crossframe-suite` 后，suite 仍然可以按 `workflow-routing-map.md` 读取和串联 `crossframe`、`crossframe-essay`、`crossframe-review` 及其它 sibling skill。
 
 只要用户从 `crossframe-suite` 总入口进入 CrossFrame 内容任务，默认最终输出 `full-visible-v5-longform`：先完成必要专项 skill，再追加 `crossframe-essay -> crossframe-review`，包含完整可见底稿和完整长文正文。只有用户明确说“只要/不要文章/短答/表格/清单/纯诊断/仅行动方案”时，才关闭默认文章层。
+
+`crossframe-max` 是独立模式：只有用户明确点名 `crossframe-max`、`/crossframe-max`、`$crossframe-max`，或明确要求最大算力、全尺度穷尽推演、不设字数限制完整解释时才读取。它不走 `crossframe-suite` 的 `2+1` 模式/角色选择器，也不走普通文章类型选择器。
 
 显式调用后，按任务内容路由到以下能力：
 
@@ -87,6 +90,7 @@ CrossFrame Essay 仍然必须读取 `skills/crossframe/SKILL.md` 与 `skills/cro
 - 整理聊天记录、组织材料、项目复盘、公共争议为案例库：`skills/crossframe-casebook/SKILL.md`
 - 历史材料、历史事件、史料互读、长时段演化、archive/FOIA backlog：`skills/crossframe-history/SKILL.md`
 - 完成态后继续追问、反证、补证、迁移应用或行动边界确认：`skills/crossframe-inquiry/SKILL.md`
+- 最大化结构推演、局部世界建模、全尺度解释、演化路径穷尽：`skills/crossframe-max/SKILL.md`
 - 公共议题、平台申诉、制度评论、机构合规材料、公共承诺兑现：`skills/crossframe-public/SKILL.md`
 - 团队、项目、组织修复、复盘改造、反馈写回、低风险试点：`skills/crossframe-org/SKILL.md`
 - CrossFrame 概念教学、误读纠偏、现实信号、练习题：`skills/crossframe-teach/SKILL.md`
@@ -106,6 +110,7 @@ CrossFrame Essay 仍然必须读取 `skills/crossframe/SKILL.md` 与 `skills/cro
 - 答读者问：`crossframe -> crossframe-dialogue -> crossframe-essay(full-visible-v5-longform) -> crossframe-review`
 - 案例沉淀：`crossframe -> crossframe-casebook -> crossframe-essay(full-visible-v5-longform) -> crossframe-review`
 - 历史研究：`crossframe -> crossframe-history -> crossframe-essay(full-visible-v5-longform) -> crossframe-review`
+- 最大化推演：`crossframe-max -> crossframe-review`
 - 概念教学：`crossframe -> crossframe-teach -> crossframe-essay(full-visible-v5-longform) -> crossframe-review`
 - 命题辩论：`crossframe -> crossframe-debate -> crossframe-essay(full-visible-v5-longform) -> crossframe-review`
 - 读书研究：`crossframe -> crossframe-notebook -> crossframe-essay(full-visible-v5-longform) -> crossframe-review`
