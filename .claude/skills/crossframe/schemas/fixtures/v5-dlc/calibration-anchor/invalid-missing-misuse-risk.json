@@ -1,0 +1,20 @@
+{
+  "construct_id": "action_ceiling_clarity",
+  "name_zh": "行动上限清晰度",
+  "definition": "当前判断最多允许什么行动。",
+  "not_this": "不是行动授权。",
+  "neighbor_concepts": ["行动闸"],
+  "anchors": {
+    "0": "无行动边界。",
+    "1": "只有关注提醒。",
+    "2": "能指导观察。",
+    "3": "行动上限和停止条件清楚。",
+    "4": "行动边界与证据、权力风险和复核义务绑定。"
+  },
+  "minimum_evidence": "至少需要判断档位、行动上限和停止条件。",
+  "high_responsibility_upgrade_conditions": "高责任场景必须外部复核。",
+  "withdrawal_condition": "行动被用于处分时撤回。",
+  "v5_source_anchors": ["v5-evidence-downgrade-action-ceiling-pack"],
+  "worksheets": ["seven-gates-quant-rubric.md"],
+  "schema_fields": ["action_ceiling"]
+}

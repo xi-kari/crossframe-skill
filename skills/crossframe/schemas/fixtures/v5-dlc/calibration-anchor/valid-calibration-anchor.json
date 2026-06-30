@@ -1,0 +1,21 @@
+{
+  "construct_id": "low_power_counterexample_entry",
+  "name_zh": "低权力反例入口",
+  "definition": "受影响且权力较低的位置是否能安全提交反例、补证和反驳，并让反例改变判断。",
+  "not_this": "不是形式上存在一个邮箱、申诉按钮或会议发言机会。",
+  "neighbor_concepts": ["权力闸", "低权力保护", "反俘获", "反例写回"],
+  "anchors": {
+    "0": "低权力主体无法安全表达或提交反例。",
+    "1": "只有名义入口，缺少匿名、代理提交或反报复保护。",
+    "2": "有部分入口，但独立性、反馈写回或安全边界不足。",
+    "3": "有安全申诉、代理提交、反报复和补证路径。",
+    "4": "低权力反例能改变判断、行动上限、工具行为和版本写回。"
+  },
+  "minimum_evidence": "至少需要入口说明、反报复边界、实际提交路径和写回记录。",
+  "high_responsibility_upgrade_conditions": "涉及资格、名誉、资源、权利或公共记忆时，必须有独立复核和低权力位置反馈。",
+  "misuse_risks": ["把形式入口当作真实反例入口", "把沉默解释成没有反例"],
+  "withdrawal_condition": "如果提交反例会导致报复或入口不能改变判断，应将该构念降为 0 或 1。",
+  "v5_source_anchors": ["v5-low-power-protection-pack", "v5-evidence-downgrade-action-ceiling-pack"],
+  "worksheets": ["seven-gates-quant-rubric.md", "counterexample-register.md"],
+  "schema_fields": ["gate_id:power", "counterevidence_status", "action_ceiling_change"]
+}

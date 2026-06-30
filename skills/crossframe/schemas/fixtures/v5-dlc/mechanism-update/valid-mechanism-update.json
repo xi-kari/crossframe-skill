@@ -1,0 +1,17 @@
+{
+  "mechanism_id": "M1",
+  "mechanism_edge_id": "ME1",
+  "description": "反馈被收集，但没有写回规则、资源或角色边界。",
+  "supporting_facts": ["source:S1 显示复盘记录存在", "source:S2 显示后续规则未改动"],
+  "counterevidence": ["source:S3 显示个别团队做了临时调整"],
+  "diagnostic_force": "moderate",
+  "update_direction": "weaken",
+  "current_state": "机制仍可保留，但不能解释所有改动缺失。",
+  "can_explain": ["为什么复盘很多但积累很少"],
+  "cannot_explain": ["不能解释预算冻结或外部政策变化造成的延迟"],
+  "observable_predictions": ["下一轮复盘仍重复同类问题", "会议记录增加但规则文本不变"],
+  "withdrawal_condition": "如果反馈已明确改变授权链和资源配置，则撤回该机制边。",
+  "claim_id": "CL2",
+  "judgment_grade": "full_diagnosis",
+  "action_ceiling": "只能提出低风险试点和补证，不得公开追责。"
+}

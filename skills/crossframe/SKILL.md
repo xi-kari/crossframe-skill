@@ -31,19 +31,40 @@ CrossFrame 不是“把 v5.0 文本塞进上下文”的提示词包，而是一
 5. 按 `templates/read-state-capsule.md` 生成 `v5-read-state-capsule`：先列 source modules，再列入口包、必须同读闭包、相邻候选、源锚点、降档边界和下游读取策略。suite 不生成胶囊，胶囊由本核心层生成并传给专项 skill、essay 和 review。
 6. 填写内部 intake：对象、尺度、事实、证据缺口、用户用途、受影响对象、观测影响、权力结构、行动上限。
 7. 通过七闸：对象闸、证据闸、尺度闸、责任闸、观测闸、权力闸、行动闸。七闸必须登记为 `pass / weak / fail / blocked`；任一为 `fail` 或 `blocked`，不能维持强判断。
-8. 形成至少两个机制候选；除非证据足以说明只有一个机制。每个机制候选必须登记 `mechanism_id`，并回指事实、源锚点、反向证据、概念契约和判断档位上限。
-9. 对承担判断作用的概念做完整吸收：读取对应概念卡，并读取 `references/concept-contracts/core-contracts.md` 中对应概念契约；用 `worksheets/concept-fidelity-check.md` 做保真检查。概念卡回答含义，概念契约回答是否允许承担判断。
-10. 用 `worksheets/source-continuity-check.md` 检查是否只读了孤立概念卡、漏掉 v5 相邻约束或需要降档。
-11. 用 `worksheets/source-anchor-integrity-check.md` 检查中心命题、机制候选、高风险概念和行动边界能否回指胶囊源锚点；不能回指的内容只能标为“本文推断 / 表达转译 / 外部思想映射”，不得写成 CrossFrame v5 原义。
-12. 按 `templates/claim-ledger.md` 生成 `claim ledger`：中心命题、机制候选、判断档位、行动建议、公共定性、文章转译和高风险概念使用都必须登记 `claim_id`。没有 `claim_id` 的命题不得进入正文或结论。
-13. 用 `worksheets/claim-ledger-check.md` 检查正文前命题台账：若中心命题、行动建议、高风险概念或公共定性缺少事实锚点、源锚点、概念契约、判断档位、撤回条件或发布边界，必须删除、补证、降档，或标为“本文推断 / 表达转译 / 外部思想映射”。
-14. 决定判断档位：轻量观察、开放断言、完整诊断、强判断、低条件试探行动、退出转移。若必须联读但未联读、源锚点不足、概念契约未通过、claim ledger 缺失，不能维持强判断。
-15. 先输出可见推理提纲，再选择模板输出：先说现实语言，再按需要附内部映射。推理提纲不展示完整工作表，但必须显示判断来自事实、机制候选、七闸和命题台账，而不是来自术语套用。
+8. 判断是否触发 v5.0 半量化 DLC 运行时闸：默认不触发；只有用户明确要求量化、评分、半量化、比较、校准、一致性、审计、DLC 工具，或高责任/公开发布前需要内部边界审计时，才读取 DLC 文件。普通关系、组织和公共议题不得自动输出分数。
+9. 形成至少两个机制候选；除非证据足以说明只有一个机制。每个机制候选必须登记 `mechanism_id`，并回指事实、源锚点、反向证据、概念契约和判断档位上限。
+10. 对承担判断作用的概念做完整吸收：读取对应概念卡，并读取 `references/concept-contracts/core-contracts.md` 中对应概念契约；用 `worksheets/concept-fidelity-check.md` 做保真检查。概念卡回答含义，概念契约回答是否允许承担判断。
+11. 用 `worksheets/source-continuity-check.md` 检查是否只读了孤立概念卡、漏掉 v5 相邻约束或需要降档。
+12. 用 `worksheets/source-anchor-integrity-check.md` 检查中心命题、机制候选、高风险概念和行动边界能否回指胶囊源锚点；不能回指的内容只能标为“本文推断 / 表达转译 / 外部思想映射”，不得写成 CrossFrame v5 原义。
+13. 按 `templates/claim-ledger.md` 生成 `claim ledger`：中心命题、机制候选、判断档位、行动建议、公共定性、文章转译和高风险概念使用都必须登记 `claim_id`。没有 `claim_id` 的命题不得进入正文或结论。
+14. 用 `worksheets/claim-ledger-check.md` 检查正文前命题台账：若中心命题、行动建议、高风险概念或公共定性缺少事实锚点、源锚点、概念契约、判断档位、撤回条件或发布边界，必须删除、补证、降档，或标为“本文推断 / 表达转译 / 外部思想映射”。
+15. 决定判断档位：轻量观察、开放断言、完整诊断、强判断、低条件试探行动、退出转移。若必须联读但未联读、源锚点不足、概念契约未通过、claim ledger 缺失，不能维持强判断。
+16. 先输出现实诊断第一段，再给可见结构映射提纲并选择模板输出。第一段必须不用术语说清现实中发生了什么、为什么卡住、谁在承担成本、下一步看什么；结构映射提纲不展示完整工作表，但必须显示判断来自事实、机制候选、七闸和命题台账，而不是来自术语套用。
+
+## v5.0 半量化 DLC 运行时闸
+
+v5.0 半量化 DLC 是 v5 主流程的附加审计层，不替换七闸、命题台账、概念契约、来源台账或 review。它只把七闸、证据、机制候选、反例和行动上限整理成可校准的结构剖面。
+
+- 默认状态：`v5_dlc: not_triggered`。普通诊断、亲密关系、组织复盘、公共评论和概念解释不因为题材本身自动量化。
+- 显式触发：用户说量化、评分、半量化、打分、比较、排序、校准、一致性、rubric、audit、DLC、七闸分值、案例库试跑，或要求展示/调试半量化表。
+- 内部触发：高责任判断、公共发布、组织处置、真实平台/机构/人物、AI 合规材料或工具发布前，需要检查是否应降档、补证、阻断公开或隐藏分值时，可以内部触发，但默认不展示分数。
+- 可见性：`score_visibility` 必须登记为 `hidden`、`profile_only` 或 `user_requested_profile`。默认 `hidden`；用户明确要求量化审计时最多展示结构剖面，不输出对象总分、关系分、组织健康分、文明阶段分或最终合格分。
+- 高责任边界：DLC 分值只能触发降档、补证、反例入口、行动上限收窄或 `block_publication`；不能自动升级判断档位，不能作为处分、封禁、开除、资格、排名、公开定性、发布通过或 `substantive_pass` 的依据。
+- 普通关系、组织和公共议题不得自动输出分数。若用户要求量化，只能说明“这是内部审计剖面”，先显示不能证明什么、缺哪些证据、最高行动上限和撤回条件。
+- 任一七闸 `fail / blocked`、`claim_id` 缺失、source_anchor 缺失、低权力反例入口缺失、低成本材料冒充强证据或行动闸不足时，DLC 只能降档或阻断，不能给出更高判断。
+
+触发后最小读取：
+
+1. `references/construct-map-v5-dlc.md`
+2. `worksheets/seven-gates-quant-rubric.md`
+3. `references/judgment-action-matrix-v5-dlc.md`
+4. 按需读取 `worksheets/evidence-ledger-v5-dlc.md`、`worksheets/mechanism-update-rules.md`、`worksheets/counterexample-register.md`
 
 ## 读取规则
 
 - 默认遵守 `references/runtime-read-policy.md`：不读取 `evals/`、`examples/`、完整成功案例、完整失败案例或全量 v5 大索引。它们只用于开发压测、回归验证、风格调试、用户显式要求源审计或源锚点失败后的定向补读。
 - 普通诊断：读 `protocols/diagnosis-protocol.md`，并使用 `worksheets/intake-worksheet.md`、`worksheets/seven-gates-worksheet.md`、`worksheets/evidence-ledger.md`、`worksheets/mechanism-candidates.md`。
+- 量化、评分、半量化、比较、校准、一致性或 DLC 审计：先按 v5 主流程完成对象、证据、七闸、机制候选、claim ledger 和判断档位，再读取 v5 DLC 最小文件；分值只解释闸状态和降档理由。
 - 推演、后续走向、路径展开、分支终点：读 `protocols/inference-protocol.md` 和 `templates/inference-output.md`，并按需追加状态坐标、长期演化、治理连续性包。
 - 低到中等把握的判断：读 `protocols/open-assertion-protocol.md`、`worksheets/open-assertion-record.md`、`templates/open-assertion-output.md` 和 `v5-open-assertion-proposition-pack`。
 - 高责任、强权力密度、处分、名誉、权利、资源、公共记忆类问题：读 `protocols/anti-capture-protocol.md`、`worksheets/high-responsibility-check.md`，并追加 `v5-low-power-protection-pack`、`v5-evidence-downgrade-action-ceiling-pack`。
@@ -66,13 +87,16 @@ CrossFrame 不是“把 v5.0 文本塞进上下文”的提示词包，而是一
 
 ## 输出规则
 
-- 默认输出短而清楚。除非用户明确要求极简结论，否则先展示一个“推理提纲”；不展示完整工作表。
-- 推理提纲必须包含：诊断对象、事实边界、尺度窗口、七闸复核、机制候选、判断档位、命题台账状态、概念契约状态、本次读取的概念或保真检查、本次 v5 连续联读包、读态胶囊摘要、下一步观察或行动。
+- 默认输出短而清楚。除非用户明确要求极简结论，否则先给“现实诊断第一段”，再展示“结构映射提纲”；不展示完整工作表。
+- 现实诊断第一段必须回答：现实中发生了什么、为什么反复卡住、谁在承担成本、下一步看什么信号或行动边界。第一段不得用术语开场，不得把概念名当结论。
+- 结构映射提纲必须包含：诊断对象、事实边界、尺度窗口、七闸复核、机制候选、判断档位、命题台账状态、概念契约状态、本次读取的概念或保真检查、本次 v5 连续联读包、读态胶囊摘要、下一步观察或行动。
+- 结构映射提纲必须登记 v5 DLC 状态：未触发 / 内部触发-不展示分值 / 用户要求可见剖面；同时登记 `score_visibility`。未触发时不要补写量化结论。
+- v5 DLC 可见输出只能是结构剖面、降档理由、证据缺口、反例入口、行动上限和撤回条件；不得输出对象总分、排名、预测概率、关系质量分、组织健康分或发布合格分。
 - 生成层不得宣布质量闸通过、完全通过、A档、合格或 `substantive_pass`。生成层只能给出自检摘要、待 review 判定的候选产物和必须补读/降档的风险点。
 - 没有进入 `crossframe-review` 前，不得给出 `structural_pass`、`substantive_pass` 或 `publish_boundary` 的通过结论。质量闸归属 review；core、essay、suite 和 sibling skill 只能保留“自检未发现 X / 待 review 抽句复核”这类保守表述。
 - review 看到生成层自称“质量闸通过 / 完全通过 / A档 / 合格 / substantive_pass”时，必须记录为“生成层自我盖章”，并重新执行反向否决最小块。
-- 深度、审计、高责任、公共制度、亲密关系、长期演化和文章输出场景，推理提纲必须显示“本次连续联读包”；普通轻量问题可以写“未触发”。
-- 推理提纲只能写提纲，不写冗长内心推理；它用于让用户看见推理路径，也用于约束后续输出不跳步。
+- 深度、审计、高责任、公共制度、亲密关系、长期演化和文章输出场景，结构映射提纲必须显示“本次连续联读包”；普通轻量问题可以写“未触发”。
+- 结构映射提纲只能写提纲，不写冗长内心推理；它用于让用户看见推理路径，也用于约束后续输出不跳步。
 - 只有用户要求“完整推理过程”“内部映射”“工作表”“审计”时，才展开完整工作表。
 - 默认先说人话，不堆术语。第一段必须让没有读过框架的人也能明白“发生了什么、为什么卡住、下一步看什么”。
 - 永远区分：来源、事实、证据、解释、机制候选、判断档位、行动上限。
@@ -92,16 +116,25 @@ CrossFrame 不是“把 v5.0 文本塞进上下文”的提示词包，而是一
 
 最终输出前，内部检查四问：
 
-1. 第一段是否不用术语也能说清问题？
+1. 第一段是否不用术语也能说清现实中发生了什么、为什么卡住、谁承担成本和下一步看什么？
 2. 用户是否能知道这个判断来自哪些事实，而不是来自概念套用？
 3. 是否把“承接、回流、尺度、开放断言”等术语翻译成了现实行为？
 4. 是否给出了一个可观察信号或行动边界？
 
 任一不通过，先重写表达，再输出。
 
-## 推理提纲
+## 现实诊断第一段
 
-默认输出前置一个简短提纲：
+默认输出先给一个简短现实段落，不用术语开场：
+
+- 现实中发生了什么：
+- 为什么反复卡住：
+- 谁在承担成本或风险：
+- 下一步先看什么信号或行动边界：
+
+## 结构映射提纲
+
+现实第一段之后，前置一个简短结构映射提纲：
 
 - 诊断对象：
 - 事实边界：
@@ -117,7 +150,7 @@ CrossFrame 不是“把 v5.0 文本塞进上下文”的提示词包，而是一
 - 本次 v5 连续联读包：
 - 下一步：
 
-这个提纲不是完整工作表，也不是冗长推理链。它的作用是让用户看见：本次输出确实先界定对象、检查证据、比较机制、再给判断。
+这个提纲不是完整工作表，也不是冗长推理链。它的作用是让用户看见：本次输出确实先用现实语言落地，再界定对象、检查证据、比较机制、给出判断档位和行动上限。
 
 ## 核心资料
 
@@ -134,6 +167,7 @@ CrossFrame 不是“把 v5.0 文本塞进上下文”的提示词包，而是一
 - `templates/read-state-capsule.md`：本次 v5 source modules、入口包、必须同读闭包、源锚点和下游读取策略的胶囊模板。
 - `templates/claim-ledger.md`：中心命题、机制候选、行动建议、高风险概念和正文短摘的命题台账。
 - `worksheets/claim-ledger-check.md`：检查正文和结论是否只从已登记命题展开。
+- `references/construct-map-v5-dlc.md`、`worksheets/seven-gates-quant-rubric.md`、`references/judgment-action-matrix-v5-dlc.md`：v5.0 半量化 DLC 的运行时审计层，只在显式触发或高责任边界审计时读取。
 - `references/concept-contracts/core-contracts.md`：核心高风险概念的准入、禁止升级、降档和审查契约。
 - `schemas/claim-ledger.schema.json`：命题台账的结构化字段约束，用于脚本和 review 对齐。
 - `references/concepts-minimal-set.md`：最小概念集。
@@ -199,3 +233,4 @@ CrossFrame 不是“把 v5.0 文本塞进上下文”的提示词包，而是一
 - 是否生成 `claim ledger`，并让中心命题、机制候选、行动建议、高风险概念和文章转译都有 `claim_id`？
 - 正文或结论中是否存在没有 `claim_id` 的裸奔命题？
 - 每个承担判断作用的高风险概念，是否同时通过概念卡、概念契约、v5 连续联读包和源锚点检查？
+- 本次 v5 DLC 是否触发？若触发，`score_visibility` 是什么，分值是否只用于降档、补证、阻断发布或行动上限，而没有被用作处置、排名、公开定性或发布通过依据？

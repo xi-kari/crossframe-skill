@@ -16,6 +16,7 @@ CURRENT_CROSSFRAME_SKILLS = [
     "crossframe-essay",
     "crossframe-history",
     "crossframe-inquiry",
+    "crossframe-max",
     "crossframe-notebook",
     "crossframe-org",
     "crossframe-public",
@@ -215,6 +216,18 @@ def joined_markdown(path: Path) -> str:
     return "\n".join(read(child) for child in sorted(path.glob("*.md")))
 
 
+def iter_schema_object_nodes(value, path: str = "root"):
+    if isinstance(value, dict):
+        # Predicate schemas under if/contains intentionally stay open so they can match full records.
+        if value.get("type") == "object" and "/contains" not in path and "/if" not in path:
+            yield path, value
+        for key, child in value.items():
+            yield from iter_schema_object_nodes(child, f"{path}/{key}")
+    elif isinstance(value, list):
+        for idx, child in enumerate(value):
+            yield from iter_schema_object_nodes(child, f"{path}/{idx}")
+
+
 def iter_text_files(root: Path):
     suffixes = {".md", ".py", ".json", ".txt", ".ps1", ".sh", ".yaml", ".yml"}
     for skill in CURRENT_CROSSFRAME_SKILLS:
@@ -269,29 +282,33 @@ def check_repo_adapters(repo: Path, label: str) -> None:
         return
 
     adapter_needles = {
-        "AGENTS.md": ["crossframe-history", "crossframe-inquiry", "完成态后继续追问", "纯致谢"],
+        "AGENTS.md": ["crossframe-history", "crossframe-inquiry", "crossframe-max", "局部世界", "完成态后继续追问", "纯致谢"],
         "CLAUDE.md": [
             ".claude/skills/crossframe-inquiry/SKILL.md",
+            ".claude/skills/crossframe-max/SKILL.md",
             ".claude/commands/crossframe-inquiry.md",
+            ".claude/commands/crossframe-max.md",
             "/crossframe-inquiry",
+            "/crossframe-max",
             "skills/crossframe-inquiry/SKILL.md",
+            "skills/crossframe-max/SKILL.md",
             "纯致谢",
         ],
-        "GEMINI.md": ["crossframe-history", "crossframe-inquiry", "完成后追问", "纯致谢"],
-        "CONVENTIONS.md": ["crossframe-inquiry", "14 CrossFrame skills", "pure acknowledgments"],
-        "INTERFACES.md": ["skills/crossframe-inquiry/SKILL.md", "14 个 CrossFrame skill", "纯致谢"],
-        "llms.txt": ["History skill", "Inquiry skill", "crossframe-inquiry", "pure acknowledgments"],
-        ".github/copilot-instructions.md": ["crossframe-history", "crossframe-inquiry", "完成后追问", "纯致谢"],
-        ".cursor/rules/crossframe.mdc": ["crossframe-history", "crossframe-inquiry", "post-completion inquiry", "pure acknowledgment/thanks signal"],
-        ".cursor/rules/crossframe-suite.mdc": ["crossframe-history", "crossframe-inquiry", "post-completion inquiry", "pure acknowledgment/thanks signal"],
+        "GEMINI.md": ["crossframe-history", "crossframe-inquiry", "crossframe-max", "完成后追问", "纯致谢"],
+        "CONVENTIONS.md": ["crossframe-inquiry", "crossframe-max", "15 CrossFrame skills", "pure acknowledgments"],
+        "INTERFACES.md": ["skills/crossframe-inquiry/SKILL.md", "skills/crossframe-max/SKILL.md", "15 个 CrossFrame skill", "纯致谢"],
+        "llms.txt": ["History skill", "Inquiry skill", "Max skill", "crossframe-inquiry", "crossframe-max", "pure acknowledgments"],
+        ".github/copilot-instructions.md": ["crossframe-history", "crossframe-inquiry", "crossframe-max", "完成后追问", "纯致谢"],
+        ".cursor/rules/crossframe.mdc": ["crossframe-history", "crossframe-inquiry", "crossframe-max", "post-completion inquiry", "pure acknowledgment/thanks signal"],
+        ".cursor/rules/crossframe-suite.mdc": ["crossframe-history", "crossframe-inquiry", "crossframe-max", "post-completion inquiry", "pure acknowledgment/thanks signal"],
         ".cursor/rules/crossframe-essay.mdc": ["skills/crossframe-essay/SKILL.md", "runtime-read-policy.md"],
-        ".continue/rules/crossframe.md": ["history research", "crossframe-inquiry", "post-completion inquiry", "pure acknowledgment/thanks signal"],
-        ".clinerules/crossframe.md": ["history research", "crossframe-inquiry", "post-completion inquiry", "pure acknowledgment/thanks signal"],
-        ".roo/rules/crossframe.md": ["history research", "crossframe-inquiry", "post-completion inquiry", "pure acknowledgment/thanks signal"],
-        ".windsurf/rules/crossframe.md": ["history research", "crossframe-inquiry", "post-completion inquiry", "pure acknowledgment/thanks signal"],
-        "docs/ADAPTERS.md": ["crossframe-history", "crossframe-inquiry", "纯致谢"],
-        "scripts/install-codex.ps1": ["skills/crossframe-history", "skills/crossframe-inquiry", "Invoke-CodexSkillInstaller", "Get-Command python"],
-        "scripts/install-codex.sh": ["skills/crossframe-history", "skills/crossframe-inquiry", "for skill_path in", "done"],
+        ".continue/rules/crossframe.md": ["history research", "crossframe-inquiry", "crossframe-max", "post-completion inquiry", "pure acknowledgment/thanks signal"],
+        ".clinerules/crossframe.md": ["history research", "crossframe-inquiry", "crossframe-max", "post-completion inquiry", "pure acknowledgment/thanks signal"],
+        ".roo/rules/crossframe.md": ["history research", "crossframe-inquiry", "crossframe-max", "post-completion inquiry", "pure acknowledgment/thanks signal"],
+        ".windsurf/rules/crossframe.md": ["history research", "crossframe-inquiry", "crossframe-max", "post-completion inquiry", "pure acknowledgment/thanks signal"],
+        "docs/ADAPTERS.md": ["crossframe-history", "crossframe-inquiry", "crossframe-max", "15 个 `crossframe-*` skills", "纯致谢"],
+        "scripts/install-codex.ps1": ["skills/crossframe-history", "skills/crossframe-inquiry", "skills/crossframe-max", "Invoke-CodexSkillInstaller", "Get-Command python"],
+        "scripts/install-codex.sh": ["skills/crossframe-history", "skills/crossframe-inquiry", "skills/crossframe-max", "for skill_path in", "done"],
     }
     runtime_ref_adapters = set(adapter_needles) - {"docs/ADAPTERS.md", "scripts/install-codex.ps1", "scripts/install-codex.sh"}
     retired_adapter_refs = [
@@ -346,6 +363,34 @@ def check_repo_adapters(repo: Path, label: str) -> None:
     for needle in ["# /crossframe-inquiry", "This explicit command is allowed", "skills/crossframe-inquiry/SKILL.md", "post-completion follow-up layer"]:
         require(needle in inquiry_command_text, f"{label}: crossframe-inquiry command missing marker: {needle}")
 
+    max_command = repo / ".claude" / "commands" / "crossframe-max.md"
+    require(max_command.exists(), f"{label}: missing Claude command for crossframe-max")
+    max_command_text = read(max_command)
+    for needle in ["# /crossframe-max", "This explicit command is allowed", "skills/crossframe-max/SKILL.md", "independent mode", "local world", "template-fidelity gate", "max-source-frontier", "max-transcendence-window", "max-continuation-ledger", "max-red-team-pass", "max-position-matrix", "max-path-confidence-layers", "max-unexhaustible-declaration", "max-output-layers", "max-continuation-index", "max-dossier", "max-essay"]:
+        require(needle in max_command_text, f"{label}: crossframe-max command missing marker: {needle}")
+
+    max_artifact_validator = repo / "scripts" / "check_crossframe_max_artifacts.py"
+    require(max_artifact_validator.exists(), f"{label}: missing crossframe-max artifact validator")
+    max_artifact_validator_text = read(max_artifact_validator)
+    for needle in [
+        "check_crossframe_max_artifacts",
+        "max-dossier.md",
+        "max-essay.md",
+        "max-continuation-ledger.md",
+        "max-continuation-index.md",
+        "template-fidelity gate",
+        "REQUIRED_DOSSIER_HEADINGS",
+        "REQUIRED_ESSAY_MARKERS",
+        "REQUIRED_LEDGER_MARKERS",
+        "REQUIRED_INDEX_MARKERS",
+        "source_anchor",
+        "claim_id",
+        "claim ledger",
+        "max-output-layers",
+        "max-continuation-index",
+    ]:
+        require(needle in max_artifact_validator_text, f"{label}: crossframe-max artifact validator missing marker: {needle}")
+
 
 def check_public_release_docs(repo: Path, label: str) -> None:
     if not (repo / "skills").is_dir():
@@ -363,6 +408,8 @@ def check_public_release_docs(repo: Path, label: str) -> None:
             "claim_id",
             "concept contract",
             "crossframe-inquiry",
+            "crossframe-max",
+            "15 个 skills",
             "https://xi-kari.github.io/crossframe-skill/assets/og-image.png",
             "twitter:image",
             "rel=\"canonical\"",
@@ -454,8 +501,16 @@ def check_public_release_docs(repo: Path, label: str) -> None:
             "python -m py_compile scripts/*.py",
             "Validate PowerShell installer syntax",
             "python -m json.tool skills/crossframe/schemas/claim-ledger.schema.json > /dev/null",
+            "python -m json.tool skills/crossframe/schemas/seven-gates-quant.schema.json > /dev/null",
+            "python -m json.tool skills/crossframe/schemas/evidence-ledger-v5-dlc.schema.json > /dev/null",
+            "python -m json.tool skills/crossframe/schemas/calibration-anchor.schema.json > /dev/null",
+            "python -m json.tool skills/crossframe/schemas/mechanism-update.schema.json > /dev/null",
+            "python -m json.tool skills/crossframe/schemas/counterexample-register.schema.json > /dev/null",
             "python -m pip install jsonschema",
             "python scripts/validate_claim_ledger_schema_fixtures.py --repo .",
+            "python scripts/validate_v5_dlc_quantification_schema_fixtures.py --repo .",
+            "python scripts/check_v5_dlc_casebook_trials.py --repo .",
+            "python scripts/check_v5_dlc_publication_bundle.py --repo .",
             "python scripts/sync_skill_mirrors.py --check",
             "python scripts/package_crossframe_skill.py --repo . --version ci",
             "git diff --check",
@@ -480,14 +535,14 @@ def check_public_release_docs(repo: Path, label: str) -> None:
         require(retired_demo_marker not in public_page_text, f"{label}: public page still has sensitive landing demo marker: {retired_demo_marker}")
 
     required_docs = {
-        "README.md": ["14 个 `crossframe-*` skills", "安全边界先行", "source_id -> claim_id", "docs/QUICKSTART.md", "framework-CrossFrame_v5.1.7", "review_%E2%86%92_inquiry", "https://xi-kari.github.io/crossframe-skill/", "网页介绍", "install-codex.sh", "validate_claim_ledger_schema_fixtures.py", "sync_skill_mirrors.py --check", "bash -n scripts/install-codex.sh", "python -m py_compile scripts/*.py", "brief-visible", "standard-visible"],
+        "README.md": ["15 个 `crossframe-*` skills", "crossframe-max", "局部世界", "安全边界先行", "source_id -> claim_id", "docs/QUICKSTART.md", "framework-CrossFrame_v5.1.7", "review_%E2%86%92_inquiry", "https://xi-kari.github.io/crossframe-skill/", "网页介绍", "install-codex.sh", "validate_claim_ledger_schema_fixtures.py", "validate_v5_dlc_quantification_schema_fixtures.py", "check_v5_dlc_casebook_trials.py", "check_v5_dlc_publication_bundle.py", "docs/CROSSFRAME_V5_DLC.md", "docs/V5_DLC_TOOL_PROTOTYPE.md", "不是总分系统、预测模型、认证系统或处置工具", "失败发现", "sync_skill_mirrors.py --check", "bash -n scripts/install-codex.sh", "python -m py_compile scripts/*.py", "brief-visible", "standard-visible"],
         "CHANGELOG.md": ["v5.1.7", "v5.1.6", "v5.1.5", "v5.1.4", "v5.1.3", "site/", "GitHub Pages", "v5.0.2", "crossframe-history", "crossframe-inquiry", "source_id"],
-        "docs/WHAT_IS_CROSSFRAME.md": ["CrossFrame 是一组给 AI 使用的中文结构思考 skills", "一个一分钟例子", "它不是什么", "最推荐怎么用", "crossframe-inquiry"],
-        "docs/QUICKSTART.md": ["install-codex.ps1", "install-codex.sh", "--materials-only", "--source-docx", "validate_claim_ledger_schema_fixtures.py", "sync_skill_mirrors.py --check", "bash -n scripts/install-codex.sh", "python -m py_compile scripts/*.py"],
+        "docs/WHAT_IS_CROSSFRAME.md": ["CrossFrame 是一组给 AI 使用的中文结构思考 skills", "一个一分钟例子", "它不是什么", "最推荐怎么用", "crossframe-inquiry", "crossframe-max"],
+        "docs/QUICKSTART.md": ["install-codex.ps1", "install-codex.sh", "--materials-only", "--source-docx", "validate_claim_ledger_schema_fixtures.py", "validate_v5_dlc_quantification_schema_fixtures.py", "check_v5_dlc_casebook_trials.py", "check_v5_dlc_publication_bundle.py", "build_v5_dlc_publication_bundle.py", "build_v5_dlc_docx.py", "sync_skill_mirrors.py --check", "bash -n scripts/install-codex.sh", "python -m py_compile scripts/*.py"],
         "docs/CONCEPTS.md": ["Claim Ledger", "source_id", "Concept Contract"],
-        "docs/WORKFLOWS.md": ["previous_context -> crossframe-inquiry", "claim ledger / claim-ledger-check", "纯致谢", "brief-visible", "standard-visible"],
+        "docs/WORKFLOWS.md": ["previous_context -> crossframe-inquiry", "crossframe-max -> crossframe-review", "claim ledger / claim-ledger-check", "纯致谢", "brief-visible", "standard-visible"],
         "docs/EXAMPLES.md": ["首页只使用安全模拟样例", "真实/高敏主题", "source_id", "claim_id", "evidence grade", "withdrawal condition", "publish_boundary", "历史草稿档", "crossframe-inquiry", "mini 输出示例"],
-        "docs/ADAPTERS.md": ["sync_skill_mirrors.py", "install-codex.sh", "Codex", "Claude Code", "crossframe-history", "crossframe-inquiry", "纯致谢"],
+        "docs/ADAPTERS.md": ["sync_skill_mirrors.py", "install-codex.sh", "Codex", "Claude Code", "crossframe-history", "crossframe-inquiry", "crossframe-max", "纯致谢"],
         "docs/SAFETY_AND_LIMITS.md": ["默认不展示内部 reasoning", "工具调用参数"],
         "docs/FAQ.md": ["explicit-only", "--materials-only"],
     }
@@ -763,6 +818,395 @@ def check_claim_ledger(root: Path, label: str) -> None:
         validator_text = read(schema_validator)
         for needle in ["Draft202012Validator", "valid-", "invalid-", "iter_errors"]:
             require(needle in validator_text, f"{label}: claim ledger fixture validator missing marker: {needle}")
+
+
+def check_v5_dlc_quantification_foundation(root: Path, label: str) -> None:
+    schema_targets = {
+        "seven-gates-quant.schema.json": "CrossFrame V5 DLC Seven-Gates Quant Profile",
+        "evidence-ledger-v5-dlc.schema.json": "CrossFrame V5 DLC Evidence Ledger",
+        "calibration-anchor.schema.json": "CrossFrame V5 DLC Calibration Anchor",
+        "mechanism-update.schema.json": "CrossFrame V5 DLC Mechanism Update",
+        "counterexample-register.schema.json": "CrossFrame V5 DLC Counterexample Register",
+    }
+    fixture_targets = [
+        "seven-gates-quant",
+        "evidence-ledger-v5-dlc",
+        "calibration-anchor",
+        "mechanism-update",
+        "counterexample-register",
+    ]
+    worksheet_targets = {
+        "crossframe/references/construct-map-v5-dlc.md": [
+            "object_boundary_clarity",
+            "evidence_support_degree",
+            "scale_consistency",
+            "responsibility_chain_traceability",
+            "observation_reflexivity_risk",
+            "low_power_counterexample_entry",
+            "action_ceiling_clarity",
+            "feedback_writeback_degree",
+            "repair_window_feasibility",
+            "counterexample_writeback_strength",
+        ],
+        "crossframe/worksheets/seven-gates-quant-rubric.md": [
+            "分值只能解释状态来源",
+            "不得单独用于处分",
+            "强制降档规则",
+        ],
+        "crossframe/worksheets/evidence-ledger-v5-dlc.md": [
+            "不能证明什么",
+            "AI/过程性产物不能证明现实安全",
+            "同源材料不能通过数量叠加变成独立证据",
+        ],
+        "crossframe/worksheets/calibration-anchor-card.md": [
+            "校准锚点先于评分",
+            "高责任升级条件",
+            "撤回条件",
+        ],
+        "crossframe/worksheets/mechanism-update-rules.md": [
+            "不输出总排序",
+            "一条证据只能更新它实际命中的机制边",
+            "不能替代命题台账",
+        ],
+        "crossframe/worksheets/counterexample-register.md": [
+            "治理事件",
+            "misuse",
+            "high_harm",
+            "版本写回",
+        ],
+    }
+
+    schema_dir = root / "crossframe" / "schemas"
+    for filename, title in schema_targets.items():
+        path = schema_dir / filename
+        require(path.exists(), f"{label}: missing v5 DLC quantification schema: {path.relative_to(root)}")
+        schema_obj = json.loads(read(path))
+        require(schema_obj.get("$schema") == "https://json-schema.org/draft/2020-12/schema", f"{label}: {filename} missing draft 2020-12 schema marker")
+        require(schema_obj.get("title") == title, f"{label}: {filename} has wrong title")
+        require(schema_obj.get("additionalProperties") is False, f"{label}: {filename} root must set additionalProperties=false")
+        object_nodes = list(iter_schema_object_nodes(schema_obj))
+        require(object_nodes, f"{label}: {filename} has no object schema nodes")
+        for node_path, node in object_nodes:
+            require(node.get("additionalProperties") is False, f"{label}: {filename} object schema must close additionalProperties at {node_path}")
+
+    fixture_root = schema_dir / "fixtures" / "v5-dlc"
+    for fixture_id in fixture_targets:
+        fixture_dir = fixture_root / fixture_id
+        require(fixture_dir.is_dir(), f"{label}: missing v5 DLC fixture directory: {fixture_dir.relative_to(root)}")
+        valid = sorted(fixture_dir.glob("valid-*.json"))
+        invalid = sorted(fixture_dir.glob("invalid-*.json"))
+        require(valid, f"{label}: v5 DLC fixture directory missing valid fixture: {fixture_id}")
+        require(invalid, f"{label}: v5 DLC fixture directory missing invalid fixture: {fixture_id}")
+
+    for rel, needles in worksheet_targets.items():
+        path = root / rel
+        require(path.exists(), f"{label}: missing v5 DLC quantification file: {rel}")
+        text = read(path)
+        for needle in needles:
+            require(needle in text, f"{label}: {rel} missing v5 DLC marker: {needle}")
+
+    repo = schema_dir.parents[2]
+    schema_validator = repo / "scripts" / "validate_v5_dlc_quantification_schema_fixtures.py"
+    if (repo / "scripts").is_dir():
+        require(schema_validator.exists(), f"{label}: missing v5 DLC fixture validator: {schema_validator.relative_to(repo)}")
+        validator_text = read(schema_validator)
+        for needle in [
+            "FORBIDDEN_SCORE_KEYS",
+            "EXPECTED_ERROR_MARKERS",
+            "strong_judgment requires source_ledger_id",
+            "low cost evidence cannot support strong_judgment",
+            "power gate below 3 cannot allow public pressure",
+            "misuse or high_harm counterexample requires action_ceiling_change",
+            "valid-",
+            "invalid-",
+        ]:
+            require(needle in validator_text, f"{label}: v5 DLC fixture validator missing marker: {needle}")
+
+
+def check_v5_dlc_casebook_validation(root: Path, label: str) -> None:
+    targets = {
+        "crossframe-casebook/references/v5-dlc-casebook-validation-protocol.md": [
+            "失败",
+            "评分者独立性",
+            "降档与写回触发",
+            "禁止性声明",
+        ],
+        "crossframe-casebook/templates/v5-dlc-quant-case-trial-template.md": [
+            "trial_id:",
+            "七闸半量化剖面",
+            "证据台账摘记",
+            "本案例不能证明",
+        ],
+        "crossframe-casebook/templates/v5-dlc-rater-disagreement-record-template.md": [
+            "conflict_id:",
+            "rater_a 原始读数",
+            "rater_b 原始读数",
+            "校准处理",
+        ],
+        "crossframe-casebook/examples/v5-dlc-quant-trials/organization-case-trial.md": [
+            "case_domain: organization",
+            "rater_record: embedded",
+            "responsibility_chain_traceability",
+            "本案例不能证明",
+        ],
+        "crossframe-casebook/examples/v5-dlc-quant-trials/relationship-case-trial.md": [
+            "case_domain: relationship",
+            "judgment_grade: open_assertion",
+            "action_ceiling: ask_for_evidence",
+            "本案例不能证明",
+        ],
+        "crossframe-casebook/examples/v5-dlc-quant-trials/public-dispute-case-trial.md": [
+            "case_domain: public_dispute",
+            "downgrade_triggered: true",
+            "action_ceiling: block_publication",
+            "low_power_counterexample_entry",
+        ],
+        "crossframe-casebook/examples/v5-dlc-quant-trials/misuse-counterexample-trial.md": [
+            "case_domain: misuse_counterexample",
+            "trial_status: counterexample",
+            "template_revision_required: true",
+            "尺度闸 fail",
+        ],
+        "crossframe-casebook/examples/v5-dlc-quant-trials/rater-disagreement-sample.md": [
+            "conflict_type: action_ceiling",
+            "rater_a_action_ceiling: block_publication",
+            "rater_b_action_ceiling: publish_with_boundary",
+            "不强行合并",
+        ],
+        "crossframe-casebook/examples/v5-dlc-quant-trials/validation-summary.md": [
+            "第一轮 shakedown",
+            "降档与写回",
+            "评分者一致性发现",
+            "模板修订建议",
+        ],
+    }
+
+    for rel, needles in targets.items():
+        path = root / rel
+        require(path.exists(), f"{label}: missing v5 DLC casebook validation file: {rel}")
+        text = read(path)
+        for needle in needles:
+            require(needle in text, f"{label}: {rel} missing v5 DLC casebook marker: {needle}")
+
+    repo = root.parent
+    checker = repo / "scripts" / "check_v5_dlc_casebook_trials.py"
+    if (repo / "scripts").is_dir():
+        require(checker.exists(), f"{label}: missing v5 DLC casebook checker: {checker.relative_to(repo)}")
+        checker_text = read(checker)
+        for needle in [
+            "REQUIRED_DOMAINS",
+            "FORBIDDEN_LANGUAGE",
+            "REGRESSION_FILES",
+            "check_regression_files",
+            "need at least two formal trials with embedded rater_a/rater_b readings",
+            "need at least one downgrade, anchor revision, or template revision",
+            "ok: v5 DLC casebook validation trials passed",
+        ]:
+            require(needle in checker_text, f"{label}: v5 DLC casebook checker missing marker: {needle}")
+
+
+def check_v5_dlc_runtime_integration(root: Path, label: str) -> None:
+    runtime_targets = {
+        "crossframe/SKILL.md": [
+            "## v5.0 半量化 DLC 运行时闸",
+            "v5_dlc: not_triggered",
+            "普通关系、组织和公共议题不得自动输出分数",
+            "score_visibility",
+            "DLC 分值只能触发降档、补证、反例入口、行动上限收窄或 `block_publication`",
+        ],
+        "crossframe/references/read-routing-map.md": [
+            "## v5.0 半量化 DLC 运行时路由",
+            "量化 / 评分 / 半量化 / 打分 / 比较",
+            "高责任发布前边界审计",
+            "score_visibility: hidden / profile_only / user_requested_profile",
+        ],
+        "crossframe/references/runtime-read-policy.md": [
+            "## v5 DLC 读取边界",
+            "默认不读取 v5 DLC 半量化文件",
+            "score_visibility: hidden / profile_only / user_requested_profile",
+            "不能授权处分",
+        ],
+        "crossframe/references/construct-map-v5-dlc.md": [
+            "## 运行时接入边界",
+            "普通关系、组织和公共议题不得自动输出分数",
+            "`score_visibility`",
+        ],
+        "crossframe/worksheets/seven-gates-quant-rubric.md": [
+            "本表只有在 runtime 明确触发 v5 DLC 时使用",
+            "DLC 分数处置化失败",
+            "score_visibility:",
+        ],
+        "crossframe/references/judgment-action-matrix-v5-dlc.md": [
+            "v5 DLC 分数被用作处分",
+            "`score_visibility` 缺失",
+            "普通关系、组织和公共议题不得自动输出分数",
+        ],
+    }
+    for rel, needles in runtime_targets.items():
+        text = read(root / rel)
+        for needle in needles:
+            require(needle in text, f"{label}: v5 DLC runtime integration missing {needle!r} in {rel}")
+
+    review_targets = {
+        "crossframe-review/SKILL.md": [
+            "v5 DLC 分数处置化",
+            "半量化自动外显",
+            "强句无 `claim_id`",
+            "开放断言伪装成强判断",
+            "v5 DLC 追加评分上限",
+        ],
+        "crossframe-review/protocols/review-protocol.md": [
+            "v5 DLC 分数处置化候选",
+            "半量化自动外显候选",
+            "v5 DLC 分数作为处分、排名、资格、封禁、公开定性、发布通过或 `substantive_pass`",
+        ],
+        "crossframe-review/templates/review-report.md": [
+            "v5 DLC 触发与 score_visibility",
+            "| v5 DLC 分数处置化候选 |",
+            "| 半量化自动外显候选 |",
+        ],
+        "crossframe-review/references/review-rubric.md": [
+            "v5 DLC 分数处置化",
+            "半量化自动外显",
+            "开放断言伪装成强判断",
+            "强句无 `claim_id`",
+        ],
+        "crossframe-review/references/failure-taxonomy.md": [
+            "## v5 DLC 分数处置化",
+            "## 半量化自动外显",
+            "## 开放断言伪装成强判断",
+            "## 强句无 claim_id",
+            "## 标题/结论强于台账",
+        ],
+        "crossframe-review/evals/crossframe-review-smoke-tests.md": [
+            "## v5 DLC 分数处置化",
+            "## 半量化自动外显",
+            "## 开放断言伪装成强判断",
+        ],
+    }
+    for rel, needles in review_targets.items():
+        text = read(root / rel)
+        for needle in needles:
+            require(needle in text, f"{label}: v5 DLC review hardening missing {needle!r} in {rel}")
+
+    regression_targets = {
+        "crossframe-casebook/examples/v5-dlc-quant-trials/relationship-scale-erasure-regression.md": [
+            "regression_id: v5-dlc-regression-relationship-scale-erasure",
+            "低尺度痛苦",
+            "score_visibility: hidden",
+        ],
+        "crossframe-casebook/examples/v5-dlc-quant-trials/organization-retrospective-proof-regression.md": [
+            "regression_id: v5-dlc-regression-organization-retrospective-proof",
+            "反馈写回",
+            "score_visibility: hidden",
+        ],
+        "crossframe-casebook/examples/v5-dlc-quant-trials/public-announcement-low-power-regression.md": [
+            "regression_id: v5-dlc-regression-public-announcement-low-power",
+            "低权力反例入口",
+            "required_action_ceiling: block_publication",
+        ],
+        "crossframe-casebook/examples/v5-dlc-quant-trials/ai-compliance-report-proof-regression.md": [
+            "regression_id: v5-dlc-regression-ai-compliance-proof",
+            "过程性产物",
+            "required_action_ceiling: ask_for_evidence",
+        ],
+    }
+    for rel, needles in regression_targets.items():
+        text = read(root / rel)
+        for needle in needles:
+            require(needle in text, f"{label}: v5 DLC failure regression missing {needle!r} in {rel}")
+
+
+def check_v5_dlc_publication_prototype(root: Path, label: str) -> None:
+    repo = root.parent
+    if (repo / "docs").is_dir():
+        docs = {
+            "docs/CROSSFRAME_V5_DLC.md": [
+                "# 跨尺度结构诊断框架 v5.0 半量化 DLC",
+                "## 发布边界",
+                "## 与 v5.0 原文的关系",
+                "## 判断档位与行动上限",
+                "## 反例、撤回与治理写回",
+                "## 案例库验证与评分者一致性",
+                "## 工具原型",
+                "本工具只帮助整理结构判断",
+                "skills/crossframe/references/construct-map-v5-dlc.md",
+                "skills/crossframe-casebook/examples/v5-dlc-quant-trials/validation-summary.md",
+                "scripts/validate_v5_dlc_quantification_schema_fixtures.py",
+                "scripts/check_v5_dlc_casebook_trials.py",
+            ],
+            "docs/V5_DLC_INTEGRATION_NOTES.md": [
+                "半量化 DLC 不替换 v5.0",
+                "七闸复核",
+                "反例、撤回、版本写回",
+                "评分者一致性只说明协议稳定性",
+            ],
+            "docs/V5_DLC_TOOL_PROTOTYPE.md": [
+                "v5.0 半量化 DLC 工具原型",
+                "scripts/build_v5_dlc_publication_bundle.py",
+                "scripts/build_v5_dlc_docx.py",
+                "scripts/check_v5_dlc_publication_bundle.py",
+                "Smoke Test 期望",
+                "不能单独授权处置",
+            ],
+        }
+        for rel, needles in docs.items():
+            path = repo / rel
+            require(path.exists(), f"{label}: missing v5 DLC publication doc: {rel}")
+            text = read(path)
+            for needle in needles:
+                require(needle in text, f"{label}: {rel} missing v5 DLC publication marker: {needle}")
+
+    references = {
+        "crossframe/references/judgment-action-matrix-v5-dlc.md": [
+            "强制降档规则",
+            "`open_assertion`",
+            "`block_publication`",
+            "案例库试跑或 checker 通过",
+        ],
+        "crossframe/references/falsification-governance-v5-dlc.md": [
+            "反例分级",
+            "评分者分歧治理",
+            "误用复核",
+            "停止使用条件",
+        ],
+    }
+    for rel, needles in references.items():
+        path = root / rel
+        require(path.exists(), f"{label}: missing v5 DLC publication reference: {rel}")
+        text = read(path)
+        for needle in needles:
+            require(needle in text, f"{label}: {rel} missing v5 DLC publication marker: {needle}")
+
+    if (repo / "scripts").is_dir():
+        scripts = {
+            "scripts/build_v5_dlc_publication_bundle.py": [
+            "BUNDLE_SOURCE_FILES",
+            "PROTOTYPE_AUDIT_FILES",
+            "crossframe-v5-dlc-publication",
+            "manifest.json",
+            "sha256",
+            ],
+            "scripts/build_v5_dlc_docx.py": [
+            "DOCX_SOURCE_FILES",
+            "TOOL_BOUNDARY",
+            "compact_reference_guide",
+            "跨尺度结构诊断框架v5.0半量化DLC.docx",
+            ],
+            "scripts/check_v5_dlc_publication_bundle.py": [
+            "REQUIRED_HEADINGS",
+            "TOOL_BOUNDARY",
+            "FORBIDDEN_LANGUAGE",
+            "MAX_NEGATION_DISTANCE",
+            "ok: v5 DLC publication bundle checks passed",
+        ],
+        }
+        for rel, needles in scripts.items():
+            path = repo / rel
+            require(path.exists(), f"{label}: missing v5 DLC publication script: {rel}")
+            text = read(path)
+            for needle in needles:
+                require(needle in text, f"{label}: {rel} missing v5 DLC publication marker: {needle}")
 
 
 def check_history_adapter(root: Path, label: str) -> None:
@@ -1392,6 +1836,7 @@ def check_freeze_cleanup(root: Path, label: str) -> None:
             "质量闸归属",
             "生成层是否自我盖章",
             "`structural_pass`、`substantive_pass` 和 `publish_boundary` 只能由 review 判定",
+            "直接让路给 `../crossframe-max/SKILL.md`",
         ],
         "crossframe-suite/agents/openai.yaml": [
             "crossframe-inquiry",
@@ -1401,6 +1846,7 @@ def check_freeze_cleanup(root: Path, label: str) -> None:
         "crossframe-suite/protocols/suite-dispatch-protocol.md": [
             "生成层自检摘要：已修正 X，待 review 判定",
             "不得写“质量闸通过 / 完全通过 / substantive_pass”",
+            "直接转交 `../../crossframe-max/SKILL.md`",
         ],
         "crossframe-suite/templates/suite-reasoning-outline.md": [
             "structural_pass 待 review 判定",
@@ -1560,12 +2006,371 @@ def check_quality_gate_hardening(root: Path, label: str) -> None:
         require(needle in review_rubric, f"{label}: review rubric missing pass-boundary marker: {needle}")
 
 
+def check_expression_layer_hardening(root: Path, label: str) -> None:
+    crossframe_skill = read(root / "crossframe" / "SKILL.md")
+    for needle in [
+        "先输出现实诊断第一段，再给可见结构映射提纲",
+        "现实诊断第一段必须回答",
+        "结构映射提纲必须包含",
+        "现实中发生了什么、为什么卡住、谁承担成本和下一步看什么",
+    ]:
+        require(needle in crossframe_skill, f"{label}: crossframe SKILL missing expression-layer marker: {needle}")
+    for retired in ["先输出可见推理提纲", "先展示一个“推理提纲”", "默认输出前置一个简短提纲"]:
+        require(retired not in crossframe_skill, f"{label}: crossframe SKILL still has retired expression order: {retired}")
+
+    user_language = read(root / "crossframe" / "templates" / "user-facing-language.md")
+    for needle in [
+        "先给现实诊断第一段",
+        "再给结构映射提纲",
+        "第一段必须回答现实中发生了什么、为什么卡住、谁在承担成本、下一步看什么信号或行动边界",
+    ]:
+        require(needle in user_language, f"{label}: user-facing language missing expression-layer marker: {needle}")
+
+    output_templates = [
+        "concept-explanation-output.md",
+        "expression-translation-output.md",
+        "field-dissociation-output.md",
+        "framework-boundary-output.md",
+        "full-diagnosis-output.md",
+        "governance-continuity-output.md",
+        "healing-transfer-output.md",
+        "high-reflexivity-output.md",
+        "inference-output.md",
+        "intimate-relationship-output.md",
+        "large-scale-stress-output.md",
+        "lifecycle-output.md",
+        "open-assertion-output.md",
+        "progression-output.md",
+        "public-institution-output.md",
+        "quick-diagnosis-output.md",
+        "reasoning-outline-output.md",
+        "strong-judgment-output.md",
+    ]
+    for filename in output_templates:
+        rel = f"crossframe/templates/{filename}"
+        text = read(root / rel)
+        require("现实第一段" in text, f"{label}: {rel} missing reality-first section")
+        require("结构映射提纲" in text, f"{label}: {rel} missing structure-mapping outline")
+        first_reality = text.find("现实第一段")
+        first_mapping = text.find("结构映射提纲")
+        require(first_reality != -1 and first_mapping != -1 and first_reality < first_mapping, f"{label}: {rel} must place reality-first before structure-mapping")
+        for retired in ["## 推理提纲", "## 0. 推理提纲", "**推理提纲**", "## 先说人话"]:
+            require(retired not in text, f"{label}: {rel} still has retired expression heading: {retired}")
+
+    smoke = read(root / "crossframe" / "evals" / "crossframe-smoke-tests.md")
+    for needle in ["现实诊断第一段优先", "结构映射提纲必须在现实第一段之后", "第一段删掉术语后无法独立成立"]:
+        require(needle in smoke, f"{label}: crossframe smoke tests missing expression-layer regression: {needle}")
+
+    anti_imitation = read(root / "crossframe" / "evals" / "crossframe-anti-imitation-tests.md")
+    for needle in ["先列提纲但没有现实第一段", "结构映射提纲只能放在现实第一段之后", "不得用“推理提纲 / 承接 / 回流 / 开放断言”作为第一屏入口"]:
+        require(needle in anti_imitation, f"{label}: anti-imitation tests missing expression-layer regression: {needle}")
+
+
+def check_crossframe_max_skill(root: Path, label: str) -> None:
+    max_root = root / "crossframe-max"
+    required_files = [
+        "SKILL.md",
+        "protocols/max-worldview-protocol.md",
+        "templates/max-dossier-output.md",
+        "templates/max-essay-output.md",
+        "evals/crossframe-max-smoke-tests.md",
+        "agents/openai.yaml",
+    ]
+    for rel in required_files:
+        require((max_root / rel).exists(), f"{label}: missing crossframe-max file: {rel}")
+
+    skill_text = read(max_root / "SKILL.md")
+    for needle in [
+        "name: crossframe-max",
+        "Use when",
+        "explicit-only",
+        "不走 `crossframe-suite` 的 `2+1` 模式/角色选择器",
+        "不走普通文章类型选择器",
+        "世界观层先行",
+        "诊断层是世界观进入事件后的分析动作",
+        "疗愈、行动和成文属于应用层",
+        "把对象当作一个局部世界",
+        "把一件事当作一个局部世界来对待",
+        "局部世界建模",
+        "演化路径推演",
+        "max-worldview-capsule",
+        "max-source-frontier",
+        "max-transcendence-window",
+        "max-continuation-ledger",
+        "max-run-state",
+        "max-red-team-pass",
+        "max-position-matrix",
+        "max-path-confidence-layers",
+        "max-unexhaustible-declaration",
+        "max-output-layers",
+        "max-continuation-index",
+        "max-local-world-model",
+        "max-path-tree",
+        "max-dossier",
+        "max-essay",
+        "v5-root-assumptions-meta-rules-pack",
+        "v5-anchor-dynamics-structure-process-pack",
+        "v5-state-coordinate-lifecycle-pack",
+        "v5-long-evolution-progression-field-pack",
+        "v5-framework-self-diagnosis-falsification-pack",
+        "concept-cards/README.md",
+        "concept-contracts/core-contracts.md",
+        "主动检索",
+        "反向检索",
+        "未找到也要登记",
+        "来源类型分层",
+        "资料快照时间",
+        "缺席主体检查",
+        "检索反身性",
+        "停止条件",
+        "资料穷尽不等于现实穷尽",
+        "不能假装穷尽现实真相",
+        "不能解释，不等于出于超越性",
+        "开放行动能力",
+        "非工具性",
+        "非占有性",
+        "真实成本但不转化成债权",
+        "保留对方的自由",
+        "不取消边界",
+        "不得要求受害者继续忍耐",
+        "误读为爱",
+        "已读材料",
+        "已展开路径",
+        "未展开路径",
+        "已撤回判断",
+        "下一轮续写入口",
+        "如果这套解释是错的",
+        "框架偏好遮蔽",
+        "解释力幻觉",
+        "行动者",
+        "承接者",
+        "受害者",
+        "旁观者",
+        "制度主体",
+        "沉默者",
+        "退出者",
+        "未来主体",
+        "事实路径",
+        "机制候选路径",
+        "低置信想象实验",
+        "纯反事实路径",
+        "价值性解释路径",
+        "不能把所有可能写成同一种强度",
+        "内心动机",
+        "未来自由行动",
+        "沉默主体经验",
+        "未公开材料",
+        "历史偶然性",
+        "穷尽一切从狂妄改成诚实",
+        "结构底稿",
+        "完整长文",
+        "续写索引",
+        "template-fidelity gate",
+        "模板忠实度硬闸",
+        "模板是 contract，不是参考",
+        "逐项填充",
+        "不得合并标题",
+        "不得跳过空栏",
+        "不得把单独文件当作 dossier 内部章节替代",
+        "缺任何一级标题都不得宣布完成",
+        "scripts/check_crossframe_max_artifacts.py",
+    ]:
+        require(needle in skill_text, f"{label}: crossframe-max SKILL.md missing marker: {needle}")
+    require("2+1" in skill_text and "模式/角色选择器" in skill_text, f"{label}: crossframe-max must explicitly bypass suite selector")
+
+    protocol_text = read(max_root / "protocols" / "max-worldview-protocol.md")
+    for needle in [
+        "世界观层",
+        "诊断层",
+        "应用层",
+        "局部世界",
+        "运行规律",
+        "演化推演",
+        "概念命中、运行规律、问题结构、处理路径和演化分支",
+        "概念命中不是词命中",
+        "结构变量命中",
+        "concept card -> concept contract -> v5 continuity closure -> claim ledger",
+        "max-source-frontier",
+        "max-transcendence-window",
+        "max-continuation-ledger",
+        "max-red-team-pass",
+        "max-position-matrix",
+        "max-path-confidence-layers",
+        "max-unexhaustible-declaration",
+        "max-output-layers",
+        "超越性窗口",
+        "不能解释只能先标成未知",
+        "超越性痕迹",
+        "创伤重复",
+        "控制",
+        "补偿",
+        "角色依赖",
+        "道德表演",
+        "撤回条件",
+        "事实、解释、机制候选、路径推演和想象实验",
+        "支持材料、反对材料、缺失材料、冲突材料、不可访问材料",
+        "资料饱和",
+        "未穷尽资料队列",
+        "状态坐标与生命周期",
+        "递进模式",
+        "双向势场",
+        "自主解离",
+        "多中心治理",
+        "观测反身性",
+        "非线性路径库",
+        "连续运行状态",
+        "反向推演 / 自我攻击回合",
+        "主体位置矩阵",
+        "路径置信分层",
+        "不可穷尽声明",
+        "输出分层模式",
+        "模板忠实度检查",
+        "模板截断",
+        "单独文件不能替代",
+    ]:
+        require(needle in protocol_text, f"{label}: crossframe-max protocol missing marker: {needle}")
+
+    dossier_text = read(max_root / "templates" / "max-dossier-output.md")
+    for needle in [
+        "max-worldview-capsule",
+        "max-source-frontier",
+        "max-transcendence-window",
+        "max-continuation-ledger",
+        "max-red-team-pass",
+        "max-position-matrix",
+        "max-path-confidence-layers",
+        "max-unexhaustible-declaration",
+        "max-output-layers",
+        "max-continuation-index",
+        "max-local-world-model",
+        "max-concept-graph",
+        "max-scale-map",
+        "max-path-tree",
+        "问题定位",
+        "处理问题",
+        "反例与撤回条件",
+        "主动检索",
+        "反向检索",
+        "未找到也要登记",
+        "资料快照时间",
+        "缺席主体检查",
+        "检索反身性",
+        "未穷尽资料队列",
+        "不可升格的未知",
+        "开放行动信号",
+        "误读风险",
+        "撤回条件",
+        "已读材料",
+        "已展开路径",
+        "未展开路径",
+        "已撤回判断",
+        "下一轮续写入口",
+        "解释力幻觉",
+        "框架偏好遮蔽",
+        "行动者",
+        "承接者",
+        "受害者",
+        "旁观者",
+        "制度主体",
+        "沉默者",
+        "退出者",
+        "未来主体",
+        "事实路径",
+        "机制候选路径",
+        "低置信想象实验",
+        "纯反事实路径",
+        "价值性解释路径",
+        "内心动机",
+        "未来自由行动",
+        "沉默主体经验",
+        "未公开材料",
+        "历史偶然性",
+        "结构底稿",
+        "完整长文",
+        "续写索引",
+        "未展开完的路径队列",
+    ]:
+        require(needle in dossier_text, f"{label}: crossframe-max dossier template missing marker: {needle}")
+
+    essay_text = read(max_root / "templates" / "max-essay-output.md")
+    for needle in [
+        "# max-essay",
+        "不设默认字数上限",
+        "完整解释",
+        "演化路径",
+        "不能用摘要替代正文",
+        "不把框架写成现实终审",
+        "超越性窗口",
+        "不能解释不等于超越性",
+        "不把爱写成忍耐义务",
+        "连续运行状态",
+        "反向推演",
+        "主体位置矩阵",
+        "路径置信分层",
+        "不可穷尽声明",
+        "输出分层",
+        "续写索引",
+    ]:
+        require(needle in essay_text, f"{label}: crossframe-max essay template missing marker: {needle}")
+
+    eval_text = read(max_root / "evals" / "crossframe-max-smoke-tests.md")
+    for needle in [
+        "世界观层不能被诊断层替代",
+        "词命中误用",
+        "局部世界建模缺失",
+        "演化推演缺失",
+        "只搜支持材料",
+        "未找到证据误作证据不存在",
+        "推演与证据混同",
+        "缺席主体被材料遮蔽",
+        "无限检索无停止条件",
+        "不可解释误判为超越性",
+        "爱被写成忍耐义务",
+        "道德表演误读为爱",
+        "超越性取消责任链",
+        "多轮续写漂移",
+        "解释力幻觉未自我攻击",
+        "强势主体吞没位置矩阵",
+        "路径置信混写",
+        "原则上不可穷尽被假装穷尽",
+        "超长输出缺少续写索引",
+        "max-dossier 截断",
+        "单独 continuation-index 代替 dossier 内部章节",
+        "CL1-CL5 无 source_anchor",
+        "模板标题合并或改名",
+        "误走 suite 选择器",
+        "普通文章类型选择器误触发",
+    ]:
+        require(needle in eval_text, f"{label}: crossframe-max evals missing regression: {needle}")
+
+    agent_text = read(max_root / "agents" / "openai.yaml")
+    for needle in [
+        "max-worldview-capsule",
+        "max-source-frontier",
+        "max-transcendence-window",
+        "max-continuation-ledger",
+        "max-red-team-pass",
+        "max-position-matrix",
+        "max-path-confidence-layers",
+        "max-unexhaustible-declaration",
+        "max-output-layers",
+        "max-continuation-index",
+        "template-fidelity gate",
+        "scripts/check_crossframe_max_artifacts.py",
+    ]:
+        require(needle in agent_text, f"{label}: crossframe-max agent prompt missing marker: {needle}")
+
+
 def check_root(root: Path, label: str) -> None:
     require(root.is_dir(), f"{label}: skill root does not exist: {root}")
     check_no_retired_dirs(root, label)
     check_required_skill_dirs(root, label)
     check_source_ledger(root, label)
     check_claim_ledger(root, label)
+    check_v5_dlc_quantification_foundation(root, label)
+    check_v5_dlc_casebook_validation(root, label)
+    check_v5_dlc_runtime_integration(root, label)
+    check_v5_dlc_publication_prototype(root, label)
     check_history_adapter(root, label)
     check_inquiry_layer(root, label)
     check_suite_routes_all_siblings(root, label)
@@ -1574,6 +2379,8 @@ def check_root(root: Path, label: str) -> None:
     check_techniques(root, label)
     check_evals(root, label)
     check_quality_gate_hardening(root, label)
+    check_expression_layer_hardening(root, label)
+    check_crossframe_max_skill(root, label)
     check_freeze_cleanup(root, label)
     check_no_trailing_whitespace(root, label)
 

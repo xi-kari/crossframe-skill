@@ -193,3 +193,14 @@ Prompt：用户先显式调用 `/crossframe-suite`，选择 `2+1`，完成结构
 - 不生成新的 3-5 个追问问题。
 - 对纯致谢、确认收到、结束语或无内容回应，只轻量收束或结束本轮。
 - 若用户随后再次提出与上一轮相关的问题，再重新触发 `crossframe-inquiry`。
+
+## 13. crossframe-max 让路
+
+Prompt：`/crossframe-suite` 后用户说“改用 crossframe-max，把这件事当作局部世界做全尺度推演，不设字数限制”。
+
+期望：
+
+- 不渲染 `2+1` 模式/角色选择器。
+- 不进入普通文章类型选择器。
+- 直接转交 `crossframe-max -> crossframe-review`。
+- 明确 `crossframe-max` 是独立模式，不是 suite 的体积档位。

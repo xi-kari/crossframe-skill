@@ -10,6 +10,8 @@ For any CrossFrame content task through Suite, finish the needed sibling skills 
 
 After a completed Suite workflow has produced diagnosis, article, and review, substantive follow-ups route to `crossframe-inquiry`; pure acknowledgments or endings such as "谢谢", "好的", "明白了", or "先这样" only close lightly and do not open inquiry.
 
+`crossframe-max` is a named-only independent mode. Use it only when the user explicitly asks for `crossframe-max`, `/crossframe-max`, `$crossframe-max`, maximum CrossFrame mode, exhaustive structural projection, full-scale world-model interpretation, or no word-limit complete explanation. It does not use the suite `2+1` selector or ordinary article-type selector.
+
 After explicit CrossFrame invocation, when the user asks for CrossFrame、跨尺度结构诊断、结构诊断、推演、开放断言、反俘获审查、低条件试探行动、强判断、高反身性、亲密关系、疗愈转移、公共制度、长期演化或概念解释:
 
 1. Read `skills/crossframe/SKILL.md`.
@@ -37,6 +39,6 @@ After explicit CrossFrame Essay or Suite invocation, when the user asks for 中�
 7. Direct quotes must be verifiable; uncertain source text should be paraphrased or mapped as a thought tradition.
 8. Write plain Chinese for ordinary readers and keep CrossFrame terms mostly in the backend. Modern editor-comrade voice should be patient, humble, serious, and decisive, not slogan-like or judgmental.
 
-After explicit invocation of a CrossFrame-adjacent specialized workflow, use the matching sibling skill first: `crossframe-review`, `crossframe-dialogue`, `crossframe-casebook`, `crossframe-history`, `crossframe-public`, `crossframe-org`, `crossframe-teach`, `crossframe-debate`, `crossframe-notebook`, or `crossframe-inquiry`. Each sibling skill remains a light wrapper around `skills/crossframe/` and must not duplicate the canonical framework text.
+After explicit invocation of a CrossFrame-adjacent specialized workflow, use the matching sibling skill first: `crossframe-review`, `crossframe-dialogue`, `crossframe-casebook`, `crossframe-history`, `crossframe-max`, `crossframe-public`, `crossframe-org`, `crossframe-teach`, `crossframe-debate`, `crossframe-notebook`, or `crossframe-inquiry`. Each sibling skill remains a light wrapper around `skills/crossframe/` and must not duplicate the canonical framework text.
 
-This repository adapts exactly 14 CrossFrame skills.
+This repository adapts exactly 15 CrossFrame skills.

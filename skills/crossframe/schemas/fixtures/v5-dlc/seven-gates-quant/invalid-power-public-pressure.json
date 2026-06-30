@@ -1,0 +1,81 @@
+{
+  "record_id": "SGQ4",
+  "case_id": "case-invalid-power-pressure",
+  "gates": [
+    {
+      "gate_id": "object",
+      "gate_state": "pass",
+      "score": 3,
+      "anchor_evidence": ["source:S1"],
+      "downgrade_reason": "无",
+      "max_judgment_grade": "full_diagnosis",
+      "action_ceiling": "内部复核。",
+      "withdrawal_condition": "对象变化时撤回。"
+    },
+    {
+      "gate_id": "evidence",
+      "gate_state": "pass",
+      "score": 3,
+      "anchor_evidence": ["source:S2"],
+      "downgrade_reason": "无",
+      "max_judgment_grade": "full_diagnosis",
+      "action_ceiling": "内部复核。",
+      "withdrawal_condition": "证据失效时撤回。"
+    },
+    {
+      "gate_id": "scale",
+      "gate_state": "pass",
+      "score": 3,
+      "anchor_evidence": ["source:S3"],
+      "downgrade_reason": "无",
+      "max_judgment_grade": "full_diagnosis",
+      "action_ceiling": "内部复核。",
+      "withdrawal_condition": "尺度失效时撤回。"
+    },
+    {
+      "gate_id": "responsibility",
+      "gate_state": "pass",
+      "score": 3,
+      "anchor_evidence": ["source:S4"],
+      "downgrade_reason": "无",
+      "max_judgment_grade": "full_diagnosis",
+      "action_ceiling": "内部复核。",
+      "withdrawal_condition": "责任链失效时撤回。"
+    },
+    {
+      "gate_id": "observation",
+      "gate_state": "pass",
+      "score": 3,
+      "anchor_evidence": ["source:S5"],
+      "downgrade_reason": "无",
+      "max_judgment_grade": "full_diagnosis",
+      "action_ceiling": "内部复核。",
+      "withdrawal_condition": "观测影响失效时撤回。"
+    },
+    {
+      "gate_id": "power",
+      "gate_state": "weak",
+      "score": 2,
+      "anchor_evidence": ["source:S6"],
+      "downgrade_reason": "低权力反例入口不足。",
+      "max_judgment_grade": "open_assertion",
+      "action_ceiling": "不得公开施压。",
+      "withdrawal_condition": "补齐低权力入口前撤回公开建议。",
+      "allows_public_pressure": true
+    },
+    {
+      "gate_id": "action",
+      "gate_state": "pass",
+      "score": 3,
+      "anchor_evidence": ["source:S7"],
+      "downgrade_reason": "无",
+      "max_judgment_grade": "full_diagnosis",
+      "action_ceiling": "内部复核。",
+      "withdrawal_condition": "行动边界失效时撤回。"
+    }
+  ],
+  "max_judgment_grade": "open_assertion",
+  "action_ceiling": "错误地允许公开施压。",
+  "withdrawal_condition": "权力闸不足时撤回公开施压。",
+  "publish_boundary": "blocked"
+}

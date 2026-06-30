@@ -43,13 +43,27 @@ jobs:
           }
 
       - name: Validate claim ledger schema JSON
-        run: python -m json.tool skills/crossframe/schemas/claim-ledger.schema.json > /dev/null
+        run: |
+          python -m json.tool skills/crossframe/schemas/claim-ledger.schema.json > /dev/null
+          python -m json.tool skills/crossframe/schemas/seven-gates-quant.schema.json > /dev/null
+          python -m json.tool skills/crossframe/schemas/evidence-ledger-v5-dlc.schema.json > /dev/null
+          python -m json.tool skills/crossframe/schemas/calibration-anchor.schema.json > /dev/null
+          python -m json.tool skills/crossframe/schemas/mechanism-update.schema.json > /dev/null
+          python -m json.tool skills/crossframe/schemas/counterexample-register.schema.json > /dev/null
 
       - name: Install schema validator
         run: python -m pip install jsonschema
 
       - name: Validate claim ledger schema fixtures
-        run: python scripts/validate_claim_ledger_schema_fixtures.py --repo .
+        run: |
+          python scripts/validate_claim_ledger_schema_fixtures.py --repo .
+          python scripts/validate_v5_dlc_quantification_schema_fixtures.py --repo .
+
+      - name: Validate v5 DLC casebook trials
+        run: python scripts/check_v5_dlc_casebook_trials.py --repo .
+
+      - name: Validate v5 DLC publication bundle
+        run: python scripts/check_v5_dlc_publication_bundle.py --repo .
 
       - name: Check mirror sync
         run: python scripts/sync_skill_mirrors.py --check

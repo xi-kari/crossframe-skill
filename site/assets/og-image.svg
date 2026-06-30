@@ -4,7 +4,7 @@
   <rect width="1200" height="630" fill="#f7f3ea"/>
   <g stroke="#ded6c8" stroke-width="1">
     <path d="M0 105h1200M0 210h1200M0 315h1200M0 420h1200M0 525h1200"/>
-    <path d="M150 0v630M300 0v630M450 0v630M600 0v630M750 0v630M900 0v630M1050 0v630"/>
+    <path d="M150 0 v 630M300 0 v 630M450 0 v 630M600 0 v 630M750 0 v 630M900 0 v 630M1050 0 v 630"/>
   </g>
   <rect x="82" y="72" width="1036" height="486" rx="24" fill="#fffaf1" stroke="#ded6c8" stroke-width="2"/>
   <text x="128" y="162" fill="#2f9e8f" font-family="Segoe UI, Noto Sans SC, Microsoft YaHei, sans-serif" font-size="28" font-weight="800">CrossFrame Skill Suite</text>

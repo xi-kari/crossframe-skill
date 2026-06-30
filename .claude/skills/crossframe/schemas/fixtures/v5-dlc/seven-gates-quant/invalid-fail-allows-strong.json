@@ -1,0 +1,80 @@
+{
+  "record_id": "SGQ3",
+  "case_id": "case-invalid-fail-strong",
+  "gates": [
+    {
+      "gate_id": "object",
+      "gate_state": "fail",
+      "score": 0,
+      "anchor_evidence": ["source:S1"],
+      "downgrade_reason": "对象边界缺失。",
+      "max_judgment_grade": "strong_judgment",
+      "action_ceiling": "错误地允许强判断。",
+      "withdrawal_condition": "对象边界缺失时应撤回。"
+    },
+    {
+      "gate_id": "evidence",
+      "gate_state": "pass",
+      "score": 3,
+      "anchor_evidence": ["source:S2"],
+      "downgrade_reason": "无",
+      "max_judgment_grade": "full_diagnosis",
+      "action_ceiling": "内部复核。",
+      "withdrawal_condition": "证据失效时撤回。"
+    },
+    {
+      "gate_id": "scale",
+      "gate_state": "pass",
+      "score": 3,
+      "anchor_evidence": ["source:S3"],
+      "downgrade_reason": "无",
+      "max_judgment_grade": "full_diagnosis",
+      "action_ceiling": "内部复核。",
+      "withdrawal_condition": "尺度失效时撤回。"
+    },
+    {
+      "gate_id": "responsibility",
+      "gate_state": "pass",
+      "score": 3,
+      "anchor_evidence": ["source:S4"],
+      "downgrade_reason": "无",
+      "max_judgment_grade": "full_diagnosis",
+      "action_ceiling": "内部复核。",
+      "withdrawal_condition": "责任链失效时撤回。"
+    },
+    {
+      "gate_id": "observation",
+      "gate_state": "pass",
+      "score": 3,
+      "anchor_evidence": ["source:S5"],
+      "downgrade_reason": "无",
+      "max_judgment_grade": "full_diagnosis",
+      "action_ceiling": "内部复核。",
+      "withdrawal_condition": "观测影响失效时撤回。"
+    },
+    {
+      "gate_id": "power",
+      "gate_state": "pass",
+      "score": 3,
+      "anchor_evidence": ["source:S6"],
+      "downgrade_reason": "无",
+      "max_judgment_grade": "full_diagnosis",
+      "action_ceiling": "内部复核。",
+      "withdrawal_condition": "权力入口失效时撤回。"
+    },
+    {
+      "gate_id": "action",
+      "gate_state": "pass",
+      "score": 3,
+      "anchor_evidence": ["source:S7"],
+      "downgrade_reason": "无",
+      "max_judgment_grade": "full_diagnosis",
+      "action_ceiling": "内部复核。",
+      "withdrawal_condition": "行动边界失效时撤回。"
+    }
+  ],
+  "max_judgment_grade": "strong_judgment",
+  "action_ceiling": "错误地允许强判断。",
+  "withdrawal_condition": "任一闸 fail 时应撤回。",
+  "publish_boundary": "blocked"
+}

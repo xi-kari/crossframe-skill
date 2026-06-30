@@ -1,0 +1,17 @@
+{
+  "mechanism_id": "M2",
+  "mechanism_edge_id": "ME2",
+  "description": "错误地撤回机制但没有反向证据。",
+  "supporting_facts": ["source:S1"],
+  "counterevidence": [],
+  "diagnostic_force": "weak",
+  "update_direction": "withdraw",
+  "current_state": "撤回。",
+  "can_explain": ["无"],
+  "cannot_explain": ["无"],
+  "observable_predictions": ["无"],
+  "withdrawal_condition": "无反向证据时不能撤回。",
+  "claim_id": "CL5",
+  "judgment_grade": "open_assertion",
+  "action_ceiling": "只能补证。"
+}

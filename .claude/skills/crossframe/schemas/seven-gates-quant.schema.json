@@ -1,0 +1,217 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CrossFrame V5 DLC Seven-Gates Quant Profile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "record_id",
+    "case_id",
+    "gates",
+    "max_judgment_grade",
+    "action_ceiling",
+    "withdrawal_condition",
+    "publish_boundary"
+  ],
+  "properties": {
+    "record_id": {
+      "type": "string",
+      "pattern": "^SGQ[0-9]+$"
+    },
+    "case_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "gates": {
+      "type": "array",
+      "minItems": 7,
+      "maxItems": 7,
+      "allOf": [
+        {
+          "contains": {
+            "type": "object",
+            "properties": {
+              "gate_id": {
+                "const": "object"
+              }
+            },
+            "required": ["gate_id"]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "type": "object",
+            "properties": {
+              "gate_id": {
+                "const": "evidence"
+              }
+            },
+            "required": ["gate_id"]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "type": "object",
+            "properties": {
+              "gate_id": {
+                "const": "scale"
+              }
+            },
+            "required": ["gate_id"]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "type": "object",
+            "properties": {
+              "gate_id": {
+                "const": "responsibility"
+              }
+            },
+            "required": ["gate_id"]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "type": "object",
+            "properties": {
+              "gate_id": {
+                "const": "observation"
+              }
+            },
+            "required": ["gate_id"]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "type": "object",
+            "properties": {
+              "gate_id": {
+                "const": "power"
+              }
+            },
+            "required": ["gate_id"]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "type": "object",
+            "properties": {
+              "gate_id": {
+                "const": "action"
+              }
+            },
+            "required": ["gate_id"]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        }
+      ],
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "gate_id",
+          "gate_state",
+          "score",
+          "anchor_evidence",
+          "downgrade_reason",
+          "max_judgment_grade",
+          "action_ceiling",
+          "withdrawal_condition"
+        ],
+        "properties": {
+          "gate_id": {
+            "type": "string",
+            "enum": [
+              "object",
+              "evidence",
+              "scale",
+              "responsibility",
+              "observation",
+              "power",
+              "action"
+            ]
+          },
+          "gate_state": {
+            "type": "string",
+            "enum": ["pass", "weak", "fail", "blocked"]
+          },
+          "score": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 4
+          },
+          "anchor_evidence": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "downgrade_reason": {
+            "type": "string",
+            "minLength": 1
+          },
+          "max_judgment_grade": {
+            "type": "string",
+            "enum": [
+              "light_observation",
+              "open_assertion",
+              "full_diagnosis",
+              "strong_judgment",
+              "low_condition_action",
+              "exit_transfer"
+            ]
+          },
+          "action_ceiling": {
+            "type": "string",
+            "minLength": 1
+          },
+          "withdrawal_condition": {
+            "type": "string",
+            "minLength": 1
+          },
+          "allows_public_pressure": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "max_judgment_grade": {
+      "type": "string",
+      "enum": [
+        "light_observation",
+        "open_assertion",
+        "full_diagnosis",
+        "strong_judgment",
+        "low_condition_action",
+        "exit_transfer"
+      ]
+    },
+    "action_ceiling": {
+      "type": "string",
+      "minLength": 1
+    },
+    "withdrawal_condition": {
+      "type": "string",
+      "minLength": 1
+    },
+    "publish_boundary": {
+      "type": "string",
+      "enum": ["internal_only", "publishable_with_boundary", "blocked"]
+    }
+  }
+}

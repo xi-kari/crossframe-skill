@@ -1,0 +1,81 @@
+{
+  "record_id": "SGQ2",
+  "case_id": "case-invalid-total-score",
+  "total_score": 18,
+  "gates": [
+    {
+      "gate_id": "object",
+      "gate_state": "pass",
+      "score": 3,
+      "anchor_evidence": ["source:S1"],
+      "downgrade_reason": "无",
+      "max_judgment_grade": "full_diagnosis",
+      "action_ceiling": "仅内部复核。",
+      "withdrawal_condition": "对象变化时撤回。"
+    },
+    {
+      "gate_id": "evidence",
+      "gate_state": "pass",
+      "score": 3,
+      "anchor_evidence": ["source:S2"],
+      "downgrade_reason": "无",
+      "max_judgment_grade": "full_diagnosis",
+      "action_ceiling": "仅内部复核。",
+      "withdrawal_condition": "证据失效时撤回。"
+    },
+    {
+      "gate_id": "scale",
+      "gate_state": "pass",
+      "score": 3,
+      "anchor_evidence": ["source:S3"],
+      "downgrade_reason": "无",
+      "max_judgment_grade": "full_diagnosis",
+      "action_ceiling": "仅内部复核。",
+      "withdrawal_condition": "尺度变化时撤回。"
+    },
+    {
+      "gate_id": "responsibility",
+      "gate_state": "pass",
+      "score": 3,
+      "anchor_evidence": ["source:S4"],
+      "downgrade_reason": "无",
+      "max_judgment_grade": "full_diagnosis",
+      "action_ceiling": "仅内部复核。",
+      "withdrawal_condition": "责任链变化时撤回。"
+    },
+    {
+      "gate_id": "observation",
+      "gate_state": "pass",
+      "score": 3,
+      "anchor_evidence": ["source:S5"],
+      "downgrade_reason": "无",
+      "max_judgment_grade": "full_diagnosis",
+      "action_ceiling": "仅内部复核。",
+      "withdrawal_condition": "观测影响变化时撤回。"
+    },
+    {
+      "gate_id": "power",
+      "gate_state": "pass",
+      "score": 3,
+      "anchor_evidence": ["source:S6"],
+      "downgrade_reason": "无",
+      "max_judgment_grade": "full_diagnosis",
+      "action_ceiling": "仅内部复核。",
+      "withdrawal_condition": "权力入口失效时撤回。"
+    },
+    {
+      "gate_id": "action",
+      "gate_state": "pass",
+      "score": 3,
+      "anchor_evidence": ["source:S7"],
+      "downgrade_reason": "无",
+      "max_judgment_grade": "full_diagnosis",
+      "action_ceiling": "仅内部复核。",
+      "withdrawal_condition": "行动边界变化时撤回。"
+    }
+  ],
+  "max_judgment_grade": "full_diagnosis",
+  "action_ceiling": "仅内部复核。",
+  "withdrawal_condition": "出现反例时撤回。",
+  "publish_boundary": "internal_only"
+}

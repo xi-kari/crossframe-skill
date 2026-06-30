@@ -16,7 +16,7 @@ macOS / Linux：
 bash scripts/install-codex.sh
 ```
 
-它会安装 14 个 `crossframe-*` skills 到 `$HOME/.codex/skills`。
+它会安装 15 个 `crossframe-*` skills 到 `$HOME/.codex/skills`。
 
 ## 2. Claude Code
 
@@ -24,6 +24,7 @@ Claude Code 项目内使用：
 
 ```text
 /crossframe-suite 分析这个团队为什么复盘很多但没有真实修复
+/crossframe-max 把这件事当作一个局部世界，做全尺度结构推演并写完整解释
 /crossframe-essay 写一篇关于平台治理的中文评论文章
 /crossframe-inquiry 基于刚才的文章继续追问反证和迁移条件
 ```
@@ -61,11 +62,30 @@ python scripts/check_source_continuity.py --materials-only --repo .
 python -m json.tool skills/crossframe/schemas/claim-ledger.schema.json
 python -m pip install jsonschema
 python scripts/validate_claim_ledger_schema_fixtures.py --repo .
+python scripts/validate_v5_dlc_quantification_schema_fixtures.py --repo .
+python scripts/check_v5_dlc_casebook_trials.py --repo .
+python scripts/check_v5_dlc_publication_bundle.py --repo .
 python scripts/sync_skill_mirrors.py --check
 bash -n scripts/install-codex.sh
 python -m py_compile scripts/*.py
 git diff --check
 ```
+
+`check_v5_dlc_casebook_trials.py` 只检查 v5 DLC 案例库试跑是否保留降档、分歧、反例和反误用边界；它不是发布证明，也不是现实正确性证明。
+
+生成 v5 DLC 发布 bundle：
+
+```powershell
+python scripts\build_v5_dlc_publication_bundle.py --repo .
+```
+
+生成 v5 DLC DOCX 发布稿：
+
+```powershell
+python scripts\build_v5_dlc_docx.py --repo .
+```
+
+`check_v5_dlc_publication_bundle.py` 会生成 ignored `outputs/` bundle 并核对 manifest、章节、来源引用和反误用语言；通过只说明发布源稿结构可审计，不说明现实判断正确。
 
 如果你持有原始 v5.0 DOCX，可以运行完整源一致性检查：
 

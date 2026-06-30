@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CrossFrame V5 DLC Counterexample Register",
+  "type": "object",
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "counterexample_type": {
+            "enum": ["misuse", "high_harm"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "action_ceiling_change": {
+            "minLength": 1
+          },
+          "tool_consequence": {
+            "minLength": 1
+          }
+        }
+      }
+    }
+  ],
+  "required": [
+    "counterexample_id",
+    "related_claim_ids",
+    "related_construct_ids",
+    "related_mechanism_ids",
+    "source_id",
+    "counterexample_type",
+    "impact_scope",
+    "text_consequence",
+    "tool_consequence",
+    "action_ceiling_change",
+    "version_writeback",
+    "withdrawal_condition"
+  ],
+  "properties": {
+    "counterexample_id": {
+      "type": "string",
+      "pattern": "^CE[0-9]+$"
+    },
+    "related_claim_ids": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "pattern": "^CL[0-9]+$"
+      }
+    },
+    "related_construct_ids": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_]*$"
+      }
+    },
+    "related_mechanism_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^M[0-9]+$"
+      }
+    },
+    "source_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "counterexample_type": {
+      "type": "string",
+      "enum": ["minor", "repeated", "high_harm", "systemic", "misuse", "unrecoverable"]
+    },
+    "impact_scope": {
+      "type": "string",
+      "minLength": 1
+    },
+    "text_consequence": {
+      "type": "string",
+      "minLength": 1
+    },
+    "tool_consequence": {
+      "type": "string"
+    },
+    "action_ceiling_change": {
+      "type": "string"
+    },
+    "version_writeback": {
+      "type": "string",
+      "minLength": 1
+    },
+    "withdrawal_condition": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

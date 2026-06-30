@@ -16,6 +16,7 @@ CROSSFRAME_SKILLS = [
     "crossframe-casebook",
     "crossframe-history",
     "crossframe-inquiry",
+    "crossframe-max",
     "crossframe-public",
     "crossframe-org",
     "crossframe-teach",
