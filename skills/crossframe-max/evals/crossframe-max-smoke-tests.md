@@ -85,6 +85,41 @@ Prompt：`/crossframe-max 写成完整解释文章，不设字数限制`
 - 直接生成 `max-dossier` 和 `max-essay`。
 - 说明 `max-essay` 不设默认字数上限，若单轮写不完，登记未展开完的路径队列。
 
+## 聊天压缩版代替产物
+
+Prompt：`/crossframe-max 穷尽解释这个问题，最后给我完整内容`
+
+失败信号：
+
+- 只在聊天窗口输出“短答 / 压缩版 / 摘要版 / 先给结论”。
+- 没有创建产物目录。
+- 没有写出 `max-artifact-manifest.md`、`max-dossier.md`、`max-essay.md`、`max-continuation-ledger.md` 和 `max-continuation-index.md`。
+- 最终回复没有给出产物路径和校验状态。
+- 最终回复没有在正常输出中列出“可继续讨论的分支”。
+
+必须：
+
+- 执行 artifact-first gate。
+- 先写入独立产物文件，再给聊天索引。
+- 运行 `scripts/check_crossframe_max_artifacts.py --workspace <产物目录>`。
+- 在 final chat 中列出可继续讨论的分支，不能只把分支藏在 `max-continuation-index.md`。
+- 若文件写入不可用，只能声明产物未完成，不得把聊天正文当作完整产物。
+
+## 合并文件代替最小产物集
+
+Prompt：`/crossframe-max 我只要一个完整 md 文件，其他不用`
+
+失败信号：
+
+- 只输出一个合并 Markdown 文件。
+- 用合并阅读版代替 `max-dossier.md`、`max-essay.md` 或续写台账。
+
+必须：
+
+- 合并阅读版只能作为可选副本。
+- 最小产物集仍必须包含 `max-artifact-manifest.md`、`max-dossier.md`、`max-essay.md`、`max-continuation-ledger.md` 和 `max-continuation-index.md`。
+- `max-artifact-manifest.md` 必须登记合并阅读版与最小产物集的关系。
+
 ## 只搜支持材料
 
 Prompt：`/crossframe-max 分析一个真实平台治理争议，尽量穷尽资料`
@@ -308,6 +343,23 @@ Prompt：`/crossframe-max 不设字数限制，完整写完这个世界档案`
 - 输出 `max-output-layers`。
 - 至少分为结构底稿、完整长文和续写索引。
 - 输出 `max-continuation-index`，列出未展开路径、下一轮续写入口、未展开资料队列和不得越界内容。
+
+## 正文被底稿压薄
+
+Prompt：`/crossframe-max 输出完整解释文章，dossier 可以作为内部底稿`
+
+失败信号：
+
+- `max-dossier` 很长，`max-essay` 小于 max-dossier 或只占整体输出的一小部分。
+- `max-essay` 只是 dossier 的摘要、导读、标题串联或结论摘录。
+- 主要解释力停留在台账、表格、字段填充或结构底稿里。
+
+必须：
+
+- 执行 longform-dominance gate。
+- `max-essay` 是最终完整解释层，理想占整体输出 55% 到 70%。
+- 自动校验最低要求：`max-essay` 可见字符数不得低于 `max-dossier` 的 1.2 倍。
+- 若 `max-essay 小于 max-dossier`，只能声明完整解释正文未完成，并在 `max-continuation-index` 里指定继续扩写正文。
 
 ## max-dossier 截断
 

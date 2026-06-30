@@ -366,7 +366,7 @@ def check_repo_adapters(repo: Path, label: str) -> None:
     max_command = repo / ".claude" / "commands" / "crossframe-max.md"
     require(max_command.exists(), f"{label}: missing Claude command for crossframe-max")
     max_command_text = read(max_command)
-    for needle in ["# /crossframe-max", "This explicit command is allowed", "skills/crossframe-max/SKILL.md", "independent mode", "local world", "template-fidelity gate", "max-source-frontier", "max-transcendence-window", "max-continuation-ledger", "max-red-team-pass", "max-position-matrix", "max-path-confidence-layers", "max-unexhaustible-declaration", "max-output-layers", "max-continuation-index", "max-dossier", "max-essay"]:
+    for needle in ["# /crossframe-max", "This explicit command is allowed", "skills/crossframe-max/SKILL.md", "independent mode", "local world", "artifact-first gate", "max-artifact-manifest.md", "complete article must live in its own `max-essay.md`", "branches we can keep discussing", "template-fidelity gate", "longform-dominance gate", "max-source-frontier", "max-transcendence-window", "max-continuation-ledger", "max-red-team-pass", "max-position-matrix", "max-path-confidence-layers", "max-unexhaustible-declaration", "max-output-layers", "max-continuation-index", "max-dossier", "max-essay"]:
         require(needle in max_command_text, f"{label}: crossframe-max command missing marker: {needle}")
 
     max_artifact_validator = repo / "scripts" / "check_crossframe_max_artifacts.py"
@@ -374,6 +374,9 @@ def check_repo_adapters(repo: Path, label: str) -> None:
     max_artifact_validator_text = read(max_artifact_validator)
     for needle in [
         "check_crossframe_max_artifacts",
+        "artifact-first gate",
+        "max-artifact-manifest.md",
+        "REQUIRED_MANIFEST_MARKERS",
         "max-dossier.md",
         "max-essay.md",
         "max-continuation-ledger.md",
@@ -383,6 +386,9 @@ def check_repo_adapters(repo: Path, label: str) -> None:
         "REQUIRED_ESSAY_MARKERS",
         "REQUIRED_LEDGER_MARKERS",
         "REQUIRED_INDEX_MARKERS",
+        "MIN_ESSAY_TO_DOSSIER_RATIO",
+        "check_longform_dominance",
+        "longform-dominance gate",
         "source_anchor",
         "claim_id",
         "claim ledger",
@@ -390,6 +396,13 @@ def check_repo_adapters(repo: Path, label: str) -> None:
         "max-continuation-index",
     ]:
         require(needle in max_artifact_validator_text, f"{label}: crossframe-max artifact validator missing marker: {needle}")
+
+    bundled_max_artifact_validator = repo / "skills" / "crossframe-max" / "scripts" / "check_crossframe_max_artifacts.py"
+    require(bundled_max_artifact_validator.exists(), f"{label}: missing bundled crossframe-max artifact validator")
+    require(
+        read(bundled_max_artifact_validator) == max_artifact_validator_text,
+        f"{label}: bundled crossframe-max artifact validator differs from repo scripts/check_crossframe_max_artifacts.py",
+    )
 
 
 def check_public_release_docs(repo: Path, label: str) -> None:
@@ -2075,6 +2088,7 @@ def check_crossframe_max_skill(root: Path, label: str) -> None:
         "templates/max-essay-output.md",
         "evals/crossframe-max-smoke-tests.md",
         "agents/openai.yaml",
+        "scripts/check_crossframe_max_artifacts.py",
     ]
     for rel in required_files:
         require((max_root / rel).exists(), f"{label}: missing crossframe-max file: {rel}")
@@ -2165,6 +2179,14 @@ def check_crossframe_max_skill(root: Path, label: str) -> None:
         "结构底稿",
         "完整长文",
         "续写索引",
+        "artifact-first gate",
+        "产物优先硬闸",
+        "max-artifact-manifest.md",
+        "产物目录",
+        "文件必须分开交付",
+        "完整文章必须单独放在 `max-essay.md`",
+        "最终聊天回复承担交付索引和继续讨论入口功能",
+        "可继续讨论的分支",
         "template-fidelity gate",
         "模板忠实度硬闸",
         "模板是 contract，不是参考",
@@ -2173,6 +2195,12 @@ def check_crossframe_max_skill(root: Path, label: str) -> None:
         "不得跳过空栏",
         "不得把单独文件当作 dossier 内部章节替代",
         "缺任何一级标题都不得宣布完成",
+        "正文主导硬闸",
+        "longform-dominance gate",
+        "max-essay 必须大于 max-dossier",
+        "55% 到 70%",
+        "1.2 倍",
+        "不得把 max-essay 写成 dossier 的摘要",
         "scripts/check_crossframe_max_artifacts.py",
     ]:
         require(needle in skill_text, f"{label}: crossframe-max SKILL.md missing marker: {needle}")
@@ -2224,7 +2252,16 @@ def check_crossframe_max_skill(root: Path, label: str) -> None:
         "路径置信分层",
         "不可穷尽声明",
         "输出分层模式",
+        "产物优先交付",
+        "artifact-first gate",
+        "max-artifact-manifest.md",
+        "完整文章必须单独放在 `max-essay.md`",
+        "可继续讨论的分支",
+        "不能只留在文件里",
         "模板忠实度检查",
+        "正文主导检查",
+        "longform-dominance gate",
+        "1.2 倍",
         "模板截断",
         "单独文件不能替代",
     ]:
@@ -2288,6 +2325,18 @@ def check_crossframe_max_skill(root: Path, label: str) -> None:
         "结构底稿",
         "完整长文",
         "续写索引",
+        "artifact-first gate",
+        "产物目录",
+        "产物文件",
+        "max-artifact-manifest.md",
+        "max-dossier.md",
+        "max-essay.md",
+        "max-continuation-ledger.md",
+        "max-continuation-index.md",
+        "正常输出中的可继续讨论分支",
+        "正文主导状态",
+        "max-essay / max-dossier 比例",
+        "底稿摘要风险",
         "未展开完的路径队列",
     ]:
         require(needle in dossier_text, f"{label}: crossframe-max dossier template missing marker: {needle}")
@@ -2297,6 +2346,8 @@ def check_crossframe_max_skill(root: Path, label: str) -> None:
         "# max-essay",
         "不设默认字数上限",
         "完整解释",
+        "artifact-first gate",
+        "max-essay.md",
         "演化路径",
         "不能用摘要替代正文",
         "不把框架写成现实终审",
@@ -2310,6 +2361,12 @@ def check_crossframe_max_skill(root: Path, label: str) -> None:
         "不可穷尽声明",
         "输出分层",
         "续写索引",
+        "正文主导原则",
+        "55% 到 70%",
+        "max-dossier 的 1.2 倍",
+        "不能只是 dossier 的摘要",
+        "禁止只在聊天里输出压缩版",
+        "max-artifact-manifest.md",
     ]:
         require(needle in essay_text, f"{label}: crossframe-max essay template missing marker: {needle}")
 
@@ -2338,6 +2395,13 @@ def check_crossframe_max_skill(root: Path, label: str) -> None:
         "单独 continuation-index 代替 dossier 内部章节",
         "CL1-CL5 无 source_anchor",
         "模板标题合并或改名",
+        "正文被底稿压薄",
+        "max-essay 小于 max-dossier",
+        "聊天压缩版代替产物",
+        "合并文件代替最小产物集",
+        "artifact-first gate",
+        "max-artifact-manifest.md",
+        "可继续讨论的分支",
         "误走 suite 选择器",
         "普通文章类型选择器误触发",
     ]:
@@ -2355,10 +2419,32 @@ def check_crossframe_max_skill(root: Path, label: str) -> None:
         "max-unexhaustible-declaration",
         "max-output-layers",
         "max-continuation-index",
+        "artifact-first gate",
+        "max-artifact-manifest.md",
+        "完整文章必须单独放在 max-essay.md",
+        "可继续讨论的分支",
+        "不能只把分支藏在文件里",
         "template-fidelity gate",
+        "longform-dominance gate",
         "scripts/check_crossframe_max_artifacts.py",
     ]:
         require(needle in agent_text, f"{label}: crossframe-max agent prompt missing marker: {needle}")
+
+    bundled_validator_text = read(max_root / "scripts" / "check_crossframe_max_artifacts.py")
+    for needle in [
+        "check_crossframe_max_artifacts",
+        "artifact-first gate",
+        "max-artifact-manifest.md",
+        "REQUIRED_MANIFEST_MARKERS",
+        "max-dossier.md",
+        "max-essay.md",
+        "max-continuation-ledger.md",
+        "max-continuation-index.md",
+        "template-fidelity gate",
+        "longform-dominance gate",
+        "MIN_ESSAY_TO_DOSSIER_RATIO",
+    ]:
+        require(needle in bundled_validator_text, f"{label}: bundled crossframe-max artifact validator missing marker: {needle}")
 
 
 def check_root(root: Path, label: str) -> None:

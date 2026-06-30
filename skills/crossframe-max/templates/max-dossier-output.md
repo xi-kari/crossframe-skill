@@ -236,13 +236,30 @@
 - 解释顺序：
 - 必须完整展开的路径：
 - 不得写强的句子：
+- 正文主导状态：
+- max-essay / max-dossier 比例：
+- 底稿摘要风险：
 - 未展开完的路径队列：
 
 ## max-output-layers
 
+- artifact-first gate：
+- 产物目录：
+- 产物文件：
+- max-artifact-manifest.md：
+- max-dossier.md：
+- max-essay.md：
+- max-continuation-ledger.md：
+- max-continuation-index.md：
+- 合并阅读版（如有）：
+- 校验脚本：
+- 校验状态：
+- 聊天回复边界：
+- 正常输出中的可继续讨论分支：
 - 结构底稿：
 - 完整长文：
 - 续写索引：
+- 正文主导硬闸：
 - 可继续扩展的世界档案：
 - 压缩呈现但不可省略的内容：
 

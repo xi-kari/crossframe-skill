@@ -74,6 +74,42 @@ disable-model-invocation: true
 
 读取包时先用 `../crossframe/references/continuity-closure-map.md` 展开 required_closure；需要语义、源锚点或降档边界时再读取 `../crossframe/references/continuity-bundles.md` 和对应 `../crossframe/references/continuity-bundles/v5/<bundle-id>.md`。源锚点不足时定向读取 `../crossframe/references/v5-source-spine.md`、`../crossframe/references/v5-section-digest-index.md`、`../crossframe/references/v5-coverage-map.md` 和 `../crossframe/references/v5-term-fidelity.md` 的相关局部；max 可以扩大读取范围，但仍要记录读态胶囊。
 
+## 产物优先硬闸
+
+`artifact-first gate` 是 `crossframe-max` 的交付闸。max 的完整输出不能只存在于聊天回复里；聊天回复不能替代产物文件，也不能用“短答 / 压缩版 / 先给结论 / 摘要版”宣称完成。
+
+每次进入 max 后，必须先确定可写入的产物目录：
+
+- 用户指定目录时，使用用户目录。
+- 用户未指定时，使用当前工作区下的 `outputs/<subject-slug>-crossframe-max/`。
+- 如果当前环境没有文件写入能力，必须明确声明“无法满足 artifact-first gate”，并只输出未完成状态；不得把聊天正文伪装成完整产物。
+
+产物目录至少必须包含：
+
+- `max-artifact-manifest.md`：产物清单、生成时间、输入摘要、读态摘要、校验状态和下一轮入口。
+- `max-dossier.md`：完整结构底稿。
+- `max-essay.md`：完整解释长文。
+- `max-continuation-ledger.md`：连续运行台账 / max-run-state。
+- `max-continuation-index.md`：续写索引。
+
+文件必须分开交付。尤其完整文章必须单独放在 `max-essay.md`，不得只把文章塞进合并阅读版、聊天回复、dossier 后半段或 continuation 文件里。可选再生成一个合并阅读版，例如 `max-dossier-plus-essay.md`，但合并阅读版不能替代上述五个最小产物文件。
+
+产物写入后，必须运行本 skill 随附脚本：
+
+```bash
+python scripts/check_crossframe_max_artifacts.py --workspace <产物目录>
+```
+
+运行位置以当前 `crossframe-max` skill 目录为准；如果在 canonical repo 中工作，也可使用仓库根目录的 `scripts/check_crossframe_max_artifacts.py`。没有运行脚本、脚本失败、产物目录缺文件或 `max-essay` 未满足正文主导阈值时，只能声明“产物未完成 / 待续写”，不得宣布 max 完成。
+
+最终聊天回复承担交付索引和继续讨论入口功能：
+
+- 给出产物目录和五个核心文件路径。
+- 给出校验脚本结果。
+- 给出 3 到 7 行阅读导引和下一轮续写入口。
+- 正常列出“可继续讨论的分支”，从 `max-continuation-index.md` 中抽取 5 到 12 个分支，每个分支用一句话说明继续讨论会展开什么。
+- 不在聊天中重写完整 dossier 或完整 essay，除非用户在产物已生成后明确要求粘贴全文。
+
 ## 模板忠实度硬闸
 
 `template-fidelity gate` 是 `crossframe-max` 的完成闸。模板是 contract，不是参考；`templates/max-dossier-output.md`、`templates/max-essay-output.md`、`templates/max-dossier-output.md` 中的一级 / 二级标题必须逐项填充。
@@ -87,7 +123,29 @@ disable-model-invocation: true
 - 有 CL1、CL2 这类命题编号时，必须落到 `source_anchor`、`claim_id`、`claim ledger` 和 `source ledger`；只有编号没有台账链路，视为模板未完成。
 - 缺任何一级标题都不得宣布完成，不得写“已完成 / 质量通过 / max 完成”。
 
-产物交付后，应运行 `scripts/check_crossframe_max_artifacts.py` 对实际输出目录做模板忠实度检查。这个检查只验证结构和必要台账字段，不替代 `crossframe-review` 的实质质量判断。
+产物交付后，必须运行 `scripts/check_crossframe_max_artifacts.py` 对实际输出目录做模板忠实度检查。这个检查只验证结构和必要台账字段，不替代 `crossframe-review` 的实质质量判断。
+
+## 正文主导硬闸
+
+`longform-dominance gate` 是 `template-fidelity gate` 之后的第二完成闸。`max-dossier` 是结构底稿和证据机器，`max-essay` 才是最终完整解释层；不得把 `max-essay` 写成 dossier 的摘要、导读、压缩版或结论摘录。
+
+硬性禁句：不得把 max-essay 写成 dossier 的摘要。
+
+默认占比：
+
+- `max-essay` 完整解释正文应占整体输出的 55% 到 70%。
+- `max-dossier` 结构底稿应占 20% 到 30%。
+- `source / claim / continuation / red-team` 台账索引应占 10% 到 15%。
+
+最低完成标准：
+
+- `max-essay 必须大于 max-dossier`，理想上是 `max-dossier` 的 1.5 到 3 倍。
+- 自动校验的最低阈值是：`max-essay` 可见字符数不得低于 `max-dossier` 的 1.2 倍。
+- 如果 `max-essay` 小于 `max-dossier`，只能声明为“结构底稿已生成，完整解释正文未完成”，不得宣布 max 完成。
+- `max-essay` 必须逐层展开局部世界如何运行、问题如何形成、路径如何演化、处理如何改变结构、哪些只是伪修复、哪些反例会撤回解释、哪些未知必须保留。
+- `max-essay` 可以引用 dossier 的结构发现，但必须把它们转化为连续解释；不能把项目符号、表格、台账字段或标题填充当成正文。
+
+如果单轮上下文无法写出足够完整的 `max-essay`，必须把不足写入 `max-continuation-index`，并把下一轮入口指定为“继续扩写 max-essay 的完整解释层”，而不是重新生成 dossier。
 
 ## 连续运行状态
 
@@ -281,6 +339,8 @@ concept card -> concept contract -> v5 continuity closure -> claim ledger
 - 可以保留超越性窗口，不能把不可解释处写成超越性结论；必须写明 `max-transcendence-window`、误读风险和撤回条件。
 - 可以穷尽可能，不能把所有可能写成同一种强度；必须写明 `max-path-confidence-layers`。
 - 可以连续多轮展开，不能让多轮输出重复、漂移或遗忘边界；必须写明 `max-continuation-ledger` 和 `max-continuation-index`。
+- 可以在聊天里给阅读导引和可继续讨论分支，不能用聊天导引替代产物文件；必须满足 `artifact-first gate`，写出 `max-artifact-manifest.md`、`max-dossier.md`、`max-essay.md`、`max-continuation-ledger.md` 和 `max-continuation-index.md`。
+- 可以先生成 `max-dossier`，不能让底稿吞没最终解释；必须满足 `longform-dominance gate`，让 `max-essay` 成为正文主导层。
 - 可以追求解释力，不能跳过自我攻击；必须写明 `max-red-team-pass`。
 - 可以从可见材料出发，不能让强势主体吞没沉默者、退出者和未来主体；必须写明 `max-position-matrix`。
 - 可以说“穷尽一切”，不能假装原则上不可穷尽之物已经穷尽；必须写明 `max-unexhaustible-declaration`。
