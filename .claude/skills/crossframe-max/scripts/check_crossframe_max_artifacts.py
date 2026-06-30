@@ -38,10 +38,19 @@ REQUIRED_DOSSIER_MARKERS = [
 ]
 
 REQUIRED_ESSAY_MARKERS = [
+    "局部世界",
+    "运行规律",
+    "问题形成",
+    "路径演化",
+    "处理问题",
+    "伪修复",
+    "资料前沿",
     "路径置信分层",
     "主体位置矩阵",
     "反向推演",
     "不可判断区",
+    "撤回条件",
+    "不可穷尽",
     "续写索引",
     "max-continuation-index",
 ]
@@ -81,7 +90,9 @@ REQUIRED_MANIFEST_MARKERS = [
     "max-continuation-index.md",
 ]
 
-MIN_ESSAY_TO_DOSSIER_RATIO = 1.2
+MIN_ESSAY_TO_DOSSIER_RATIO = 1.6
+STRONG_ESSAY_TO_DOSSIER_RATIO = 2.2
+MAX_ESSAY_TO_DOSSIER_RATIO = 3.0
 
 DEFAULT_FILENAMES = {
     "manifest": "max-artifact-manifest.md",
