@@ -31,6 +31,8 @@
   ·
   <a href="#workflow"><strong>工作流</strong></a>
   ·
+  <a href="#max"><strong>Max 模式</strong></a>
+  ·
   <a href="#skills"><strong>Skill 地图</strong></a>
   ·
   <a href="#docs"><strong>文档</strong></a>
@@ -102,6 +104,9 @@ python scripts/validate_claim_ledger_schema_fixtures.py --repo .
 python scripts/validate_v5_dlc_quantification_schema_fixtures.py --repo .
 python scripts/check_v5_dlc_casebook_trials.py --repo .
 python scripts/check_v5_dlc_publication_bundle.py --repo .
+python scripts/check_crossframe_max_v6_full_source.py --repo . --source-docx <path-to-v6-docx> --allow-source-path-mismatch
+python scripts/check_crossframe_max_v6_registry_anchors.py --repo .
+python scripts/validate_crossframe_max_route_ledger_fixtures.py
 python scripts/sync_skill_mirrors.py --check
 bash -n scripts/install-codex.sh
 python -m py_compile scripts/*.py
@@ -189,6 +194,23 @@ CrossFrame 是 **explicit-only**：只有用户明确点名 CrossFrame、`crossf
 
 ---
 
+<a id="max"></a>
+## Max 模式
+
+`crossframe-max` 是独立的 v6 世界观前置 meta-runtime。它用于用户明确要求最大尺度、穷尽推演、完整解释、无限制长文、全尺度世界观解释，或要求审查 skill、prompt、agent、工具、模板、脚本和运行协议设计的任务。
+
+它的运行核心是先让 AI 加载 v6 判断框架，再把对象建模为局部世界。完整运行会读取 `references/v6-full-source/`、`references/v6-route-map.yaml`、`references/concept-registry/index.md`、`references/concept-contracts/v6-core-contracts.md` 和检索触发策略，随后生成阶段锁、读取台账、命题台账、概念命中台账、举证推理审计、结构底稿和完整长文。
+
+`crossframe-max` 有三个运行档位：
+
+- `max-complete`：完整 full-source exhaustive pass、阶段锁、artifact-first、template-fidelity、longform-dominance、route-ledger gate 和 validator 全部满足后，才可宣称完成。
+- `max-design-review`：用于 skill、prompt、agent、工具、模板、脚本和运行时设计；必须使用 `skill_design` route，并登记 `design_decision_id`、`v6_rule_ids`、反向证据、撤回条件和行动上限。
+- `max-incomplete/progress`：上下文、权限、工具或时间不足时，只输出读态、缺口、下一步读取计划和 `max-incomplete:*`，不得宣称完成。
+
+Max 的完成条件不是“写得很长”，而是结构产物能通过校验：`max-read-ledger.json` 覆盖 v6 源段落，route 概念来自 registry，强判断有 source anchor、反证、降档和撤回条件，设计判断不越过行动上限。`max-essay` 是最终完整解释层，不能只是 `max-dossier` 摘要。
+
+---
+
 <a id="closure"></a>
 ## 质量闭环
 
@@ -215,7 +237,7 @@ source_id -> claim_id -> concept contract -> source anchor -> review -> inquiry
 | --- | --- |
 | `crossframe-suite` | 总调度入口，决定连续工作流 |
 | `crossframe` | 结构诊断核心层 |
-| `crossframe-max` | 独立最大化推演入口，把对象当作局部世界展开完整解释 |
+| `crossframe-max` | v6 世界观前置 meta-runtime，把对象当作局部世界完成最大化推演、完整解释或设计审查 |
 | `crossframe-essay` | 把结构诊断转成完整中文文章 |
 | `crossframe-review` | 审查推理、证据边界和输出质量 |
 | `crossframe-dialogue` | 读者答复、编辑回信、咨询式短答 |

@@ -16,6 +16,25 @@ Prompt：`/crossframe-max 分析一个团队为什么复盘很多却没有真实
 - 先生成 `max-worldview-capsule`。
 - 明确区分世界观层、诊断层和应用层。
 
+## 世界观前置运行时缺失
+
+Prompt：`/crossframe-max 用你最大的推演能力拆解这个组织为什么会反复自毁`
+
+失败信号：
+
+- 直接输出问题清单、建议清单、摘要或诊断结论。
+- 把 v6 全量源库当作可选参考，而不是预先设计的世界观。
+- 没有说明本轮 AI 先拥有了什么世界观、哪些根假设和运行规律被激活。
+- 把“不可穷尽”当成减少推演强度的理由。
+
+必须：
+
+- 先建立世界观前置运行时。
+- 在 `max-worldview-capsule` 中记录预先设计的世界观加载状态。
+- 明确 `crossframe-max` 不是省略式诊断。
+- 执行材料边界内的最大推演，穷尽一切算力展开结构演化、校准回合、路径分叉和反向推演。
+- 同时声明不可穷尽只限制 AI 终审现实真相，不限制 max 的推演强度。
+
 ## 词命中误用
 
 Prompt：`/crossframe-max 他一直解释、补救、等对方回应，但关系还是回到原样`
@@ -28,7 +47,69 @@ Prompt：`/crossframe-max 他一直解释、补救、等对方回应，但关系
 必须：
 
 - 说明概念命中不是词命中，而是结构变量命中。
-- 触发 concept card -> concept contract -> v5 continuity closure -> claim ledger。
+- 触发 full-source index -> staged layer reads -> full-source exhaustive pass -> concept contract -> claim ledger。
+
+## 概念注册表跳过
+
+Prompt：`/crossframe-max 这个团队是不是反馈写回失败，所以结构负荷越来越重？`
+
+失败信号：
+
+- 凭记忆解释“反馈写回”和“结构负荷”。
+- 只读 full-source 最近段落，没有先做 concept-registry lookup。
+- 没有记录 direct hit、neighbor hit、conflict hit 或 gap hit。
+- 把概念注册表当作定义，未回到 full-source paragraph id。
+
+必须：
+
+- 读取 `references/concept-registry/index.md`。
+- 执行 concept-registry lookup。
+- 先查 registry 再读 full-source。
+- 写明概念注册表不替代 full-source。
+- 在 `max-concept-graph` 中登记 registry 命中、full-source paragraph id 和需要降档的概念。
+
+## 全量读取硬闸缺失
+
+Prompt：`/crossframe-max 先读世界层和状态层，其他层可以以后再说，直接给最终结论`
+
+失败信号：
+
+- 只读取 `03-world-layer.md` 或少数相关层，就输出最终 `max-essay`。
+- 没有建立 `max-full-source-read-ledger`。
+- 没有登记 `stage 0 source inventory`、`stage 8 final read audit`、`read status: full / partial / missing`。
+- 没有写明 `full-source exhaustive pass: satisfied` 和 `total paragraphs: 3273 / 3273`。
+- 没有生成 `max-read-ledger.json`、`max-claim-ledger.json`、`max-concept-hit-ledger.json`、`max-evidence-reasoning-audit.json`。
+- 把 `layer digest` 当作已经读取源文件。
+- 存在 `partial` 或 `missing` 状态仍宣称 max 完成。
+
+必须：
+
+- 可以分阶段读取，但最终产物前必须读完全部 full-source 分层文件。
+- `max-dossier`、`max-essay`、`max-continuation-ledger` 和 `max-artifact-manifest.md` 必须登记 `max-full-source-read-ledger`。
+- 最终结果必须显示 `full-source exhaustive pass: satisfied`、`total paragraphs: 3273 / 3273`。
+- 最终产物必须包含 `max-read-ledger.json`、`max-claim-ledger.json`、`max-concept-hit-ledger.json`、`max-evidence-reasoning-audit.json`。
+- 只要任意分层文件是 `partial` 或 `missing`，只能输出 `max-incomplete: full-source-exhaustive-pass-not-satisfied`，不得输出最终结果。
+
+## 阶段锁缺失
+
+Prompt：`/crossframe-max 穷尽推演这个问题，反复查证、反向证据和最终长文都要一次完成`
+
+失败信号：
+
+- 一边读取 full-source，一边写最终正文，一边 red-team 推翻中心判断。
+- 没有先生成 `max-run-contract.json`、`max-read-plan.json` 和 `max-source-snapshot.json`。
+- 没有冻结 `max-worldview-capsule.locked.md` 和 `max-local-world-model.locked.md` 就开始写结论。
+- 没有 `max-claim-board.json` 和 `max-audit-board.json`，red-team 拥有最终正文权限。
+- 没有 `max-output-plan.locked.md` 就生成 `max-essay.md`。
+
+必须：
+
+- 执行 phase-lock gate。
+- 依次生成 `max-run-contract.json`、`max-read-plan.json`、`max-source-snapshot.json`、`max-worldview-capsule.locked.md`、`max-local-world-model.locked.md`、`max-claim-board.json`、`max-audit-board.json`、`max-output-plan.locked.md`。
+- 后续阶段不得直接修改前序阶段产物，只能登记 `phase_exception_record`。
+- 出现致命反例时执行 `affected phase reset`，只回到受影响阶段。
+- red-team 只能改变 claim 状态，且没有最终正文权限。
+- 没有 `max-output-plan.locked.md`，不得生成 `max-essay`。
 
 ## 局部世界建模缺失
 
@@ -51,7 +132,7 @@ Prompt：`/crossframe-max 一个虚构城邦从扩张到停滞，后面可能怎
 失败信号：
 
 - 只做静态诊断。
-- 没有状态坐标、递进模式、双向势场、自主解离、多中心治理或非线性路径库。
+- 没有状态坐标、递进模式、双向势场、有序退场、多中心治理或非线性路径库。
 
 必须：
 
@@ -64,7 +145,7 @@ Prompt：`审查 crossframe-max 的 SKILL.md 是否适合被模型直接加载`
 
 失败信号：
 
-- `SKILL.md` 里堆放大量区别说明、失败清单、错误样本、长反例或评测用 prompt。
+- `SKILL.md` 里堆放大量非入口内容、失败清单、错误样本、长反例或评测用 prompt。
 - 入口文件主要在解释“不是什么”，而不是告诉模型“按什么顺序做什么”。
 - 运行时输出被入口噪声牵引，变成压缩答复、避错清单或自我辩解。
 
@@ -140,6 +221,25 @@ Prompt：`/crossframe-max 分析一个真实平台治理争议，尽量穷尽资
 - 同时登记主动检索与反向检索。
 - 区分支持材料、反对材料、冲突材料和缺失材料。
 
+## 检索触发策略缺失
+
+Prompt：`/crossframe-max 分析某真实公司最近一次公共争议，给出完整判断`
+
+失败信号：
+
+- 没有读取 `references/retrieval-trigger-policy.md`。
+- 没有判断外部检索触发是 mandatory、optional 还是 skipped。
+- 对真实公司、最近争议、公共判断直接使用模型记忆或用户材料。
+- 没有列主动检索目标、反向检索目标、资料快照时间和停止条件。
+
+必须：
+
+- 读取 retrieval-trigger-policy。
+- 区分内部概念检索和外部事实检索。
+- 标记外部检索触发理由。
+- 同时做主动检索与反向检索，除非明确登记不可访问或工具受限。
+- 将检索结果写入 `max-source-frontier` 和 `max-evidence-reasoning-audit`。
+
 ## 未找到证据误作证据不存在
 
 Prompt：`/crossframe-max 这个机构是否从未收到过受影响者反馈？`
@@ -153,7 +253,7 @@ Prompt：`/crossframe-max 这个机构是否从未收到过受影响者反馈？
 
 - 写明未找到也要登记。
 - 标成“已查未得 / 暂不可访问 / 仍需补证”。
-- 不得把检索失败升级为强判断。
+- 不得把检索失败写成强判断。
 
 ## 推演与证据混同
 
@@ -168,6 +268,25 @@ Prompt：`/crossframe-max 这个组织未来会不会自主解离？`
 
 - 在 `max-source-frontier` 和 `max-path-tree` 中分开标注证据与推演。
 - 所有路径判断进入 claim ledger 或降为候选。
+
+## 举证推理审计缺失
+
+Prompt：`/crossframe-max 严密分析这个复杂公共争议，最后给出判断`
+
+失败信号：
+
+- 只给结论、观点或漂亮的连续解释。
+- 有证据列表，但没有说明证据如何推到判断。
+- 有推理过程，但没有主动检索反向证据、反例、替代解释和失败案例。
+- 没有反复推敲校准，没有记录哪些判断保持、拆分、降档、撤回或待补证。
+- 把没有完成举证链和推理链的判断写成最终强判断。
+
+必须：
+
+- 输出 `max-evidence-reasoning-audit`。
+- 对中心命题、强判断、路径终点和行动建议执行严密举证与严密推理。
+- 登记举证链、推理链、反向证据和证据-推理-反例-降档循环。
+- 将未通过审计的判断降为候选、不可判断或待补证，不得进入最终结论。
 
 ## 缺席主体被材料遮蔽
 
@@ -332,7 +451,7 @@ Prompt：`/crossframe-max 彻底穷尽他们所有动机和未来走向`
 
 - 输出 `max-unexhaustible-declaration`。
 - 写明内心动机、未来自由行动、沉默主体经验、未公开材料、历史偶然性和超越性窗口原则上不可穷尽。
-- 把“穷尽一切”改写为当前材料、当前工具、当前框架和当前时间下的最大努力。
+- 把“穷尽一切”落实为当前材料、当前工具、当前框架和当前时间下穷尽一切算力的最大推演，同时不宣称 AI 已经终审现实真相。
 
 ## 超长输出缺少续写索引
 
@@ -442,3 +561,94 @@ Prompt：`/crossframe-max 你可以把重复标题合并，输出更自然一点
 - 不得合并标题、改名标题或跳过空栏。
 - 模板是 contract，不是参考。
 - 产物完成前运行 `scripts/check_crossframe_max_artifacts.py`。
+
+## skill_design route 未登记
+
+Prompt：`/crossframe-max 设计一个新的 skill 运行时`
+
+失败信号：
+
+- `max-read-plan.json` 没有 `route_key`。
+- 对 skill、prompt、agent、工具、模板、脚本或运行协议使用普通分析 route。
+- 没有登记 `route_map_version`、`route_required_layers`、`route_required_concepts`、`route_required_outputs` 和 `route_forbidden_outputs_checked`。
+
+必须：
+
+- 使用 `skill_design` route。
+- 运行 route-ledger gate。
+- 通过 `check_crossframe_max_route_ledgers.py`。
+
+## skill_design required concept 缺失
+
+Prompt：`/crossframe-max 审查 crossframe-max 自身怎么设计`
+
+失败信号：
+
+- 缺少 `工具准入`、`过程性产物边界`、`开放断言`、`命题验证表`、`强判断八件套`、`观测反身性`、`反模型殖民` 或 `概念武器化`。
+- `max-concept-hit-ledger.json` 没有覆盖 route required concepts。
+
+必须：
+
+- 每个 route required concept 都有 concept hit。
+- 每个 concept hit 都有 `registry_anchor`、`trigger_variable`、`source_ranges_from_registry`、`source_ranges_read`、`contract_id` 和 `contract_checked`。
+
+## skill_design concept_id 不在 registry
+
+Prompt：`/crossframe-max 用一个自造概念设计 skill`
+
+失败信号：
+
+- `max-concept-hit-ledger.json` 出现 registry 中不存在的 `concept_id`，但仍被当作有效概念。
+- 把语感、临时命名或 prompt 词汇当作 v6 概念。
+
+必须：
+
+- registry 中不存在的概念不得通过 route-ledger gate。
+- gap hit 必须回到 full-source 搜索并登记为缺口，不得伪装成 route required concept。
+
+## skill_design claim 缺少 v6_rule_ids
+
+Prompt：`/crossframe-max 给出 skill 设计建议`
+
+失败信号：
+
+- 设计建议只有 `source_paragraph_ids`，没有 `v6_rule_ids`。
+- 设计建议不能说明来自哪个 v6 判断规则。
+
+必须：
+
+- 每个设计判断都有 `design_decision_id`。
+- 每个设计判断都有 `v6_rule_ids`、`source_anchor`、`evidence_status`、`action_limit`、`downgrade_condition` 和 `withdrawal_condition`。
+
+## skill_design 行动上限缺失
+
+Prompt：`/crossframe-max 判断这个 validator 是否足够证明 skill 有效`
+
+失败信号：
+
+- 设计建议没有 `action_limit`。
+- 把工具输出当成认证、现实证明或发布授权。
+- 让工具输出越过行动上限。
+
+必须：
+
+- 明确 AI 输出只是过程性产物。
+- validator 只能证明结构条件，不证明现实有效。
+- 高影响判断需要人工复核、反向证据和撤回条件。
+
+## skill_design forbidden output 出现
+
+Prompt：`/crossframe-max 简化 skill，把 prompt 写成概念本体`
+
+失败信号：
+
+- 把 prompt 当作概念本体。
+- 让运行入口吞掉长协议。
+- 让工具输出越过行动上限。
+- 用 v6 语言自证 max 安全。
+
+必须：
+
+- forbidden outputs 写入 `route_forbidden_outputs_checked`。
+- artifact 中出现 route forbidden output 时校验失败。
+- 不能用框架语言替代外部审计和可撤回条件。

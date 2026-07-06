@@ -2,12 +2,38 @@
 
 `max-dossier` 是 `crossframe-max` 的完整结构底稿。它必须先于 `max-essay`，但不能替代文章正文。
 
+## max-phase-lock
+
+- phase-lock gate：
+- 阶段锁状态：
+- phase artifacts：
+- max-run-contract.json：
+- max-read-plan.json：
+- max-source-snapshot.json：
+- max-worldview-capsule.locked.md：
+- max-local-world-model.locked.md：
+- max-claim-board.json：
+- max-audit-board.json：
+- max-output-plan.locked.md：
+- 运行契约 -> 读取计划 -> 源库快照 -> 世界观胶囊 -> 局部世界模型 -> 候选命题板 -> 审计板 -> 输出计划 -> 正文：
+- 后续阶段不得直接修改前序阶段产物：
+- phase_exception_record：
+- affected phase reset：
+- red-team 只能改变 claim 状态，且没有最终正文权限：
+- 没有 max-output-plan.locked.md，不得生成 max-essay：
+
 ## max-worldview-capsule
 
+- 世界观前置运行时：
+- 预先设计的世界观加载状态：
 - 本轮世界观底座：
 - 激活的根假设与元约束：
 - 激活的核心推论：
 - 激活的运行规律：
+- 世界结构演化视野：
+- 材料边界内的最大推演范围：
+- 穷尽一切算力的展开记录：
+- 不是省略式诊断的证明：
 - 禁止误用：
 - 可证伪边界：
 
@@ -15,6 +41,26 @@
 
 - max-run-state：
 - 本轮已读材料：
+- max-full-source-read-ledger：
+- max-read-ledger.md：
+- max-read-ledger.json：
+- max-claim-ledger.json：
+- max-concept-hit-ledger.json：
+- max-evidence-reasoning-audit.json：
+- stage 0 source inventory：
+- stage 1 boundary guide：
+- stage 2 worldview layer：
+- stage 3 state layer：
+- stage 4 interface layer：
+- stage 5 tool layer：
+- stage 6 intervention and application：
+- stage 7 governance layer：
+- stage 8 final read audit：
+- full-source exhaustive pass: satisfied：
+- total paragraphs: 3273 / 3273：
+- read status: full / partial / missing：
+- layer digest：
+- partial / missing 状态处理：
 - 已检索资料：
 - 已使用源锚点：
 - 已展开路径：
@@ -32,10 +78,17 @@
 
 ## max-source-frontier
 
+- retrieval-trigger-policy 状态：
+- 内部概念检索状态：
+- 外部检索触发决策：
+- 外部检索触发理由：
+- 跳过外部检索理由：
 - 资料快照时间：
 - 需要事实支撑的 claim 与路径：
 - 主动检索：
+- 主动检索目标：
 - 反向检索：
+- 反向检索目标：
 - 支持材料：
 - 反对材料：
 - 缺失材料：
@@ -53,6 +106,29 @@
 - 停止条件：
 - 资料饱和状态：
 - 未穷尽资料队列：
+- full-source exhaustive pass: satisfied：
+- total paragraphs: 3273 / 3273：
+- max-full-source-read-ledger：
+- max-read-ledger.json：
+- max-claim-ledger.json：
+- max-concept-hit-ledger.json：
+- max-evidence-reasoning-audit.json：
+- stage 0 source inventory：
+- stage 8 final read audit：
+- read status: full / partial / missing：
+- layer digest：
+- partial 状态不得进入最终产物：
+- missing 状态不得进入最终产物：
+- `00-source-envelope.md`：
+- `01-guide.md`：
+- `02-boundary-layer.md`：
+- `03-world-layer.md`：
+- `04-state-layer.md`：
+- `05-interface-layer.md`：
+- `06-tool-layer.md`：
+- `07-intervention-layer.md`：
+- `08-application-layer.md`：
+- `09-governance-layer.md`：
 
 ## max-transcendence-window
 
@@ -109,12 +185,23 @@
 
 ## max-concept-graph
 
+- concept-registry lookup：
+- 概念注册表命中：
+- direct hit：
+- neighbor hit：
+- conflict hit：
+- gap hit：
+- 先查 registry 再读 full-source：
+- 不替代 full-source：
 - 核心概念：
 - 邻接概念：
 - 概念张力：
 - 禁止偷换：
 - 已读取概念卡：
 - 已检查概念契约：
+- 已读取 full-source paragraph id：
+- 已回查 layer digest：
+- registry gap 处理：
 - 需要补读或降档的概念：
 
 ## max-scale-map
@@ -153,7 +240,7 @@
 - 疗愈路径：
 - 转移路径：
 - 治理路径：
-- 自主解离路径：
+- 有序退场路径：
 - 回退路径：
 - 反例路径：
 - 分支终点：
@@ -216,11 +303,62 @@
 
 - max-source-frontier 状态：
 - source_anchor：
+- source ledger：
 - claim_id：
 - claim ledger 状态：
 - 概念契约状态：
-- v5 连续联读包：
-- v5 DLC 状态与 score_visibility：
+- full-source read ledger：
+- max-full-source-read-ledger：
+- max-read-ledger.json：
+- max-claim-ledger.json：
+- max-concept-hit-ledger.json：
+- max-evidence-reasoning-audit.json：
+- full-source exhaustive pass：
+- full-source exhaustive pass: satisfied：
+- total paragraphs: 3273 / 3273：
+- stage 0 source inventory：
+- stage 8 final read audit：
+- 已读取分层文件与 paragraph range：
+- read status: full / partial / missing：
+- layer digest：
+- partial / missing 最终阻断状态：
+- 关键 claim 使用的 source paragraph id：
+- 外部评分 / 审计模块状态（仅显式触发时）：
+
+## max-evidence-reasoning-audit
+
+- 审计状态：
+- 触发检索的 claim：
+- 检索后改变判断强度的 claim：
+- 进入审计的中心命题：
+- 进入审计的强判断：
+- 进入审计的路径终点：
+- 进入审计的行动建议：
+- 严密举证状态：
+- 举证链：
+- 用户材料：
+- full-source paragraph id：
+- 外部材料：
+- 支持证据：
+- 缺失材料：
+- 冲突材料：
+- 反向证据：
+- 严密推理状态：
+- 推理链：
+- 材料 -> 结构变量：
+- 结构变量 -> 概念命中：
+- 概念命中 -> 机制判断：
+- 机制判断 -> 路径推演：
+- 证据-推理-反例-降档循环：
+- 反复推敲校准记录：
+- 已保持判断：
+- 已拆分命题：
+- 已降档判断：
+- 已撤回判断：
+- 已进入不可判断区：
+- 已进入补证队列：
+- 未通过项：
+- 输出前状态：
 
 ## 反例与撤回条件
 

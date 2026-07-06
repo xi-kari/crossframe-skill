@@ -1,11 +1,16 @@
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 from pathlib import Path
 
+from check_crossframe_max_read_ledger import check as check_structured_ledgers
+from check_crossframe_max_route_ledgers import check as check_route_ledgers
+
 
 REQUIRED_DOSSIER_HEADINGS = [
+    "## max-phase-lock",
     "## max-worldview-capsule",
     "## max-continuation-ledger",
     "## max-source-frontier",
@@ -22,6 +27,7 @@ REQUIRED_DOSSIER_HEADINGS = [
     "## max-unexhaustible-declaration",
     "## 处理问题",
     "## 证据与台账",
+    "## max-evidence-reasoning-audit",
     "## 反例与撤回条件",
     "## max-essay 准备",
     "## max-output-layers",
@@ -29,22 +35,60 @@ REQUIRED_DOSSIER_HEADINGS = [
 ]
 
 REQUIRED_DOSSIER_MARKERS = [
+    "phase-lock gate",
+    "phase artifacts",
+    "max-run-contract.json",
+    "max-read-plan.json",
+    "max-source-snapshot.json",
+    "max-worldview-capsule.locked.md",
+    "max-local-world-model.locked.md",
+    "max-claim-board.json",
+    "max-audit-board.json",
+    "max-output-plan.locked.md",
+    "phase_exception_record",
+    "affected phase reset",
     "source_anchor",
     "claim_id",
     "claim ledger",
     "source ledger",
+    "concept-registry lookup",
+    "retrieval-trigger-policy",
+    "内部概念检索",
+    "外部检索触发",
+    "先查 registry 再读 full-source",
+    "max-evidence-reasoning-audit",
+    "举证链",
+    "推理链",
+    "反向证据",
+    "证据-推理-反例-降档循环",
     "max-output-layers",
     "max-continuation-index",
+    "max-full-source-read-ledger",
+    "full-source exhaustive pass: satisfied",
+    "total paragraphs: 3273 / 3273",
+    "stage 0 source inventory",
+    "stage 8 final read audit",
+    "read status: full / partial / missing",
+    "layer digest",
+    "max-read-ledger.json",
+    "max-claim-ledger.json",
+    "max-concept-hit-ledger.json",
+    "max-evidence-reasoning-audit.json",
 ]
 
 REQUIRED_ESSAY_MARKERS = [
+    "phase-lock gate",
+    "max-run-contract.json",
+    "max-output-plan.locked.md",
     "局部世界",
     "运行规律",
     "问题形成",
     "路径演化",
+    "概念注册表",
     "处理问题",
     "伪修复",
     "资料前沿",
+    "retrieval-trigger-policy",
     "路径置信分层",
     "主体位置矩阵",
     "反向推演",
@@ -53,9 +97,22 @@ REQUIRED_ESSAY_MARKERS = [
     "不可穷尽",
     "续写索引",
     "max-continuation-index",
+    "max-full-source-read-ledger",
+    "full-source exhaustive pass: satisfied",
+    "total paragraphs: 3273 / 3273",
+    "stage 8 final read audit",
+    "max-read-ledger.json",
+    "max-claim-ledger.json",
+    "max-concept-hit-ledger.json",
+    "max-evidence-reasoning-audit.json",
 ]
 
 REQUIRED_LEDGER_MARKERS = [
+    "phase-lock gate",
+    "phase artifacts",
+    "max-run-contract.json",
+    "max-source-snapshot.json",
+    "max-output-plan.locked.md",
     "max-run-state",
     "已读材料",
     "已展开路径",
@@ -64,6 +121,15 @@ REQUIRED_LEDGER_MARKERS = [
     "下一轮续写入口",
     "防重复",
     "防漂移",
+    "max-full-source-read-ledger",
+    "full-source exhaustive pass: satisfied",
+    "total paragraphs: 3273 / 3273",
+    "read status: full / partial / missing",
+    "stage 8 final read audit",
+    "max-read-ledger.json",
+    "max-claim-ledger.json",
+    "max-concept-hit-ledger.json",
+    "max-evidence-reasoning-audit.json",
 ]
 
 REQUIRED_INDEX_MARKERS = [
@@ -77,6 +143,8 @@ REQUIRED_INDEX_MARKERS = [
 ]
 
 REQUIRED_MANIFEST_MARKERS = [
+    "phase-lock gate",
+    "phase artifacts",
     "artifact-first gate",
     "产物目录",
     "生成时间",
@@ -88,6 +156,45 @@ REQUIRED_MANIFEST_MARKERS = [
     "max-essay.md",
     "max-continuation-ledger.md",
     "max-continuation-index.md",
+    "max-run-contract.json",
+    "max-read-plan.json",
+    "max-source-snapshot.json",
+    "max-worldview-capsule.locked.md",
+    "max-local-world-model.locked.md",
+    "max-claim-board.json",
+    "max-audit-board.json",
+    "max-output-plan.locked.md",
+    "max-full-source-read-ledger",
+    "full-source exhaustive pass: satisfied",
+    "total paragraphs: 3273 / 3273",
+    "stage 0 source inventory",
+    "stage 8 final read audit",
+    "read status: full / partial / missing",
+    "max-read-ledger.json",
+    "max-claim-ledger.json",
+    "max-concept-hit-ledger.json",
+    "max-evidence-reasoning-audit.json",
+]
+
+REQUIRED_FULL_SOURCE_FILES = [
+    "00-source-envelope.md",
+    "01-guide.md",
+    "02-boundary-layer.md",
+    "03-world-layer.md",
+    "04-state-layer.md",
+    "05-interface-layer.md",
+    "06-tool-layer.md",
+    "07-intervention-layer.md",
+    "08-application-layer.md",
+    "09-governance-layer.md",
+]
+
+FORBIDDEN_FINAL_MARKERS = [
+    "max-incomplete:",
+    "full-source exhaustive pass: not satisfied",
+    "full-source exhaustive pass: unsatisfied",
+    "read status: partial",
+    "read status: missing",
 ]
 
 MIN_ESSAY_TO_DOSSIER_RATIO = 1.6
@@ -102,6 +209,44 @@ DEFAULT_FILENAMES = {
     "index": "max-continuation-index.md",
 }
 
+STRUCTURED_LEDGER_FILENAMES = [
+    "max-read-ledger.json",
+    "max-claim-ledger.json",
+    "max-concept-hit-ledger.json",
+    "max-evidence-reasoning-audit.json",
+]
+
+PHASE_LOCK_FILENAMES = [
+    "max-run-contract.json",
+    "max-read-plan.json",
+    "max-source-snapshot.json",
+    "max-worldview-capsule.locked.md",
+    "max-local-world-model.locked.md",
+    "max-claim-board.json",
+    "max-audit-board.json",
+    "max-output-plan.locked.md",
+]
+
+ALLOWED_CLAIM_STATUSES = {
+    "candidate",
+    "supported",
+    "downgraded",
+    "split",
+    "withdrawn",
+    "needs_search",
+    "unexhaustible",
+    "final",
+}
+
+ALLOWED_AUDIT_RESULTS = {
+    "keep",
+    "downgrade",
+    "split",
+    "withdraw",
+    "needs_external_search",
+    "move_to_unexhaustible",
+}
+
 
 def read_text(path: Path, errors: list[str]) -> str:
     if not path.exists():
@@ -111,6 +256,20 @@ def read_text(path: Path, errors: list[str]) -> str:
         errors.append(f"not a file: {path}")
         return ""
     return path.read_text(encoding="utf-8")
+
+
+def read_json_file(path: Path, errors: list[str], missing_label: str = "phase-lock artifact") -> object | None:
+    if not path.exists():
+        errors.append(f"missing {missing_label}: {path.name}")
+        return None
+    if not path.is_file():
+        errors.append(f"phase-lock artifact is not a file: {path}")
+        return None
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        errors.append(f"{path.name}: invalid JSON: {exc}")
+        return None
 
 
 def check_markers(text: str, markers: list[str], label: str, errors: list[str]) -> None:
@@ -164,7 +323,181 @@ def check_longform_dominance(dossier: str, essay: str, errors: list[str]) -> Non
         )
 
 
-def check_crossframe_max_artifacts(workspace: Path) -> list[str]:
+def check_no_incomplete_final(text: str, label: str, errors: list[str]) -> None:
+    normalized = text.lower()
+    for marker in FORBIDDEN_FINAL_MARKERS:
+        if marker in normalized:
+            errors.append(f"{label}: incomplete full-source read state cannot pass final artifact validation: {marker}")
+
+
+def default_skill_root() -> Path:
+    script_path = Path(__file__).resolve()
+    if script_path.parent.name == "scripts" and script_path.parent.parent.name == "crossframe-max":
+        return script_path.parent.parent
+    return script_path.parents[1] / "skills" / "crossframe-max"
+
+
+def ids_from_claim_ledger(workspace: Path, errors: list[str]) -> set[str]:
+    data = read_json_file(workspace / "max-claim-ledger.json", errors, "structured ledger")
+    if not isinstance(data, dict) or not isinstance(data.get("claims"), list):
+        return set()
+    return {
+        claim.get("claim_id")
+        for claim in data["claims"]
+        if isinstance(claim, dict) and isinstance(claim.get("claim_id"), str)
+    }
+
+
+def check_phase_lock_artifacts(workspace: Path, errors: list[str]) -> None:
+    for filename in PHASE_LOCK_FILENAMES:
+        if not (workspace / filename).exists():
+            errors.append(f"missing phase-lock artifact: {filename}")
+
+    run_contract = read_json_file(workspace / "max-run-contract.json", errors)
+    if isinstance(run_contract, dict):
+        if run_contract.get("run_mode") != "crossframe-v6-max":
+            errors.append("max-run-contract.json: run_mode must be crossframe-v6-max")
+        if run_contract.get("final_output_allowed") is not False:
+            errors.append("max-run-contract.json: final_output_allowed must be false before output-plan lock")
+        forbidden = run_contract.get("forbidden_behavior")
+        if not isinstance(forbidden, list) or not forbidden:
+            errors.append("max-run-contract.json: forbidden_behavior must be a non-empty list")
+        for field in ["affected_phase_reset_rule", "phase_exception_rule"]:
+            if not run_contract.get(field):
+                errors.append(f"max-run-contract.json: missing {field}")
+
+    read_plan = read_json_file(workspace / "max-read-plan.json", errors)
+    if isinstance(read_plan, dict):
+        if read_plan.get("final_full_source_required") is not True:
+            errors.append("max-read-plan.json: final_full_source_required must be true")
+        required_files = read_plan.get("required_full_source_files")
+        if not isinstance(required_files, list):
+            errors.append("max-read-plan.json: required_full_source_files must be a list")
+        else:
+            missing = sorted(set(REQUIRED_FULL_SOURCE_FILES) - set(required_files))
+            if missing:
+                errors.append(f"max-read-plan.json: missing required full-source files: {', '.join(missing)}")
+
+    source_snapshot = read_json_file(workspace / "max-source-snapshot.json", errors)
+    if isinstance(source_snapshot, dict):
+        if not source_snapshot.get("source_snapshot_id"):
+            errors.append("max-source-snapshot.json: missing source_snapshot_id")
+        if source_snapshot.get("total_paragraphs") != 3273:
+            errors.append("max-source-snapshot.json: total_paragraphs must be 3273")
+        if source_snapshot.get("full_source_exhaustive_pass") is not True:
+            errors.append("max-source-snapshot.json: full_source_exhaustive_pass must be true")
+        if source_snapshot.get("table_count") != 60:
+            errors.append("max-source-snapshot.json: table_count must be 60")
+        if source_snapshot.get("frozen") is not True:
+            errors.append("max-source-snapshot.json: frozen must be true")
+        if source_snapshot.get("source_anchor_verification_only_after_freeze") is not True:
+            errors.append(
+                "max-source-snapshot.json: source_anchor_verification_only_after_freeze must be true"
+            )
+
+    worldview = read_text(workspace / "max-worldview-capsule.locked.md", errors)
+    if worldview:
+        check_markers(
+            worldview,
+            ["locked: true", "source_snapshot_id", "本轮预先设计的世界观", "worldview_exception_record"],
+            "max-worldview-capsule.locked.md",
+            errors,
+        )
+
+    local_world = read_text(workspace / "max-local-world-model.locked.md", errors)
+    if local_world:
+        check_markers(
+            local_world,
+            ["locked: true", "局部世界", "对象边界", "主体位置", "承接链", "只建模，不下最终判断"],
+            "max-local-world-model.locked.md",
+            errors,
+        )
+
+    claim_board = read_json_file(workspace / "max-claim-board.json", errors)
+    claim_board_ids: set[str] = set()
+    if isinstance(claim_board, dict):
+        claims = claim_board.get("claims")
+        if not isinstance(claims, list) or not claims:
+            errors.append("max-claim-board.json: claims must be a non-empty list")
+        else:
+            for idx, claim in enumerate(claims, start=1):
+                if not isinstance(claim, dict):
+                    errors.append(f"max-claim-board.json: claim {idx} must be an object")
+                    continue
+                claim_id = claim.get("claim_id")
+                if not isinstance(claim_id, str) or not claim_id:
+                    errors.append(f"max-claim-board.json: claim {idx} missing claim_id")
+                    continue
+                claim_board_ids.add(claim_id)
+                status = claim.get("status")
+                if status not in ALLOWED_CLAIM_STATUSES:
+                    errors.append(f"max-claim-board.json: {claim_id} invalid status: {status}")
+                if not claim.get("source_paragraph_ids"):
+                    errors.append(f"max-claim-board.json: {claim_id} missing source_paragraph_ids")
+                if not claim.get("concept_ids"):
+                    errors.append(f"max-claim-board.json: {claim_id} missing concept_ids")
+                if claim.get("needs_evidence") is not True:
+                    errors.append(f"max-claim-board.json: {claim_id} needs_evidence must be true before audit")
+                if claim.get("needs_counterevidence") is not True:
+                    errors.append(f"max-claim-board.json: {claim_id} needs_counterevidence must be true before audit")
+
+    audit_board = read_json_file(workspace / "max-audit-board.json", errors)
+    audit_board_ids: set[str] = set()
+    if isinstance(audit_board, dict):
+        if audit_board.get("red_team_final_text_authority") is not False:
+            errors.append("max-audit-board.json: red_team_final_text_authority must be false")
+        audits = audit_board.get("audits")
+        if not isinstance(audits, list) or not audits:
+            errors.append("max-audit-board.json: audits must be a non-empty list")
+        else:
+            for idx, audit in enumerate(audits, start=1):
+                if not isinstance(audit, dict):
+                    errors.append(f"max-audit-board.json: audit {idx} must be an object")
+                    continue
+                claim_id = audit.get("claim_id")
+                if not isinstance(claim_id, str) or not claim_id:
+                    errors.append(f"max-audit-board.json: audit {idx} missing claim_id")
+                    continue
+                audit_board_ids.add(claim_id)
+                if audit.get("audit_result") not in ALLOWED_AUDIT_RESULTS:
+                    errors.append(f"max-audit-board.json: {claim_id} invalid audit_result")
+                if audit.get("final_status") not in ALLOWED_CLAIM_STATUSES:
+                    errors.append(f"max-audit-board.json: {claim_id} invalid final_status")
+                if not audit.get("source_paragraph_ids"):
+                    errors.append(f"max-audit-board.json: {claim_id} missing source_paragraph_ids")
+                if not audit.get("counterevidence_status"):
+                    errors.append(f"max-audit-board.json: {claim_id} missing counterevidence_status")
+
+    output_plan = read_text(workspace / "max-output-plan.locked.md", errors)
+    if output_plan:
+        check_markers(
+            output_plan,
+            [
+                "locked: true",
+                "进入正文的 claim",
+                "降档表达的 claim",
+                "撤回的 claim",
+                "进入不可判断区的 claim",
+                "不可写强的句子",
+                "必须保留的撤回条件",
+                "max-essay.md may now be written",
+            ],
+            "max-output-plan.locked.md",
+            errors,
+        )
+
+    final_claim_ids = ids_from_claim_ledger(workspace, errors)
+    if final_claim_ids and claim_board_ids:
+        missing = sorted(final_claim_ids - claim_board_ids)
+        if missing:
+            errors.append(f"phase-lock gate: final claims missing from max-claim-board.json: {', '.join(missing)}")
+    if final_claim_ids and audit_board_ids:
+        missing = sorted(final_claim_ids - audit_board_ids)
+        if missing:
+            errors.append(f"phase-lock gate: final claims missing from max-audit-board.json: {', '.join(missing)}")
+
+
+def check_crossframe_max_artifacts(workspace: Path, skill_root: Path | None = None) -> list[str]:
     """Validate generated crossframe-max artifacts against artifact, template, and longform gates."""
     errors: list[str] = []
     if not workspace.exists():
@@ -182,37 +515,56 @@ def check_crossframe_max_artifacts(workspace: Path) -> list[str]:
 
     if manifest:
         check_markers(manifest, REQUIRED_MANIFEST_MARKERS, "max-artifact-manifest.md", errors)
+        check_no_incomplete_final(manifest, "max-artifact-manifest.md", errors)
     if dossier:
         check_ordered_headings(dossier, REQUIRED_DOSSIER_HEADINGS, "max-dossier.md", errors)
         check_markers(dossier, REQUIRED_DOSSIER_MARKERS, "max-dossier.md", errors)
+        check_markers(dossier, REQUIRED_FULL_SOURCE_FILES, "max-dossier.md", errors)
+        check_no_incomplete_final(dossier, "max-dossier.md", errors)
         check_no_template_truncation(dossier, errors)
     if essay:
         check_markers(essay, REQUIRED_ESSAY_MARKERS, "max-essay.md", errors)
+        check_no_incomplete_final(essay, "max-essay.md", errors)
     if dossier and essay:
         check_longform_dominance(dossier, essay, errors)
     if ledger:
         check_markers(ledger, REQUIRED_LEDGER_MARKERS, "max-continuation-ledger.md", errors)
+        check_markers(ledger, REQUIRED_FULL_SOURCE_FILES, "max-continuation-ledger.md", errors)
+        check_no_incomplete_final(ledger, "max-continuation-ledger.md", errors)
     if index:
         check_markers(index, REQUIRED_INDEX_MARKERS, "max-continuation-index.md", errors)
+        check_no_incomplete_final(index, "max-continuation-index.md", errors)
+    for filename in STRUCTURED_LEDGER_FILENAMES:
+        if not (workspace / filename).exists():
+            errors.append(f"missing structured ledger: {filename}")
+    check_phase_lock_artifacts(workspace, errors)
+    if not any(error.startswith("missing structured ledger:") for error in errors):
+        errors.extend(check_structured_ledgers(workspace, skill_root or default_skill_root()))
+        errors.extend(check_route_ledgers(workspace, skill_root or default_skill_root()))
 
     return errors
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="check_crossframe_max_artifacts: validate generated crossframe-max files against artifact-first, template-fidelity, and longform-dominance gates."
+        description="check_crossframe_max_artifacts: validate generated crossframe-max files against artifact-first, template-fidelity, longform-dominance, and route-ledger gates."
     )
     parser.add_argument("--workspace", default=".", help="Directory containing max-dossier.md and related artifacts.")
+    parser.add_argument("--skill-root", default=None, help="Path to the crossframe-max skill root for source-id validation.")
     args = parser.parse_args()
 
     workspace = Path(args.workspace).resolve()
-    errors = check_crossframe_max_artifacts(workspace)
+    skill_root = Path(args.skill_root).resolve() if args.skill_root else default_skill_root()
+    errors = check_crossframe_max_artifacts(workspace, skill_root)
     if errors:
         for error in errors:
             print(error, file=sys.stderr)
         return 1
 
-    print(f"ok: crossframe max artifacts passed artifact-first, template-fidelity, and longform-dominance gates -> {workspace}")
+    print(
+        "ok: crossframe max artifacts passed artifact-first, template-fidelity, "
+        f"longform-dominance, and route-ledger gates -> {workspace}"
+    )
     return 0
 
 
