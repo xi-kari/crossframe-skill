@@ -1,0 +1,18 @@
+{
+  "framework_version": "v6.0",
+  "source_sha256": "d3f3c666ef0d4f6d0a3a0517ae98acbbeeaa7143abd82927ee06fa39e5d80499",
+  "raw_paragraphs": 3273,
+  "included_paragraphs": 3273,
+  "expected_included_paragraphs": 3273,
+  "excluded_source_ids": [],
+  "revision_meta_range": [
+    "P0003",
+    "P0029"
+  ],
+  "text_chars": 143333,
+  "non_whitespace_chars": 142141,
+  "table_count": 60,
+  "generated_at": "2026-07-05T12:59:02.020968+00:00",
+  "source_docx_metadata_path": "D:\\下载\\跨尺度结构解释框架_v6.0.docx",
+  "source_path_note": "original local path is metadata only, not validation key"
+}

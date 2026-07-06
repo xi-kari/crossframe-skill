@@ -1,0 +1,278 @@
+version: v6.0
+purpose: "Route user questions to the v6 layers, concept registry entries, contracts, and output modules that must be read before final max artifacts."
+rule: "This route map guides staged reads only. Final max output still requires full-source exhaustive pass across 3273 / 3273 paragraphs."
+
+routes:
+  meaning_question:
+    description: "人生意义、分别、爱、存在、历史感、开放行动、不可穷尽"
+    preload:
+      - references/v6-full-source/00-index.md
+      - references/v6-full-source/01-guide.md
+      - references/v6-full-source/03-world-layer.md
+    required_layers:
+      - 03-world-layer.md
+      - 04-state-layer.md
+      - 09-governance-layer.md
+    required_concepts:
+      - 开放性承担行动
+      - 时间不可逆
+      - 演化记忆
+      - 有序退场
+      - 不可穷尽声明
+      - 正当不透明
+    required_outputs:
+      - max-worldview-capsule
+      - max-path-confidence-layers
+      - max-transcendence-window
+      - max-red-team-pass
+    forbidden_outputs:
+      - 把不可解释直接升格为爱
+      - 把世界观解释写成现实终审
+
+  relationship_question:
+    description: "关系、家庭、亲密关系、承接、边界、退出、爱与伤害"
+    preload:
+      - references/v6-full-source/00-index.md
+      - references/v6-full-source/02-boundary-layer.md
+      - references/v6-full-source/03-world-layer.md
+    required_layers:
+      - 01-guide.md
+      - 02-boundary-layer.md
+      - 03-world-layer.md
+      - 07-intervention-layer.md
+      - 09-governance-layer.md
+    required_concepts:
+      - 开放性承担行动
+      - 行动承接层
+      - 动力-承接链
+      - 低权力主体保护
+      - 低条件试探行动
+      - 责任链硬规则
+      - T0-T4 恢复与再承接
+    forbidden_outputs:
+      - 用爱要求忍耐
+      - 用复杂性取消责任
+      - 直接定性人格
+      - 用疗愈语言替代边界保护
+
+  organization_diagnosis:
+    description: "团队、公司、组织、复盘、治理、结构负荷、虚稳态"
+    preload:
+      - references/v6-full-source/00-index.md
+      - references/v6-full-source/02-boundary-layer.md
+      - references/v6-full-source/05-interface-layer.md
+    required_layers:
+      - 02-boundary-layer.md
+      - 03-world-layer.md
+      - 05-interface-layer.md
+      - 06-tool-layer.md
+      - 08-application-layer.md
+    required_concepts:
+      - 行动承接层
+      - 动力-承接链
+      - 反馈写回
+      - 结构负荷
+      - 虚稳态
+      - 权力封闭度
+      - 过程性产物边界
+    required_outputs:
+      - max-local-world-model
+      - max-position-matrix
+      - max-source-frontier
+      - max-evidence-reasoning-audit
+    forbidden_outputs:
+      - 把复盘次数当作结构改变
+      - 忽略低权力主体和沉默者
+
+  public_governance:
+    description: "平台、制度、公共争议、申诉、政策、合规、公共判断"
+    preload:
+      - references/retrieval-trigger-policy.md
+      - references/v6-full-source/02-boundary-layer.md
+      - references/v6-full-source/09-governance-layer.md
+    required_layers:
+      - 02-boundary-layer.md
+      - 05-interface-layer.md
+      - 06-tool-layer.md
+      - 08-application-layer.md
+      - 09-governance-layer.md
+    required_concepts:
+      - 解释准入
+      - 工具准入
+      - 干涉授权
+      - 强判断八件套
+      - 来源-证据-判断-行动上限
+      - 低权力主体保护
+      - 反模型殖民
+      - 反领域殖民
+    required_outputs:
+      - max-source-frontier
+      - max-evidence-reasoning-audit
+      - max-red-team-pass
+      - max-path-confidence-layers
+    forbidden_outputs:
+      - 未检索真实规则就给公共强判断
+      - 把模型判断写成处置授权
+
+  artifact_or_text_review:
+    description: "文章、报告、方案、申诉材料、AI 产物、过程性文档"
+    preload:
+      - references/v6-full-source/05-interface-layer.md
+      - references/v6-full-source/06-tool-layer.md
+      - references/v6-full-source/09-governance-layer.md
+    required_layers:
+      - 05-interface-layer.md
+      - 06-tool-layer.md
+      - 09-governance-layer.md
+    required_concepts:
+      - 过程性产物边界
+      - 开放断言
+      - 命题验证表
+      - 强判断八件套
+      - 概念武器化
+      - 正当不透明
+    required_outputs:
+      - max-concept-graph
+      - max-evidence-reasoning-audit
+      - max-red-team-pass
+    forbidden_outputs:
+      - 用文风顺滑替代证据链
+      - 用概念密度替代判断边界
+
+  history_analysis:
+    description: "历史事件、历史人物、制度演化、文明叙事、长期路径与反事实边界"
+    preload:
+      - references/retrieval-trigger-policy.md
+      - references/v6-full-source/03-world-layer.md
+      - references/v6-full-source/04-state-layer.md
+      - references/v6-full-source/09-governance-layer.md
+    required_layers:
+      - 02-boundary-layer.md
+      - 03-world-layer.md
+      - 04-state-layer.md
+      - 05-interface-layer.md
+      - 06-tool-layer.md
+      - 08-application-layer.md
+      - 09-governance-layer.md
+    required_concepts:
+      - 时间不可逆
+      - 演化记忆
+      - 状态坐标与生命周期
+      - 非线性路径库
+      - 路径置信分层
+      - 观测反身性
+      - 强判断八件套
+      - 来源-证据-判断-行动上限
+    required_outputs:
+      - max-source-frontier
+      - max-path-tree
+      - max-path-confidence-layers
+      - max-red-team-pass
+      - max-unexhaustible-declaration
+    forbidden_outputs:
+      - 把框架推演写成史实
+      - 把单一路径写成历史必然
+      - 忽略档案缺口和沉默主体
+
+  framework_self_review:
+    description: "审查 CrossFrame 自身、概念边界、误用风险、概念是否漂移、框架能否解释某类对象"
+    preload:
+      - references/v6-full-source/01-guide.md
+      - references/v6-full-source/02-boundary-layer.md
+      - references/v6-full-source/09-governance-layer.md
+      - references/concept-contracts/v6-core-contracts.md
+    required_layers:
+      - 01-guide.md
+      - 02-boundary-layer.md
+      - 03-world-layer.md
+      - 05-interface-layer.md
+      - 06-tool-layer.md
+      - 09-governance-layer.md
+    required_concepts:
+      - 解释准入
+      - 工具准入
+      - 观测反身性
+      - 概念武器化
+      - 正当不透明
+      - 反模型殖民
+      - 反领域殖民
+      - 不可穷尽声明
+    required_outputs:
+      - max-concept-graph
+      - max-evidence-reasoning-audit
+      - max-red-team-pass
+      - max-unexhaustible-declaration
+    forbidden_outputs:
+      - 用框架维护框架
+      - 用术语密度替代可证伪边界
+      - 把盲区写成解释优势
+
+  skill_design:
+    description: "skill、agent、prompt、读取策略、校验脚本、产物协议与运行时设计"
+    preload:
+      - references/v6-full-source/01-guide.md
+      - references/v6-full-source/05-interface-layer.md
+      - references/v6-full-source/06-tool-layer.md
+      - references/v6-full-source/09-governance-layer.md
+    required_layers:
+      - 01-guide.md
+      - 02-boundary-layer.md
+      - 05-interface-layer.md
+      - 06-tool-layer.md
+      - 09-governance-layer.md
+    required_concepts:
+      - 工具准入
+      - 过程性产物边界
+      - 开放断言
+      - 命题验证表
+      - 强判断八件套
+      - 观测反身性
+      - 反模型殖民
+      - 概念武器化
+    required_outputs:
+      - max-local-world-model
+      - max-concept-graph
+      - max-evidence-reasoning-audit
+      - max-red-team-pass
+    forbidden_outputs:
+      - 把 prompt 当作概念本体
+      - 让运行入口吞掉长协议
+      - 让工具输出越过行动上限
+
+  document_question:
+    description: "询问 v6 文档、层级含义、某段原文、表格、标题、概念位置或源文件读取顺序"
+    preload:
+      - references/v6-full-source/00-index.md
+      - references/v6-full-source/00-heading-index.md
+      - references/v6-full-source/00-term-index.md
+      - references/v6-full-source/00-table-index.md
+    required_layers:
+      - 00-source-envelope.md
+      - 01-guide.md
+      - 02-boundary-layer.md
+      - 03-world-layer.md
+      - 04-state-layer.md
+      - 05-interface-layer.md
+      - 06-tool-layer.md
+      - 07-intervention-layer.md
+      - 08-application-layer.md
+      - 09-governance-layer.md
+    required_concepts:
+      - 解释准入
+      - 工具准入
+      - 过程性产物边界
+      - 来源-证据-判断-行动上限
+      - 正当不透明
+      - 不可穷尽声明
+    required_outputs:
+      - max-full-source-read-ledger
+      - max-concept-graph
+      - max-evidence-reasoning-audit
+    forbidden_outputs:
+      - 用摘要替代原文段落回指
+      - 跳过表格结构只看段落文本
+      - 把文档定位回答写成现实判断
+
+fallback:
+  rule: "If no route matches, read 00-index.md, 01-guide.md, 02-boundary-layer.md, 03-world-layer.md, concept-registry/index.md, then declare a route-map gap in max-concept-graph."
+  final_requirement: "Regardless of route, final artifacts require 3273 / 3273 full-source exhaustive pass."
