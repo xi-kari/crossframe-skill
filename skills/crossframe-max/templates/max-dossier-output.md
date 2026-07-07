@@ -148,6 +148,7 @@
 
 - 行动者：
 - 承接者：
+- 受害者：
 - 受影响者：
 - 旁观者：
 - 制度主体：
@@ -407,6 +408,10 @@
 - max-essay.md：
 - max-continuation-ledger.md：
 - max-continuation-index.md：
+- 结构底稿：
+- 完整长文：
+- 续写索引：
+- 正常输出中的可继续讨论分支：
 - 合并阅读版（如有）：
 - 校验脚本：仅显式 validation / maintenance 运行。
 - 校验状态：not run / passed / failed；不得把 validator failure 写成“不影响手写文件”。

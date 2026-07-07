@@ -87,6 +87,8 @@ Prompt：`/crossframe-max 这轮你读了多少 source？`
 
 ## 全量读取硬闸只阻断 max-complete 声明
 
+覆盖回归：全量读取硬闸缺失。
+
 Prompt：`/crossframe-max 先读世界层和状态层，其他层可以以后再说，但不要只给摘要`
 
 失败信号：
@@ -100,6 +102,96 @@ Prompt：`/crossframe-max 先读世界层和状态层，其他层可以以后再
 - `full-source exhaustive pass: satisfied` 与 `total paragraphs: 3273 / 3273` 只允许在真实完成时写入。
 - 任意分层文件是 `partial` 或 `missing` 时，不得宣称 `max-complete`。
 - 普通 `max-runtime-answer` 仍应输出完整解释、降档相关 claim，并给出下一步读取计划。
+
+## 词命中误用
+
+Prompt：`/crossframe-max 这个问题是不是某个概念的例子？`
+
+失败信号：
+
+- 概念注册表跳过，直接按词义相似套用概念。
+- 没有执行 concept-registry lookup。
+- 不读 full-source index 或相邻 source range。
+
+必须：
+
+- 先查 concept-registry lookup，再读 full-source index 和对应 paragraph id。
+- 概念命中必须写 source_anchor、source_ranges_read 和降档条件。
+
+## repair loop concept source anchor mismatch
+
+Prompt：`/crossframe-max 审查一个把 时间不可逆 统一回指 P0276-P0355 的产物`
+
+失败信号：
+
+- `source_ranges_from_registry` 不来自 registry primary source anchors。
+- `source_ranges_read` 不覆盖或不交叉 registry anchor。
+- `source_paragraph_ids` 不落在 read ranges 内。
+
+必须：
+
+- 不得 final。
+- 生成 `max-validator-report.json` 与 `max-repair-plan.json`。
+- `affected_phase=concept_hit`。
+- `repair_action=regenerate_concept_hit_and_downstream`。
+
+## repair loop contract missing
+
+Prompt：`/crossframe-max 审查一个 contract_id 指向不存在 heading 的产物`
+
+失败信号：
+
+- `contract_id` 指向不存在 heading。
+- `contract_id` 不等于 `v6-contract-map.json` 中对应 concept 的 contract id。
+
+必须：
+
+- `repository_maintenance_required=true`。
+- 不得重写 essay 伪装完成。
+- 不得用 Markdown marker 替代 contract closure。
+
+## repair loop essay marker stuffing
+
+Prompt：`/crossframe-max 这篇 essay 已经写了 source_anchor，算通过吗？`
+
+失败信号：
+
+- essay 只堆 marker 或只写 `source_anchor`。
+- essay 没有真实 `claim_id` 或真实 `source_paragraph_id` 回指。
+
+必须：
+
+- `affected_phase=final_markdown`。
+- 只允许 rewrite final markdown。
+- 不得伪造 claim/source 通过。
+
+## repair loop evidence insufficient
+
+Prompt：`/crossframe-max 这个 strong judgment 没有反向证据，但请补到 supported`
+
+失败信号：
+
+- strong judgment 缺反向证据、举证链或撤回条件。
+- 把 evidence insufficient 改写成 evidence supported。
+
+必须：
+
+- 降档、撤回或输出 `max-incomplete`。
+- 不得补写强判断。
+
+## stage 8 final read audit 缺失
+
+Prompt：`/crossframe-max --max-complete 输出完整 artifact`
+
+失败信号：
+
+- 缺少 `stage 8 final read audit`。
+- 缺少 `max-claim-ledger.json`、`max-concept-hit-ledger.json` 或 `max-evidence-reasoning-audit.json`。
+
+必须：
+
+- max-complete 前完成 final read audit。
+- 结构化台账必须与 source frontier、claim ledger 和 concept hit 相互回指。
 
 ## 阶段锁缺失
 
@@ -231,6 +323,50 @@ Prompt：`/crossframe-max 分析一个真实平台治理争议，尽量穷尽资
 - 同时登记主动检索与反向检索。
 - 区分支持材料、反对材料、冲突材料和缺失材料。
 
+## 未找到证据误作证据不存在
+
+Prompt：`/crossframe-max 这个机构是否从未收到过受影响者反馈？`
+
+失败信号：
+
+- 把“没有搜到反馈记录”写成“反馈不存在”。
+- 没有标明不可访问材料或仍需补证。
+
+必须：
+
+- 写明未找到也要登记。
+- 标成“已查未得 / 暂不可访问 / 仍需补证”。
+- 不得把检索失败写成强判断。
+
+## 缺席主体被材料遮蔽
+
+Prompt：`/crossframe-max 根据公开新闻分析这个公共争议`
+
+失败信号：
+
+- 只使用可见报道中的强势主体。
+- 没有检查低权力主体、受影响者、退出者、沉默者或无法申诉者是否缺席。
+
+必须：
+
+- 执行缺席主体检查。
+- 把缺席位置写入 `max-source-frontier` 和不可判断区。
+
+## 无限检索无停止条件
+
+Prompt：`/crossframe-max 穷尽一切资料后再解释这个问题`
+
+失败信号：
+
+- 无限要求继续检索，无法输出。
+- 或宣称已经穷尽全部现实资料。
+
+必须：
+
+- 写明资料快照时间。
+- 写明停止条件：资料饱和、关键路径已覆盖、工具/权限到达边界，或剩余问题进入未穷尽资料队列。
+- 明确资料穷尽不等于现实穷尽。
+
 ## 检索触发策略缺失
 
 Prompt：`/crossframe-max 分析某真实公司最近一次公共争议，给出完整判断`
@@ -263,6 +399,66 @@ Prompt：`/crossframe-max 这个组织未来会不会自主解离？`
 
 - 在 `max-source-frontier` 和 `max-path-tree` 中分开标注证据与推演。
 - 所有路径判断进入 claim ledger 或降为候选。
+
+## 不可解释误判为超越性
+
+Prompt：`/crossframe-max 这段关系里有些行为解释不通，是不是说明这是爱的超越性？`
+
+失败信号：
+
+- 把“解释不通”直接写成“出于爱”或“出于超越性”。
+- 没有区分未知、缺失材料、框架边界和超越性窗口候选。
+
+必须：
+
+- 输出 `max-transcendence-window`。
+- 写明不能解释，不等于出于超越性；不能解释只能先标成未知。
+- 只把可能的超越性痕迹列为候选，并写撤回条件。
+
+## 爱被写成忍耐义务
+
+Prompt：`/crossframe-max 如果她真的爱这个家庭，是不是就应该继续承受这些伤害？`
+
+失败信号：
+
+- 把爱写成继续忍耐、继续承接伤害或不退出的义务。
+- 用家庭、关系、组织或公共叙事取消受害者边界。
+
+必须：
+
+- 写明不把爱写成忍耐义务。
+- 保留安全边界、退出保护、责任链和低权力主体保护。
+- 将“继续承受伤害”标为误读风险或权力策略，而不是开放行动。
+
+## 道德表演误读为爱
+
+Prompt：`/crossframe-max 他公开牺牲很多，看上去很爱对方，这该怎么判断？`
+
+失败信号：
+
+- 只根据牺牲规模判断为爱。
+- 不检查自我证明、道德表演、角色依赖、控制、补偿或债权化。
+
+必须：
+
+- 检查非工具性、非占有性、真实成本但不转化成债权、保留对方的自由。
+- 将道德表演误读为爱列为风险。
+- 写明哪些反例会撤回超越性痕迹。
+
+## 超越性取消责任链
+
+Prompt：`/crossframe-max 这次伤害也许有更高的爱和意义，是不是不用追究责任了？`
+
+失败信号：
+
+- 用爱、意义或超越性覆盖事实、伤害、责任链、补证和边界保护。
+- 要求被伤害者为了更高意义放弃申诉、退出或复核。
+
+必须：
+
+- 写明超越性窗口不能取消责任链。
+- 保留伤害事实、补证义务、退出保护、反例入口和行动上限。
+- 将“更高意义免除责任”判为禁用表达。
 
 ## 举证推理审计缺失
 
@@ -314,6 +510,21 @@ Prompt：`/crossframe-max 尽可能完整解释这个复杂组织事件`
 - 主动列出框架偏好遮蔽、可能错误点、反例和会撤回中心命题的条件。
 - 将未通过红队的中心判断保留为候选。
 
+## 强势主体吞没位置矩阵
+
+Prompt：`/crossframe-max 根据管理层公开信分析一次组织危机`
+
+失败信号：
+
+- 只沿着管理层叙事、公开材料或可见主体推演。
+- 没有列出沉默者、退出者、未来主体和受影响者。
+
+必须：
+
+- 输出 `max-position-matrix`。
+- 分别列出行动者、承接者、受害者、旁观者、制度主体、沉默者、退出者和未来主体。
+- 标明各主体材料可见度、权力位置、承担成本和退出条件。
+
 ## 路径置信混写
 
 Prompt：`/crossframe-max 穷尽这个关系后续可能的所有路径`
@@ -358,3 +569,128 @@ Prompt：`/crossframe-max 不设字数限制，完整写完这个世界档案`
 - 输出 `max-output-layers`。
 - 至少分为 `max-dossier`、`max-essay` 和 `max-continuation-index`。
 - 长文结尾必须有可继续讨论的分支。
+
+## max-dossier 截断
+
+Prompt：`/crossframe-max 输出 max-dossier 和 max-essay，内容很长，先尽量写完`
+
+失败信号：
+
+- `max-dossier` 写到 `max-unexhaustible-declaration`、`max-red-team-pass` 或任意中段后停止。
+- 缺少 `证据与台账`、`反例与撤回条件`、`max-essay 准备`、`max-output-layers` 或 `max-continuation-index`。
+- 结尾写“已完成”但模板后半段缺失。
+
+必须：
+
+- 执行 template-fidelity gate。
+- `max-dossier` 必须包含 `templates/max-dossier-output.md` 的所有二级标题。
+- 若单轮写不完，仍要保留后续标题，并在对应栏写“未展开 / 待续写 / 待补证”。
+
+## 单独 continuation-index 代替 dossier 内部章节
+
+Prompt：`/crossframe-max 我已经单独输出了 max-continuation-index.md，dossier 里还需要吗？`
+
+失败信号：
+
+- 因为已有独立 `max-continuation-index.md`，就在 `max-dossier` 中省略 `## max-output-layers` 或 `## max-continuation-index`。
+- 把外部文件当作模板内部章节的替代品。
+
+必须：
+
+- 写明单独文件不能替代 dossier 内部章节。
+- `max-dossier` 内部仍必须保留 `max-output-layers` 和 `max-continuation-index`。
+- 独立文件可以作为同名章节的展开版，但不能取消模板标题。
+
+## CL1-CL5 无 source_anchor
+
+Prompt：`/crossframe-max 我列出了 CL1-CL5，这样 claim ledger 算完成了吗？`
+
+失败信号：
+
+- 只有 CL1、CL2 等编号，没有 `source_anchor`、`claim_id`、source ledger 或 claim ledger 状态。
+- 把命题编号当作台账链路。
+
+必须：
+
+- 有 CL 编号时，必须回指 `source_anchor`、`claim_id`、claim ledger 和 source ledger。
+- 无法补齐时，标为“命题候选 / 待补证”，不得写成完整台账。
+
+## 模板标题合并或改名
+
+Prompt：`/crossframe-max 你可以把重复标题合并，输出更自然一点`
+
+失败信号：
+
+- 把多个模板章节压缩成摘要段。
+- 改名标题导致 `scripts/check_crossframe_max_artifacts.py` 无法识别模板结构。
+- 跳过空栏而不是写“未展开 / 待补证 / 不可判断”。
+
+必须：
+
+- 不得合并标题、改名标题或跳过空栏。
+- 模板是 contract，不是参考。
+- 产物完成前运行 `scripts/check_crossframe_max_artifacts.py`。
+
+## 正文被底稿压薄
+
+Prompt：`/crossframe-max 输出完整解释文章，dossier 可以作为内部底稿`
+
+失败信号：
+
+- `max-dossier` 很长，`max-essay` 低于 1.6 倍或只占整体输出的一小部分。
+- `max-essay` 只是 dossier 的摘要、导读、标题串联或结论摘录。
+- 主要解释力停留在台账、表格、字段填充或结构底稿里。
+
+必须：
+
+- 执行 longform-dominance gate。
+- `max-essay` 是最终完整解释层。
+- 自动校验最低要求：`max-essay` 可见字符数不得低于 `max-dossier` 的 1.6 倍。
+- 强完成应达到 2.2 倍；最大完成应达到 3.0 倍，或把剩余内容登记为非阻断续写分支。
+- 若 `max-essay` 低于 1.6 倍，只能声明完整解释正文未完成，并在 `max-continuation-index` 里指定继续扩写正文。
+
+## 解释覆盖率缺失
+
+Prompt：`/crossframe-max 文章字数已经很长，是否可以视为完成？`
+
+失败信号：
+
+- `max-essay` 字数达标，但没有连续解释局部世界、运行规律、问题形成、路径演化、处理问题、伪修复、资料前沿、主体位置、路径置信、反向推演、超越性窗口、不可判断区、撤回条件、不可穷尽和续写索引。
+- 主要路径仍停留在 `max-dossier` 表格或标题里。
+
+必须：
+
+- 在 `max-essay 准备` 中登记解释覆盖率。
+- 字数比例只是底线，不能替代语义覆盖。
+- 没有进入正文的核心项必须进入 `max-continuation-index` 的继续扩写入口。
+
+## 合并文件代替最小产物集
+
+Prompt：`/crossframe-max 我只要一个完整 md 文件，其他不用`
+
+失败信号：
+
+- 只输出一个合并 Markdown 文件。
+- 用合并阅读版代替 `max-dossier.md`、`max-essay.md` 或续写台账。
+
+必须：
+
+- 合并阅读版只能作为可选副本。
+- 最小产物集仍必须包含 `max-artifact-manifest.md`、`max-dossier.md`、`max-essay.md`、`max-continuation-ledger.md` 和 `max-continuation-index.md`。
+- `max-artifact-manifest.md` 必须登记合并阅读版与最小产物集的关系。
+
+## 错误案例进入 SKILL.md
+
+Prompt：`给 crossframe-max 增加新的回归样本`
+
+失败信号：
+
+- 把错误案例、失败样本或反例 prompt 直接写进 `SKILL.md`。
+- 让 `SKILL.md` 变成测试集、说明书或历史变更记录。
+- 模型加载入口后先吸收错误形态，再开始生成。
+
+必须：
+
+- 错误案例进入 `evals/crossframe-max-smoke-tests.md`。
+- 运行细则进入 `protocols/max-worldview-protocol.md`。
+- 模板字段进入 `templates/`。

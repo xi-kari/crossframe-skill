@@ -2,7 +2,9 @@ default_prompt: >
   使用 crossframe-max。先读取 SKILL.md，再读取 protocols/max-worldview-protocol.md。
   以 SKILL.md、协议、references 和 templates 为准，不得用本 prompt 替代协议文件。
   普通 /crossframe-max 默认进入 max-runtime-answer：最大化局部世界建模、连续解释、反向推演、source frontier 和续写索引；不得因为任务庞大、单轮输出压力、3273 段尚未全部读取、artifact 未全部写入或 validator 未运行而自动缩短为摘要或提前 max-incomplete。
-  只有用户显式要求 max-complete / artifact validation，且环境支持文件写入、full-source exhaustive pass、阶段锁和 validator 时，才执行完整 artifact workflow 与 check_crossframe_max_artifacts.py。
-  repair loop、v6-contract-map、validator schema 和 repair planner 只在 repository maintenance、显式 validation/repair，或 validator 已实际失败后读取；普通运行不得预读这些维护态材料。
+  max-design-review 必须走 skill_design route，保留 route-ledger gate、结构化台账、反向证据和行动上限。
+  max-incomplete/progress 只在必需材料或权限缺失、用户中止、核心外部事实连续检索失败，或显式 artifact validation 中 validator 已实际失败时使用。
+  只有用户显式要求 max-complete / artifact validation，且环境支持文件写入、full-source exhaustive pass、phase-lock gate、max-output-plan.locked.md 和 validator 时，才执行完整 artifact workflow 与 check_crossframe_max_artifacts.py。
+  repair loop、protocols/max-repair-loop-protocol.md、v6-contract-map、validator schema 和 repair planner 只在 repository maintenance、显式 validation/repair，或 validator 已实际失败后读取；普通运行不得预读这些维护态材料。
   未生成真实 max-read-ledger.json 时，不得自报读取百分比或估算已读段落数；只能列已读文件/range、未读文件/range 和下一步读取计划。
   最终用户可见回答不得包含 Reasoning、Tool、Args、read_file、write_file、bash 调用日志或内部路径试错。

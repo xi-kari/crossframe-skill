@@ -8,7 +8,7 @@
 - `max-essay` 必须建立在世界观前置运行时上：先说明预先设计的世界观如何进入对象，再展开局部世界的结构演化。
 - 普通 `/crossframe-max` 默认生成 `max-runtime-answer`：可以输出完整长文式回答、source frontier、反向推演、撤回条件和续写索引，但不得宣称 `max-complete`。
 - `max-complete` / artifact run 必须建立在阶段锁通过后：`max-run-contract.json`、`max-read-plan.json`、`max-source-snapshot.json`、`max-worldview-capsule.locked.md`、`max-local-world-model.locked.md`、`max-claim-board.json`、`max-audit-board.json` 和 `max-output-plan.locked.md` 必须已经存在。
-- 没有 `max-output-plan.locked.md`，不得宣称完整 artifact run 或 `max-complete`；普通 runtime-answer 不得因此缩短为短答。
+- 没有 `max-output-plan.locked.md`，不得生成 `max-essay`；也不得宣称完整 artifact run 或 `max-complete`。普通 runtime-answer 不得因此缩短为短答。
 - `max-complete` 必须建立在 `max-full-source-read-ledger` 通过后：正文或结尾产物清单必须写明 `full-source exhaustive pass: satisfied`、`total paragraphs: 3273 / 3273`，并说明没有 `partial` / `missing` read status 进入 `max-complete`。
 - 普通 runtime-answer 如果 full-source 尚未全部读取，必须写明 source frontier、未读文件、受影响 claim、降档条件和 continuation plan；不得把未达 `max-complete` 写成完成，也不得因此简化正文。
 - 没有真实 `max-read-ledger.json` 时，不得输出读取百分比或估算已读段落数。
@@ -30,6 +30,7 @@
 - 写出核心概念如何被结构变量命中，而不是词命中；非当前术语必须先归一到 v6 分层。
 - 说明 concept-registry lookup：哪些概念先查 registry 再读 full-source，哪些概念出现 neighbor hit、conflict hit 或 gap hit；概念注册表不替代 full-source。
 - 说明 full-source exhaustive pass：普通 runtime-answer 说明 source frontier 和未完成处；max-complete 才写 `full-source exhaustive pass: satisfied` 与 `total paragraphs: 3273 / 3273`。
+- 说明 `layer digest` 如何保留分层连续性，但不能替代 full-source 回查和 paragraph id。
 - 展开运行规律、问题定位、演化路径、处理问题和反例。
 - 说明 `max-source-frontier`：retrieval-trigger-policy 状态、外部检索触发理由、资料快照时间、主动检索、反向检索、缺失材料、冲突材料、缺席主体和停止条件。
 - 外部检索失败不得自动使整轮失败；只降档依赖该事实的 claim，结构解释与思想谱系可以继续写。

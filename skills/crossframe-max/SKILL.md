@@ -6,11 +6,11 @@ disable-model-invocation: true
 
 # CrossFrame Max
 
-`crossframe-max` 是 CrossFrame v6 世界观前置 meta-runtime。它不是超长回答模板，也不是省略式诊断模板；它先让 AI 拥有用户预先设计的世界观，再把对象当作局部世界建模，在材料、工具、上下文和行动边界内完成最大推演、校准回合、举证推理、反向证据、产物交付和续写索引。
+`crossframe-max` 是 CrossFrame v6 世界观前置的 meta-runtime。它不是超长回答模板，也不是省略式诊断模板；它先让 AI 拥有用户预先设计的世界观，再把对象当作局部世界建模，在材料、工具、上下文和行动边界内完成最大推演、校准回合、举证推理、反向证据、产物交付和续写索引。
 
 ## max-clean-runtime-entry
 
-运行入口保持正向、精简，并优先服务前台生成稳定性。`SKILL.md` 只放触发边界、运行档位、运行时必读顺序、交付闸门和维护态校验入口。失败样本、反例压力测试放在 `evals/`；长细则放在 `protocols/`、`templates/` 和脚本。
+运行入口保持正向、精简，并优先服务前台生成稳定性。`SKILL.md` 只放触发边界、运行档位、运行时必读顺序、交付闸门和维护态校验入口。失败样本和反例压力测试放在 `evals/`；长细则放在 `protocols/`、`templates/` 和脚本。
 
 普通 `/crossframe-max` 运行不得在启动阶段预读 repair loop、validator schema、contract map 或维护脚本；这些只在 artifact validation、repository maintenance、显式 repair 或 validator 已实际失败后进入。
 
@@ -34,6 +34,7 @@ disable-model-invocation: true
 - 先做局部世界建模，再做判断。
 - 先识别运行规律，再定位问题。
 - 先查 registry 再读相关 full-source。
+- `max-complete` 和 artifact run 保持先查 registry 再读 full-source；普通 runtime 可以先读相关 full-source，但必须登记 source frontier。
 - 先完成举证链、推理链、反向证据和证据-推理-反例-降档循环，再进入最终表达。
 - 先保留撤回条件、行动上限和不可穷尽声明，再写完整长文或设计审查结论。
 
@@ -62,6 +63,8 @@ disable-model-invocation: true
 - `schemas/max-repair-plan.schema.json`
 - `scripts/` 中对应 validator 和 repair planner
 
+校验失败后的 repair loop 必须生成或读取 `max-validator-report.json` 与 `max-repair-plan.json`，并登记 `affected_phase`、`downstream_reset`、`repair_action`；普通 runtime 不预读这些维护态材料。
+
 任务路由以 `references/v6-route-map.yaml` 为准。route map 决定阶段读取顺序，不能降低 `max-complete` 的 full-source exhaustive pass 要求；但普通 `max-runtime-answer` 允许先以 source frontier、read status 和 continuation plan 输出完整解释，不得把未达 `max-complete` 误写为完成。
 
 ## 阶段锁
@@ -77,7 +80,7 @@ disable-model-invocation: true
 - `max-audit-board.json`
 - `max-output-plan.locked.md`
 
-没有 `max-output-plan.locked.md`，不得宣称完整 artifact run 或 `max-complete`。普通 `max-runtime-answer` 若环境不能写入这些文件，必须在回答中保留相同状态链的可见结构，不得因此缩短为短答或只输出 incomplete。
+没有 `max-output-plan.locked.md`，不得生成 `max-essay.md`；也不得宣称完整 artifact run 或 `max-complete`。普通 `max-runtime-answer` 若环境不能写入这些文件，必须在回答中保留相同状态链的可见结构，不得因此缩短为短答或只输出 incomplete。
 
 后续阶段不得直接改写前序冻结产物；异常登记为 `phase_exception_record`，并按 `affected phase reset` 回到受影响阶段。validator failure 只在显式 validation / repair 模式触发 repair loop；普通 runtime 不因预判 validator 难以通过而提前放弃生成。
 

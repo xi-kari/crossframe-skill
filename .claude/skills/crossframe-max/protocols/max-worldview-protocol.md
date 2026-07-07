@@ -23,6 +23,8 @@
 
 维护态材料不得污染普通运行入口：`max-repair-loop-protocol.md`、`v6-contract-map.json`、validator schemas、repair planner 和脚本只在 repository maintenance、显式 artifact validation、显式 repair 或 validator 已实际失败后读取。
 
+普通运行仍可读取 `references/concept-contracts/v6-core-contracts.md` 作为概念契约入口；`v6-contract-map.json` 只在维护态或显式校验态读取。
+
 ## 0.2 运行档位
 
 `crossframe-max` 有四个运行档位。档位必须写入 `max-run-contract.json`，或在无法写文件时写入最终回答的运行状态区：
@@ -93,7 +95,7 @@ max-run-contract.json
 
 后续阶段不得直接改写已经冻结的前序产物；异常只登记为 `phase_exception_record`；处理规则为 `affected phase reset`，仅回到受影响阶段。反向证据只改变 claim 状态。
 
-validator failure 只在显式 validation / repair 模式触发 repair loop。失败后不得直接 patch final Markdown，必须按 `max-repair-loop-protocol.md` 生成 repair plan，并回到 affected phase。普通 runtime 不预判 validator 失败，也不因预判 validator 难以通过而提前 `max-incomplete`。
+validator failure 也必须遵守 phase lock。validator failure 只在显式 validation / repair 模式触发 repair loop。失败后不得直接 patch final Markdown，必须按 `max-repair-loop-protocol.md` 生成 repair plan，并回到 affected phase。普通 runtime 不预判 validator 失败，也不因预判 validator 难以通过而提前 `max-incomplete`。
 
 状态表：
 
@@ -203,9 +205,11 @@ audit result:
 最低链路：
 
 ```text
+v6-route-map -> concept-registry lookup -> full-source index -> worldview-runtime capsule -> staged layer reads -> full-source exhaustive pass -> v6-core-contracts -> structured ledgers -> evidence-reasoning audit
 v6-route-map -> concept-registry lookup -> full-source index -> worldview-runtime capsule -> staged layer reads -> source frontier -> concept contract -> claim ledger -> evidence-reasoning audit -> route-ledger gate
 ```
 
+未完成全量读取不得输出最终结果；这里的最终结果指 `max-complete` / artifact validation 的完成声明和最终文件状态。
 未完成全量读取时，不得宣称 `max-complete`。普通 `max-runtime-answer` 必须输出 source frontier、缺失分层、下一步读取计划、降档判断和不可穷尽声明，而不是缩成短答。
 
 ### 4.1 skill_design route
@@ -230,17 +234,23 @@ v6-route-map -> concept-registry lookup -> full-source index -> worldview-runtim
 
 凡涉及真实机构、真实政策、当前事实、公共判断、历史事实、法律、医疗、金融、平台规则、公司、人物或最新资料，必须读取 `references/retrieval-trigger-policy.md`。
 
+检索触发策略必须写入 `retrieval-trigger-policy 状态`，区分内部概念检索和外部事实检索，登记外部检索触发理由、主动检索目标、反向检索目标、资料快照时间、停止条件和不可访问材料。
+
 外部检索失败不得自动使整轮 `crossframe-max` 失败。它只影响依赖外部事实的 claim 强度。结构解释、路径推演、思想谱系和概念比较可以继续输出，但必须标注：检索尝试、失败原因、受影响 claim、降档条件、后续补证入口。
 
-未找到证据不得写成证据不存在。检索失败不得写成现实不存在。
+未找到证据不得写成证据不存在。检索失败不得写成现实不存在。`max-source-frontier` 必须区分支持材料、反对材料、缺失材料、冲突材料、不可访问材料；达到资料饱和或边界时，把剩余项放入未穷尽资料队列。
 
 ## 7. 路径置信分层
+
+`max-path-confidence-layers` 负责登记路径置信分层。
 
 所有路径必须分成：事实路径、机制候选路径、低置信想象实验、纯反事实路径、价值性解释路径。不能把所有路径写成同一种强度。
 
 每条路径必须写明：证据来源、判断档位、行动上限、撤回条件和公开边界。
 
 ## 8. 举证推理审计
+
+反复推敲校准与举证推理硬闸是最终表达前的强制步骤；如果中心命题无法形成举证链、推理链、反向证据和证据-推理-反例-降档循环，artifact validation 应输出 `max-incomplete: evidence-reasoning-audit-not-satisfied`。
 
 对中心命题、强判断、路径终点和行动建议执行：
 
@@ -264,25 +274,37 @@ v6-route-map -> concept-registry lookup -> full-source index -> worldview-runtim
 
 ## 10. 超越性窗口
 
-不能解释不等于爱、意义或超越性。超越性窗口只登记候选痕迹：开放行动、非工具性、非占有性、真实成本但不转化成债权、保留对方自由、保留边界。
+`max-transcendence-window` 负责登记超越性窗口。
 
-不得把爱写成忍耐义务。不得用超越性取消责任链、伤害事实、补证义务或退出保护。
+不能解释只能先标成未知；不能解释不等于爱、意义或超越性。超越性窗口只登记超越性痕迹候选：开放行动、非工具性、非占有性、真实成本但不转化成债权、保留对方自由、保留边界。
+
+必须同时检查创伤重复、控制、补偿、角色依赖、道德表演等替代解释。不得把爱写成忍耐义务。不得用超越性取消责任链、伤害事实、补证义务或退出保护。
 
 ## 11. 不可穷尽声明
+
+`max-unexhaustible-declaration` 负责登记不可穷尽声明。
 
 每次 `crossframe-max` 都必须写不可穷尽声明。不可穷尽包括：内心动机、未来自由行动、沉默主体经验、未公开材料、历史偶然性、超越性窗口和现实资料本身。
 
 “穷尽一切”只意味着在当前材料、工具、框架和时间内穷尽一切算力，不意味着 AI 终审现实真相。
 
+路径与边界必须区分事实、解释、机制候选、路径推演和想象实验；涉及阶段演化时登记状态坐标与生命周期、递进模式、双向势场、有序退场、多中心治理和非线性路径库。
+
+连续运行状态必须记录已读、未读、已展开、未展开、已降档、已撤回和下一轮入口。反向推演 / 自我攻击回合必须写入 `max-red-team-pass` 或同等可见结构。
+
 ## 12. 输出分层
+
+输出分层模式以 `max-output-layers` 为准。产物优先交付只在 `max-complete` 或显式 artifact run 中强制执行 artifact-first gate；普通 runtime 可以聊天输出完整长文，但不得冒充 artifact。
 
 `max-output-layers` 必须包含：
 
 - `max-dossier`：结构底稿。
-- `max-essay`：连续完整长文，不得只是 dossier 摘要。
+- `max-essay`：连续完整长文，完整文章必须单独放在 `max-essay.md`，不得只是 dossier 摘要。
 - `max-continuation-ledger`：已读、未读、已展开、未展开、已降档、已撤回。
 - `max-continuation-index`：下一轮如何继续，不重复上一轮。
 - `max-artifact-manifest.md`：仅 artifact run 必须存在，且必须最后生成。
+
+最终回复要列出可继续讨论的分支，不能只留在文件里。模板忠实度检查要防止模板截断、标题合并、单独文件不能替代模板内部章节。正文主导检查执行 longform-dominance gate 和解释覆盖率：最低 `max-essay` 为 `max-dossier` 的 1.6 倍，强完成为 2.2 倍，最大完成为 3.0 倍或剩余内容只属于非阻断续写分支。
 
 ## 13. 前台输出卫生
 
