@@ -8,63 +8,34 @@
 
 `crossframe-max` 的第一动作是建立世界观前置运行时，而不是直接回答用户问题。执行顺序：
 
-1. 读取 `references/v6-full-source/00-index.md`，建立本轮 source inventory。
-2. 读取 `references/source_manifest.json` 和 `references/v6-route-map.yaml`，确认 full-source primary knowledge base、任务路由和本轮优先层。
+1. 读取 `references/v6-full-source/00-index.md`，建立 full-source read ledger。
+2. 读取 `references/source_manifest.json` 和 `references/v6-route-map.yaml`，确认 3273 / 3273 全量源库、任务路由和本轮优先层。
 3. 读取与当前任务最相关的 v6 分层源文件，先形成 `max-worldview-capsule`。
 4. 将 `max-worldview-capsule` 明确写成“本轮 AI 使用的预先设计的世界观”，登记根假设、元约束、运行规律、可证伪边界和禁用误读。
 5. 再进入局部世界建模，把用户对象放入世界结构演化中推演。
-6. 在输出前登记 source frontier：已读、未读、需补读、需降档、需续写。
+6. 在输出前完成 full-source exhaustive pass，确认所有分层源文件均已进入 read ledger。
 
-这意味着世界观不是参考资料，也不是输出附录，而是 max 的运行前置条件。任何只套用诊断表、只给结论、只做摘要、只写行动建议或跳过世界观加载的输出，都不能算作 `crossframe-max` 的合格运行。
+这意味着世界观不是参考资料，也不是输出附录，而是 max 的运行前置条件。任何只套用诊断表、只给结论、只做摘要、只写行动建议或跳过世界观加载的输出，都不能算作 `crossframe-max` 完成。
 
 ## 0.1 运行入口降噪
 
 `max-clean-runtime-entry`：运行入口只保留正向执行地图、读法顺序和交付闸门。失败样本、错误案例、反例压力测试和回归样本放在 `evals/`；长细则放在本协议、模板和校验脚本中。执行时以本协议的正向流程为主，不把错误样本当作生成模板。
 
-维护态材料不得污染普通运行入口：`max-repair-loop-protocol.md`、`v6-contract-map.json`、validator schemas、repair planner 和脚本只在 repository maintenance、显式 artifact validation、显式 repair 或 validator 已实际失败后读取。
-
-普通运行仍可读取 `references/concept-contracts/v6-core-contracts.md` 作为概念契约入口；`v6-contract-map.json` 只在维护态或显式校验态读取。
-
 ## 0.2 运行档位
 
-`crossframe-max` 有四个运行档位。档位必须写入 `max-run-contract.json`，或在无法写文件时写入最终回答的运行状态区：
+`crossframe-max` 有三个运行档位。档位必须写入 `max-run-contract.json` 和 `max-artifact-manifest.md`：
 
-- `max-runtime-answer`：普通 `/crossframe-max` 默认档位。目标是最大连续解释、局部世界建模、source frontier、red-team、不可穷尽声明和续写索引。该档位可以输出完整长文式回答，但不得宣称 `max-complete`。
 - `max-complete`：完整 full-source exhaustive pass、阶段锁、artifact-first、template-fidelity、longform-dominance、route-ledger gate 和 validator 全部满足后才可宣称完成。
-- `max-design-review`：用于 skill、prompt、agent、工具、模板、脚本和运行时设计。必须使用 `skill_design` route，登记 route concepts、design decision、v6 rule、反向证据、撤回条件和行动上限。该档位可以完成设计审查，但不得伪称完整 max 长文完成。
-- `max-incomplete/progress`：只在必需文件不可访问、工具权限缺失、用户中止、外部事实检索连续失败且核心结论完全依赖该事实，或显式 artifact-validation 模式下 validator 已实际失败时使用。任务庞大、单轮输出长、3273 段尚未读完、validator 未运行、上下文压力高，不是自动 incomplete 理由。
+- `max-design-review`：用于 skill、prompt、agent、工具、模板、脚本和运行时设计。必须使用 `skill_design` route，登记 route concepts、design decision、v6 rule、反向证据、撤回条件和行动上限。该档位可以完成设计审查，但不得伪称完成完整 max 长文。
+- `max-incomplete/progress`：环境、上下文、权限、工具或时间不足时，只输出读态、缺口、下一阶段读取计划和 `max-incomplete:*`，不得宣称完成。
 
-## 0.3 max-complete-source-gate
-
-只有宣称 `max-complete` 时，才必须同时满足：
-
-```text
-full-source exhaustive pass: satisfied
-total paragraphs: 3273 / 3273
-all layered files read status: full
-max-full-source-read-ledger: complete
-stage 8 final read audit: complete
-```
-
-若这些条件未满足，禁止使用 `max-complete` 字样；但普通 `max-runtime-answer` 不得因此缩短为摘要或提前终止。正确动作是继续分阶段读取、登记 source frontier、降档依赖未读材料的 claim、给出 continuation plan，并输出材料边界内的最大解释。
-
-## 0.4 读取百分比规则
-
-没有真实 `max-read-ledger.json` 时，禁止输出读取百分比、估算已读段落数或“约 20% / 500 段 / 12 段范围”这类数字。只能登记：
-
-```text
-已读取文件 / range / anchor：
-未读取文件 / range：
-依赖未读材料的 claim：
-已降档判断：
-下一步读取顺序：
-```
+`max-design-review` 的对象也是局部世界。skill、prompt、agent、模板、脚本和 validator 必须被建模为过程性结构对象：入口边界、协议顺序、知识源、产物接口、反馈写回、反例库、模型适配和行动上限都要进入局部世界模型。
 
 ## Phase Lock Rule / 阶段锁规则
 
-`crossframe-max` 不得把读取、审计和最终写作作为互相污染的义务。每个阶段先形成中间状态，再进入下一阶段。
+`crossframe-max` 不得把读取、审计和最终写作作为同时进行的义务。每个阶段先形成冻结型中间产物，再进入下一阶段。
 
-完整 artifact run 的强制顺序：
+强制顺序：
 
 ```text
 max-run-contract.json
@@ -76,7 +47,6 @@ max-run-contract.json
 -> max-audit-board.json
 -> max-output-plan.locked.md
 -> max-dossier.md / max-essay.md / max-continuation-index.md
--> max-artifact-manifest.md
 ```
 
 阶段产物：
@@ -88,14 +58,11 @@ max-run-contract.json
 - `max-local-world-model.locked.md`：局部世界模型；只建模对象、边界、尺度、主体位置、承接链、反馈通道和运行规律候选，不下最终判断。
 - `max-claim-board.json`：冻结候选命题板；所有判断先是 `candidate`，不得直接进入正文。
 - `max-audit-board.json`：冻结审计板；red-team 只能把 claim 状态转为 `supported`、`downgraded`、`split`、`withdrawn`、`needs_search`、`unexhaustible` 或 `final`，且没有最终正文权限。
-- `max-output-plan.locked.md`：冻结输出计划，列明进入正文、降档表达、撤回、不可判断和不得写强的 claim。没有 `max-output-plan.locked.md`，不得宣称完整 artifact run。
-- `max-artifact-manifest.md`：最终文件状态清单，必须最后生成；任何后续文件变化都必须重写 manifest。
-
-普通 `max-runtime-answer` 如果环境不支持写文件，也要在可见回答里保留这些状态链的逻辑顺序，但不得因为无法创建文件而缩短为短答。
+- `max-output-plan.locked.md`：冻结输出计划，列明进入正文、降档表达、撤回、不可判断和不得写强的 claim。没有 `max-output-plan.locked.md`，不得生成 `max-essay`。
 
 后续阶段不得直接改写已经冻结的前序产物；异常只登记为 `phase_exception_record`；处理规则为 `affected phase reset`，仅回到受影响阶段。反向证据只改变 claim 状态。
 
-validator failure 也必须遵守 phase lock。validator failure 只在显式 validation / repair 模式触发 repair loop。失败后不得直接 patch final Markdown，必须按 `max-repair-loop-protocol.md` 生成 repair plan，并回到 affected phase。普通 runtime 不预判 validator 失败，也不因预判 validator 难以通过而提前 `max-incomplete`。
+validator failure 也必须遵守 phase lock。失败后不得直接 patch final Markdown，必须登记失败原因，并回到 affected phase。
 
 状态表：
 
@@ -110,13 +77,13 @@ supported -> downgraded / split / withdrawn / final
 needs_search -> supported / downgraded / withdrawn / unexhaustible
 ```
 
-最终写作只允许使用已经分配状态的 claim。`max-red-team-pass` 和 `max-evidence-reasoning-audit` 可以改变 claim 状态，但不得绕过审计直接改写最终强判断。
+最终写作只允许使用 `max-output-plan.locked.md` 中已经分配状态的 claim。`max-red-team-pass` 和 `max-evidence-reasoning-audit` 可以改变 claim 状态，但不得绕过 `max-audit-board.json` 直接改写最终正文。
 
 ## 1. 三层分离
 
 ### 世界观层
 
-世界观层回答“框架如何理解世界”。它包括：对象不是孤立物；世界由多尺度嵌套系统组成；承接者、锚点、保护变量、反馈通道、资源、记忆和边界共同维持局部世界；反馈只有写回规则、资源、角色、边界、记忆或能力，才改变结构；时间不可逆；观测、命名、诊断、评分和发布会进入对象行动链；爱和开放行动不能被结构完全推出，也不能被制度命令；根假设只是可证伪、可边界收缩、可暂停使用的工作假设。
+世界观层回答“框架如何理解世界”。它包括：对象不是孤立物，而是结构过程；世界由多尺度嵌套系统组成；承接者、锚点、保护变量、反馈通道、资源、记忆和边界共同维持局部世界；反馈只有写回规则、资源、角色、边界、记忆或能力，才改变结构；时间不可逆；观测、命名、诊断、评分和发布会进入对象行动链；爱和开放行动不能被结构完全推出，也不能被制度命令；根假设只是可证伪、可边界收缩、可暂停使用的工作假设。
 
 ### 诊断层
 
@@ -130,23 +97,13 @@ needs_search -> supported / downgraded / withdrawn / unexhaustible
 
 把用户对象当作一个局部世界，而不是一个等待贴标签的案例。
 
-必须建模：
-
-- 对象边界：本次局部世界是什么，不是什么。
-- 尺度层级：个人、关系、组织、制度、历史、文明中哪些层级被激活。
-- 主体与位置：谁能行动，谁承担成本，谁获益，谁缺少退出或申诉。
-- 锚点与保护变量：什么维持方向、记忆、判断、资源和信任。
-- 承接与回流：谁吸收压力、风险、情绪、解释劳动或责任，这些是否写回结构。
-- 动力与通道：行动为什么启动，如何被转译，支撑通道是否足够。
-- 结构负荷：哪些维护债、隐藏成本、虚稳态和熵增正在累积。
-- 观测入口：本次分析、命名、发布或行动会怎样改变对象。
-- 外部扰动：哪些制度、技术、历史、平台、市场、家庭或公共力量进入局部世界。
+必须建模：对象边界、尺度层级、主体与位置、锚点与保护变量、承接与回流、动力与通道、结构负荷、观测入口和外部扰动。
 
 ## 3. 主体位置矩阵
 
 max 模式必须把缺席主体检查扩展为主体位置矩阵，输出 `max-position-matrix`。不能只沿着可见材料、强势主体、材料最多者、最会说话者或权力最高者推演。
 
-必须列出行动者、承接者、受害者 / 受影响者、旁观者、制度主体、沉默者、退出者和未来主体。每个位置必须登记材料可见度、权力位置、承担成本、行动条件、退出条件、被误读风险和对应 claim_id。
+必须列出行动者、承接者、受影响者、旁观者、制度主体、沉默者、退出者和未来主体。每个位置必须登记材料可见度、权力位置、承担成本、行动条件、退出条件、被误读风险和对应 claim_id。
 
 ## 4. 全量源库读取与概念语义邻域
 
@@ -157,22 +114,22 @@ max 模式必须把缺席主体检查扩展为主体位置矩阵，输出 `max-p
 - registry 只做定位，不替代 full-source。
 - `layer digest` 只做阶段连续性的临时摘要，不能替代源文件逐段读取、paragraph id 回指和最终回查。
 - `00-table-index.md` 与 `tables/` 保留 Word 表格行列结构；当 `source_paragraph_ids` 属于表格或表格关系影响意义时，必须读取对应 table 文件并同时记录 table id。
-- 读取可以按问题阶段分层推进；`max-complete` 输出前必须完成 `max-full-source-read-ledger`。
-- `max-complete` 最终硬闸是 `full-source exhaustive pass: satisfied` 与 `total paragraphs: 3273 / 3273` 同时成立。
-- 普通 `max-runtime-answer` 中，partial / missing 读态只阻断 `max-complete` 声明，不阻断最大解释；但必须登记 source frontier、降档相关 claim、给出下一步读取计划。
-- Markdown 读态不能替代结构化台账；`max-complete` 产物必须生成 `max-read-ledger.json`、`max-claim-ledger.json`、`max-concept-hit-ledger.json` 和 `max-evidence-reasoning-audit.json`。
+- 读取可以按问题阶段分层推进；最终结果输出前必须完成 `max-full-source-read-ledger`。
+- 最终硬闸是 `full-source exhaustive pass: satisfied` 与 `total paragraphs: 3273 / 3273` 同时成立。
+- 任何 full-source 文件的 `read status: full / partial / missing` 不是 `full` 时，只能输出读取进度或 `max-incomplete: full-source-exhaustive-pass-not-satisfied`，不得输出最终结果。
+- Markdown 读态不能替代结构化台账；最终产物必须生成 `max-read-ledger.json`、`max-claim-ledger.json`、`max-concept-hit-ledger.json` 和 `max-evidence-reasoning-audit.json`。
 
 分阶段读取策略：
 
-1. `stage 0 source inventory`：读取 `references/source_manifest.json`、`references/v6-route-map.yaml`、`references/v6-full-source/00-index.md`、`00-heading-index.md`、`00-term-index.md` 和 `00-table-index.md`，核对 full-source primary knowledge base、文件清单、paragraph 总数、表格结构索引、任务路由和每个分层文件的范围。
-2. `stage 1 boundary guide`：读取 `00-source-envelope.md`、`01-guide.md`、`02-boundary-layer.md`，建立材料来源边界、使用边界、准入条件、误用防护和本轮不可越界处。
-3. `stage 2 worldview layer`：读取 `03-world-layer.md`，建立世界观层、核心概念、根假设、结构动力学和本轮 `max-worldview-capsule`。
-4. `stage 3 state layer`：读取 `04-state-layer.md`，建立状态坐标、生命周期、双向势场、非线性路径和演化推演基础。
-5. `stage 4 interface layer`：读取 `05-interface-layer.md`，建立证据、判断、交互、反馈写回和观测反身性接口。
-6. `stage 5 tool layer`：读取 `06-tool-layer.md`，建立诊断工具、开放断言、输出层和工具使用边界。
-7. `stage 6 intervention and application`：读取 `07-intervention-layer.md`、`08-application-layer.md`，建立处理问题、疗愈、修复、转移、治理、表达和领域应用路径。
-8. `stage 7 governance layer`：读取 `09-governance-layer.md`，建立证伪、误用防护、治理边界、替代接口和公开表达上限。
-9. `stage 8 final read audit`：只在 `max-complete` / artifact validation 中强制。按 `00-source-envelope.md` 到 `09-governance-layer.md` 顺序回查全部分层文件，确认每个文件的 `read status`、首尾 paragraph id、已读 chunks、`layer digest` 和未闭合缺口。
+1. `stage 0 source inventory`：读取 source manifest、route map、00-index、heading index、term index 和 table index。
+2. `stage 1 boundary guide`：读取 source envelope、guide、boundary layer。
+3. `stage 2 worldview layer`：读取 world layer，建立 worldview capsule。
+4. `stage 3 state layer`：读取 state layer，建立演化推演基础。
+5. `stage 4 interface layer`：读取 interface layer，建立证据、判断和反馈写回接口。
+6. `stage 5 tool layer`：读取 tool layer，建立诊断工具、开放断言、输出层和工具边界。
+7. `stage 6 intervention and application`：读取 intervention 与 application layer。
+8. `stage 7 governance layer`：读取 governance layer。
+9. `stage 8 final read audit`：回查全部分层文件，确认 read status、首尾 paragraph id、chunks、layer digest 和未闭合缺口。
 
 `max-full-source-read-ledger` 字段：
 
@@ -192,65 +149,35 @@ audit result:
 
 1. 从局部世界模型中识别结构变量。
 2. 读取 `references/v6-route-map.yaml`，按问题类型确定优先读取层、必查概念和禁用输出。
-3. 读取 `references/concept-registry/index.md`，执行 concept-registry lookup，将结构变量映射到概念邻域、候选概念、冲突概念和 gap hit。
-4. 每个命中都必须继续读取对应 full-source paragraph ids 和相邻段落，并把命中写回 `max-concept-graph`；在 `max-complete` / artifact run 中还要写入 `max-concept-hit-ledger.json`。
-5. 按当前任务阶段先读相关分层文件；普通 runtime 不因尚未读完全部 3273 段而停止解释，但不得宣称全量完成。
-6. 进入 `max-evidence-reasoning-audit`，对中心命题执行严密举证、严密推理、反向证据检查和反复推敲校准。
-7. 进入 `route-ledger gate`，按 `references/v6-route-map.yaml` 校验 `route_key`、required layers、required concepts、required outputs、forbidden outputs、concept registry 命中、行动上限和审计回指。
+3. 读取 `references/concept-registry/index.md`，执行 concept-registry lookup。
+4. 每个命中都必须继续读取对应 full-source paragraph ids 和相邻段落，并写回 `max-concept-graph` 与 `max-concept-hit-ledger.json`。
+5. 读取 full-source index，建立 exhaustive pass 计划。
+6. 按当前任务阶段先读相关分层文件。
+7. 无论阶段读取顺序如何，最终结果输出前必须全量读取并完成全量读取登记。
+8. 读取 v6-core-contracts，确认 allowed_when、forbidden_when、required_inputs、downgrade_if。
+9. 在 `max-claim-ledger.json` 中登记 claim_id、source_anchor、判断档位、行动上限、撤回条件、source paragraph id、反向证据状态和 full-source exhaustive pass 状态。
+10. 进入 `max-evidence-reasoning-audit`。
+11. 进入 `route-ledger gate`。
 
-若 validator 在显式 validation 模式发现 `concept_id` 存在但 `source_ranges_from_registry` 与 registry anchor 不匹配，必须回到 `concept_hit` phase。若 validator 发现 `contract_id` 不存在或不对应 `concept_id`，必须回到 concept contract maintenance；本轮不得通过补写 Markdown 完成。
-
-`route-ledger gate` 在维护态也是 repair classifier 的输入。每个 route-ledger failure 必须映射到 `error_type`、`affected_phase`、`downstream_reset` 和 `repair_action`。
-
-最低链路：
-
-```text
-v6-route-map -> concept-registry lookup -> full-source index -> worldview-runtime capsule -> staged layer reads -> full-source exhaustive pass -> v6-core-contracts -> structured ledgers -> evidence-reasoning audit
-v6-route-map -> concept-registry lookup -> full-source index -> worldview-runtime capsule -> staged layer reads -> source frontier -> concept contract -> claim ledger -> evidence-reasoning audit -> route-ledger gate
-```
-
-未完成全量读取不得输出最终结果；这里的最终结果指 `max-complete` / artifact validation 的完成声明和最终文件状态。
-未完成全量读取时，不得宣称 `max-complete`。普通 `max-runtime-answer` 必须输出 source frontier、缺失分层、下一步读取计划、降档判断和不可穷尽声明，而不是缩成短答。
+未完成全量读取不得输出最终结果。只能输出读取进度、缺失分层、下一步读取计划或 `max-incomplete: full-source-exhaustive-pass-not-satisfied`。
 
 ### 4.1 skill_design route
 
-当对象是 skill、prompt、agent、工具、模板、脚本、产物协议或运行时设计时，必须使用 `skill_design` route。
-
-`max-read-plan.json` 必须登记：`route_key`、`route_map_version`、`route_required_layers`、`route_required_concepts`、`route_required_outputs`、`route_forbidden_outputs_checked`。
-
-`max-concept-hit-ledger.json` 必须登记：`concept_id`、`trigger_variable`、`registry_anchor`、`source_ranges_from_registry`、`source_ranges_read`、`contract_id`、`contract_checked`。
-
-`max-claim-ledger.json` 中每个设计判断必须登记：`design_decision_id`、`v6_rule_ids`、`claim_type`、`source_anchor`、`evidence_status`、`action_limit`、`downgrade_condition`、`withdrawal_condition`。
-
-设计审查可以使用 `max-design-review` 完成，不要求生成完整长文，但必须保留 route-ledger gate、反向证据和行动上限。
+当对象是 skill、prompt、agent、工具、模板、脚本、产物协议或运行时设计时，必须使用 `skill_design` route。`max-read-plan.json` 必须登记 route key、route version、required layers、required concepts、required outputs 和 forbidden outputs checked。
 
 ## 5. 概念注册表命中
 
-输出 `max-concept-graph`，包括 direct hit、neighbor hit、conflict hit、gap hit、已读取概念卡、已检查概念契约、source paragraph id、需要补读或降档的概念。
-
-概念注册表不能直接替代正文定义。概念定义必须回到 v6 full-source paragraph ids；如果本轮尚未读取到对应段落，必须降档为 concept candidate，并进入 continuation index。
+输出 `max-concept-graph`，包括 direct hit、neighbor hit、conflict hit、gap hit、已读取概念卡、已检查概念契约、source paragraph id、需要补读或降档的概念。概念注册表不能直接替代正文定义。
 
 ## 6. 资料前沿与外部检索
 
-凡涉及真实机构、真实政策、当前事实、公共判断、历史事实、法律、医疗、金融、平台规则、公司、人物或最新资料，必须读取 `references/retrieval-trigger-policy.md`。
-
-检索触发策略必须写入 `retrieval-trigger-policy 状态`，区分内部概念检索和外部事实检索，登记外部检索触发理由、主动检索目标、反向检索目标、资料快照时间、停止条件和不可访问材料。
-
-外部检索失败不得自动使整轮 `crossframe-max` 失败。它只影响依赖外部事实的 claim 强度。结构解释、路径推演、思想谱系和概念比较可以继续输出，但必须标注：检索尝试、失败原因、受影响 claim、降档条件、后续补证入口。
-
-未找到证据不得写成证据不存在。检索失败不得写成现实不存在。`max-source-frontier` 必须区分支持材料、反对材料、缺失材料、冲突材料、不可访问材料；达到资料饱和或边界时，把剩余项放入未穷尽资料队列。
+凡涉及真实机构、真实政策、当前事实、公共判断、历史事实、法律、医疗、金融、平台规则、公司、人物或最新资料，必须读取 `references/retrieval-trigger-policy.md`。未找到证据不得写成证据不存在。检索失败不得写成现实不存在。
 
 ## 7. 路径置信分层
 
-`max-path-confidence-layers` 负责登记路径置信分层。
-
-所有路径必须分成：事实路径、机制候选路径、低置信想象实验、纯反事实路径、价值性解释路径。不能把所有路径写成同一种强度。
-
-每条路径必须写明：证据来源、判断档位、行动上限、撤回条件和公开边界。
+所有路径必须分成事实路径、机制候选路径、低置信想象实验、纯反事实路径、价值性解释路径。每条路径必须写明证据来源、判断档位、行动上限、撤回条件和公开边界。
 
 ## 8. 举证推理审计
-
-反复推敲校准与举证推理硬闸是最终表达前的强制步骤；如果中心命题无法形成举证链、推理链、反向证据和证据-推理-反例-降档循环，artifact validation 应输出 `max-incomplete: evidence-reasoning-audit-not-satisfied`。
 
 对中心命题、强判断、路径终点和行动建议执行：
 
@@ -258,61 +185,20 @@ v6-route-map -> concept-registry lookup -> full-source index -> worldview-runtim
 材料 -> 结构变量 -> 概念命中 -> 机制判断 -> 路径推演 -> 行动上限
 ```
 
-每个中心 claim 必须登记：举证链、推理链、反向证据、证据-推理-反例-降档循环、已保持判断、已拆分命题、已降档判断、已撤回判断、已进入不可判断区、已进入补证队列。
+每个中心 claim 必须登记举证链、推理链、反向证据、证据-推理-反例-降档循环、已保持判断、已拆分命题、已降档判断、已撤回判断、已进入不可判断区和已进入补证队列。
 
 ## 9. Red Team Pass
 
-最终表达前必须自我攻击：
-
-- 如果这套解释是错的，最可能错在哪里？
-- 哪些主体被框架偏好遮蔽？
-- 哪些概念看似命中，实际只是词义相似？
-- 哪些反例会撤回中心命题？
-- 哪些行动建议会制造二次伤害？
-
-未通过 red-team 的判断必须降档、拆分、撤回或进入补证队列。
+最终表达前必须自我攻击：如果这套解释是错的，最可能错在哪里；哪些主体被框架偏好遮蔽；哪些概念只是词义相似；哪些反例会撤回中心命题；哪些行动建议会制造二次风险。
 
 ## 10. 超越性窗口
 
-`max-transcendence-window` 负责登记超越性窗口。
-
-不能解释只能先标成未知；不能解释不等于爱、意义或超越性。超越性窗口只登记超越性痕迹候选：开放行动、非工具性、非占有性、真实成本但不转化成债权、保留对方自由、保留边界。
-
-必须同时检查创伤重复、控制、补偿、角色依赖、道德表演等替代解释。不得把爱写成忍耐义务。不得用超越性取消责任链、伤害事实、补证义务或退出保护。
+不能解释不等于爱、意义或超越性。超越性窗口只登记候选痕迹。不得用超越性取消责任链、伤害事实、补证义务或退出保护。
 
 ## 11. 不可穷尽声明
 
-`max-unexhaustible-declaration` 负责登记不可穷尽声明。
-
-每次 `crossframe-max` 都必须写不可穷尽声明。不可穷尽包括：内心动机、未来自由行动、沉默主体经验、未公开材料、历史偶然性、超越性窗口和现实资料本身。
-
-“穷尽一切”只意味着在当前材料、工具、框架和时间内穷尽一切算力，不意味着 AI 终审现实真相。
-
-路径与边界必须区分事实、解释、机制候选、路径推演和想象实验；涉及阶段演化时登记状态坐标与生命周期、递进模式、双向势场、有序退场、多中心治理和非线性路径库。
-
-连续运行状态必须记录已读、未读、已展开、未展开、已降档、已撤回和下一轮入口。反向推演 / 自我攻击回合必须写入 `max-red-team-pass` 或同等可见结构。
+每次 `crossframe-max` 都必须写不可穷尽声明。不可穷尽包括内心动机、未来自由行动、沉默主体经验、未公开材料、历史偶然性、超越性窗口和现实资料本身。
 
 ## 12. 输出分层
 
-输出分层模式以 `max-output-layers` 为准。产物优先交付只在 `max-complete` 或显式 artifact run 中强制执行 artifact-first gate；普通 runtime 可以聊天输出完整长文，但不得冒充 artifact。
-
-`max-output-layers` 必须包含：
-
-- `max-dossier`：结构底稿。
-- `max-essay`：连续完整长文，完整文章必须单独放在 `max-essay.md`，不得只是 dossier 摘要。
-- `max-continuation-ledger`：已读、未读、已展开、未展开、已降档、已撤回。
-- `max-continuation-index`：下一轮如何继续，不重复上一轮。
-- `max-artifact-manifest.md`：仅 artifact run 必须存在，且必须最后生成。
-
-最终回复要列出可继续讨论的分支，不能只留在文件里。模板忠实度检查要防止模板截断、标题合并、单独文件不能替代模板内部章节。正文主导检查执行 longform-dominance gate 和解释覆盖率：最低 `max-essay` 为 `max-dossier` 的 1.6 倍，强完成为 2.2 倍，最大完成为 3.0 倍或剩余内容只属于非阻断续写分支。
-
-## 13. 前台输出卫生
-
-最终用户可见回答不得包含：
-
-- `### Reasoning`
-- `Tool:` / `Args:` / `read_file` / `write_file` / `bash`
-- 内部路径试错、命令流水、自我提示词
-- “Let me...” 或“我现在读取某文件”的内部执行自述
-
-最终聊天回复承担交付索引、核心结论、状态声明、source frontier 和可继续讨论分支功能。
+`max-output-layers` 必须包含 `max-dossier`、`max-essay`、`max-continuation-ledger`、`max-continuation-index` 和 `max-artifact-manifest.md`。`max-essay` 不能只是 dossier 摘要，必须是连续完整长文。
