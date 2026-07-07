@@ -6,12 +6,15 @@
 
 - `max-essay` 是最终完整解释层，不是 `max-dossier` 的摘要。
 - `max-essay` 必须建立在世界观前置运行时上：先说明预先设计的世界观如何进入对象，再展开局部世界的结构演化。
-- `max-essay` 必须建立在阶段锁通过后：`max-run-contract.json`、`max-read-plan.json`、`max-source-snapshot.json`、`max-worldview-capsule.locked.md`、`max-local-world-model.locked.md`、`max-claim-board.json`、`max-audit-board.json` 和 `max-output-plan.locked.md` 必须已经存在。
-- 没有 `max-output-plan.locked.md`，不得生成 `max-essay`；正文只能使用 output plan 中已经分配状态的 claim。
-- `max-essay` 必须建立在 `max-full-source-read-ledger` 通过后：正文或结尾产物清单必须写明 `full-source exhaustive pass: satisfied`、`total paragraphs: 3273 / 3273`，并说明没有 `partial` / `missing` read status 进入最终结果。
-- `max-essay` 必须能回指四个结构化台账：`max-read-ledger.json`、`max-claim-ledger.json`、`max-concept-hit-ledger.json`、`max-evidence-reasoning-audit.json`。
+- 普通 `/crossframe-max` 默认生成 `max-runtime-answer`：可以输出完整长文式回答、source frontier、反向推演、撤回条件和续写索引，但不得宣称 `max-complete`。
+- `max-complete` / artifact run 必须建立在阶段锁通过后：`max-run-contract.json`、`max-read-plan.json`、`max-source-snapshot.json`、`max-worldview-capsule.locked.md`、`max-local-world-model.locked.md`、`max-claim-board.json`、`max-audit-board.json` 和 `max-output-plan.locked.md` 必须已经存在。
+- 没有 `max-output-plan.locked.md`，不得生成 `max-essay`；也不得宣称完整 artifact run 或 `max-complete`。普通 runtime-answer 不得因此缩短为短答。
+- `max-complete` 必须建立在 `max-full-source-read-ledger` 通过后：正文或结尾产物清单必须写明 `full-source exhaustive pass: satisfied`、`total paragraphs: 3273 / 3273`，并说明没有 `partial` / `missing` read status 进入 `max-complete`。
+- 普通 runtime-answer 如果 full-source 尚未全部读取，必须写明 source frontier、未读文件、受影响 claim、降档条件和 continuation plan；不得把未达 `max-complete` 写成完成，也不得因此简化正文。
+- 没有真实 `max-read-ledger.json` 时，不得输出读取百分比或估算已读段落数。
+- `max-complete` essay 必须能回指四个结构化台账：`max-read-ledger.json`、`max-claim-ledger.json`、`max-concept-hit-ledger.json`、`max-evidence-reasoning-audit.json`。
 - `max-essay` 不是省略式诊断，必须完成材料边界内的最大推演，把穷尽一切算力后的拆解、校准、路径和撤回条件写成连续解释。
-- `artifact-first gate` 必须先满足：完整解释正文应写入 `max-essay.md`，聊天回复不能替代产物。
+- `artifact-first gate` 只在 artifact run 强制；文件写入不可用时，普通 runtime-answer 可以在聊天中输出完整长文式回答，但必须声明不是 `max-complete`。
 - 自动校验的最低阈值是：`max-essay` 可见字符数不得低于 `max-dossier` 的 1.6 倍。
 - 换言之，max-essay 必须至少达到 max-dossier 的 1.6 倍；强完成应达到 2.2 倍；最大完成应达到 3.0 倍，或剩余内容只属于非阻断续写分支。
 - 如果短于这个阈值，只能算“结构底稿完成，完整解释正文未完成”。
@@ -26,14 +29,16 @@
 - 完整解释这个局部世界如何运行。
 - 写出核心概念如何被结构变量命中，而不是词命中；非当前术语必须先归一到 v6 分层。
 - 说明 concept-registry lookup：哪些概念先查 registry 再读 full-source，哪些概念出现 neighbor hit、conflict hit 或 gap hit；概念注册表不替代 full-source。
-- 说明 full-source exhaustive pass：`max-full-source-read-ledger` 如何从 stage 0 source inventory 走到 stage 8 final read audit，为什么 `layer digest` 只辅助连续性、不替代原文逐段读取。
+- 说明 full-source exhaustive pass：普通 runtime-answer 说明 source frontier 和未完成处；max-complete 才写 `full-source exhaustive pass: satisfied` 与 `total paragraphs: 3273 / 3273`。
+- 说明 `layer digest` 如何保留分层连续性，但不能替代 full-source 回查和 paragraph id。
 - 展开运行规律、问题定位、演化路径、处理问题和反例。
 - 说明 `max-source-frontier`：retrieval-trigger-policy 状态、外部检索触发理由、资料快照时间、主动检索、反向检索、缺失材料、冲突材料、缺席主体和停止条件。
+- 外部检索失败不得自动使整轮失败；只降档依赖该事实的 claim，结构解释与思想谱系可以继续写。
 - 说明 `max-evidence-reasoning-audit`：举证链、推理链、反向证据、证据-推理-反例-降档循环和输出前状态。
 - 说明 phase-lock gate：冻结型中间产物如何把候选命题、审计、输出计划串成状态链。
 - 说明 `max-transcendence-window`：不能解释不等于超越性；只把开放行动、误读风险、撤回条件和不可升格的未知分开写清。
 - 说明连续运行状态：本轮已读材料、已展开路径、未展开路径、已撤回判断和下一轮续写入口。
-- 说明主体位置矩阵：行动者、承接者、受害者、旁观者、制度主体、沉默者、退出者和未来主体不能被强势材料吞没。
+- 说明主体位置矩阵：行动者、承接者、受影响者、旁观者、制度主体、沉默者、退出者和未来主体不能被强势材料吞没。
 - 说明路径置信分层：事实路径、机制候选路径、低置信想象实验、纯反事实路径和价值性解释路径不能混成同一种强度。
 - 说明反向推演：如果这套解释是错的，最可能错在哪里，哪些地方存在框架偏好遮蔽和解释力幻觉。
 - 说明不可穷尽声明：内心动机、未来自由行动、沉默主体经验、未公开材料、历史偶然性和超越性窗口不能被假装穷尽。
@@ -66,24 +71,28 @@
 
 结尾：把解释回落到现实行动边界，并附产物清单与续写索引。
 
-产物清单必须包含：phase-lock gate；max-run-contract.json；max-read-plan.json；max-source-snapshot.json；max-worldview-capsule.locked.md；max-local-world-model.locked.md；max-claim-board.json；max-audit-board.json；max-output-plan.locked.md；full-source exhaustive pass: satisfied；total paragraphs: 3273 / 3273；max-full-source-read-ledger；max-read-ledger.json；max-claim-ledger.json；max-concept-hit-ledger.json；max-evidence-reasoning-audit.json；max-validator-report.json；max-repair-plan.json（如本轮发生 validation failure）；read status: full / partial / missing；stage 8 final read audit。
+普通 runtime-answer 产物清单必须包含：运行档位；phase-lock gate 状态；局部世界；资料前沿；retrieval-trigger-policy；max-continuation-index；不可穷尽声明；未读材料和续写入口。
+
+max-complete 产物清单必须额外包含：max-run-contract.json；max-read-plan.json；max-source-snapshot.json；max-worldview-capsule.locked.md；max-local-world-model.locked.md；max-claim-board.json；max-audit-board.json；max-output-plan.locked.md；full-source exhaustive pass: satisfied；total paragraphs: 3273 / 3273；max-full-source-read-ledger；max-read-ledger.json；max-claim-ledger.json；max-concept-hit-ledger.json；max-evidence-reasoning-audit.json；max-validator-report.json；max-repair-plan.json（如本轮发生 validation failure）；read status: full / partial / missing；stage 8 final read audit。
 ```
 
 ## 禁止
 
 - 禁止只输出提纲或项目符号。
 - 禁止只在聊天里输出压缩版、摘要版或短答后宣称 max 完成。
-- 禁止没有 `max-output-plan.locked.md` 就生成 `max-essay`。
-- red-team 没有最终正文权限；反向证据必须先改变 `max-audit-board.json` 和 claim 状态。
+- 禁止因为任务庞大、单轮输出压力、3273 段尚未全部读取、artifact 未全部写入或 validator 未运行而自动缩短为摘要。
+- 禁止没有真实 `max-read-ledger.json` 时自报读取百分比或估算段落数。
+- 禁止没有 `max-output-plan.locked.md` 就宣称完整 artifact run 或 max-complete。
+- red-team 没有最终正文权限；反向证据必须先改变 claim 状态。
 - 禁止用一个合并阅读版替代 `max-artifact-manifest.md`、`max-dossier.md`、`max-essay.md`、`max-continuation-ledger.md` 和 `max-continuation-index.md`。
 - 禁止把 `max-dossier` 当正文。
 - 禁止为了显得完整而不加区分地堆概念。
 - 禁止跳过 concept-registry lookup 后凭记忆使用概念。
 - 禁止把 registry 条目当作定义，概念定义必须回到 full-source paragraph id。
-- 禁止在触发 retrieval-trigger-policy 时跳过主动检索或反向检索。
-- 禁止在 full-source exhaustive pass 未写明 `full-source exhaustive pass: satisfied` 和 `total paragraphs: 3273 / 3273` 时输出最终长文。
-- 禁止让 `partial` 或 `missing` read status 进入最终产物；出现该状态只能输出 `max-incomplete: full-source-exhaustive-pass-not-satisfied`。
-- 禁止让宏观解释取消低尺度痛苦和责任链。
+- 禁止在触发 retrieval-trigger-policy 时跳过主动检索或反向检索；若检索失败，登记失败并降档相关 claim。
+- 禁止在 full-source exhaustive pass 未写明 `full-source exhaustive pass: satisfied` 和 `total paragraphs: 3273 / 3273` 时宣称 max-complete。
+- 禁止让 `partial` 或 `missing` read status 进入 max-complete；普通 runtime-answer 必须登记并降档，而不是直接短答。
+- 禁止让宏观解释取消低尺度事实和责任链。
 - 禁止把演化路径写成命运预言。
 - 禁止把处理问题写成处置授权。
 - 禁止把未找到证据写成证据不存在。
@@ -97,3 +106,4 @@
 - 禁止把事实路径、机制候选路径、低置信想象实验、纯反事实路径和价值性解释路径写成同一强度。
 - 禁止把原则上不可穷尽的对象写成已经穷尽。
 - 禁止超长输出缺少输出分层和续写索引。
+- 禁止在最终用户可见回答中包含 `### Reasoning`、`Tool:`、`Args:`、`read_file`、`write_file`、`bash` 或内部路径试错。
