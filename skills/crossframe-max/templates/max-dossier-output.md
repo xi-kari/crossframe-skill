@@ -1,11 +1,11 @@
 # max-dossier
 
-`max-dossier` 是 `crossframe-max` 的完整结构底稿。它必须先于 `max-essay`，但不能替代文章正文。
+`max-dossier` 是 `crossframe-max` 的完整结构底稿。它必须先于 `max-essay`，但不能替代文章正文。普通 `max-runtime-answer` 使用本模板登记结构状态；`max-complete` / artifact validation 才要求全部 JSON 台账、3273/3273 full-source 和 validator 通过。
 
 ## max-phase-lock
 
 - phase-lock gate：
-- 阶段锁状态：
+- 阶段锁状态：runtime-answer / artifact-run / validation-run
 - phase artifacts：
 - max-run-contract.json：
 - max-read-plan.json：
@@ -20,7 +20,7 @@
 - phase_exception_record：
 - affected phase reset：
 - red-team 只能改变 claim 状态，且没有最终正文权限：
-- 没有 max-output-plan.locked.md，不得生成 max-essay：
+- 没有 max-output-plan.locked.md，不得宣称完整 artifact run 或 max-complete；普通 runtime-answer 不得因此缩短为短答：
 
 ## max-worldview-capsule
 
@@ -56,11 +56,11 @@
 - stage 6 intervention and application：
 - stage 7 governance layer：
 - stage 8 final read audit：
-- full-source exhaustive pass: satisfied：
-- total paragraphs: 3273 / 3273：
-- read status: full / partial / missing：
+- full-source exhaustive pass: satisfied：仅 max-complete 可以写 satisfied；runtime-answer 写 not claimed / pending。
+- total paragraphs: 3273 / 3273：仅真实 max-read-ledger.json 完成时填写；不得估算百分比或段落数。
+- read status: full / partial / missing：partial / missing 只阻断 max-complete 声明，不阻断 runtime-answer 长文生成。
 - layer digest：
-- partial / missing 状态处理：
+- partial / missing 状态处理：登记 source frontier、降档相关 claim、列下一步读取计划；不得缩成摘要。
 - 已检索资料：
 - 已使用源锚点：
 - 已展开路径：
@@ -95,19 +95,15 @@
 - 冲突材料：
 - 不可访问材料：
 - 未找到也要登记：
-- 来源类型分层：
-- 用户材料：
-- 公开报道 / 论文 / 统计数据 / 档案：
-- 法律文本 / 平台规则 / 制度文件：
-- 当事人叙述 / 第三方评论 / AI 推测：
+- 来源类型分层：用户材料；公开报道 / 论文 / 统计数据 / 档案；法律文本 / 平台规则 / 制度文件；当事人叙述 / 第三方评论 / AI 推测。
 - 事实、解释、机制候选、路径推演和想象实验区分：
 - 缺席主体检查：
 - 检索反身性：
 - 停止条件：
 - 资料饱和状态：
 - 未穷尽资料队列：
-- full-source exhaustive pass: satisfied：
-- total paragraphs: 3273 / 3273：
+- full-source exhaustive pass: satisfied：仅 max-complete 可以写 satisfied。
+- total paragraphs: 3273 / 3273：无真实台账不得估算。
 - max-full-source-read-ledger：
 - max-read-ledger.json：
 - max-claim-ledger.json：
@@ -117,8 +113,8 @@
 - stage 8 final read audit：
 - read status: full / partial / missing：
 - layer digest：
-- partial 状态不得进入最终产物：
-- missing 状态不得进入最终产物：
+- partial 状态处理：runtime-answer 登记并降档；max-complete 阻断。
+- missing 状态处理：runtime-answer 登记并给补读计划；max-complete 阻断。
 - `00-source-envelope.md`：
 - `01-guide.md`：
 - `02-boundary-layer.md`：
@@ -141,14 +137,10 @@
 - 真实成本但不转化成债权：
 - 保留对方的自由：
 - 不取消边界：
-- 不得要求受害者继续忍耐：
+- 不把开放行动写成承受义务：
 - 打开的未来可能性：
 - 误读风险：
-- 创伤重复：
-- 控制 / 占有 / 权力策略：
-- 补偿 / 角色依赖 / 沉没成本：
-- 道德表演 / 自我证明 / 牺牲义务：
-- 责任链与伤害事实保留：
+- 责任链与事实保留：
 - 退出保护与边界保护：
 - 撤回条件：
 
@@ -156,7 +148,7 @@
 
 - 行动者：
 - 承接者：
-- 受害者 / 受影响者：
+- 受影响者：
 - 旁观者：
 - 制度主体：
 - 沉默者：
@@ -205,7 +197,7 @@
 - source_paragraph_ids inside read ranges：
 - contract_id：
 - contract heading exists：
-- contract map status：
+- contract map status：维护态 / validation 态才需要完整 closure；runtime-answer 登记已检查状态。
 - concept-source-contract closure：
 - 已读取 full-source paragraph id：
 - 已回查 layer digest：
@@ -218,7 +210,7 @@
 - 目标尺度解释：
 - 被压缩的细节：
 - 不可跨越的尺度边界：
-- 低尺度痛苦、失职和责任保留：
+- 低尺度事实、责任和行动上限保留：
 - 跨尺度转译条件：
 
 ## 运行规律
@@ -279,7 +271,7 @@
 - 被遗漏主体 / 路径 / 尺度：
 - 会撤回中心命题的反例：
 - 会降档行动建议的反例：
-- 二次伤害 / 权力背书风险：
+- 二次风险 / 权力背书风险：
 
 ## max-unexhaustible-declaration
 
@@ -322,14 +314,14 @@
 - max-concept-hit-ledger.json：
 - max-evidence-reasoning-audit.json：
 - full-source exhaustive pass：
-- full-source exhaustive pass: satisfied：
-- total paragraphs: 3273 / 3273：
+- full-source exhaustive pass: satisfied：仅 max-complete 可以写 satisfied。
+- total paragraphs: 3273 / 3273：无真实台账不得估算。
 - stage 0 source inventory：
 - stage 8 final read audit：
 - 已读取分层文件与 paragraph range：
 - read status: full / partial / missing：
 - layer digest：
-- partial / missing 最终阻断状态：
+- partial / missing 最终阻断状态：阻断 max-complete，不阻断 runtime-answer。
 - 关键 claim 使用的 source paragraph id：
 - 外部评分 / 审计模块状态（仅显式触发时）：
 
@@ -370,7 +362,7 @@
 
 ## max-validation-and-repair-state
 
-- validator status：
+- validator status：普通 runtime-answer 默认 not run；显式 validation / maintenance 才运行。
 - max-validator-report.json：
 - max-repair-plan.json：
 - validation_attempt：
@@ -407,34 +399,14 @@
 
 ## max-output-layers
 
-- artifact-first gate：
+- artifact-first gate：仅 artifact run 强制；普通 runtime-answer 保留输出分层，不因不能写文件而短答。
 - 产物目录：
 - 产物文件：
-- max-artifact-manifest.md：
+- max-artifact-manifest.md：必须最后生成，状态必须反映最终文件系统状态。
 - max-dossier.md：
 - max-essay.md：
 - max-continuation-ledger.md：
 - max-continuation-index.md：
 - 合并阅读版（如有）：
-- 校验脚本：
-- 校验状态：
-- 聊天回复边界：
-- 正常输出中的可继续讨论分支：
-- 结构底稿：
-- 完整长文：
-- 续写索引：
-- 正文主导硬闸：
-- 可继续扩展的世界档案：
-- 压缩呈现但不可省略的内容：
-
-## max-continuation-index
-
-- 下一轮续写入口：
-- 未展开路径：
-- 未展开主体位置：
-- 未展开资料队列：
-- 未展开反例：
-- 需要继续检索的材料：
-- 需要继续红队的问题：
-- 不得重复内容：
-- 不得越界内容：
+- 校验脚本：仅显式 validation / maintenance 运行。
+- 校验状态：not run / passed / failed；不得把 validator failure 写成“不影响手写文件”。
