@@ -195,15 +195,18 @@ Suite release version 是 v5.1.7；`crossframe-max` 使用的 source framework v
 
 它的运行核心是先让 AI 加载 v6 判断框架，再把对象建模为局部世界。完整运行会读取 `references/v6-full-source/`、`references/v6-route-map.yaml`、`references/concept-registry/index.md`、`references/concept-contracts/v6-core-contracts.md` 和检索触发策略，随后生成阶段锁、读取台账、命题台账、概念命中台账、举证推理审计、结构底稿和完整长文。
 
-`crossframe-max` 有三个运行档位：
+`crossframe-max` 有四个运行档位：
 
+- `max-artifact-run`：默认档位。先生成核心 artifact、长文和 continuation，再由 validator 如实登记未满足项。
 - `max-complete`：完整 full-source exhaustive pass、阶段锁、artifact-first、template-fidelity、longform-dominance、route-ledger gate 和 validator 全部满足后，才可宣称完成。
 - `max-design-review`：用于 skill、prompt、agent、工具、模板、脚本和运行时设计；必须使用 `skill_design` route，并登记 `design_decision_id`、`v6_rule_ids`、反向证据、撤回条件和行动上限。
-- `max-incomplete/progress`：上下文、权限、工具或时间不足时，只输出读态、缺口、下一步读取计划和 `max-incomplete:*`，不得宣称完成。
+- `max-blocked/progress`：只有真实的材料、权限、工具、安全边界或用户中止阻断时使用，并登记已完成读态与恢复入口。
+
+`max-artifact-incomplete:<registered-reason>` 是派生交付标签，不是运行档位。run contract 从 `not_run` 开始，由 validator 在检查后写入 `passed` 或 `failed`；failed 必须先重置为 `not_run` 才能重验。校验前只能写 `pending-validator`，只有 fresh passed complete report 可以宣称 `max-complete`。失败标签统一为 `max-validation-failed:<profile>:<first-error-type>`。
 
 Max 的完成条件不是“写得很长”，而是结构产物能通过校验：`max-read-ledger.json` 覆盖 v6 源段落，route 概念来自 registry，强判断有 source anchor、反证、降档和撤回条件，设计判断不越过行动上限。`max-essay` 是最终完整解释层，不能只是 `max-dossier` 摘要。
 
-Max 的 validator 不是终点。校验失败时必须生成 `max-validator-report.json` 与 `max-repair-plan.json`，按 `affected_phase` 重置受影响阶段及其下游产物。能补生成的补生成，能重写的只重写对应 Markdown；证据不足、source anchor 不成立或 concept contract 不存在时，必须降档、撤回或输出 `max-incomplete/progress`，不得通过补 marker 伪装完成。
+Max 的 validator 不是终点。校验失败时必须生成 `max-validator-report.json` 与 `max-repair-plan.json`，按 `affected_phase` 重置受影响阶段及其下游产物。能补生成的补生成，能重写的只重写对应 Markdown；strict-only 缺口使用 `mark_artifact_incomplete`，证据不足、source anchor 不成立或 concept contract 不存在时必须降档或撤回，不得通过补 marker 伪装完成。artifact-run 校验失败不会抹除已生成产物，但 report 必须投影为 failed 和非 complete 标签。分析 manifest 排除三个控制面 sidecar；report 分别绑定 run contract、manifest 和 inventoried artifact hashes。
 
 Max 相关验证：
 

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import argparse
-import filecmp
+import hashlib
 import shutil
 from pathlib import Path
 
@@ -30,13 +30,24 @@ def require(condition: bool, message: str) -> None:
         raise SystemExit(message)
 
 
+def file_sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def tree_hashes(root: Path) -> dict[str, str]:
+    return {
+        path.relative_to(root).as_posix(): file_sha256(path)
+        for path in sorted(root.rglob("*"))
+        if path.is_file()
+    }
+
+
 def same_tree(left: Path, right: Path) -> bool:
-    if not left.exists() or not right.exists():
-        return False
-    comparison = filecmp.dircmp(left, right)
-    if comparison.left_only or comparison.right_only or comparison.diff_files or comparison.funny_files:
-        return False
-    return all(same_tree(left / subdir, right / subdir) for subdir in comparison.common_dirs)
+    return left.is_dir() and right.is_dir() and tree_hashes(left) == tree_hashes(right)
 
 
 def sync_skill(src: Path, dst: Path, check_only: bool) -> None:

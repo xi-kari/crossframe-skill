@@ -8,6 +8,8 @@
 
 `crossframe-max` 的第一动作是建立世界观前置运行时，而不是直接回答用户问题。执行顺序：
 
+`v6-route-map -> concept-registry lookup -> full-source index -> worldview-runtime capsule -> staged layer reads -> full-source exhaustive pass -> v6-core-contracts -> structured ledgers -> evidence-reasoning audit`
+
 1. 读取 `references/v6-full-source/00-index.md`，建立 full-source read ledger 或 source frontier。
 2. 读取 `references/source_manifest.json` 和 `references/v6-route-map.yaml`，确认 3273 / 3273 全量源库、任务路由和本轮优先层。
 3. 读取与当前任务最相关的 v6 分层源文件，先形成 `max-worldview-capsule`。
@@ -29,6 +31,8 @@
 - `max-complete`：完整 full-source exhaustive pass、阶段锁、artifact-first、template-fidelity、longform-dominance、route-ledger gate 和 validator 全部满足后才可宣称完成。
 - `max-design-review`：用于 skill、prompt、agent、工具、模板、脚本和运行时设计。必须使用 `skill_design` route，登记 route concepts、design decision、v6 rule、反向证据、撤回条件和行动上限。该档位可以完成设计审查，但不得伪称完成完整 max 长文。
 - `max-blocked/progress`：只有文件系统不可写、必需材料不可访问、用户中止、权限缺失或边界阻断时使用。任务大、单轮长、未完成 3273/3273、validator 失败，不得单独触发只读态输出。
+
+`max-artifact-incomplete:<registered-reason>` 是 validator 派生的交付标签，不是运行档位。run contract 新建或修复后从 `validation_state=not_run` 开始；validator 完成后才可写入 `passed` 或 `failed`。failed contract 必须先重置为 `not_run` 才能重验，禁止直接跳到 passed。
 
 ## Phase Lock Rule / 阶段锁规则
 
@@ -59,11 +63,13 @@ max-run-contract.json
 - `max-claim-board.json`：冻结候选命题板；所有判断先是 `candidate`，不得直接进入正文。
 - `max-audit-board.json`：冻结审计板；red-team 只能把 claim 状态转为 `supported`、`downgraded`、`split`、`withdrawn`、`needs_search`、`unexhaustible` 或 `final`，且没有最终正文权限。
 - `max-output-plan.locked.md`：冻结输出计划，列明进入正文、降档表达、撤回、不可判断和不得写强的 claim。没有它不得宣称 `max-complete`；若本轮能写文件，应先生成最小 output plan，再继续写 `max-essay.md`。
-- `max-artifact-manifest.md`：最终文件状态清单，必须最后生成。
+- `max-artifact-manifest.md`：最终文件状态清单，必须最后生成；只散列分析与阶段产物，排除 run contract、validator report 和 repair plan。
 
 后续阶段不得直接改写已经冻结的前序产物；异常只登记为 `phase_exception_record`；处理规则为 `affected phase reset`，仅回到受影响阶段。反向证据只改变 claim 状态。
 
-validator failure 也必须遵守 phase lock。失败后登记失败项和 affected phase；它阻断 `max-complete` 宣称，但不撤销已生成的 dossier、essay 和 continuation。
+validator failure 也必须遵守 phase lock。失败后登记失败项和 affected phase；它阻断 `max-complete` 宣称，但不撤销已生成的 dossier、essay 和 continuation。校验前的 Markdown 只能登记 `pending-validator`；只有 fresh passed complete report 可以宣称 `max-complete`。report 分别散列 run contract、manifest 和 inventoried artifacts；任何 profile 失败均使用 `max-validation-failed:<profile>:<first-error-type>`。
+
+具体分类、重置和重验步骤以 `max-repair-loop-protocol.md` 为准：concept source anchor 或 contract closure 失败时交给 repair classifier，禁止靠改写最终 Markdown 绕过验证。
 
 状态表：
 
@@ -172,7 +178,7 @@ audit result:
 
 ## 6. 资料前沿与外部检索
 
-凡涉及真实机构、真实政策、当前事实、公共判断、历史事实、法律、医疗、金融、平台规则、公司、人物或最新资料，必须读取 `references/retrieval-trigger-policy.md`。未找到证据不得写成证据不存在。检索失败不得写成现实不存在。
+检索触发策略区分内部概念检索与外部事实检索。凡涉及真实机构、真实政策、当前事实、公共判断、历史事实、法律、医疗、金融、平台规则、公司、人物或最新资料，必须读取 `references/retrieval-trigger-policy.md`。未找到证据不得写成证据不存在。检索失败不得写成现实不存在。
 
 外部检索失败必须写入 source frontier，降档受影响 claim；它不得自动取消本轮 artifact 输出。
 

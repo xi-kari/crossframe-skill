@@ -1,0 +1,314 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xi-kari.github.io/crossframe-skill/max-run-contract.schema.json",
+  "title": "CrossFrame Max run contract v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "run_id",
+    "run_mode",
+    "execution_state",
+    "artifact_state",
+    "validation_state",
+    "target_profile",
+    "incomplete_reasons",
+    "blocked_reason",
+    "final_output_allowed",
+    "forbidden_behavior",
+    "affected_phase_reset_rule",
+    "phase_exception_rule",
+    "completed_read_state",
+    "resume_entry"
+  ],
+  "properties": {
+    "contract_version": {
+      "const": "v2"
+    },
+    "run_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "run_mode": {
+      "type": "string",
+      "enum": [
+        "max-artifact-run",
+        "max-complete",
+        "max-design-review",
+        "max-blocked/progress"
+      ]
+    },
+    "execution_state": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "running",
+        "blocked",
+        "finished"
+      ]
+    },
+    "artifact_state": {
+      "type": "string",
+      "enum": [
+        "absent",
+        "partial",
+        "core_complete",
+        "strict_complete"
+      ]
+    },
+    "validation_state": {
+      "type": "string",
+      "enum": [
+        "not_run",
+        "failed",
+        "passed"
+      ]
+    },
+    "target_profile": {
+      "type": "string",
+      "enum": [
+        "artifact-run",
+        "complete",
+        "design-review",
+        "blocked"
+      ]
+    },
+    "incomplete_reasons": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "blocked_reason": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "final_output_allowed": {
+      "type": "boolean"
+    },
+    "forbidden_behavior": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "affected_phase_reset_rule": {
+      "type": "string",
+      "minLength": 1
+    },
+    "phase_exception_rule": {
+      "type": "string",
+      "minLength": 1
+    },
+    "completed_read_state": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "resume_entry": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "required": [
+          "run_mode"
+        ],
+        "properties": {
+          "run_mode": {
+            "const": "max-artifact-run"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "target_profile": {
+            "const": "artifact-run"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "run_mode"
+        ],
+        "properties": {
+          "run_mode": {
+            "const": "max-complete"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "target_profile": {
+            "const": "complete"
+          },
+          "execution_state": {
+            "const": "finished"
+          },
+          "artifact_state": {
+            "const": "strict_complete"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "run_mode"
+        ],
+        "properties": {
+          "run_mode": {
+            "const": "max-design-review"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "target_profile": {
+            "const": "design-review"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "run_mode"
+        ],
+        "properties": {
+          "run_mode": {
+            "const": "max-blocked/progress"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "target_profile": {
+            "const": "blocked"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "execution_state"
+        ],
+        "properties": {
+          "execution_state": {
+            "const": "blocked"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "run_mode": {
+            "const": "max-blocked/progress"
+          },
+          "target_profile": {
+            "const": "blocked"
+          },
+          "blocked_reason": {
+            "type": "string",
+            "minLength": 1
+          },
+          "completed_read_state": {
+            "minItems": 1
+          },
+          "resume_entry": {
+            "type": "string",
+            "minLength": 1
+          },
+          "final_output_allowed": {
+            "const": false
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "blocked_reason": {
+            "type": "null"
+          },
+          "resume_entry": {
+            "type": "null"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "execution_state"
+        ],
+        "properties": {
+          "execution_state": {
+            "const": "finished"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "final_output_allowed": {
+            "const": true
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "artifact_state"
+        ],
+        "properties": {
+          "artifact_state": {
+            "const": "strict_complete"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "incomplete_reasons": {
+            "maxItems": 0
+          }
+        }
+      },
+      "else": {
+        "if": {
+          "required": [
+            "execution_state"
+          ],
+          "properties": {
+            "execution_state": {
+              "const": "finished"
+            }
+          }
+        },
+        "then": {
+          "properties": {
+            "incomplete_reasons": {
+              "minItems": 1
+            }
+          }
+        }
+      }
+    }
+  ]
+}

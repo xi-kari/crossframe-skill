@@ -2,13 +2,20 @@ from __future__ import annotations
 
 import argparse
 from dataclasses import asdict, dataclass
-from datetime import datetime, timezone
 import json
 import sys
 from pathlib import Path
 from typing import Any
 
-from check_crossframe_max_artifacts import check_crossframe_max_artifacts
+from check_crossframe_max_artifacts import (
+    VALIDATION_PROFILES,
+    build_validation_result,
+    check_crossframe_max_artifacts,
+    check_crossframe_max_artifacts_structured,
+    load_run_contract,
+    read_manifest_contract,
+    write_validation_result,
+)
 
 
 VALIDATOR_NAME = "check_crossframe_max_artifacts"
@@ -174,7 +181,7 @@ def classify_message(message: str) -> tuple[str, str, str, str | None]:
     if message.startswith("missing file:") or message.startswith("missing structured ledger:") or "missing phase-lock artifact" in message or "missing route-ledger artifact" in message:
         return "missing_artifact", "create_missing_artifact", phase_for_artifact(extract_artifact(message)), None
     if "full-source" in message and ("not satisfied" in lowered or "partial" in lowered or "missing" in lowered):
-        return "full_source_incomplete", "max_incomplete", "source_snapshot", None
+        return "full_source_incomplete", "mark_artifact_incomplete", "source_snapshot", None
     if "source_ranges_from_registry does not match" in message or "source_ranges_read does not overlap" in message:
         return "concept_source_anchor_mismatch", "regenerate_concept_hit_and_downstream", "concept_hit", "source_ranges_from_registry"
     if "source_paragraph_ids not covered" in message:
@@ -207,7 +214,7 @@ def classify_message(message: str) -> tuple[str, str, str, str | None]:
         return "forbidden_output_present", "regenerate_markdown_only", "final_markdown", None
     if "must reference a real claim_id or source_paragraph_id" in message:
         return "missing_claim_or_source_reference", "regenerate_markdown_only", "final_markdown", None
-    return "unrepairable_repository_state", "max_incomplete", phase_for_artifact(extract_artifact(message)), None
+    return "unrepairable_repository_state", "mark_artifact_incomplete", phase_for_artifact(extract_artifact(message)), None
 
 
 def validation_error_from_message(index: int, message: str, validator: str = VALIDATOR_NAME) -> ValidationError:
@@ -236,6 +243,9 @@ def coerce_validation_errors(raw_errors: list[Any]) -> list[ValidationError]:
         if isinstance(error, ValidationError):
             coerced.append(error)
             continue
+        if isinstance(error, dict):
+            coerced.append(ValidationError(**error))
+            continue
         if all(hasattr(error, attr) for attr in ["error_type", "message", "repair_action"]):
             data = error.to_dict() if hasattr(error, "to_dict") else vars(error)
             coerced.append(ValidationError(**data))
@@ -244,23 +254,13 @@ def coerce_validation_errors(raw_errors: list[Any]) -> list[ValidationError]:
     return coerced
 
 
-def run_validators(workspace: Path, skill_root: Path | None = None) -> list[ValidationError]:
+def run_validators(
+    workspace: Path,
+    skill_root: Path | None = None,
+    profile: str | None = None,
+) -> list[ValidationError]:
     skill_root = skill_root or default_skill_root()
-    structured_func = getattr(sys.modules.get("check_crossframe_max_artifacts"), "check_crossframe_max_artifacts_structured", None)
-    if structured_func is not None:
-        return coerce_validation_errors(structured_func(workspace, skill_root))
-    return coerce_validation_errors(check_crossframe_max_artifacts(workspace, skill_root))
-
-
-def validator_report(workspace: Path, errors: list[ValidationError]) -> dict[str, Any]:
-    return {
-        "report_version": "v1",
-        "workspace": str(workspace),
-        "passed": not errors,
-        "generated_at": datetime.now(timezone.utc).isoformat(),
-        "validators": ["check_crossframe_max_artifacts", "check_crossframe_max_route_ledgers"],
-        "errors": [error.to_dict() for error in errors],
-    }
+    return coerce_validation_errors(check_crossframe_max_artifacts_structured(workspace, skill_root, profile))
 
 
 def ordered_unique(values: list[str]) -> list[str]:
@@ -276,7 +276,7 @@ def ordered_unique(values: list[str]) -> list[str]:
 def build_repair_plan(errors: list[ValidationError], workspace: Path, validation_attempt: int = 1) -> dict[str, Any]:
     if not errors:
         return {
-            "repair_plan_version": "v1",
+            "repair_plan_version": "v2",
             "workspace": str(workspace),
             "validation_attempt": validation_attempt,
             "retry_count": validation_attempt - 1,
@@ -291,7 +291,7 @@ def build_repair_plan(errors: list[ValidationError], workspace: Path, validation
             "withdraw_required": [],
             "external_search_required": False,
             "repository_maintenance_required": False,
-            "max_incomplete_if_unresolved": False,
+            "artifact_incomplete_if_unresolved": False,
         }
 
     affected_phases = ordered_unique([error.affected_phase for error in errors])
@@ -321,10 +321,10 @@ def build_repair_plan(errors: list[ValidationError], workspace: Path, validation
     if any("max-dossier.md" in error.downstream_reset for error in errors):
         must_not_patch_only.append("max-dossier.md")
     if validation_attempt >= HARD_MAX_RETRY_COUNT:
-        repair_actions = ordered_unique(repair_actions + ["max_incomplete"])
+        repair_actions = ordered_unique(repair_actions + ["mark_artifact_incomplete"])
 
     return {
-        "repair_plan_version": "v1",
+        "repair_plan_version": "v2",
         "workspace": str(workspace),
         "validation_attempt": validation_attempt,
         "retry_count": validation_attempt - 1,
@@ -339,7 +339,7 @@ def build_repair_plan(errors: list[ValidationError], workspace: Path, validation
         "withdraw_required": [],
         "external_search_required": external_search_required,
         "repository_maintenance_required": repository_maintenance_required,
-        "max_incomplete_if_unresolved": True,
+        "artifact_incomplete_if_unresolved": True,
     }
 
 
@@ -347,6 +347,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Build CrossFrame Max validator report and repair plan.")
     parser.add_argument("--workspace", default=".", help="Directory containing max artifacts.")
     parser.add_argument("--skill-root", default=None, help="Path to crossframe-max skill root.")
+    parser.add_argument("--profile", choices=VALIDATION_PROFILES, default=None)
     parser.add_argument("--validation-attempt", type=int, default=1)
     parser.add_argument("--write-report", action="store_true")
     parser.add_argument("--write-repair-plan", action="store_true")
@@ -355,27 +356,35 @@ def main() -> int:
 
     workspace = Path(args.workspace).resolve()
     skill_root = Path(args.skill_root).resolve() if args.skill_root else default_skill_root()
-    errors = run_validators(workspace, skill_root)
-    report = validator_report(workspace, errors)
-    plan = build_repair_plan(errors, workspace, args.validation_attempt)
+    errors = run_validators(workspace, skill_root, args.profile)
+    contract_messages: list[str] = []
+    contract = load_run_contract(workspace, skill_root, contract_messages)
+    profile = args.profile or str(contract.get("target_profile") or "artifact-run")
+    manifest = None if profile == "blocked" else read_manifest_contract(workspace)
+    projected_contract, report = build_validation_result(
+        workspace,
+        errors,
+        profile=profile,
+        contract=contract,
+        manifest=manifest,
+    )
+    effective_errors = coerce_validation_errors(report["errors"])
+    plan = build_repair_plan(effective_errors, workspace, args.validation_attempt)
 
     if args.write_report and not args.dry_run:
-        (workspace / "max-validator-report.json").write_text(
-            json.dumps(report, ensure_ascii=False, indent=2) + "\n",
-            encoding="utf-8",
-        )
-    if errors and args.write_repair_plan and not args.dry_run:
+        write_validation_result(workspace, projected_contract, report)
+    if effective_errors and args.write_repair_plan and not args.dry_run:
         (workspace / "max-repair-plan.json").write_text(
             json.dumps(plan, ensure_ascii=False, indent=2) + "\n",
             encoding="utf-8",
         )
     if args.dry_run:
         print(json.dumps({"validator_report": report, "repair_plan": plan}, ensure_ascii=False, indent=2))
-    elif errors:
-        print(f"repair plan required: {len(errors)} validator error(s)", file=sys.stderr)
+    elif effective_errors:
+        print(f"repair plan required: {len(effective_errors)} validator error(s)", file=sys.stderr)
     else:
         print("ok: crossframe max validator report passed; no repair plan required")
-    return 1 if errors else 0
+    return 1 if effective_errors else 0
 
 
 if __name__ == "__main__":

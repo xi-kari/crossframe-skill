@@ -4,12 +4,16 @@
 
 ### Added
 
+- 新增四种 Max validation profile、v2 run/report/repair contract、规范化核心产物模板与语义 fixture。
+- 新增 adversarial profile tests，覆盖伪完成、陈旧 manifest、marker-only、重复 id、断裂回指和 design-review 闭环失败。
 - 新增 `crossframe-max` repair loop：validator 失败后生成 `max-validator-report.json` 与 `max-repair-plan.json`，按 affected phase 执行受控重建、降档、撤回或 incomplete。
 - 新增 Max repair schemas、repair plan template、repair fixture validator 和 repair plan builder。
 - 新增 v6 contract map，校验 route-required concepts、registry anchors 与 concept contracts 的闭环。
 
 ### Changed
 
+- Max 控制面统一为四种运行档位、派生 incomplete 标签、fresh report hash binding 和 `mark_artifact_incomplete` 修复动作。
+- CI 拆分 repository integrity、semantic fixtures、runtime contract tests 与 package/install smoke jobs。
 - `check_crossframe_max_route_ledgers.py` 增加 concept source anchor closure、contract closure 和结构化 JSON 报告。
 - `check_crossframe_max_artifacts.py` 增加结构化错误、真实 claim/source 回指检查和 repair action 映射。
 - CI 增加 Max repair fixtures 与 repair schemas 校验。

@@ -409,11 +409,22 @@
 - 产物目录：
 - 产物文件：
 - max-artifact-manifest.md：必须最后生成，反映最终文件状态。
-- max-dossier.md：
-- max-essay.md：
+- max-dossier.md（结构底稿）：
+- max-essay.md（完整长文）：
 - max-continuation-ledger.md：
-- max-continuation-index.md：
+- max-continuation-index.md（续写索引）：
 - 合并阅读版（如有）：
 - 校验脚本：
 - 校验状态：passed / failed / not run
 - max-artifact-incomplete 原因：
+
+## max-continuation-index
+
+- 正常输出中的可继续讨论分支：
+- 下一轮续写入口：
+- 未展开路径：
+- 未展开主体位置：
+- 未穷尽资料队列：
+- 未展开反例：
+- 不得重复内容：
+- 不得越界内容：

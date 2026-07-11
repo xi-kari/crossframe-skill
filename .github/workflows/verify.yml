@@ -8,29 +8,24 @@ on:
   workflow_dispatch:
 
 jobs:
-  verify:
+  repository-integrity:
+    name: repository-integrity
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-
-      - name: Validate skill integrity
-        run: python scripts/check_crossframe_skill_integrity.py --repo .
-
-      - name: Validate source continuity materials
-        run: python scripts/check_source_continuity.py --materials-only --repo .
-
-      - name: Validate script syntax
+      - name: Validate repository integrity and source continuity
         run: |
-          bash -n scripts/install-codex.sh
+          python scripts/check_crossframe_skill_integrity.py --repo .
+          python scripts/check_source_continuity.py --materials-only --repo .
+      - name: Validate Python and Bash syntax
+        run: |
           python -m py_compile scripts/*.py
-
+          bash -n scripts/install-codex.sh
       - name: Validate PowerShell installer syntax
         shell: pwsh
         run: |
@@ -41,8 +36,41 @@ jobs:
             $errors | ForEach-Object { Write-Error $_ }
             exit 1
           }
+      - name: Validate whitespace
+        run: git diff --check
 
-      - name: Validate claim ledger schema JSON
+  max-contracts-and-artifacts:
+    name: max-contracts-and-artifacts
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install schema validator
+        run: python -m pip install jsonschema
+      - name: Run unit contracts and adversarial artifact tests
+        run: python -B -m unittest discover -s tests -p "test_*.py" -v
+      - name: Validate Max source and registry anchors
+        run: |
+          python scripts/check_crossframe_max_v6_full_source.py --repo .
+          python scripts/check_crossframe_max_v6_registry_anchors.py --repo .
+
+  schemas-and-fixtures:
+    name: schemas-and-fixtures
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install schema validator
+        run: python -m pip install jsonschema
+      - name: Parse schemas
         run: |
           python -m json.tool skills/crossframe/schemas/claim-ledger.schema.json > /dev/null
           python -m json.tool skills/crossframe/schemas/seven-gates-quant.schema.json > /dev/null
@@ -50,67 +78,80 @@ jobs:
           python -m json.tool skills/crossframe/schemas/calibration-anchor.schema.json > /dev/null
           python -m json.tool skills/crossframe/schemas/mechanism-update.schema.json > /dev/null
           python -m json.tool skills/crossframe/schemas/counterexample-register.schema.json > /dev/null
+          python -m json.tool skills/crossframe-max/schemas/max-run-contract.schema.json > /dev/null
           python -m json.tool skills/crossframe-max/schemas/max-validator-report.schema.json > /dev/null
           python -m json.tool skills/crossframe-max/schemas/max-repair-plan.schema.json > /dev/null
-
-      - name: Install schema validator
-        run: python -m pip install jsonschema
-
-      - name: Validate claim ledger schema fixtures
+      - name: Validate schema and Max fixtures
         run: |
           python scripts/validate_claim_ledger_schema_fixtures.py --repo .
           python scripts/validate_v5_dlc_quantification_schema_fixtures.py --repo .
-
-      - name: Validate v5 DLC casebook trials
-        run: python scripts/check_v5_dlc_casebook_trials.py --repo .
-
-      - name: Validate v5 DLC publication bundle
-        run: python scripts/check_v5_dlc_publication_bundle.py --repo .
-
-      - name: Validate CrossFrame Max v6 full source
-        run: python scripts/check_crossframe_max_v6_full_source.py --repo .
-
-      - name: Validate CrossFrame Max registry anchors
-        run: python scripts/check_crossframe_max_v6_registry_anchors.py --repo .
-
-      - name: Validate CrossFrame Max route ledger fixtures
-        run: python scripts/validate_crossframe_max_route_ledger_fixtures.py
-
-      - name: Validate CrossFrame Max repair fixtures
-        run: python scripts/validate_crossframe_max_repair_fixtures.py
-
-      - name: Validate CrossFrame Max repair planner smoke
+          python scripts/validate_crossframe_max_route_ledger_fixtures.py
+          python scripts/validate_crossframe_max_repair_fixtures.py
+      - name: Validate Max repair planner smoke
         run: |
           temp_dir="$(mktemp -d)"
           python scripts/validate_crossframe_max_repair_fixtures.py --write-valid-fixture "$temp_dir"
           python scripts/build_crossframe_max_repair_plan.py --workspace "$temp_dir" --dry-run
 
+  mirrors-and-package:
+    name: mirrors-and-package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
       - name: Check mirror sync
         run: python scripts/sync_skill_mirrors.py --check
-
-      - name: Package smoke test
+      - name: Validate publication inputs
+        run: |
+          python scripts/check_v5_dlc_casebook_trials.py --repo .
+          python scripts/check_v5_dlc_publication_bundle.py --repo .
+      - name: Build, inspect, and execute packaged fixtures
         run: |
           python scripts/package_crossframe_skill.py --repo . --version ci
           python - <<'PY'
+          import subprocess
+          import sys
+          import tempfile
           import zipfile
           from pathlib import Path
 
+          required = {
+              ".github/workflows/verify.yml",
+              "scripts/crossframe_max_fixture_factory.py",
+              "scripts/crossframe_max_runtime_contract.py",
+              "scripts/validate_crossframe_max_route_ledger_fixtures.py",
+              "scripts/validate_crossframe_max_repair_fixtures.py",
+              "skills/crossframe-max/scripts/crossframe_max_runtime_contract.py",
+              "skills/crossframe-max/schemas/max-run-contract.schema.json",
+              "skills/crossframe-max/schemas/max-validator-report.schema.json",
+              "skills/crossframe-max/schemas/max-repair-plan.schema.json",
+              "skills/crossframe-max/templates/max-artifact-manifest-output.md",
+              "skills/crossframe-max/templates/max-continuation-ledger-output.md",
+              "skills/crossframe-max/templates/max-continuation-index-output.md",
+          }
           zips = sorted(Path("outputs").glob("crossframe-skill-suite-ci-*.zip"))
           if not zips:
               raise SystemExit("package smoke did not create a ci zip")
           with zipfile.ZipFile(zips[-1]) as archive:
               names = set(archive.namelist())
-          for name in [
-              "scripts/install-codex.sh",
-              "scripts/install-codex.ps1",
-              ".github/workflows/verify.yml",
-              "skills/crossframe-max/protocols/max-repair-loop-protocol.md",
-              "skills/crossframe-max/schemas/max-repair-plan.schema.json",
-          ]:
-              if name not in names:
-                  raise SystemExit(f"package smoke missing: {name}")
+              missing = sorted(required - names)
+              if missing:
+                  raise SystemExit(f"package smoke missing: {missing}")
+              with tempfile.TemporaryDirectory() as td:
+                  archive.extractall(td)
+                  extracted = Path(td)
+                  for script in (
+                      "validate_crossframe_max_route_ledger_fixtures.py",
+                      "validate_crossframe_max_repair_fixtures.py",
+                  ):
+                      subprocess.run(
+                          [sys.executable, f"scripts/{script}"],
+                          cwd=extracted,
+                          check=True,
+                      )
           print(f"ok: package smoke -> {zips[-1]}")
           PY
-
-      - name: Git whitespace check
-        run: git diff --check
