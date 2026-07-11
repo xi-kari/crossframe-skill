@@ -827,6 +827,64 @@ def check_forbidden_outputs_in_final_markdown(workspace: Path, errors: list[str]
 
 def report_freshness_errors(workspace: Path, report: dict[str, Any]) -> list[str]:
     errors: list[str] = []
+    required = {
+        "report_version",
+        "run_id",
+        "profile",
+        "run_mode",
+        "execution_state",
+        "artifact_state",
+        "incomplete_reasons",
+        "input_validation_state",
+        "validation_state",
+        "run_contract_sha256",
+        "manifest_sha256",
+        "artifact_sha256",
+        "final_label",
+        "passed",
+        "validators",
+        "errors",
+    }
+    missing = sorted(required - set(report))
+    if missing:
+        errors.append(f"report schema: missing fields {', '.join(missing)}")
+    if report.get("report_version") != "v2":
+        errors.append("report schema: report_version must be v2")
+    passed = report.get("passed")
+    error_records = report.get("errors")
+    if not isinstance(passed, bool):
+        errors.append("report schema: passed must be boolean")
+        passed = False
+    if not isinstance(error_records, list) or any(not isinstance(item, dict) for item in error_records):
+        errors.append("report schema: errors must be a list of objects")
+        error_records = []
+    if passed:
+        if report.get("validation_state") != "passed" or error_records:
+            errors.append("report schema: passed report requires validation_state=passed and no errors")
+    elif report.get("validation_state") != "failed" or not error_records:
+        errors.append("report schema: failed report requires validation_state=failed and at least one error")
+    profile_value = report.get("profile")
+    profile = profile_value if isinstance(profile_value, str) and profile_value in VALIDATION_PROFILES else "artifact-run"
+    if profile_value != profile:
+        errors.append("report schema: invalid profile")
+    reasons_value = report.get("incomplete_reasons")
+    reasons = [item for item in reasons_value if isinstance(item, str)] if isinstance(reasons_value, list) else []
+    if reasons_value != reasons:
+        errors.append("report schema: incomplete_reasons must contain only strings")
+    expected_label = _final_label(profile, bool(passed), reasons, error_records)
+    if report.get("final_label") != expected_label:
+        errors.append(f"report schema: final_label must be {expected_label}")
+    sha_pattern = re.compile(r"^[0-9a-f]{64}$")
+    if not isinstance(report.get("run_contract_sha256"), str) or not sha_pattern.fullmatch(
+        str(report.get("run_contract_sha256"))
+    ):
+        errors.append("report schema: run_contract_sha256 must be lowercase SHA256")
+    artifact_hashes_value = report.get("artifact_sha256")
+    if not isinstance(artifact_hashes_value, dict) or any(
+        not isinstance(name, str) or not isinstance(digest, str) or not sha_pattern.fullmatch(digest)
+        for name, digest in artifact_hashes_value.items()
+    ):
+        errors.append("report schema: artifact_sha256 must map paths to lowercase SHA256")
     contract_path = workspace / "max-run-contract.json"
     if not contract_path.is_file():
         return ["run_contract_sha256: max-run-contract.json is missing"]
@@ -1262,7 +1320,7 @@ def classify_message(message: str) -> tuple[str, str, str, str | None]:
     if message.startswith("missing file:") or message.startswith("missing structured ledger:") or "missing phase-lock artifact" in message or "missing route-ledger artifact" in message:
         return "missing_artifact", "create_missing_artifact", phase_for_artifact(artifact), None
     if "full-source" in message and ("not satisfied" in lowered or "partial" in lowered or "missing" in lowered):
-        return "full_source_incomplete", "max_incomplete", "source_snapshot", None
+        return "full_source_incomplete", "mark_artifact_incomplete", "source_snapshot", None
     if "source_ranges_from_registry does not match" in message or "source_ranges_read does not overlap" in message:
         return "concept_source_anchor_mismatch", "regenerate_concept_hit_and_downstream", "concept_hit", "source_ranges_from_registry"
     if "source_paragraph_ids not covered" in message:
@@ -1295,7 +1353,7 @@ def classify_message(message: str) -> tuple[str, str, str, str | None]:
         return "forbidden_output_present", "regenerate_markdown_only", "final_markdown", None
     if "must reference a real claim_id or source_paragraph_id" in message:
         return "missing_claim_or_source_reference", "regenerate_markdown_only", "final_markdown", None
-    return "unrepairable_repository_state", "max_incomplete", phase_for_artifact(artifact), None
+    return "unrepairable_repository_state", "mark_artifact_incomplete", phase_for_artifact(artifact), None
 
 
 def check_crossframe_max_artifacts_structured(
@@ -1358,7 +1416,7 @@ def _final_label(
     error_records: list[dict[str, Any]],
 ) -> str:
     if not passed:
-        first_error = str(error_records[0].get("error_type", "unknown_error"))
+        first_error = str(error_records[0].get("error_type", "unknown_error")) if error_records else "unknown_error"
         return f"max-validation-failed:{profile}:{first_error}"
     if profile == "artifact-run":
         if incomplete_reasons:
@@ -1457,17 +1515,6 @@ def write_validation_result(
     )
     os.replace(contract_temp, contract_path)
     os.replace(report_temp, report_path)
-
-
-def validator_report(workspace: Path, errors: list[ValidationError]) -> dict[str, Any]:
-    return {
-        "report_version": "v1",
-        "workspace": str(workspace),
-        "passed": not errors,
-        "generated_at": datetime.now(timezone.utc).isoformat(),
-        "validators": ["check_crossframe_max_artifacts", "check_crossframe_max_route_ledgers"],
-        "errors": [error.to_dict() for error in errors],
-    }
 
 
 def main() -> int:

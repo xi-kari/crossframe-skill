@@ -7,6 +7,7 @@ import tempfile
 from pathlib import Path
 
 from build_crossframe_max_repair_plan import build_repair_plan, run_validators
+from crossframe_max_fixture_factory import rewrite_manifest
 from validate_crossframe_max_route_ledger_fixtures import (
     base_fixture,
     repo_root,
@@ -40,6 +41,7 @@ def expect_error_plan(name: str, mutate, expected_error: str, expected_action: s
         workspace = Path(temp_dir)
         write_valid_fixture(workspace)
         mutate(workspace)
+        rewrite_manifest(workspace)
         errors = run_validators(workspace, repo_root() / "skills" / "crossframe-max")
         if expected_error not in error_types(errors):
             raise AssertionError(f"{name}: expected {expected_error}, got {[getattr(e, 'error_type') for e in errors]}")
@@ -127,9 +129,9 @@ def test_retry_budget_exceeded() -> None:
         write_fixture(workspace, fixture)
         errors = run_validators(workspace, repo_root() / "skills" / "crossframe-max")
         plan = build_repair_plan(errors, workspace, validation_attempt=3)
-        assert_contains(actions(plan), "max_incomplete", "retry-budget: repair_actions")
-        if plan.get("max_incomplete_if_unresolved") is not True:
-            raise AssertionError(f"retry-budget: expected max incomplete, got {plan}")
+        assert_contains(actions(plan), "mark_artifact_incomplete", "retry-budget: repair_actions")
+        if plan.get("artifact_incomplete_if_unresolved") is not True:
+            raise AssertionError(f"retry-budget: expected artifact incomplete, got {plan}")
 
 
 def main() -> int:
