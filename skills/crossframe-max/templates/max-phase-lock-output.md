@@ -26,6 +26,10 @@
 }
 ```
 
+运行档位只有 `max-artifact-run`、`max-complete`、`max-design-review`、`max-blocked/progress`。`max-artifact-incomplete:<registered-reason>` 是派生交付标签，不得写入 `run_mode`。
+
+新建或修复后的 contract 使用 `validation_state=not_run`。validator 完成后才可原子持久化 `passed` 或 `failed`；failed 必须先重置为 `not_run` 才能重验。分析 manifest 排除 run contract、validator report 和 repair plan；report 单独绑定 contract、manifest 与 inventoried artifact hashes。校验前的 Markdown 完成声明必须写 `pending-validator`，只有 fresh passed complete report 可以改为 `max-complete`。
+
 ## max-read-plan.json
 
 ```json

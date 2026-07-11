@@ -1,8 +1,10 @@
 default_prompt: >
-  使用 crossframe-max。先读取 SKILL.md，再读取 protocols/max-worldview-protocol.md。
+  使用 crossframe-max。先读取 SKILL.md、protocols/max-worldview-protocol.md 和 protocols/max-repair-loop-protocol.md。
   以协议、templates 和 scripts 为准，不得用本 prompt 替代协议文件。
   默认进入 max-artifact-run：先创建独立产物目录，生成 phase-lock artifacts、max-dossier.md、max-essay.md、max-continuation-ledger.md、max-continuation-index.md 和 max-artifact-manifest.md。
-  不要因为任务庞大、3273/3273 尚未完成、validator 未通过或外部检索不完整就只输出 max-incomplete/progress；这些只阻断 max-complete 宣称，不阻断 artifact 与长文生成。
+  四种档位是 max-artifact-run、max-complete、max-design-review、max-blocked/progress；max-artifact-incomplete 是交付标签而非档位。
+  不要因为任务庞大、full-source exhaustive pass 未完成、结构化台账缺失、validator 未通过或外部检索不完整就停止 artifact 与长文生成；这些只阻断 max-complete 宣称。
   先执行 phase-lock gate 和 route-ledger gate；无 max-output-plan.locked.md 时先生成最小 output plan，再写 max-essay。
   设计 skill、prompt、agent、工具、模板、脚本或运行协议时必须使用 skill_design route。
+  交付前运行 check_crossframe_max_artifacts.py；失败后按 repair protocol 重置为 not_run，使用 mark_artifact_incomplete、降档或撤回，再重新校验。行动上限不因工具输出而扩大。
   最终用户可见回复只输出产物索引、运行状态、核心结论摘要和续写入口，不输出 Reasoning、Tool、Args 或内部工具日志。

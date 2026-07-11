@@ -112,4 +112,4 @@ python scripts/build_crossframe_max_repair_plan.py --workspace <artifact-dir> --
 - `max-validator-report.json`
 - `max-repair-plan.json`
 
-根据 repair plan，只重建受影响阶段及其下游；证据不足时降档、撤回或输出 `max-incomplete/progress`。
+根据 repair plan，只重建受影响阶段及其下游；修复前把 failed contract 重置为 `not_run`，修改分析产物后重写 manifest。strict-only 缺口使用 `mark_artifact_incomplete`，证据不足时降档或撤回。只有 fresh passed complete report 可以宣称 `max-complete`。

@@ -8,7 +8,7 @@
 
 ```json
 {
-  "repair_plan_version": "v1",
+  "repair_plan_version": "v2",
   "workspace": "",
   "validation_attempt": 1,
   "retry_count": 0,
@@ -23,7 +23,7 @@
   "withdraw_required": [],
   "external_search_required": false,
   "repository_maintenance_required": false,
-  "max_incomplete_if_unresolved": true
+  "artifact_incomplete_if_unresolved": true
 }
 ```
 
@@ -32,3 +32,4 @@
 - repair plan 是控制文件，不是文章。
 - repair plan 不得把缺证据改写成强判断。
 - repair plan 必须说明哪些文件可以重建，哪些文件不能只 patch。
+- strict-only 缺口使用 `mark_artifact_incomplete`；修复分析产物前把 run contract 重置为 `not_run`，重写 manifest 后再校验。

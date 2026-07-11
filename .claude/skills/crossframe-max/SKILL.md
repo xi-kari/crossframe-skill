@@ -23,7 +23,9 @@ disable-model-invocation: true
 - `max-artifact-run`：普通 `/crossframe-max` 默认档位。必须尽力创建独立产物目录和最小产物集，写出 `max-dossier.md`、`max-essay.md`、`max-continuation-ledger.md`、`max-continuation-index.md` 和 `max-artifact-manifest.md`。如果 full-source、结构化台账或 validator 未满足，产物状态写为 `max-artifact-incomplete:*`，但不得因此省略长文或只输出读态。
 - `max-complete`：完整 full-source exhaustive pass、阶段锁、artifact-first、template-fidelity、longform-dominance、route-ledger gate 和 validator 全部满足后才可宣称完成。
 - `max-design-review`：用于 skill、prompt、agent、工具、模板、脚本和运行时设计。必须使用 `skill_design` route，登记 `route_key`、route concepts、design decision、v6 rule、反向证据、撤回条件和行动上限；不得伪称完整 max 长文完成。
-- `max-blocked/progress`：只有文件系统不可写、必需材料不可访问、用户明确中止、工具权限缺失，或安全/政策边界阻断时使用。任务庞大、3273/3273 未完成、validator 未通过、外部检索不完整，不是只输出 `max-incomplete` 的理由；这些只阻断 `max-complete` 声明。
+- `max-blocked/progress`：只有文件系统不可写、必需材料不可访问、用户明确中止、工具权限缺失，或安全/政策边界阻断时使用。任务庞大、3273/3273 未完成、validator 未通过、外部检索不完整，不是停止产物生成的理由；这些只阻断 `max-complete` 声明。
+
+`max-artifact-incomplete:<registered-reason>` 是 validator 根据未满足项生成的交付标签，不是第五种运行档位。新建或修复后的 run contract 从 `validation_state=not_run` 开始；validator 只在检查结束后持久化 `passed` 或 `failed`。失败 contract 必须先重置为 `not_run`，才可重新校验，不能直接跳到 passed。
 
 ## 世界观层先行
 
@@ -40,18 +42,20 @@ disable-model-invocation: true
 ## 必读顺序
 
 1. `protocols/max-worldview-protocol.md`
-2. `references/source_manifest.json`
-3. `references/v6-route-map.yaml`
-4. `references/concept-registry/index.md`
-5. `references/concept-contracts/v6-core-contracts.md`
-6. `references/retrieval-trigger-policy.md`
-7. `references/v6-full-source/00-index.md`
-8. `references/v6-full-source/00-heading-index.md`
-9. `references/v6-full-source/00-term-index.md`
-10. `references/v6-full-source/00-table-index.md`
-11. route 指定的 v6 full-source 分层文件与 `tables/`
-12. `templates/` 中本轮产物对应 contract
-13. `scripts/` 中对应 validator
+2. `protocols/max-repair-loop-protocol.md`
+3. `references/source_manifest.json`
+4. `references/v6-route-map.yaml`
+5. `references/concept-registry/index.md`
+6. `references/concept-contracts/v6-core-contracts.md`
+7. `references/concept-contracts/v6-contract-map.json`
+8. `references/retrieval-trigger-policy.md`
+9. `references/v6-full-source/00-index.md`
+10. `references/v6-full-source/00-heading-index.md`
+11. `references/v6-full-source/00-term-index.md`
+12. `references/v6-full-source/00-table-index.md`
+13. route 指定的 v6 full-source 分层文件与 `tables/`
+14. `templates/` 中本轮产物对应 contract
+15. `scripts/` 中对应 validator
 
 任务路由以 `references/v6-route-map.yaml` 为准。route map 决定阶段读取顺序，不能降低 `max-complete` 的 full-source exhaustive pass 要求。概念注册表只做定位、别名、邻域和触发，不替代 full-source。
 
@@ -127,7 +131,7 @@ Markdown 章节不能替代 JSON 台账。source paragraph id 必须存在于 v6
 
 文件必须分开交付；完整文章必须单独放在 `max-essay.md`。最终聊天回复只承担交付索引和继续讨论入口功能，并列出可继续讨论的分支。
 
-`max-artifact-manifest.md` 必须最后生成。若后续生成或修改了任何 artifact，必须重写 manifest，使其反映最终文件状态，而不是计划状态。
+`max-artifact-manifest.md` 必须最后生成。若后续生成或修改了任何 artifact，必须重写 manifest，使其反映最终文件状态，而不是计划状态。manifest 只散列分析与阶段产物，排除 `max-run-contract.json`、`max-validator-report.json` 和 `max-repair-plan.json`；validator report 另行散列 run contract、manifest 和清单内每个 artifact，避免状态循环与旧报告重放。
 
 ## 模板与校验
 
@@ -144,11 +148,22 @@ Markdown 章节不能替代 JSON 台账。source paragraph id 必须存在于 v6
 - 强完成：`max-essay` 至少达到 2.2 倍，并把主要路径写入连续解释。
 - 最大完成：`max-essay` 至少达到 3.0 倍，或剩余内容只属于非阻断续写分支。
 
-交付后运行 validator。validator 失败时，状态为 `max-artifact-incomplete: validation-failed`，不得把失败写成通过；但已经生成的 dossier / essay / continuation 仍然是本轮交付对象。
+交付后运行 validator。校验前 Markdown 只能登记 `pending-validator`。只有 fresh、passed 的 complete report 可以宣称 `max-complete`。任何 profile 失败都必须生成 `max-validation-failed:<profile>:<first-error-type>`；artifact-run 失败不删除已生成的 dossier / essay / continuation，但 report 投影的 `validation_state` 必须是 `failed`，最终标签也不得伪装成 complete。
 
 ```bash
 python scripts/check_crossframe_max_artifacts.py --workspace <artifact-dir>
 ```
+
+## 校验失败后的 repair loop
+
+validator failed 后生成 `max-validator-report.json` 与 `max-repair-plan.json`，再依据每个 structured error 的 `affected_phase`、`downstream_reset` 和 `repair_action` 重建受影响部分。不得整轮重抽，也不得只补 marker。运行：
+
+```bash
+python scripts/build_crossframe_max_repair_plan.py --workspace <artifact-dir> --write-report --write-repair-plan
+python scripts/validate_crossframe_max_repair_fixtures.py
+```
+
+严格档缺口使用 `mark_artifact_incomplete`；证据不足时降档或撤回。修复产物后重写 manifest、把 contract 重置为 `not_run`，再运行 `scripts/check_crossframe_max_artifacts.py` 和 `check_crossframe_max_route_ledgers.py`。
 
 源库维护或发布前运行：
 

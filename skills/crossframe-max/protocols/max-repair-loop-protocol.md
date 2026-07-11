@@ -164,3 +164,5 @@ hard max_retry_count: 3
 证据不足不是自动重生成理由。如果错误类型是 `evidence_chain_missing`、`counterevidence_missing`、`external_search_required` 或 `source_anchor_not_found`，repair action 优先是 `downgrade_claim`、`withdraw_claim` 或 `mark_artifact_incomplete`，不是补写强判断。
 
 repair 修改任何分析产物后，必须把 run contract 的 `validation_state` 重置为 `not_run`，重算 manifest，再运行 validator。旧 report 的 run-contract、manifest 或 artifact hash 任一不匹配时均视为失效。
+
+分析 manifest 不包含 `max-run-contract.json`、`max-validator-report.json` 和 `max-repair-plan.json`。validator report 单独绑定 run contract、manifest 与 inventoried artifact hashes；blocked report 要求 manifest hash 为 null 且 artifact hash map 为空。任何失败 profile 的 final label 都必须是 `max-validation-failed:<profile>:<first-error-type>`，不得留空或沿用 complete 标签。

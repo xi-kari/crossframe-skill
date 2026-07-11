@@ -1,21 +1,29 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "CrossFrame Max Repair Plan",
+  "title": "CrossFrame Max Repair Plan v2",
   "type": "object",
+  "additionalProperties": false,
   "required": [
     "repair_plan_version",
+    "workspace",
     "validation_attempt",
     "retry_count",
     "final_output_allowed",
+    "max_retry_count",
+    "errors",
     "affected_phases",
     "must_regenerate",
     "must_not_patch_only",
     "repair_actions",
-    "max_incomplete_if_unresolved"
+    "downgrade_required",
+    "withdraw_required",
+    "external_search_required",
+    "repository_maintenance_required",
+    "artifact_incomplete_if_unresolved"
   ],
   "properties": {
     "repair_plan_version": {
-      "const": "v1"
+      "const": "v2"
     },
     "workspace": {
       "type": "string"
@@ -58,6 +66,7 @@
     },
     "repair_actions": {
       "type": "array",
+      "uniqueItems": true,
       "items": {
         "enum": [
           "create_missing_artifact",
@@ -66,11 +75,14 @@
           "regenerate_claim_and_downstream",
           "regenerate_audit_and_downstream",
           "regenerate_output_plan_and_final_markdown",
+          "regenerate_manifest_and_revalidate",
+          "reset_run_contract_and_revalidate",
+          "remove_false_completion_claim",
           "downgrade_claim",
           "withdraw_claim",
           "needs_external_search",
           "repository_maintenance_required",
-          "max_incomplete"
+          "mark_artifact_incomplete"
         ]
       }
     },
@@ -86,21 +98,21 @@
     "repository_maintenance_required": {
       "type": "boolean"
     },
-    "max_incomplete_if_unresolved": {
+    "artifact_incomplete_if_unresolved": {
       "type": "boolean"
     }
   },
   "allOf": [
     {
       "if": {
+        "required": [
+          "final_output_allowed"
+        ],
         "properties": {
           "final_output_allowed": {
             "const": false
           }
-        },
-        "required": [
-          "final_output_allowed"
-        ]
+        }
       },
       "then": {
         "properties": {
@@ -110,6 +122,5 @@
         }
       }
     }
-  ],
-  "additionalProperties": false
+  ]
 }
