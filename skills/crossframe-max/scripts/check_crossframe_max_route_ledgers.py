@@ -32,10 +32,6 @@ ARTIFACTS_TO_SCAN = [
     "max-output-plan.locked.md",
 ]
 
-PRESENT_FALSE_RE = re.compile(
-    r'(?:present\s*["\']?\s*[:=]\s*false|absent\s*["\']?\s*[:=]\s*true)',
-    re.IGNORECASE,
-)
 PARAGRAPH_RANGE_RE = re.compile(r"P(\d{4})(?:-P?(\d{4}))?")
 ANCHOR_WITH_FILE_RE = re.compile(r"`([^`]+\.md)`\s+`(P\d{4})(?:-P?(\d{4}))?`")
 VALIDATOR_NAME = "check_crossframe_max_route_ledgers"
@@ -591,8 +587,6 @@ def markdown_lines_for_forbidden_scan(text: str) -> list[tuple[int, str]]:
         if in_code_block or stripped.startswith(">"):
             continue
         normalized = stripped.replace("`", "")
-        if PRESENT_FALSE_RE.search(normalized):
-            continue
         lines.append((line_no, normalized))
     return lines
 

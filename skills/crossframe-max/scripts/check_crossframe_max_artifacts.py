@@ -758,12 +758,135 @@ def check_design_decision_closure(workspace: Path, errors: list[str]) -> None:
             for field in ("design_decision_id", "v6_rule_ids", "withdrawal_condition", "action_limit"):
                 if not claim.get(field):
                     errors.append(f"design-review: skill_design decision missing {field}")
+            if claim.get("needs_evidence") is True:
+                errors.append(
+                    f"premature final claim: {claim.get('claim_id', 'unknown')} still has needs_evidence=true"
+                )
     if not isinstance(audits, list) or not audits:
         errors.append("design-review: skill_design audit must contain counterevidence")
     else:
         for audit in audits:
             if isinstance(audit, dict) and not audit.get("counterevidence"):
                 errors.append("design-review: skill_design audit missing counterevidence")
+
+
+def check_claim_identity_and_backreferences(workspace: Path, errors: list[str]) -> None:
+    claims_data = read_json_file(workspace / "max-claim-ledger.json", errors, "claim ledger")
+    audits_data = read_json_file(workspace / "max-evidence-reasoning-audit.json", errors, "evidence audit")
+    claims = claims_data.get("claims") if isinstance(claims_data, dict) else None
+    audits = audits_data.get("audits") if isinstance(audits_data, dict) else None
+    if not isinstance(claims, list) or not isinstance(audits, list):
+        return
+    claim_ids = [
+        claim.get("claim_id")
+        for claim in claims
+        if isinstance(claim, dict) and isinstance(claim.get("claim_id"), str)
+    ]
+    if len(claim_ids) != len(set(claim_ids)):
+        errors.append("duplicate identifier: max-claim-ledger.json contains duplicate claim_id")
+    for claim in claims:
+        if not isinstance(claim, dict):
+            continue
+        source_ids = claim.get("source_paragraph_ids")
+        if isinstance(source_ids, list) and len(source_ids) != len(set(source_ids)):
+            errors.append(
+                f"duplicate identifier: {claim.get('claim_id', 'unknown')} contains duplicate source_paragraph_ids"
+            )
+    audit_claim_ids = {
+        audit.get("claim_id")
+        for audit in audits
+        if isinstance(audit, dict) and isinstance(audit.get("claim_id"), str)
+    }
+    if set(claim_ids) != audit_claim_ids:
+        errors.append(
+            "cross reference mismatch: claim and audit claim_id sets differ; "
+            f"claims={sorted(set(claim_ids))}, audits={sorted(audit_claim_ids)}"
+        )
+
+
+def check_forbidden_outputs_in_final_markdown(workspace: Path, errors: list[str]) -> None:
+    read_plan = read_json_file(workspace / "max-read-plan.json", [], "read plan")
+    if not isinstance(read_plan, dict):
+        return
+    checks = read_plan.get("route_forbidden_outputs_checked")
+    if not isinstance(checks, list):
+        return
+    forbidden = [
+        item.get("forbidden_output")
+        for item in checks
+        if isinstance(item, dict) and isinstance(item.get("forbidden_output"), str)
+    ]
+    for path in (workspace / "max-dossier.md", workspace / "max-essay.md"):
+        if not path.is_file():
+            continue
+        text = path.read_text(encoding="utf-8")
+        for phrase in forbidden:
+            if phrase in text:
+                errors.append(f"forbidden output appears in {path.name}: {phrase}")
+
+
+def report_freshness_errors(workspace: Path, report: dict[str, Any]) -> list[str]:
+    errors: list[str] = []
+    contract_path = workspace / "max-run-contract.json"
+    if not contract_path.is_file():
+        return ["run_contract_sha256: max-run-contract.json is missing"]
+    try:
+        contract = json.loads(contract_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        return [f"run_contract_sha256: invalid max-run-contract.json: {exc}"]
+    if report.get("run_id") != contract.get("run_id"):
+        errors.append("run_id differs from max-run-contract.json")
+    if report.get("profile") != contract.get("target_profile"):
+        errors.append("profile differs from max-run-contract.json")
+    if report.get("run_contract_sha256") != file_sha256(contract_path):
+        errors.append("run_contract_sha256 differs from max-run-contract.json")
+    profile = report.get("profile")
+    if profile == "blocked":
+        if report.get("manifest_sha256") is not None or report.get("artifact_sha256") != {}:
+            errors.append("blocked report must not bind an artifact manifest")
+        return errors
+    manifest_path = workspace / "max-artifact-manifest.md"
+    if not manifest_path.is_file():
+        errors.append("manifest_sha256: max-artifact-manifest.md is missing")
+        return errors
+    if report.get("manifest_sha256") != file_sha256(manifest_path):
+        errors.append("manifest_sha256 differs from max-artifact-manifest.md")
+    manifest = read_manifest_contract(workspace)
+    expected: dict[str, str] = {}
+    if isinstance(manifest, dict) and isinstance(manifest.get("artifacts"), list):
+        for item in manifest["artifacts"]:
+            if isinstance(item, dict) and isinstance(item.get("path"), str) and isinstance(item.get("sha256"), str):
+                expected[item["path"]] = item["sha256"]
+    if report.get("artifact_sha256") != expected:
+        errors.append("artifact_sha256 differs from manifest inventory")
+    for name, digest in expected.items():
+        path = workspace / name
+        if not path.is_file() or file_sha256(path) != digest:
+            errors.append(f"artifact_sha256 differs for {name}")
+    return errors
+
+
+def check_existing_validation_claim(
+    workspace: Path,
+    contract: dict[str, Any],
+    errors: list[str],
+) -> None:
+    if contract.get("validation_state") != "passed":
+        return
+    report_path = workspace / "max-validator-report.json"
+    if not report_path.is_file():
+        errors.append("stale or false validation claim: passed contract has no validator report")
+        return
+    try:
+        report = json.loads(report_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        errors.append(f"stale or false validation claim: invalid validator report: {exc}")
+        return
+    if not isinstance(report, dict):
+        errors.append("stale or false validation claim: validator report must be an object")
+        return
+    for freshness_error in report_freshness_errors(workspace, report):
+        errors.append(f"stale or false validation claim: {freshness_error}")
 
 
 def check_blocked_record_only(contract: dict[str, Any], errors: list[str]) -> None:
@@ -965,6 +1088,7 @@ def check_crossframe_max_artifacts(
     resolved_skill_root = skill_root or default_skill_root()
     contract = load_run_contract(workspace, resolved_skill_root, errors)
     active_profile = resolve_profile(profile, contract, errors)
+    check_existing_validation_claim(workspace, contract, errors)
     if active_profile == "blocked":
         check_blocked_record_only(contract, errors)
         check_no_completion_claim_in_present_text(workspace, errors)
@@ -989,6 +1113,8 @@ def check_crossframe_max_artifacts(
             ):
                 errors.extend(check_route_ledgers(workspace, resolved_skill_root))
             check_design_decision_closure(workspace, errors)
+            check_claim_identity_and_backreferences(workspace, errors)
+            check_forbidden_outputs_in_final_markdown(workspace, errors)
         return errors
 
     check_manifest_inventory(workspace, contract, errors)
@@ -1037,6 +1163,8 @@ def check_crossframe_max_artifacts(
     if not any(error.startswith("missing structured ledger:") for error in errors):
         errors.extend(check_structured_ledgers(workspace, resolved_skill_root))
         errors.extend(check_route_ledgers(workspace, resolved_skill_root))
+        check_claim_identity_and_backreferences(workspace, errors)
+        check_forbidden_outputs_in_final_markdown(workspace, errors)
 
     return errors
 
@@ -1105,6 +1233,30 @@ def extract_artifact(message: str) -> str:
 def classify_message(message: str) -> tuple[str, str, str, str | None]:
     lowered = message.lower()
     artifact = extract_artifact(message)
+    if "stale or false validation claim" in lowered:
+        return "stale_or_false_validation_claim", "reset_run_contract_and_revalidate", "run_contract", "validation_state"
+    if "manifest state mismatch" in lowered:
+        return "manifest_state_mismatch", "regenerate_manifest_and_revalidate", "final_markdown", None
+    if "profile mismatch" in lowered:
+        return "profile_mismatch", "reset_run_contract_and_revalidate", "run_contract", "target_profile"
+    if "false max-complete claim" in lowered:
+        return "false_complete_claim", "remove_false_completion_claim", "final_markdown", None
+    if "premature final claim" in lowered:
+        return "premature_final_claim", "regenerate_audit_and_downstream", "claim", "needs_evidence"
+    if "duplicate identifier" in lowered:
+        return "duplicate_identifier", "regenerate_claim_and_downstream", "claim", "claim_id"
+    if "cross reference mismatch" in lowered or "final claims missing audits" in lowered or "audits without matching claims" in lowered:
+        return "cross_reference_mismatch", "regenerate_audit_and_downstream", "audit", "claim_id"
+    if "design-review:" in lowered:
+        return "design_review_closure_failed", "regenerate_output_plan_and_final_markdown", "output_plan", None
+    if "heading section too thin" in lowered or "marker-only" in lowered:
+        return "artifact_semantic_thinness", "regenerate_markdown_only", "final_markdown", None
+    if "missing heading" in lowered:
+        return "missing_template_heading", "regenerate_markdown_only", "final_markdown", None
+    if "forbidden output appears" in lowered:
+        return "forbidden_output_present", "regenerate_markdown_only", "final_markdown", None
+    if message.startswith("max-run-contract.json"):
+        return "runtime_state_conflict", "reset_run_contract_and_revalidate", "run_contract", None
     if "invalid json" in lowered:
         return "invalid_json", "create_missing_artifact", phase_for_artifact(artifact), None
     if message.startswith("missing file:") or message.startswith("missing structured ledger:") or "missing phase-lock artifact" in message or "missing route-ledger artifact" in message:

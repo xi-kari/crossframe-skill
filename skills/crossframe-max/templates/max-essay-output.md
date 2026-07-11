@@ -5,10 +5,11 @@
 ## 正文主导原则
 
 - `max-essay` 是最终完整解释层，不是 `max-dossier` 的摘要。
+- 预校验产物必须登记 `delivery_label=pending-validator`；最终交付标签只从新鲜 validator report 读取。
 - `max-essay` 必须建立在世界观前置运行时上：先说明预先设计的世界观如何进入对象，再展开局部世界的结构演化。
 - `max-essay` 必须建立在阶段锁通过后：`max-run-contract.json`、`max-read-plan.json`、`max-source-snapshot.json`、`max-worldview-capsule.locked.md`、`max-local-world-model.locked.md`、`max-claim-board.json`、`max-audit-board.json` 和 `max-output-plan.locked.md` 必须已经存在或登记为本轮可见状态。
 - 没有 `max-output-plan.locked.md`，不得宣称 `max-complete`；若文件系统可写，必须先生成最小 output plan，再写 `max-essay.md`。
-- `full-source exhaustive pass: satisfied` 与 `total paragraphs: 3273 / 3273` 是 `max-complete` 条件。未满足时，正文结尾必须写 `max-artifact-incomplete: full-source-exhaustive-pass-not-satisfied`，但不得因此取消 `max-essay.md`。
+- `full-source exhaustive pass: satisfied` 与 `total paragraphs: 3273 / 3273` 是 complete profile 条件。未满足时，在 run contract 登记 `full-source-exhaustive-pass-not-satisfied`，由 report 推导不完整交付标签，但不得因此取消 `max-essay.md`。
 - `max-complete` essay 必须能回指四个结构化台账：`max-read-ledger.json`、`max-claim-ledger.json`、`max-concept-hit-ledger.json`、`max-evidence-reasoning-audit.json`。普通 `max-artifact-run` 可以先交付 essay，并在 manifest 中登记缺失台账。
 - `artifact-first gate` 必须先满足：完整解释正文应写入 `max-essay.md`，聊天回复不能替代产物。
 - 自动校验的最低阈值是：`max-essay` 可见字符数不得低于 `max-dossier` 的 1.6 倍。

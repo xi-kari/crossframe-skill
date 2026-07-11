@@ -23,7 +23,13 @@ from check_crossframe_max_route_ledgers import (
     parse_contract_map,
     parse_registry_anchor_map,
 )
-from crossframe_max_fixture_factory import complete_run_contract, rewrite_manifest
+from crossframe_max_fixture_factory import (
+    complete_run_contract,
+    rewrite_manifest,
+    semantic_complete_dossier_text,
+    semantic_complete_essay_text,
+    semantic_marker_document,
+)
 
 
 SKILL_DESIGN_CONCEPTS = [
@@ -397,7 +403,7 @@ def write_full_artifact_fixture(workspace: Path) -> None:
                 "claims": [
                     {
                         "claim_id": "CL1",
-                        "status": "final",
+                        "status": "candidate",
                         "source_paragraph_ids": ["P0276"],
                         "concept_ids": ROUTE_CONCEPTS,
                         "needs_evidence": True,
@@ -419,7 +425,7 @@ def write_full_artifact_fixture(workspace: Path) -> None:
                     {
                         "claim_id": "CL1",
                         "audit_result": "keep",
-                        "final_status": "final",
+                        "final_status": "supported",
                         "source_paragraph_ids": ["P0276"],
                         "counterevidence_status": "searched",
                     }
@@ -446,14 +452,27 @@ def write_full_artifact_fixture(workspace: Path) -> None:
         ),
         encoding="utf-8",
     )
-    dossier = dossier_fixture_text()
-    essay = essay_fixture_text()
-    ledger = marker_blob(REQUIRED_LEDGER_MARKERS + REQUIRED_FULL_SOURCE_FILES)
-    (workspace / "max-artifact-manifest.md").write_text(marker_blob(REQUIRED_MANIFEST_MARKERS), encoding="utf-8")
+    dossier = semantic_complete_dossier_text(
+        REQUIRED_DOSSIER_HEADINGS,
+        REQUIRED_DOSSIER_MARKERS,
+        REQUIRED_FULL_SOURCE_FILES,
+    )
+    essay = semantic_complete_essay_text(REQUIRED_ESSAY_MARKERS)
+    ledger = semantic_marker_document(
+        "max-continuation-ledger",
+        REQUIRED_LEDGER_MARKERS + REQUIRED_FULL_SOURCE_FILES,
+    )
+    (workspace / "max-artifact-manifest.md").write_text(
+        semantic_marker_document("max-artifact-manifest", REQUIRED_MANIFEST_MARKERS),
+        encoding="utf-8",
+    )
     (workspace / "max-dossier.md").write_text(dossier, encoding="utf-8")
     (workspace / "max-essay.md").write_text(essay, encoding="utf-8")
     (workspace / "max-continuation-ledger.md").write_text(ledger, encoding="utf-8")
-    (workspace / "max-continuation-index.md").write_text(marker_blob(REQUIRED_INDEX_MARKERS), encoding="utf-8")
+    (workspace / "max-continuation-index.md").write_text(
+        semantic_marker_document("max-continuation-index", REQUIRED_INDEX_MARKERS),
+        encoding="utf-8",
+    )
     rewrite_manifest(workspace)
 
 
@@ -522,7 +541,7 @@ def main() -> int:
 
     forbidden_checked = copy.deepcopy(valid)
     forbidden_checked["max-dossier.md"] = "已检查 forbidden output：`把 prompt 当作概念本体`，present=false。"
-    run_case("forbidden-output-present-false", forbidden_checked, None)
+    run_case("forbidden-output-present-false", forbidden_checked, "forbidden output appears")
 
     with tempfile.TemporaryDirectory(prefix="crossframe-max-full-artifact-") as temp_dir:
         workspace = Path(temp_dir)

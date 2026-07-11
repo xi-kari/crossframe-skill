@@ -6,19 +6,23 @@
 
 ```json
 {
-  "user_request": "...",
-  "run_mode": "crossframe-v6-max",
-  "max_run_level": "max-complete | max-design-review | max-incomplete/progress",
-  "phase": "run-contract",
-  "final_output_allowed": false,
-  "primary_goal": "基于 v6 框架最大推演",
+  "contract_version": "v2",
+  "run_id": "run-001",
+  "run_mode": "max-artifact-run | max-complete | max-design-review | max-blocked/progress",
+  "execution_state": "pending | running | blocked | finished",
+  "artifact_state": "absent | partial | core_complete | strict_complete",
+  "validation_state": "not_run | failed | passed",
+  "target_profile": "artifact-run | complete | design-review | blocked",
+  "incomplete_reasons": ["registered-reason"],
+  "blocked_reason": null,
+  "final_output_allowed": true,
   "forbidden_behavior": [
-    "source snapshot 完成前输出最终答案",
-    "audit board 完成前写最终结论",
-    "output plan 锁定前写 max-essay"
+    "claim max-complete before a fresh complete report"
   ],
   "affected_phase_reset_rule": "fatal contradiction returns to the nearest affected phase",
-  "phase_exception_rule": "later phases record exceptions without altering locked artifacts"
+  "phase_exception_rule": "later phases record exceptions without altering locked artifacts",
+  "completed_read_state": ["source inventory recorded"],
+  "resume_entry": null
 }
 ```
 

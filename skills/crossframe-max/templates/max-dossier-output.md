@@ -417,3 +417,13 @@
 - 校验脚本：
 - 校验状态：passed / failed / not run
 - max-artifact-incomplete 原因：
+
+## max-continuation-index
+
+- 下一轮续写入口：
+- 未展开路径：
+- 未展开主体位置：
+- 未穷尽资料队列：
+- 未展开反例：
+- 不得重复内容：
+- 不得越界内容：
