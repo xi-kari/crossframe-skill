@@ -23,6 +23,7 @@ from check_crossframe_max_route_ledgers import (
     parse_contract_map,
     parse_registry_anchor_map,
 )
+from crossframe_max_fixture_factory import complete_run_contract, rewrite_manifest
 
 
 SKILL_DESIGN_CONCEPTS = [
@@ -362,18 +363,7 @@ def write_full_artifact_fixture(workspace: Path) -> None:
         encoding="utf-8",
     )
     (workspace / "max-run-contract.json").write_text(
-        json.dumps(
-            {
-                "run_mode": "crossframe-v6-max",
-                "max_run_level": "max-complete",
-                "final_output_allowed": False,
-                "forbidden_behavior": ["output before lock"],
-                "affected_phase_reset_rule": "affected phase reset",
-                "phase_exception_rule": "phase_exception_record",
-            },
-            ensure_ascii=False,
-            indent=2,
-        )
+        json.dumps(complete_run_contract(), ensure_ascii=False, indent=2)
         + "\n",
         encoding="utf-8",
     )
@@ -464,6 +454,7 @@ def write_full_artifact_fixture(workspace: Path) -> None:
     (workspace / "max-essay.md").write_text(essay, encoding="utf-8")
     (workspace / "max-continuation-ledger.md").write_text(ledger, encoding="utf-8")
     (workspace / "max-continuation-index.md").write_text(marker_blob(REQUIRED_INDEX_MARKERS), encoding="utf-8")
+    rewrite_manifest(workspace)
 
 
 def main() -> int:
