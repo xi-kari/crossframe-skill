@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 import sys
@@ -208,6 +209,14 @@ def require(condition: bool, message: str) -> None:
 
 def read(path: Path) -> str:
     return path.read_text(encoding="utf-8")
+
+
+def file_sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
 def joined_markdown(path: Path) -> str:
@@ -2941,6 +2950,26 @@ def check_crossframe_max_runtime_tests(repo: Path, label: str) -> None:
         text = read(path)
         for marker in markers:
             require(marker in text, f"{label}: {rel} missing runtime regression: {marker}")
+
+    root_scripts = repo / "scripts"
+    skill_scripts = repo / "skills" / "crossframe-max" / "scripts"
+    parity_paths = sorted(root_scripts.glob("check_crossframe_max_*.py"))
+    parity_paths.extend(
+        root_scripts / name
+        for name in (
+            "build_crossframe_max_repair_plan.py",
+            "generate_crossframe_max_v6_full_source.py",
+            "crossframe_max_runtime_contract.py",
+        )
+    )
+    for root_path in parity_paths:
+        require(root_path.is_file(), f"{label}: missing root Max executable: {root_path.name}")
+        skill_path = skill_scripts / root_path.name
+        require(skill_path.is_file(), f"{label}: missing skill Max executable: {root_path.name}")
+        require(
+            file_sha256(root_path) == file_sha256(skill_path),
+            f"{label}: root/skill Max executable drift: {root_path.name}",
+        )
 
 
 def check_root(root: Path, label: str) -> None:
