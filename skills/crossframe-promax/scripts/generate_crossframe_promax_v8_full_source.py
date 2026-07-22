@@ -10,6 +10,7 @@ from pathlib import Path
 import re
 import shutil
 import sys
+import warnings
 from uuid import uuid4
 from zipfile import ZipFile
 import xml.etree.ElementTree as ET
@@ -1077,6 +1078,18 @@ def _remove_tree(path: Path) -> None:
         path.unlink()
 
 
+def _cleanup_committed_backup(path: Path) -> None:
+    try:
+        _remove_tree(path)
+    except OSError as error:
+        warnings.warn(
+            "release committed but backup cleanup failed; "
+            f"backup retained at {path}: {error}",
+            RuntimeWarning,
+            stacklevel=2,
+        )
+
+
 def atomic_replace_tree(stage_dir: Path, live_dir: Path) -> None:
     stage_dir = Path(stage_dir)
     live_dir = Path(live_dir)
@@ -1221,9 +1234,9 @@ def atomic_replace_release(
         raise
 
     if tree_backup_created and tree_backup.exists():
-        _remove_tree(tree_backup)
+        _cleanup_committed_backup(tree_backup)
     if manifest_backup_created and manifest_backup.exists():
-        _remove_tree(manifest_backup)
+        _cleanup_committed_backup(manifest_backup)
 
 
 def _acquire_generation_lock(lock_path: Path) -> str:

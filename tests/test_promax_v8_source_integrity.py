@@ -576,13 +576,17 @@ class ProMaxV8GenerationSafetyTests(unittest.TestCase):
             raise AssertionError(f"transaction residue remains: {residue}")
 
     def assert_manifest_install_failure_restores_release(
-        self, old_manifest: bytes | None
+        self,
+        old_manifest: bytes | None,
+        *,
+        old_tree: bool = True,
     ) -> None:
         if not REAL_SOURCE.is_file():
             self.skipTest(f"source DOCX unavailable: {REAL_SOURCE}")
 
         generator = load_module(
-            f"promax_v8_generator_transaction_{old_manifest is not None}",
+            "promax_v8_generator_transaction_"
+            f"{old_tree}_{old_manifest is not None}",
             GENERATOR_PATH,
         )
         with tempfile.TemporaryDirectory() as directory:
@@ -590,11 +594,14 @@ class ProMaxV8GenerationSafetyTests(unittest.TestCase):
             references = repo / "skills/crossframe-promax/references"
             live = references / "v8-full-source"
             manifest_path = references / "source_manifest.json"
-            live.mkdir(parents=True)
+            references.mkdir(parents=True)
             sentinel = live / "sentinel.bin"
             sentinel_bytes = b"old live tree\x00\xff"
-            sentinel.write_bytes(sentinel_bytes)
-            before = tree_fingerprint(live)
+            before = None
+            if old_tree:
+                live.mkdir()
+                sentinel.write_bytes(sentinel_bytes)
+                before = tree_fingerprint(live)
             if old_manifest is not None:
                 manifest_path.write_bytes(old_manifest)
 
@@ -619,8 +626,11 @@ class ProMaxV8GenerationSafetyTests(unittest.TestCase):
                 ):
                     generator.generate(repo, REAL_SOURCE)
 
-            self.assertEqual(tree_fingerprint(live), before)
-            self.assertEqual(sentinel.read_bytes(), sentinel_bytes)
+            if old_tree:
+                self.assertEqual(tree_fingerprint(live), before)
+                self.assertEqual(sentinel.read_bytes(), sentinel_bytes)
+            else:
+                self.assertFalse(live.exists())
             if old_manifest is None:
                 self.assertFalse(manifest_path.exists())
             else:
@@ -645,6 +655,118 @@ class ProMaxV8GenerationSafetyTests(unittest.TestCase):
 
     def test_manifest_install_failure_without_old_manifest_restores_old_tree(self) -> None:
         self.assert_manifest_install_failure_restores_release(None)
+
+    def test_first_generation_manifest_install_failure_leaves_no_release(self) -> None:
+        self.assert_manifest_install_failure_restores_release(
+            None,
+            old_tree=False,
+        )
+
+    def test_manifest_staging_write_failure_preserves_old_release(self) -> None:
+        if not REAL_SOURCE.is_file():
+            self.skipTest(f"source DOCX unavailable: {REAL_SOURCE}")
+        generator = load_module(
+            "promax_v8_generator_manifest_staging_failure",
+            GENERATOR_PATH,
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            repo = Path(directory) / "repo"
+            references = repo / "skills/crossframe-promax/references"
+            live = references / "v8-full-source"
+            manifest_path = references / "source_manifest.json"
+            live.mkdir(parents=True)
+            sentinel = live / "sentinel.bin"
+            sentinel.write_bytes(b"old live tree")
+            old_tree = tree_fingerprint(live)
+            old_manifest = b'{"release":"old"}\r\n'
+            manifest_path.write_bytes(old_manifest)
+
+            def fail_after_partial_stage(stage_path, _manifest):
+                Path(stage_path).write_bytes(b'{"partial":')
+                raise OSError("injected manifest staging failure")
+
+            with mock.patch.object(
+                generator,
+                "write_source_manifest_stage",
+                side_effect=fail_after_partial_stage,
+            ):
+                with self.assertRaisesRegex(
+                    OSError,
+                    "injected manifest staging failure",
+                ):
+                    generator.generate(repo, REAL_SOURCE)
+
+            self.assertEqual(tree_fingerprint(live), old_tree)
+            self.assertEqual(manifest_path.read_bytes(), old_manifest)
+            self.assert_no_transaction_residue(references)
+
+    def test_committed_release_survives_backup_cleanup_failure(self) -> None:
+        generator = load_module(
+            "promax_v8_generator_backup_cleanup",
+            GENERATOR_PATH,
+        )
+        transaction_id = "a" * 32
+        for failed_backup_name in (
+            f".v8-full-source.backup-{transaction_id}",
+            f".source_manifest.json.backup-{transaction_id}",
+        ):
+            with self.subTest(failed_backup=failed_backup_name):
+                with tempfile.TemporaryDirectory() as directory:
+                    references = Path(directory) / "references"
+                    stage_tree = references / ".v8-full-source.stage-test"
+                    live_tree = references / "v8-full-source"
+                    stage_manifest = references / ".source_manifest.json.stage-test"
+                    live_manifest = references / "source_manifest.json"
+                    stage_tree.mkdir(parents=True)
+                    live_tree.mkdir()
+                    (stage_tree / "new.txt").write_bytes(b"new tree")
+                    (live_tree / "old.txt").write_bytes(b"old tree")
+                    stage_manifest.write_bytes(b'{"release":"new"}\n')
+                    live_manifest.write_bytes(b'{"release":"old"}\n')
+
+                    real_remove_tree = generator._remove_tree
+
+                    def fail_selected_backup(path):
+                        if Path(path).name == failed_backup_name:
+                            raise OSError("injected backup cleanup failure")
+                        return real_remove_tree(path)
+
+                    with mock.patch.object(
+                        generator,
+                        "_remove_tree",
+                        side_effect=fail_selected_backup,
+                    ):
+                        with self.assertWarnsRegex(
+                            RuntimeWarning,
+                            "backup cleanup failed",
+                        ):
+                            generator.atomic_replace_release(
+                                stage_tree,
+                                live_tree,
+                                stage_manifest,
+                                live_manifest,
+                                transaction_id,
+                            )
+
+                    self.assertEqual(
+                        (live_tree / "new.txt").read_bytes(),
+                        b"new tree",
+                    )
+                    self.assertFalse((live_tree / "old.txt").exists())
+                    self.assertEqual(
+                        live_manifest.read_bytes(),
+                        b'{"release":"new"}\n',
+                    )
+                    failed_backup = references / failed_backup_name
+                    self.assertTrue(failed_backup.exists())
+                    remaining_backups = sorted(
+                        path.name
+                        for path in references.iterdir()
+                        if ".backup-" in path.name
+                    )
+                    self.assertEqual(remaining_backups, [failed_backup_name])
+                    self.assertFalse(stage_tree.exists())
+                    self.assertFalse(stage_manifest.exists())
 
 
 if __name__ == "__main__":
