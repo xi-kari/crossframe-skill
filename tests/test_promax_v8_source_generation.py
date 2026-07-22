@@ -608,20 +608,27 @@ class V8GenerationSafetyTests(unittest.TestCase):
             sentinel = live / "sentinel.txt"
             sentinel.write_text("keep-me", encoding="utf-8")
             lock = live.parent / ".v8-full-source.lock"
-            lock.write_text('{"pid": 999, "token": "other"}', encoding="utf-8")
+            generation_lock = generator._acquire_generation_lock(lock)
             source = root / "fixture.docx"
             write_fixture_docx(source)
             fixture_sha = generator.sha256_file(source)
-            with mock.patch.object(
-                generator, "EXPECTED_SOURCE_SHA256", fixture_sha
-            ), mock.patch.object(generator, "validate_v8_snapshot", return_value=[]):
-                with self.assertRaisesRegex(RuntimeError, "generation lock exists"):
-                    generator.generate(repo, source)
+            try:
+                with mock.patch.object(
+                    generator, "EXPECTED_SOURCE_SHA256", fixture_sha
+                ), mock.patch.object(
+                    generator,
+                    "validate_v8_snapshot",
+                    return_value=[],
+                ):
+                    with self.assertRaisesRegex(
+                        RuntimeError,
+                        "generation lock exists",
+                    ):
+                        generator.generate(repo, source)
+            finally:
+                generator._release_generation_lock(generation_lock)
             self.assertEqual(sentinel.read_text(encoding="utf-8"), "keep-me")
-            self.assertEqual(
-                lock.read_text(encoding="utf-8"),
-                '{"pid": 999, "token": "other"}',
-            )
+            self.assertTrue(lock.is_file())
             self.assertEqual(list(live.parent.glob(".v8-full-source.stage-*")), [])
 
     def test_competing_generation_fails_while_first_generation_holds_lock(self) -> None:
@@ -643,9 +650,7 @@ class V8GenerationSafetyTests(unittest.TestCase):
                     real_render(snapshot, output_dir)
                     return
                 contender_attempted = True
-                lock_payload = json.loads(lock.read_text(encoding="utf-8"))
-                self.assertEqual(lock_payload["pid"], os.getpid())
-                self.assertRegex(lock_payload["token"], r"^[0-9a-f]{32}$")
+                self.assertTrue(lock.is_file())
                 with self.assertRaisesRegex(RuntimeError, "generation lock exists"):
                     generator.generate(repo, source)
                 contender_failed = True
@@ -664,7 +669,8 @@ class V8GenerationSafetyTests(unittest.TestCase):
             self.assertTrue(contender_failed)
             self.assertEqual(result, live)
             self.assertTrue((live / "00-index.md").is_file())
-            self.assertFalse(lock.exists())
+            released_lock = generator._acquire_generation_lock(lock)
+            generator._release_generation_lock(released_lock)
 
     def test_generate_reads_source_bytes_exactly_once(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

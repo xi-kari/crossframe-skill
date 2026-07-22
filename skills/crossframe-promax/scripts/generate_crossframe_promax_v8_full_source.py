@@ -10,6 +10,7 @@ from pathlib import Path
 import re
 import shutil
 import sys
+from typing import BinaryIO
 import warnings
 from uuid import uuid4
 from zipfile import ZipFile
@@ -19,9 +20,10 @@ import xml.etree.ElementTree as ET
 W_NS = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
 W = f"{{{W_NS}}}"
 
-EXPECTED_SOURCE_SHA256 = (
+CANONICAL_SOURCE_SHA256 = (
     "3186805a3e46e1b16948a4e51d08e7693a8e0dd04aa6b4604e796266d649936c"
 )
+EXPECTED_SOURCE_SHA256 = CANONICAL_SOURCE_SHA256
 EXPECTED_PARAGRAPHS = 3863
 EXPECTED_NON_WHITESPACE_CHARS = 155721
 EXPECTED_TABLES = 117
@@ -64,6 +66,11 @@ EXPECTED_SECTION_END_IDS = (
 )
 EXPECTED_ENVELOPE_RANGE = ("V8-P0001", "V8-P0333")
 GENERATOR_VERSION = "1.0.0"
+EXPECTED_TREE_MERKLE_ROOT = (
+    "9b804bd8d4de67b0e0cc0ce3fd106aafe5dd7a40e04a11023af627c9fab4ed6b"
+)
+TREE_MERKLE_DOMAIN = b"crossframe.promax.v8.source-tree-merkle.v1"
+TRANSACTION_JOURNAL_NAME = ".v8-full-source.transaction.json"
 
 CANONICAL_PARTS = (
     ("01-guide", "第一部分　导读"),
@@ -139,12 +146,106 @@ class V8Snapshot:
     non_whitespace_chars: int
 
 
+@dataclass
+class GenerationLock:
+    path: Path
+    handle: BinaryIO
+    released: bool = False
+
+
+class GenerationLockBusy(RuntimeError):
+    pass
+
+
 def sha256_file(path: Path) -> str:
     digest = hashlib.sha256()
     with Path(path).open("rb") as handle:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def _normalize_protected_text_bytes(raw: bytes) -> bytes:
+    raw.decode("utf-8", errors="strict")
+    if raw.startswith(b"\xef\xbb\xbf"):
+        raise ValueError("UTF-8 BOM is forbidden")
+    normalized = raw.replace(b"\r\n", b"\n")
+    if b"\r" in normalized:
+        raise ValueError("bare CR is forbidden")
+    return normalized
+
+
+def _normalized_text_hash_and_size(path: Path) -> tuple[str, int]:
+    normalized = _normalize_protected_text_bytes(Path(path).read_bytes())
+    return hashlib.sha256(normalized).hexdigest(), len(normalized)
+
+
+def _expected_tree_files() -> set[str]:
+    files = {
+        "00-heading-index.md",
+        "00-index.md",
+        "00-source-envelope.md",
+        "00-table-index.md",
+        "00-term-index.md",
+    }
+    files.update(f"{slug}.md" for slug, _title in CANONICAL_PARTS)
+    files.update(f"tables/V8-T{number:03d}.md" for number in range(1, 118))
+    return files
+
+
+def compute_tree_merkle_root(source_tree: Path) -> str:
+    source_tree = Path(source_tree)
+
+    def digest(*parts: bytes) -> bytes:
+        hasher = hashlib.sha256()
+        for part in parts:
+            hasher.update(part)
+        return hasher.digest()
+
+    leaves: list[bytes] = []
+    relative_paths = sorted(_expected_tree_files())
+    for relative_path in relative_paths:
+        path_bytes = relative_path.encode("utf-8")
+        content = _normalize_protected_text_bytes(
+            (source_tree / relative_path).read_bytes()
+        )
+        leaves.append(
+            digest(
+                TREE_MERKLE_DOMAIN,
+                b"\x00leaf\x00",
+                len(path_bytes).to_bytes(4, "big", signed=False),
+                path_bytes,
+                len(content).to_bytes(8, "big", signed=False),
+                content,
+            )
+        )
+    if not leaves:
+        raise ValueError("source tree Merkle root cannot cover an empty tree")
+    leaf_count = len(leaves)
+    level = leaves
+    while len(level) > 1:
+        next_level: list[bytes] = []
+        for index in range(0, len(level), 2):
+            if index + 1 == len(level):
+                next_level.append(
+                    digest(TREE_MERKLE_DOMAIN, b"\x00odd\x00", level[index])
+                )
+            else:
+                next_level.append(
+                    digest(
+                        TREE_MERKLE_DOMAIN,
+                        b"\x00node\x00",
+                        level[index],
+                        level[index + 1],
+                    )
+                )
+        level = next_level
+    return digest(
+        TREE_MERKLE_DOMAIN,
+        b"\x00root\x00",
+        leaf_count.to_bytes(4, "big", signed=False),
+        level[0],
+    ).hex()
 
 
 def read_document_xml(source_docx: Path) -> ET.Element:
@@ -1078,19 +1179,23 @@ def _remove_tree(path: Path) -> None:
         path.unlink()
 
 
-def _cleanup_committed_backup(path: Path) -> None:
+def _warn_nonfatal(message: str) -> None:
+    try:
+        warnings.warn(message, RuntimeWarning, stacklevel=2)
+    except Exception:
+        pass
+
+
+def _cleanup_committed_backup(path: Path) -> bool:
     try:
         _remove_tree(path)
     except OSError as error:
-        try:
-            warnings.warn(
-                "release committed but backup cleanup failed; "
-                f"backup retained at {path}: {error}",
-                RuntimeWarning,
-                stacklevel=2,
-            )
-        except Exception:
-            pass
+        _warn_nonfatal(
+            "release committed but backup cleanup failed; "
+            f"backup retained at {path}: {error}"
+        )
+        return False
+    return True
 
 
 def atomic_replace_tree(stage_dir: Path, live_dir: Path) -> None:
@@ -1125,7 +1230,237 @@ def atomic_replace_tree(stage_dir: Path, live_dir: Path) -> None:
                 _remove_tree(stage_dir)
         raise
     if backup_created and backup.exists():
-        _remove_tree(backup)
+        _cleanup_committed_backup(backup)
+
+
+def _fingerprint_release_file(path: Path) -> str:
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def _fingerprint_release_tree(path: Path) -> str:
+    path = Path(path)
+    hasher = hashlib.sha256()
+    hasher.update(b"crossframe.promax.v8.release-tree.v1\x00")
+    for artifact in sorted(item for item in path.rglob("*") if item.is_file()):
+        relative = artifact.relative_to(path).as_posix().encode("utf-8")
+        content = artifact.read_bytes()
+        hasher.update(len(relative).to_bytes(4, "big", signed=False))
+        hasher.update(relative)
+        hasher.update(len(content).to_bytes(8, "big", signed=False))
+        hasher.update(content)
+    return hasher.hexdigest()
+
+
+def _fsync_directory(path: Path) -> None:
+    if os.name == "nt":
+        return
+    descriptor = os.open(path, os.O_RDONLY)
+    try:
+        os.fsync(descriptor)
+    finally:
+        os.close(descriptor)
+
+
+def _write_json_durable(path: Path, payload: dict[str, object]) -> None:
+    path = Path(path)
+    encoded = (
+        json.dumps(payload, ensure_ascii=True, sort_keys=True, separators=(",", ":"))
+        + "\n"
+    ).encode("utf-8")
+    temporary = path.parent / f".{path.name}.tmp-{uuid4().hex}"
+    descriptor = os.open(
+        temporary,
+        os.O_CREAT | os.O_EXCL | os.O_WRONLY,
+        0o600,
+    )
+    try:
+        with os.fdopen(descriptor, "wb") as handle:
+            handle.write(encoded)
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.replace(temporary, path)
+        _fsync_directory(path.parent)
+    except BaseException:
+        if temporary.exists():
+            _remove_tree(temporary)
+        raise
+
+
+def _valid_release_digest(value: object, *, optional: bool) -> bool:
+    if value is None:
+        return optional
+    return isinstance(value, str) and re.fullmatch(r"[0-9a-f]{64}", value) is not None
+
+
+def _read_transaction_journal(release_parent: Path) -> dict[str, object] | None:
+    journal_path = Path(release_parent) / TRANSACTION_JOURNAL_NAME
+    if not journal_path.exists():
+        return None
+    try:
+        payload = json.loads(journal_path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError) as error:
+        raise RuntimeError(f"invalid release transaction journal: {error}") from error
+    expected_keys = {
+        "schema_version",
+        "transaction_id",
+        "state",
+        "stage_tree_name",
+        "stage_manifest_name",
+        "old_tree_sha256",
+        "old_manifest_sha256",
+        "new_tree_sha256",
+        "new_manifest_sha256",
+    }
+    if not isinstance(payload, dict) or set(payload) != expected_keys:
+        raise RuntimeError("release transaction journal fields are not closed")
+    transaction_id = payload.get("transaction_id")
+    if not isinstance(transaction_id, str) or re.fullmatch(
+        r"[0-9a-f]{32}", transaction_id
+    ) is None:
+        raise RuntimeError("release transaction journal id is invalid")
+    if payload.get("schema_version") != 1:
+        raise RuntimeError("release transaction journal schema is invalid")
+    if payload.get("state") not in {"prepared", "committed"}:
+        raise RuntimeError("release transaction journal state is invalid")
+    for key, prefix in (
+        ("stage_tree_name", ".v8-full-source.stage-"),
+        ("stage_manifest_name", ".source_manifest.json.stage-"),
+    ):
+        value = payload.get(key)
+        if (
+            not isinstance(value, str)
+            or Path(value).name != value
+            or not value.startswith(prefix)
+        ):
+            raise RuntimeError(f"release transaction journal {key} is invalid")
+    for key in ("old_tree_sha256", "old_manifest_sha256"):
+        if not _valid_release_digest(payload.get(key), optional=True):
+            raise RuntimeError(f"release transaction journal {key} is invalid")
+    for key in ("new_tree_sha256", "new_manifest_sha256"):
+        if not _valid_release_digest(payload.get(key), optional=False):
+            raise RuntimeError(f"release transaction journal {key} is invalid")
+    return payload
+
+
+def _matches_release_tree(path: Path, expected: object) -> bool:
+    return (
+        isinstance(expected, str)
+        and Path(path).is_dir()
+        and _fingerprint_release_tree(path) == expected
+    )
+
+
+def _matches_release_file(path: Path, expected: object) -> bool:
+    return (
+        isinstance(expected, str)
+        and Path(path).is_file()
+        and _fingerprint_release_file(path) == expected
+    )
+
+
+def _cleanup_committed_artifact(path: Path) -> bool:
+    if not Path(path).exists():
+        return True
+    return _cleanup_committed_backup(Path(path))
+
+
+def recover_release_transaction(release_parent: Path) -> str:
+    release_parent = Path(release_parent).resolve()
+    journal_temporaries = sorted(
+        release_parent.glob(f".{TRANSACTION_JOURNAL_NAME}.tmp-*")
+    )
+    payload = _read_transaction_journal(release_parent)
+    if payload is None:
+        for temporary in journal_temporaries:
+            _cleanup_committed_artifact(temporary)
+        return "none"
+
+    transaction_id = str(payload["transaction_id"])
+    journal_path = release_parent / TRANSACTION_JOURNAL_NAME
+    live_tree = release_parent / "v8-full-source"
+    live_manifest = release_parent / "source_manifest.json"
+    stage_tree = release_parent / str(payload["stage_tree_name"])
+    stage_manifest = release_parent / str(payload["stage_manifest_name"])
+    tree_backup = release_parent / (
+        f".{live_tree.name}.backup-{transaction_id}"
+    )
+    manifest_backup = release_parent / (
+        f".{live_manifest.name}.backup-{transaction_id}"
+    )
+
+    new_pair_is_live = _matches_release_tree(
+        live_tree, payload["new_tree_sha256"]
+    ) and _matches_release_file(live_manifest, payload["new_manifest_sha256"])
+    if new_pair_is_live:
+        cleanup_succeeded = True
+        for residue in (
+            tree_backup,
+            manifest_backup,
+            stage_tree,
+            stage_manifest,
+            *journal_temporaries,
+        ):
+            cleanup_succeeded = (
+                _cleanup_committed_artifact(residue) and cleanup_succeeded
+            )
+        if cleanup_succeeded:
+            try:
+                _remove_tree(journal_path)
+                _fsync_directory(release_parent)
+            except OSError as error:
+                _warn_nonfatal(
+                    "release committed but transaction journal cleanup failed; "
+                    f"journal retained at {journal_path}: {error}"
+                )
+        return "committed"
+
+    if payload["state"] == "committed":
+        raise RuntimeError("committed release fingerprints do not match the journal")
+
+    old_tree_sha = payload["old_tree_sha256"]
+    if old_tree_sha is None:
+        if tree_backup.exists():
+            raise RuntimeError("unexpected tree backup for an initially absent tree")
+        if live_tree.exists():
+            _remove_tree(live_tree)
+    elif tree_backup.exists():
+        if not _matches_release_tree(tree_backup, old_tree_sha):
+            raise RuntimeError("old tree backup fingerprint mismatch")
+        if live_tree.exists():
+            _remove_tree(live_tree)
+        os.replace(tree_backup, live_tree)
+    elif not _matches_release_tree(live_tree, old_tree_sha):
+        raise RuntimeError("old live tree cannot be recovered")
+
+    old_manifest_sha = payload["old_manifest_sha256"]
+    if old_manifest_sha is None:
+        if manifest_backup.exists():
+            raise RuntimeError(
+                "unexpected manifest backup for an initially absent manifest"
+            )
+        if live_manifest.exists():
+            _remove_tree(live_manifest)
+    elif manifest_backup.exists():
+        if not _matches_release_file(manifest_backup, old_manifest_sha):
+            raise RuntimeError("old manifest backup fingerprint mismatch")
+        if live_manifest.exists():
+            _remove_tree(live_manifest)
+        os.replace(manifest_backup, live_manifest)
+    elif not _matches_release_file(live_manifest, old_manifest_sha):
+        raise RuntimeError("old live manifest cannot be recovered")
+
+    for stage in (stage_tree, stage_manifest, *journal_temporaries):
+        if stage.exists():
+            _remove_tree(stage)
+    if old_tree_sha is not None and not _matches_release_tree(live_tree, old_tree_sha):
+        raise RuntimeError("restored live tree fingerprint mismatch")
+    if old_manifest_sha is not None and not _matches_release_file(
+        live_manifest, old_manifest_sha
+    ):
+        raise RuntimeError("restored live manifest fingerprint mismatch")
+    _remove_tree(journal_path)
+    _fsync_directory(release_parent)
+    return "rolled-back"
 
 
 def atomic_replace_release(
@@ -1155,130 +1490,140 @@ def atomic_replace_release(
         for path in (stage_tree, stage_manifest, live_manifest)
     ):
         raise ValueError("release stage and live paths must have the same parent")
+    recover_release_transaction(release_parent)
 
     if transaction_id is None:
         transaction_id = uuid4().hex
     if not re.fullmatch(r"[0-9a-f]{32}", transaction_id):
         raise ValueError("transaction id must be 32 lowercase hexadecimal characters")
-    tree_backup = release_parent / (
-        f".{live_tree.name}.backup-{transaction_id}"
-    )
+    tree_backup = release_parent / f".{live_tree.name}.backup-{transaction_id}"
     manifest_backup = release_parent / (
         f".{live_manifest.name}.backup-{transaction_id}"
     )
     if tree_backup.exists() or manifest_backup.exists():
         raise RuntimeError("release transaction backup path already exists")
 
-    tree_backup_created = False
-    manifest_backup_created = False
-    tree_installed = False
-    manifest_installed = False
+    journal_path = release_parent / TRANSACTION_JOURNAL_NAME
+    payload: dict[str, object] = {
+        "schema_version": 1,
+        "transaction_id": transaction_id,
+        "state": "prepared",
+        "stage_tree_name": stage_tree.name,
+        "stage_manifest_name": stage_manifest.name,
+        "old_tree_sha256": (
+            _fingerprint_release_tree(live_tree) if live_tree.exists() else None
+        ),
+        "old_manifest_sha256": (
+            _fingerprint_release_file(live_manifest)
+            if live_manifest.exists()
+            else None
+        ),
+        "new_tree_sha256": _fingerprint_release_tree(stage_tree),
+        "new_manifest_sha256": _fingerprint_release_file(stage_manifest),
+    }
+    _write_json_durable(journal_path, payload)
     try:
         if live_tree.exists():
             os.replace(live_tree, tree_backup)
-            tree_backup_created = True
         if live_manifest.exists():
             os.replace(live_manifest, manifest_backup)
-            manifest_backup_created = True
         os.replace(stage_tree, live_tree)
-        tree_installed = True
         os.replace(stage_manifest, live_manifest)
-        manifest_installed = True
+        payload["state"] = "committed"
+        _write_json_durable(journal_path, payload)
     except BaseException as install_error:
-        rollback_errors: list[str] = []
-
-        def rollback_step(label: str, operation) -> bool:
-            try:
-                operation()
-            except BaseException as rollback_error:
-                rollback_errors.append(f"{label}: {rollback_error}")
-                return False
-            return True
-
-        if manifest_installed and live_manifest.exists():
-            if rollback_step(
-                "remove installed manifest",
-                lambda: _remove_tree(live_manifest),
-            ):
-                manifest_installed = False
-        if tree_installed and live_tree.exists():
-            if rollback_step(
-                "remove installed tree",
-                lambda: _remove_tree(live_tree),
-            ):
-                tree_installed = False
-        if manifest_backup_created and manifest_backup.exists():
-            if rollback_step(
-                "restore manifest backup",
-                lambda: os.replace(manifest_backup, live_manifest),
-            ):
-                manifest_backup_created = False
-        if tree_backup_created and tree_backup.exists():
-            if rollback_step(
-                "restore tree backup",
-                lambda: os.replace(tree_backup, live_tree),
-            ):
-                tree_backup_created = False
-        if stage_manifest.exists():
-            rollback_step(
-                "remove staged manifest",
-                lambda: _remove_tree(stage_manifest),
-            )
-        if stage_tree.exists():
-            rollback_step(
-                "remove staged tree",
-                lambda: _remove_tree(stage_tree),
-            )
-        if rollback_errors:
-            detail = "; ".join(rollback_errors)
-            raise RuntimeError(
-                f"release rollback failed after {install_error}: {detail}"
-            ) from install_error
-        raise
-
-    if tree_backup_created and tree_backup.exists():
-        _cleanup_committed_backup(tree_backup)
-    if manifest_backup_created and manifest_backup.exists():
-        _cleanup_committed_backup(manifest_backup)
-
-
-def _acquire_generation_lock(lock_path: Path) -> str:
-    token = uuid4().hex
-    payload = json.dumps(
-        {"pid": os.getpid(), "token": token},
-        ensure_ascii=True,
-        sort_keys=True,
-    )
-    try:
-        descriptor = os.open(
-            lock_path,
-            os.O_CREAT | os.O_EXCL | os.O_WRONLY,
-            0o600,
-        )
-    except FileExistsError as error:
-        raise RuntimeError(f"generation lock exists: {lock_path}") from error
-    try:
-        with os.fdopen(descriptor, "w", encoding="utf-8", newline="\n") as handle:
-            handle.write(payload + "\n")
-    except BaseException:
         try:
-            lock_path.unlink(missing_ok=True)
-        finally:
-            raise
-    return token
+            recovery_outcome = recover_release_transaction(release_parent)
+        except BaseException as recovery_error:
+            raise RuntimeError(
+                "release recovery failed after "
+                f"{install_error}: {recovery_error}"
+            ) from install_error
+        if recovery_outcome == "committed":
+            return
+        raise
+    recover_release_transaction(release_parent)
 
 
-def _release_generation_lock(lock_path: Path, token: str) -> None:
+def _lock_generation_file(handle: BinaryIO) -> None:
+    handle.seek(0)
+    if os.name == "nt":
+        import msvcrt
+
+        msvcrt.locking(handle.fileno(), msvcrt.LK_NBLCK, 1)
+    else:
+        import fcntl
+
+        fcntl.flock(handle.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+
+
+def _unlock_generation_lock_file(handle: BinaryIO) -> None:
+    handle.seek(0)
+    if os.name == "nt":
+        import msvcrt
+
+        msvcrt.locking(handle.fileno(), msvcrt.LK_UNLCK, 1)
+    else:
+        import fcntl
+
+        fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
+
+
+def _acquire_generation_lock(lock_path: Path) -> GenerationLock:
+    lock_path = Path(lock_path)
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
     try:
-        payload = json.loads(lock_path.read_text(encoding="utf-8"))
-    except (FileNotFoundError, OSError, UnicodeError, json.JSONDecodeError):
-        return
-    if payload != {"pid": os.getpid(), "token": token}:
-        return
+        handle = lock_path.open("a+b", buffering=0)
+    except OSError as error:
+        raise RuntimeError(f"cannot open generation lock: {lock_path}") from error
     try:
-        lock_path.unlink()
-    except FileNotFoundError:
-        pass
+        handle.seek(0, os.SEEK_END)
+        if handle.tell() == 0:
+            handle.write(b"\x00")
+            handle.flush()
+            os.fsync(handle.fileno())
+    except OSError as error:
+        try:
+            handle.close()
+        except OSError:
+            pass
+        raise RuntimeError(f"cannot initialize generation lock: {lock_path}") from error
+    try:
+        _lock_generation_file(handle)
+    except OSError as error:
+        try:
+            handle.close()
+        except OSError:
+            pass
+        raise GenerationLockBusy(f"generation lock exists: {lock_path}") from error
+    return GenerationLock(path=lock_path, handle=handle)
+
+
+def _release_generation_lock(generation_lock: GenerationLock) -> None:
+    if generation_lock.released:
+        return
+    descriptor = generation_lock.handle.fileno()
+    try:
+        try:
+            _unlock_generation_lock_file(generation_lock.handle)
+        except OSError as error:
+            _warn_nonfatal(
+                "generation lock explicit unlock failed; "
+                f"file close will release it: {error}"
+            )
+    finally:
+        try:
+            generation_lock.handle.close()
+        except OSError as error:
+            _warn_nonfatal(f"generation lock close failed: {error}")
+            try:
+                os.close(descriptor)
+            except OSError as fallback_error:
+                _warn_nonfatal(
+                    "generation lock descriptor close failed: "
+                    f"{fallback_error}"
+                )
+        generation_lock.released = True
 
 
 def build_source_manifest(
@@ -1313,7 +1658,7 @@ def build_source_manifest(
         "section_count": len(snapshot.sections),
         "generator": {
             "version": GENERATOR_VERSION,
-            "sha256": sha256_file(Path(__file__).resolve()),
+            "sha256": _normalized_text_hash_and_size(Path(__file__).resolve())[0],
         },
         "source_ranges": source_ranges,
         "files": file_entries,
@@ -1327,11 +1672,12 @@ def _source_tree_file_entries(source_tree: Path) -> list[dict[str, object]]:
         if not path.is_file():
             continue
         relative_path = path.relative_to(source_tree).as_posix()
+        normalized_hash, normalized_size = _normalized_text_hash_and_size(path)
         file_entries.append(
             {
                 "path": f"v8-full-source/{relative_path}",
-                "sha256": sha256_file(path),
-                "size": path.stat().st_size,
+                "sha256": normalized_hash,
+                "size": normalized_size,
             }
         )
     return file_entries
@@ -1412,7 +1758,7 @@ def generate(repo: Path, source_docx: Path) -> Path:
     live_dir.parent.mkdir(parents=True, exist_ok=True)
     manifest_path = live_dir.parent / "source_manifest.json"
     lock_path = live_dir.parent / f".{live_dir.name}.lock"
-    lock_token = _acquire_generation_lock(lock_path)
+    generation_lock = _acquire_generation_lock(lock_path)
     transaction_id = uuid4().hex
     stage_dir = live_dir.parent / f".{live_dir.name}.stage-{transaction_id}"
     manifest_stage = live_dir.parent / (
@@ -1428,6 +1774,19 @@ def generate(repo: Path, source_docx: Path) -> Path:
                     "generated v8 source validation failed: "
                     + "; ".join(generated_errors)
                 )
+            if snapshot.source_sha256 == CANONICAL_SOURCE_SHA256:
+                try:
+                    stage_merkle_root = compute_tree_merkle_root(stage_dir)
+                except (OSError, UnicodeError, ValueError) as error:
+                    raise ValueError(
+                        f"generated frozen tree Merkle root failed: {error}"
+                    ) from error
+                if stage_merkle_root != EXPECTED_TREE_MERKLE_ROOT:
+                    raise ValueError(
+                        "generated frozen tree Merkle root mismatch: "
+                        f"expected {EXPECTED_TREE_MERKLE_ROOT}, "
+                        f"got {stage_merkle_root}"
+                    )
             manifest = build_source_manifest(snapshot, stage_dir)
             write_source_manifest_stage(manifest_stage, manifest)
             manifest_errors = validate_staged_source_manifest(
@@ -1453,7 +1812,7 @@ def generate(repo: Path, source_docx: Path) -> Path:
             if stage_dir.exists():
                 _remove_tree(stage_dir)
     finally:
-        _release_generation_lock(lock_path, lock_token)
+        _release_generation_lock(generation_lock)
     return live_dir
 
 

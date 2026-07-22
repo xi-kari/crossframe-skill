@@ -25,11 +25,13 @@ GENERATOR_PATH = (
     ROOT
     / "skills/crossframe-promax/scripts/generate_crossframe_promax_v8_full_source.py"
 )
+GITATTRIBUTES_PATH = ROOT / ".gitattributes"
 REFERENCES = ROOT / "skills/crossframe-promax/references"
 MANIFEST_PATH = REFERENCES / "source_manifest.json"
 SOURCE_TREE = REFERENCES / "v8-full-source"
 REAL_SOURCE = Path(r"E:\世界模型\跨尺度多圈层结构推演框架_v8.0.docx")
 SNAPSHOT_SHA256 = "3186805a3e46e1b16948a4e51d08e7693a8e0dd04aa6b4604e796266d649936c"
+TREE_MERKLE_ROOT = "9b804bd8d4de67b0e0cc0ce3fd106aafe5dd7a40e04a11023af627c9fab4ed6b"
 
 EXPECTED_RANGES = [
     {
@@ -192,6 +194,23 @@ def replace_canonical_payload(path: Path, payload) -> None:
     )
 
 
+def refresh_manifest_entry(repo: Path, relative_path: str) -> None:
+    references = repo / "skills/crossframe-promax/references"
+    manifest_path = references / "source_manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    entry = next(
+        item for item in manifest["files"] if item["path"] == relative_path
+    )
+    artifact = references / relative_path
+    entry["sha256"] = sha256_file(artifact)
+    entry["size"] = artifact.stat().st_size
+    manifest_path.write_text(
+        json.dumps(manifest, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+        newline="\n",
+    )
+
+
 @contextmanager
 def copied_repository():
     with tempfile.TemporaryDirectory() as directory:
@@ -201,6 +220,9 @@ def copied_repository():
         shutil.copytree(SOURCE_TREE, references / "v8-full-source")
         if MANIFEST_PATH.is_file():
             shutil.copy2(MANIFEST_PATH, references / "source_manifest.json")
+        scripts = repo / "skills/crossframe-promax/scripts"
+        scripts.mkdir(parents=True)
+        shutil.copy2(GENERATOR_PATH, scripts / GENERATOR_PATH.name)
         yield repo
 
 
@@ -286,6 +308,16 @@ class ProMaxV8ManifestTests(unittest.TestCase):
         self.assertEqual(
             self.manifest["generator"]["sha256"], sha256_file(GENERATOR_PATH)
         )
+
+    def test_frozen_tree_merkle_root_is_independent_of_the_manifest(self) -> None:
+        checker = load_module("promax_v8_source_checker_merkle", CHECKER_PATH)
+        generator = load_module("promax_v8_generator_merkle", GENERATOR_PATH)
+        self.assertEqual(len(checker._expected_tree_files()), 138)
+        self.assertEqual(len(generator._expected_tree_files()), 138)
+        self.assertEqual(checker.EXPECTED_TREE_MERKLE_ROOT, TREE_MERKLE_ROOT)
+        self.assertEqual(generator.EXPECTED_TREE_MERKLE_ROOT, TREE_MERKLE_ROOT)
+        self.assertEqual(checker.compute_tree_merkle_root(SOURCE_TREE), TREE_MERKLE_ROOT)
+        self.assertEqual(generator.compute_tree_merkle_root(SOURCE_TREE), TREE_MERKLE_ROOT)
 
     def test_manifest_declares_exact_source_and_table_ranges(self) -> None:
         self.assertEqual(self.manifest["source_ranges"], EXPECTED_RANGES)
@@ -508,6 +540,42 @@ class ProMaxV8CheckerTamperTests(unittest.TestCase):
                 errors = self.checker.check_repository(repo)
                 self.assert_has_error(errors, fragment)
 
+    def test_coordinated_tree_and_manifest_tamper_hits_frozen_merkle_root(self) -> None:
+        with copied_repository() as repo:
+            source_file = (
+                repo
+                / "skills/crossframe-promax/references/v8-full-source/01-guide.md"
+            )
+            content = source_file.read_text(encoding="utf-8")
+            original = "统一入口"
+            replacement = "统壹入口"
+            self.assertEqual(content.count(original), 2)
+            source_file.write_text(
+                content.replace(original, replacement),
+                encoding="utf-8",
+                newline="\n",
+            )
+            refresh_manifest_entry(repo, "v8-full-source/01-guide.md")
+            errors = self.checker.check_repository(repo)
+        self.assert_has_error(errors, "frozen tree Merkle root")
+
+    def test_bom_and_bare_cr_are_rejected_by_the_frozen_tree_root(self) -> None:
+        for label, mutate in (
+            ("bom", lambda raw: b"\xef\xbb\xbf" + raw),
+            ("bare-cr", lambda raw: raw.replace(b"\n", b"\r", 1)),
+            ("invalid-utf8", lambda raw: raw + b"\xff"),
+        ):
+            with self.subTest(label=label), copied_repository() as repo:
+                source_file = (
+                    repo
+                    / "skills/crossframe-promax/references/v8-full-source/"
+                    "01-guide.md"
+                )
+                source_file.write_bytes(mutate(source_file.read_bytes()))
+                refresh_manifest_entry(repo, "v8-full-source/01-guide.md")
+                errors = self.checker.check_repository(repo)
+            self.assert_has_error(errors, "frozen tree Merkle root")
+
     def test_broken_index_backlink_is_rejected(self) -> None:
         with copied_repository() as repo:
             index = repo / "skills/crossframe-promax/references/v8-full-source/00-index.md"
@@ -520,6 +588,111 @@ class ProMaxV8CheckerTamperTests(unittest.TestCase):
             )
             errors = self.checker.check_repository(repo)
         self.assert_has_error(errors, "index backlink")
+
+
+class ProMaxV8CheckoutAndCoordinationTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.checker = load_module("promax_v8_source_checker_coordination", CHECKER_PATH)
+        cls.generator = load_module(
+            "promax_v8_generator_coordination",
+            GENERATOR_PATH,
+        )
+
+    def test_protected_release_files_are_forced_to_lf_by_git_attributes(self) -> None:
+        content = GITATTRIBUTES_PATH.read_text(encoding="utf-8")
+        for rule in (
+            "/skills/crossframe-promax/references/v8-full-source/** text eol=lf",
+            "/skills/crossframe-promax/references/source_manifest.json text eol=lf",
+            "/skills/crossframe-promax/scripts/generate_crossframe_promax_v8_full_source.py text eol=lf",
+            "/skills/crossframe-promax/scripts/check_crossframe_promax_v8_full_source.py text eol=lf",
+        ):
+            self.assertIn(rule, content)
+        completed = subprocess.run(
+            [
+                "git",
+                "check-attr",
+                "eol",
+                "--",
+                "skills/crossframe-promax/references/v8-full-source/01-guide.md",
+                "skills/crossframe-promax/references/source_manifest.json",
+                "skills/crossframe-promax/scripts/"
+                "generate_crossframe_promax_v8_full_source.py",
+                "skills/crossframe-promax/scripts/"
+                "check_crossframe_promax_v8_full_source.py",
+            ],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        attributes = [line.rsplit(": ", 1)[-1] for line in completed.stdout.splitlines()]
+        self.assertEqual(attributes, ["lf"] * 4)
+
+    def test_checker_accepts_crlf_checkout_via_lf_normalized_release_hashes(self) -> None:
+        with copied_repository() as repo:
+            references = repo / "skills/crossframe-promax/references"
+            protected_files = list((references / "v8-full-source").rglob("*.md"))
+            protected_files.extend(
+                (
+                    references / "source_manifest.json",
+                    repo
+                    / "skills/crossframe-promax/scripts/"
+                    "generate_crossframe_promax_v8_full_source.py",
+                )
+            )
+            for path in protected_files:
+                lf_bytes = path.read_bytes().replace(b"\r\n", b"\n")
+                path.write_bytes(lf_bytes.replace(b"\n", b"\r\n"))
+            errors = self.checker.check_repository(repo)
+        self.assertEqual(errors, [])
+
+    def test_checker_reports_busy_without_reading_a_mixed_release(self) -> None:
+        with copied_repository() as repo:
+            references = repo / "skills/crossframe-promax/references"
+            live = references / "v8-full-source"
+            lock = references / ".v8-full-source.lock"
+            generation_lock = self.generator._acquire_generation_lock(lock)
+            try:
+                os.replace(live, references / ".v8-full-source.backup-active")
+                errors = self.checker.check_repository(repo)
+            finally:
+                self.generator._release_generation_lock(generation_lock)
+        self.assertEqual(len(errors), 1, errors)
+        self.assertIn("generation busy", errors[0].lower())
+
+    def test_checker_uses_an_unlocked_persistent_coordination_file(self) -> None:
+        with copied_repository() as repo:
+            references = repo / "skills/crossframe-promax/references"
+            lock = references / ".v8-full-source.lock"
+            lock.write_bytes(b"\x00")
+            errors = self.checker.check_repository(repo)
+            self.assertEqual(errors, [])
+            self.assertTrue(lock.is_file())
+
+    def test_checker_recovers_a_stale_precommit_journal_before_validation(self) -> None:
+        with copied_repository() as repo:
+            references = repo / "skills/crossframe-promax/references"
+            transaction_id = "3" * 32
+            live = references / "v8-full-source"
+            stage = references / f".v8-full-source.stage-{transaction_id}"
+            manifest = references / "source_manifest.json"
+            manifest_stage = references / (
+                f".source_manifest.json.stage-{transaction_id}"
+            )
+            shutil.copytree(live, stage)
+            shutil.copy2(manifest, manifest_stage)
+            returncode = ProMaxV8GenerationSafetyTests.crash_release_after_rename(
+                references,
+                3,
+            )
+            self.assertEqual(returncode, 93)
+
+            errors = self.checker.check_repository(repo)
+            self.assertEqual(errors, [])
+            self.assertFalse(
+                (references / ".v8-full-source.transaction.json").exists()
+            )
 
 
 class ProMaxV8SourceComparisonTests(unittest.TestCase):
@@ -566,15 +739,82 @@ class ProMaxV8GenerationSafetyTests(unittest.TestCase):
             ".source_manifest.json.stage-",
             ".source_manifest.json.backup-",
             ".source_manifest.json.tmp-",
+            "..v8-full-source.transaction.json.tmp-",
         )
         residue = sorted(
             path.name
             for path in references.iterdir()
-            if path.name == ".v8-full-source.lock"
+            if path.name == ".v8-full-source.transaction.json"
             or path.name.startswith(prefixes)
         )
         if residue:
             raise AssertionError(f"transaction residue remains: {residue}")
+
+    @staticmethod
+    def crash_release_after_rename(references: Path, rename_number: int) -> int:
+        transaction_id = str(rename_number) * 32
+        stage_tree = references / f".v8-full-source.stage-{transaction_id}"
+        live_tree = references / "v8-full-source"
+        stage_manifest = references / f".source_manifest.json.stage-{transaction_id}"
+        live_manifest = references / "source_manifest.json"
+        script = r'''
+import importlib.util
+import os
+from pathlib import Path
+import sys
+
+module_path, stage_tree, live_tree, stage_manifest, live_manifest, transaction_id, stop = sys.argv[1:]
+spec = importlib.util.spec_from_file_location("promax_crash_generator", module_path)
+module = importlib.util.module_from_spec(spec)
+sys.modules[spec.name] = module
+spec.loader.exec_module(module)
+stage_tree = Path(stage_tree)
+live_tree = Path(live_tree)
+stage_manifest = Path(stage_manifest)
+live_manifest = Path(live_manifest)
+tree_backup = live_tree.parent / f".{live_tree.name}.backup-{transaction_id}"
+manifest_backup = live_manifest.parent / f".{live_manifest.name}.backup-{transaction_id}"
+release_targets = {
+    tree_backup.resolve(),
+    manifest_backup.resolve(),
+    live_tree.resolve(),
+    live_manifest.resolve(),
+}
+real_replace = module.os.replace
+renames = 0
+def crash_after_selected_replace(source, target):
+    global renames
+    real_replace(source, target)
+    if Path(target).resolve() in release_targets:
+        renames += 1
+        if renames == int(stop):
+            os._exit(90 + renames)
+module.os.replace = crash_after_selected_replace
+module.atomic_replace_release(
+    stage_tree,
+    live_tree,
+    stage_manifest,
+    live_manifest,
+    transaction_id,
+)
+'''
+        completed = subprocess.run(
+            [
+                sys.executable,
+                "-c",
+                script,
+                str(GENERATOR_PATH),
+                str(stage_tree),
+                str(live_tree),
+                str(stage_manifest),
+                str(live_manifest),
+                transaction_id,
+                str(rename_number),
+            ],
+            cwd=ROOT,
+            check=False,
+        )
+        return completed.returncode
 
     def assert_manifest_install_failure_restores_release(
         self,
@@ -701,6 +941,227 @@ class ProMaxV8GenerationSafetyTests(unittest.TestCase):
             self.assertEqual(manifest_path.read_bytes(), old_manifest)
             self.assert_no_transaction_residue(references)
 
+    def test_stage_merkle_mismatch_never_installs_the_generated_release(self) -> None:
+        if not REAL_SOURCE.is_file():
+            self.skipTest(f"source DOCX unavailable: {REAL_SOURCE}")
+        generator = load_module(
+            "promax_v8_generator_stage_merkle_mismatch",
+            GENERATOR_PATH,
+        )
+        with copied_repository() as repo:
+            live = repo / "skills/crossframe-promax/references/v8-full-source"
+            before_tree = tree_fingerprint(live)
+            manifest_path = live.parent / "source_manifest.json"
+            before_manifest = manifest_path.read_bytes()
+            real_render = generator.render_v8_source_tree
+
+            def render_then_tamper(snapshot, output_dir):
+                real_render(snapshot, output_dir)
+                source_file = Path(output_dir) / "01-guide.md"
+                content = source_file.read_text(encoding="utf-8")
+                source_file.write_text(
+                    content.replace("统一入口", "统壹入口"),
+                    encoding="utf-8",
+                    newline="\n",
+                )
+
+            with mock.patch.object(
+                generator,
+                "render_v8_source_tree",
+                side_effect=render_then_tamper,
+            ), mock.patch.object(
+                generator,
+                "validate_generated_v8_tree",
+                return_value=[],
+            ):
+                with self.assertRaisesRegex(ValueError, "frozen tree Merkle root"):
+                    generator.generate(repo, REAL_SOURCE)
+
+            self.assertEqual(tree_fingerprint(live), before_tree)
+            self.assertEqual(manifest_path.read_bytes(), before_manifest)
+
+    def test_durable_journal_recovers_every_process_crash_boundary(self) -> None:
+        generator = load_module(
+            "promax_v8_generator_crash_recovery",
+            GENERATOR_PATH,
+        )
+        for rename_number in range(1, 5):
+            with self.subTest(rename_number=rename_number), tempfile.TemporaryDirectory() as directory:
+                references = Path(directory) / "references"
+                transaction_id = str(rename_number) * 32
+                stage_tree = references / f".v8-full-source.stage-{transaction_id}"
+                live_tree = references / "v8-full-source"
+                stage_manifest = references / f".source_manifest.json.stage-{transaction_id}"
+                live_manifest = references / "source_manifest.json"
+                stage_tree.mkdir(parents=True)
+                live_tree.mkdir()
+                (stage_tree / "release.txt").write_bytes(b"new tree")
+                (live_tree / "release.txt").write_bytes(b"old tree")
+                stage_manifest.write_bytes(b'{"release":"new"}\n')
+                live_manifest.write_bytes(b'{"release":"old"}\n')
+
+                returncode = self.crash_release_after_rename(
+                    references,
+                    rename_number,
+                )
+                self.assertEqual(returncode, 90 + rename_number)
+                self.assertTrue(
+                    (references / ".v8-full-source.transaction.json").is_file()
+                )
+
+                outcome = generator.recover_release_transaction(references)
+                expected_release = b"new tree" if rename_number == 4 else b"old tree"
+                expected_manifest = (
+                    b'{"release":"new"}\n'
+                    if rename_number == 4
+                    else b'{"release":"old"}\n'
+                )
+                self.assertIn(outcome, {"committed", "rolled-back"})
+                self.assertEqual(
+                    (live_tree / "release.txt").read_bytes(),
+                    expected_release,
+                )
+                self.assertEqual(live_manifest.read_bytes(), expected_manifest)
+                self.assert_no_transaction_residue(references)
+
+    def test_first_generation_crash_is_either_absent_or_fully_committed(self) -> None:
+        generator = load_module(
+            "promax_v8_generator_first_release_crash",
+            GENERATOR_PATH,
+        )
+        for rename_number in (1, 2):
+            with self.subTest(rename_number=rename_number), tempfile.TemporaryDirectory() as directory:
+                references = Path(directory) / "references"
+                transaction_id = str(rename_number) * 32
+                stage_tree = references / f".v8-full-source.stage-{transaction_id}"
+                stage_manifest = references / (
+                    f".source_manifest.json.stage-{transaction_id}"
+                )
+                live_tree = references / "v8-full-source"
+                live_manifest = references / "source_manifest.json"
+                stage_tree.mkdir(parents=True)
+                (stage_tree / "release.txt").write_bytes(b"first tree")
+                stage_manifest.write_bytes(b'{"release":"first"}\n')
+
+                returncode = self.crash_release_after_rename(
+                    references,
+                    rename_number,
+                )
+                self.assertEqual(returncode, 90 + rename_number)
+                outcome = generator.recover_release_transaction(references)
+                if rename_number == 1:
+                    self.assertEqual(outcome, "rolled-back")
+                    self.assertFalse(live_tree.exists())
+                    self.assertFalse(live_manifest.exists())
+                else:
+                    self.assertEqual(outcome, "committed")
+                    self.assertEqual(
+                        (live_tree / "release.txt").read_bytes(),
+                        b"first tree",
+                    )
+                    self.assertEqual(
+                        live_manifest.read_bytes(),
+                        b'{"release":"first"}\n',
+                    )
+                self.assert_no_transaction_residue(references)
+
+    def test_exception_after_manifest_commit_does_not_report_false_failure(self) -> None:
+        generator = load_module(
+            "promax_v8_generator_post_commit_exception",
+            GENERATOR_PATH,
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            references = Path(directory) / "references"
+            stage_tree = references / ".v8-full-source.stage-test"
+            live_tree = references / "v8-full-source"
+            stage_manifest = references / ".source_manifest.json.stage-test"
+            live_manifest = references / "source_manifest.json"
+            stage_tree.mkdir(parents=True)
+            live_tree.mkdir()
+            (stage_tree / "release.txt").write_bytes(b"new tree")
+            (live_tree / "release.txt").write_bytes(b"old tree")
+            stage_manifest.write_bytes(b'{"release":"new"}\n')
+            live_manifest.write_bytes(b'{"release":"old"}\n')
+            real_replace = os.replace
+
+            def raise_after_commit(source, target):
+                real_replace(source, target)
+                if Path(source) == stage_manifest and Path(target) == live_manifest:
+                    raise OSError("injected exception after manifest commit")
+
+            with mock.patch.object(
+                generator.os,
+                "replace",
+                side_effect=raise_after_commit,
+            ):
+                generator.atomic_replace_release(
+                    stage_tree,
+                    live_tree,
+                    stage_manifest,
+                    live_manifest,
+                    "c" * 32,
+                )
+
+            self.assertEqual(
+                (live_tree / "release.txt").read_bytes(),
+                b"new tree",
+            )
+            self.assertEqual(
+                live_manifest.read_bytes(),
+                b'{"release":"new"}\n',
+            )
+            self.assert_no_transaction_residue(references)
+
+    def test_failed_explicit_unlock_is_nonfatal_and_close_releases_lock(self) -> None:
+        generator = load_module(
+            "promax_v8_generator_lock_release",
+            GENERATOR_PATH,
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            lock = Path(directory) / ".v8-full-source.lock"
+            generation_lock = generator._acquire_generation_lock(lock)
+            with mock.patch.object(
+                generator,
+                "_unlock_generation_lock_file",
+                side_effect=OSError("injected explicit unlock failure"),
+            ):
+                with self.assertWarnsRegex(RuntimeWarning, "unlock failed"):
+                    generator._release_generation_lock(generation_lock)
+
+            replacement_lock = generator._acquire_generation_lock(lock)
+            generator._release_generation_lock(replacement_lock)
+            self.assertTrue(lock.is_file())
+
+    def test_process_exit_automatically_releases_generation_lock(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            lock = Path(directory) / ".v8-full-source.lock"
+            script = r'''
+import importlib.util
+import os
+from pathlib import Path
+import sys
+
+module_path, lock_path = sys.argv[1:]
+spec = importlib.util.spec_from_file_location("promax_lock_crash", module_path)
+module = importlib.util.module_from_spec(spec)
+sys.modules[spec.name] = module
+spec.loader.exec_module(module)
+module._acquire_generation_lock(Path(lock_path))
+os._exit(0)
+'''
+            completed = subprocess.run(
+                [sys.executable, "-c", script, str(GENERATOR_PATH), str(lock)],
+                cwd=ROOT,
+                check=False,
+            )
+            self.assertEqual(completed.returncode, 0)
+            generator = load_module(
+                "promax_v8_generator_after_lock_crash",
+                GENERATOR_PATH,
+            )
+            generation_lock = generator._acquire_generation_lock(lock)
+            generator._release_generation_lock(generation_lock)
+
     def test_committed_release_survives_backup_cleanup_failure(self) -> None:
         generator = load_module(
             "promax_v8_generator_backup_cleanup",
@@ -766,8 +1227,18 @@ class ProMaxV8GenerationSafetyTests(unittest.TestCase):
                         if ".backup-" in path.name
                     )
                     self.assertEqual(remaining_backups, [failed_backup_name])
+                    self.assertTrue(
+                        (references / ".v8-full-source.transaction.json").is_file()
+                    )
                     self.assertFalse(stage_tree.exists())
                     self.assertFalse(stage_manifest.exists())
+
+                    self.assertEqual(
+                        generator.recover_release_transaction(references),
+                        "committed",
+                    )
+                    self.assertFalse(failed_backup.exists())
+                    self.assert_no_transaction_residue(references)
 
     def test_warning_as_error_cannot_break_committed_release_cleanup(self) -> None:
         generator = load_module(

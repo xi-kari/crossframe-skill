@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 from io import BytesIO
 import hashlib
+import importlib.util
 import json
 from pathlib import Path
 import re
@@ -21,6 +22,10 @@ EXPECTED_NON_WHITESPACE_CHARS = 155721
 EXPECTED_TABLES = 117
 EXPECTED_SECTIONS = 16
 GENERATOR_VERSION = "1.0.0"
+EXPECTED_TREE_MERKLE_ROOT = (
+    "9b804bd8d4de67b0e0cc0ce3fd106aafe5dd7a40e04a11023af627c9fab4ed6b"
+)
+TREE_MERKLE_DOMAIN = b"crossframe.promax.v8.source-tree-merkle.v1"
 
 CANONICAL_PARTS = (
     ("01-guide.md", "第一部分　导读"),
@@ -84,6 +89,21 @@ def _sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 
+def _normalize_protected_text_bytes(raw: bytes) -> bytes:
+    raw.decode("utf-8", errors="strict")
+    if raw.startswith(b"\xef\xbb\xbf"):
+        raise ValueError("UTF-8 BOM is forbidden")
+    normalized = raw.replace(b"\r\n", b"\n")
+    if b"\r" in normalized:
+        raise ValueError("bare CR is forbidden")
+    return normalized
+
+
+def _normalized_text_hash_and_size(path: Path) -> tuple[str, int]:
+    normalized = _normalize_protected_text_bytes(Path(path).read_bytes())
+    return hashlib.sha256(normalized).hexdigest(), len(normalized)
+
+
 def _paragraph_number(paragraph_id: str) -> int:
     return int(paragraph_id.rsplit("P", 1)[1])
 
@@ -127,6 +147,61 @@ def _expected_tree_files() -> set[str]:
     files.update(source_range[0] for source_range in SOURCE_RANGES)
     files.update(f"tables/V8-T{number:03d}.md" for number in range(1, 118))
     return files
+
+
+def compute_tree_merkle_root(source_tree: Path) -> str:
+    source_tree = Path(source_tree)
+
+    def digest(*parts: bytes) -> bytes:
+        hasher = hashlib.sha256()
+        for part in parts:
+            hasher.update(part)
+        return hasher.digest()
+
+    leaves: list[bytes] = []
+    relative_paths = sorted(_expected_tree_files())
+    for relative_path in relative_paths:
+        path_bytes = relative_path.encode("utf-8")
+        content = _normalize_protected_text_bytes(
+            (source_tree / relative_path).read_bytes()
+        )
+        leaves.append(
+            digest(
+                TREE_MERKLE_DOMAIN,
+                b"\x00leaf\x00",
+                len(path_bytes).to_bytes(4, "big", signed=False),
+                path_bytes,
+                len(content).to_bytes(8, "big", signed=False),
+                content,
+            )
+        )
+    if not leaves:
+        raise ValueError("source tree Merkle root cannot cover an empty tree")
+    leaf_count = len(leaves)
+    level = leaves
+    while len(level) > 1:
+        next_level: list[bytes] = []
+        for index in range(0, len(level), 2):
+            if index + 1 == len(level):
+                next_level.append(
+                    digest(TREE_MERKLE_DOMAIN, b"\x00odd\x00", level[index])
+                )
+            else:
+                next_level.append(
+                    digest(
+                        TREE_MERKLE_DOMAIN,
+                        b"\x00node\x00",
+                        level[index],
+                        level[index + 1],
+                    )
+                )
+        level = next_level
+    return digest(
+        TREE_MERKLE_DOMAIN,
+        b"\x00root\x00",
+        leaf_count.to_bytes(4, "big", signed=False),
+        level[0],
+    ).hex()
 
 
 def _source_file_for_pid(paragraph_id: str) -> str | None:
@@ -399,8 +474,10 @@ def _validate_manifest(
             errors.append("source manifest generator version mismatch")
         if generator_path.is_file():
             try:
-                expected_generator_sha = _sha256_file(generator_path)
-            except OSError as error:
+                expected_generator_sha = _normalized_text_hash_and_size(
+                    generator_path
+                )[0]
+            except (OSError, UnicodeError, ValueError) as error:
                 errors.append(f"cannot hash generator: {error}")
             else:
                 if generator.get("sha256") != expected_generator_sha:
@@ -429,9 +506,8 @@ def _validate_manifest(
         if not path.is_file():
             continue
         try:
-            actual_hash = _sha256_file(path)
-            actual_size = path.stat().st_size
-        except OSError as error:
+            actual_hash, actual_size = _normalized_text_hash_and_size(path)
+        except (OSError, UnicodeError, ValueError) as error:
             errors.append(f"cannot inspect manifest file {relative_path}: {error}")
             continue
         if entry.get("sha256") != actual_hash:
@@ -629,7 +705,7 @@ def _compare_source_docx(
         errors.append("source table count mismatch")
 
 
-def check_repository(
+def _check_repository_unlocked(
     repo: Path, source_docx: Path | None = None
 ) -> list[str]:
     repo = Path(repo).resolve()
@@ -649,6 +725,18 @@ def check_repository(
         errors.append(f"missing file: {relative_path}")
     for relative_path in sorted(actual_files - expected_files):
         errors.append(f"unexpected file: {relative_path}")
+    if actual_files == expected_files:
+        try:
+            actual_merkle_root = compute_tree_merkle_root(source_tree)
+        except (OSError, UnicodeError, ValueError) as error:
+            errors.append(f"frozen tree Merkle root cannot be computed: {error}")
+        else:
+            if actual_merkle_root != EXPECTED_TREE_MERKLE_ROOT:
+                errors.append(
+                    "frozen tree Merkle root mismatch: "
+                    f"expected {EXPECTED_TREE_MERKLE_ROOT}, "
+                    f"got {actual_merkle_root}"
+                )
     _validate_manifest(repo, references, source_tree, errors)
 
     titles_by_file = dict(CANONICAL_PARTS)
@@ -721,6 +809,53 @@ def check_repository(
             Path(source_docx), committed_records, committed_tables, errors
         )
     return list(dict.fromkeys(errors))
+
+
+def _load_release_support(repo: Path):
+    generator_path = (
+        Path(repo)
+        / "skills/crossframe-promax/scripts/"
+        "generate_crossframe_promax_v8_full_source.py"
+    )
+    if not generator_path.is_file():
+        raise RuntimeError(f"canonical generator missing: {generator_path}")
+    module_name = "promax_v8_release_support_" + hashlib.sha256(
+        str(generator_path).encode("utf-8")
+    ).hexdigest()[:16]
+    spec = importlib.util.spec_from_file_location(module_name, generator_path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError(f"cannot load canonical generator: {generator_path}")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[module_name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+def check_repository(
+    repo: Path, source_docx: Path | None = None
+) -> list[str]:
+    repo = Path(repo).resolve()
+    references = repo / "skills/crossframe-promax/references"
+    references.mkdir(parents=True, exist_ok=True)
+    try:
+        release_support = _load_release_support(repo)
+    except (OSError, RuntimeError) as error:
+        return [str(error)]
+    lock_path = references / ".v8-full-source.lock"
+    try:
+        generation_lock = release_support._acquire_generation_lock(lock_path)
+    except release_support.GenerationLockBusy:
+        return [f"source generation busy: {lock_path}"]
+    except RuntimeError as error:
+        return [f"source generation coordination failed: {error}"]
+    try:
+        try:
+            release_support.recover_release_transaction(references)
+        except (OSError, RuntimeError, ValueError) as error:
+            return [f"source release recovery failed: {error}"]
+        return _check_repository_unlocked(repo, source_docx)
+    finally:
+        release_support._release_generation_lock(generation_lock)
 
 
 def parse_args() -> argparse.Namespace:
