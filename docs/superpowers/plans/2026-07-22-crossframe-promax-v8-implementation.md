@@ -53,7 +53,7 @@
 - [ ] Commit only the RED corpus and tests:
 
   ```powershell
-  git add tests/evals/promax-red tests/test_promax_behavioral_contract.py tests/test_promax_repository_integration.py
+  git add tests/evals/promax-red tests/fixtures/promax-preservation.json tests/test_promax_behavioral_contract.py tests/test_promax_repository_integration.py
   git commit -m "test: capture crossframe promax red baselines"
   ```
 
@@ -261,6 +261,7 @@ The exact body titles, verified directly from `word/document.xml`, are `第一�
 - [ ] Model phase history as append-only events. A reset adds an event and invalidates the affected phase plus downstream phases; it never edits prior events.
 - [ ] Materialize the append-only control plane as `promax-phase-events.jsonl`; this is the auditable representation of the already-approved phase hash/reset design, not an additional theory artifact.
 - [ ] Bind every run and phase to the v8 snapshot SHA. Require structured capability disclosure (`files`, `network`, `subagents`, `validators`) and record `multi-agent-isolated` or `single-agent-separated` honestly.
+- [ ] Put routing resolution in the run-contract schema now: when both names occur require `routing_conflict.detected=true`, both requested names, `resolved_to=crossframe-promax`, and the immutable priority rule; otherwise require `detected=false` with an empty conflict list. Test both branches before implementation.
 - [ ] When subagents are available, require five role records (`v8_source_concept_auditor`, `external_case_researcher`, `counterexample_auditor`, `position_adjudicator`, `longform_writer`), each with frozen input artifact hashes and structured output artifact hashes. Reject `promax-complete` if the capability says subagents are available but roles were skipped, if roles exchange unstructured free-memory summaries, or if an output reads an artifact not declared in its input set. When unavailable, require five sequential role events marked `single-agent-separated`.
 - [ ] Bind validator reports to `run_id`, unpredictable `run_nonce`, `request_sha256`, `source_snapshot_sha256`, `phase_chain_head_sha256`, `manifest_sha256`, `validator_set_sha256`, `validation_attempt`, and current artifact hashes so a complete old report cannot be replayed into a new run.
 - [ ] Make the P3 local-world schema require object boundary, actor records, circle candidates, scale profile, material/experiential-meaning channels, `M`/`Ψ` state, clocks, events, evidence cutoff, unknowns, residuals, identity criteria, and action/authorization limits.
@@ -352,7 +353,7 @@ The exact body titles, verified directly from `word/document.xml`, are `第一�
 - [ ] Keep `SKILL.md` as a concise runtime entry and route all heavy details to one-level-deep protocol/reference files. Use imperative instructions.
 - [ ] Encode the judgment constitution: user stance is a hypothesis, no default agreement/refutation, evidence does not equal authorization, missing evidence creates conditional branches rather than silence, and every requested judgment/recommendation ends in a ranked position with change conditions.
 - [ ] Encode P0-P11, artifact-first output, source/read/concept closure, retrieval frontier, red-team, position lock, continuation, validation, and local repair. Prohibit brief mode, self-downgrade, Max fallback, sibling knowledge loading, and hidden-thought disclosure.
-- [ ] Provide templates for every required artifact and keep template fields synchronized with the schemas.
+- [ ] Provide templates for every model-authored artifact and keep their fields synchronized with the schemas. Generate control-plane artifacts (`run contract`, `source snapshot`, `read events`, `phase events`, and `continuation ledger`) through deterministic runtime functions/schemas rather than prose templates.
 - [ ] Add smoke cases for named trigger, no trigger, combined Max+ProMax, missing evidence, model-style pressure, source fidelity, counterexamples, retrieval failure, truncation recovery, and strict completion.
 - [ ] Run the exact quality commands below. `SKILL.md` must stay below 500 lines, every protocol/reference over 100 lines must have a table of contents, and no generated placeholder may remain:
 
@@ -400,7 +401,7 @@ The exact body titles, verified directly from `word/document.xml`, are `第一�
 **Steps:**
 
 - [ ] Extend the existing RED routing tests with exact-name variants and near misses, then run `python -B -m unittest tests.test_promax_repository_integration -v`. Observe the expected failures before editing suite or adapter files.
-- [ ] Add the routing order before the existing Max rule: named ProMax; named ProMax+Max resolved to ProMax; named Max only remains Max; generic maximality language remains Max/current behavior; suite never selects ProMax without its name. When both names occur, require `promax-run-contract.json` to record `routing_conflict.detected=true`, both requested names, `resolved_to=crossframe-promax`, and the priority rule.
+- [ ] Add the routing order before the existing Max rule: named ProMax; named ProMax+Max resolved to ProMax; named Max only remains Max; generic maximality language remains Max/current behavior; suite never selects ProMax without its name. Exercise the Task 5 run-contract conflict fields through this routing integration test; do not change their schema in this task.
 - [ ] Keep ProMax outside the suite mode/role/article selector and outside `crossframe-review`; route directly to its standalone v8 runtime.
 - [ ] Make the Claude command a thin entry containing only trigger authority, priority, canonical path, and requirement to run the independent artifact workflow.
 - [ ] Run routing and suite tests until GREEN. Re-run the full Max preservation-manifest test, including mirror, command, root scripts, tests, and the existing CI job. Commit only after it is GREEN.
