@@ -44,10 +44,12 @@ def current_surfaces() -> dict[str, list[Path]]:
         "claude_command_crossframe_max": [
             ROOT / ".claude/commands/crossframe-max.md"
         ],
-        "root_scripts_filename_contains_max": [
+        "root_max_scripts_excluding_promax": [
             path
             for path in (ROOT / "scripts").iterdir()
-            if path.is_file() and "max" in path.name.lower()
+            if path.is_file()
+            and "max" in path.name.lower()
+            and "promax" not in path.name.lower()
         ],
         "max_contract_tests": list((ROOT / "tests").glob("test_max_*.py")),
     }

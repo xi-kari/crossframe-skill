@@ -15,7 +15,7 @@
       "file_count": 1,
       "tree_sha256": "00e6ed60fd67d7baf56c4d7d1abe9e823a9344cd49fa87fec9510639dd195c3e"
     },
-    "root_scripts_filename_contains_max": {
+    "root_max_scripts_excluding_promax": {
       "file_count": 11,
       "tree_sha256": "ebe7bc28a7ded3ec14dbef42de654b491495cc446b489cca6915f4bb434e5d7f"
     },
