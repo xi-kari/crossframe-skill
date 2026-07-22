@@ -24,6 +24,43 @@ EXPECTED_PARAGRAPHS = 3863
 EXPECTED_NON_WHITESPACE_CHARS = 155721
 EXPECTED_TABLES = 117
 EXPECTED_SECTIONS = 16
+EXPECTED_SECTION_START_IDS = (
+    "V8-P0334",
+    "V8-P0408",
+    "V8-P0486",
+    "V8-P0544",
+    "V8-P0807",
+    "V8-P0996",
+    "V8-P1073",
+    "V8-P2244",
+    "V8-P2527",
+    "V8-P2716",
+    "V8-P2907",
+    "V8-P3096",
+    "V8-P3307",
+    "V8-P3559",
+    "V8-P3626",
+    "V8-P3735",
+)
+EXPECTED_SECTION_END_IDS = (
+    "V8-P0407",
+    "V8-P0485",
+    "V8-P0543",
+    "V8-P0806",
+    "V8-P0995",
+    "V8-P1072",
+    "V8-P2243",
+    "V8-P2526",
+    "V8-P2715",
+    "V8-P2906",
+    "V8-P3095",
+    "V8-P3306",
+    "V8-P3558",
+    "V8-P3625",
+    "V8-P3734",
+    "V8-P3863",
+)
+EXPECTED_ENVELOPE_RANGE = ("V8-P0001", "V8-P0333")
 
 CANONICAL_PARTS = (
     ("01-guide", "第一部分　导读"),
@@ -113,22 +150,34 @@ def _paragraph_elements(
     return tuple(found)
 
 
-def extract_v8_paragraphs(document_root: ET.Element) -> tuple[V8Paragraph, ...]:
-    return tuple(
+def _extract_v8_paragraphs_and_ids(
+    document_root: ET.Element,
+) -> tuple[tuple[V8Paragraph, ...], dict[int, str]]:
+    elements = _paragraph_elements(document_root)
+    paragraphs = tuple(
         V8Paragraph(f"V8-P{index:04d}", style, text)
         for index, (_element, style, text) in enumerate(
-            _paragraph_elements(document_root), start=1
+            elements, start=1
         )
     )
-
-
-def extract_v8_tables(document_root: ET.Element) -> tuple[V8Table, ...]:
-    paragraph_ids = {
-        id(element): f"V8-P{index:04d}"
-        for index, (element, _style, _text) in enumerate(
-            _paragraph_elements(document_root), start=1
+    pid_by_element = {
+        id(element): paragraph.pid
+        for (element, _style, _text), paragraph in zip(
+            elements, paragraphs, strict=True
         )
     }
+    return paragraphs, pid_by_element
+
+
+def extract_v8_paragraphs(document_root: ET.Element) -> tuple[V8Paragraph, ...]:
+    paragraphs, _pid_by_element = _extract_v8_paragraphs_and_ids(document_root)
+    return paragraphs
+
+
+def extract_v8_tables(
+    document_root: ET.Element,
+    pid_by_element: dict[int, str],
+) -> tuple[V8Table, ...]:
     tables: list[V8Table] = []
     for table_index, table_element in enumerate(
         document_root.iter(f"{W}tbl"), start=1
@@ -146,7 +195,7 @@ def extract_v8_tables(document_root: ET.Element) -> tuple[V8Table, ...]:
                     text = _paragraph_text(paragraph)
                     if not text.strip():
                         continue
-                    paragraph_id = paragraph_ids[id(paragraph)]
+                    paragraph_id = pid_by_element[id(paragraph)]
                     cell_texts.append(text)
                     cell_ids.append(paragraph_id)
                     table_paragraph_ids.append(paragraph_id)
@@ -323,6 +372,39 @@ def validate_v8_snapshot(snapshot: V8Snapshot) -> list[str]:
             f"section count mismatch: expected {EXPECTED_SECTIONS}, "
             f"got {len(snapshot.sections)}"
         )
+    actual_section_starts = tuple(
+        section.start_heading_id for section in snapshot.sections
+    )
+    if actual_section_starts != EXPECTED_SECTION_START_IDS:
+        errors.append(
+            "section start anchor mismatch: "
+            f"expected {EXPECTED_SECTION_START_IDS}, got {actual_section_starts}"
+        )
+    actual_section_ranges = tuple(
+        (
+            section.paragraph_ids[0] if section.paragraph_ids else "EMPTY",
+            section.paragraph_ids[-1] if section.paragraph_ids else "EMPTY",
+        )
+        for section in snapshot.sections
+    )
+    expected_section_ranges = tuple(
+        zip(EXPECTED_SECTION_START_IDS, EXPECTED_SECTION_END_IDS, strict=True)
+    )
+    if actual_section_ranges != expected_section_ranges:
+        errors.append(
+            "section paragraph ranges do not match the fixed continuous v8 boundaries"
+        )
+    if snapshot.paragraphs and actual_section_starts:
+        first_section_number = _anchor_number(actual_section_starts[0])
+        actual_envelope_range = (
+            snapshot.paragraphs[0].pid,
+            f"V8-P{first_section_number - 1:04d}",
+        )
+        if actual_envelope_range != EXPECTED_ENVELOPE_RANGE:
+            errors.append(
+                "source envelope range mismatch: "
+                f"expected {EXPECTED_ENVELOPE_RANGE}, got {actual_envelope_range}"
+            )
     try:
         expected_sections = split_v8_sections(snapshot.paragraphs, snapshot.tables)
     except ValueError as error:
@@ -587,21 +669,25 @@ def atomic_replace_tree(stage_dir: Path, live_dir: Path) -> None:
         raise ValueError("stage and live directories must have the same parent")
     backup = live_dir.parent / f".{live_dir.name}.backup-{uuid4().hex}"
     backup_created = False
+    live_moved = False
     try:
         if live_dir.exists():
             os.replace(live_dir, backup)
             backup_created = True
+            live_moved = True
         os.replace(stage_dir, live_dir)
     except BaseException:
-        if live_dir.exists():
-            _remove_tree(live_dir)
-        if backup_created and backup.exists():
-            os.replace(backup, live_dir)
-            backup_created = False
-        if stage_dir.exists():
-            _remove_tree(stage_dir)
-        if backup.exists():
-            _remove_tree(backup)
+        try:
+            if live_moved:
+                if live_dir.exists():
+                    _remove_tree(live_dir)
+                if backup_created and backup.exists():
+                    os.replace(backup, live_dir)
+                    backup_created = False
+                    live_moved = False
+        finally:
+            if stage_dir.exists():
+                _remove_tree(stage_dir)
         raise
     if backup_created and backup.exists():
         _remove_tree(backup)
@@ -617,8 +703,8 @@ def generate(repo: Path, source_docx: Path) -> Path:
             f"expected {EXPECTED_SOURCE_SHA256}, got {source_sha256}"
         )
     document_root = read_document_xml(source_docx)
-    paragraphs = extract_v8_paragraphs(document_root)
-    tables = extract_v8_tables(document_root)
+    paragraphs, pid_by_element = _extract_v8_paragraphs_and_ids(document_root)
+    tables = extract_v8_tables(document_root, pid_by_element)
     sections = split_v8_sections(paragraphs, tables)
     snapshot = V8Snapshot(
         source_sha256=source_sha256,

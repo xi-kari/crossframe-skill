@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import replace
 import importlib.util
+import inspect
 import os
 from pathlib import Path
 import sys
@@ -19,6 +20,24 @@ GENERATOR_PATH = (
     / "skills/crossframe-promax/scripts/generate_crossframe_promax_v8_full_source.py"
 )
 REAL_SOURCE = Path(r"E:\世界模型\跨尺度多圈层结构推演框架_v8.0.docx")
+EXPECTED_SECTION_START_IDS = (
+    "V8-P0334",
+    "V8-P0408",
+    "V8-P0486",
+    "V8-P0544",
+    "V8-P0807",
+    "V8-P0996",
+    "V8-P1073",
+    "V8-P2244",
+    "V8-P2527",
+    "V8-P2716",
+    "V8-P2907",
+    "V8-P3096",
+    "V8-P3307",
+    "V8-P3559",
+    "V8-P3626",
+    "V8-P3735",
+)
 
 if not GENERATOR_PATH.is_file():
     raise ModuleNotFoundError(
@@ -42,6 +61,20 @@ def fixture_root() -> ET.Element:
     return ET.fromstring(FIXTURE_XML.read_bytes())
 
 
+def pid_by_element(document_root: ET.Element) -> dict[int, str]:
+    elements = [
+        paragraph
+        for paragraph in document_root.iter(f"{generator.W}p")
+        if "".join(
+            node.text or "" for node in paragraph.iter(f"{generator.W}t")
+        ).strip()
+    ]
+    return {
+        id(element): f"V8-P{index:04d}"
+        for index, element in enumerate(elements, start=1)
+    }
+
+
 def non_whitespace(text: str) -> int:
     return sum(not character.isspace() for character in text)
 
@@ -51,7 +84,10 @@ def valid_release_snapshot():
         generator.V8Paragraph(f"V8-P{index:04d}", "", "x")
         for index in range(1, generator.EXPECTED_PARAGRAPHS + 1)
     ]
-    heading_indexes = [index * 100 for index in range(generator.EXPECTED_SECTIONS)]
+    heading_indexes = [
+        int(paragraph_id.removeprefix("V8-P")) - 1
+        for paragraph_id in EXPECTED_SECTION_START_IDS
+    ]
     for heading_index, title in zip(
         heading_indexes, generator.CANONICAL_TITLES, strict=True
     ):
@@ -132,7 +168,10 @@ class V8XmlExtractionTests(unittest.TestCase):
         )
 
     def test_extract_tables_preserves_rows_cells_and_source_bindings(self) -> None:
-        tables = generator.extract_v8_tables(fixture_root())
+        document_root = fixture_root()
+        tables = generator.extract_v8_tables(
+            document_root, pid_by_element(document_root)
+        )
         self.assertEqual(len(tables), 1)
         self.assertEqual(tables[0].tid, "V8-T001")
         self.assertEqual(tables[0].paragraph_ids, tuple(f"V8-P{i:04d}" for i in range(5, 9)))
@@ -145,9 +184,18 @@ class V8XmlExtractionTests(unittest.TestCase):
             ),
         )
 
+    def test_extract_tables_requires_the_explicit_paragraph_element_index(self) -> None:
+        self.assertEqual(
+            tuple(inspect.signature(generator.extract_v8_tables).parameters),
+            ("document_root", "pid_by_element"),
+        )
+
     def test_split_sections_ignores_same_named_toc1_and_uses_exact_style1(self) -> None:
-        paragraphs = generator.extract_v8_paragraphs(fixture_root())
-        tables = generator.extract_v8_tables(fixture_root())
+        document_root = fixture_root()
+        paragraphs = generator.extract_v8_paragraphs(document_root)
+        tables = generator.extract_v8_tables(
+            document_root, pid_by_element(document_root)
+        )
         sections = generator.split_v8_sections(paragraphs, tables)
         self.assertEqual(len(sections), 16)
         self.assertEqual(sections[0].start_heading_id, "V8-P0003")
@@ -156,8 +204,11 @@ class V8XmlExtractionTests(unittest.TestCase):
         self.assertEqual(sections[1].start_heading_id, "V8-P0009")
 
     def test_split_sections_rejects_missing_duplicate_and_reordered_titles(self) -> None:
-        paragraphs = list(generator.extract_v8_paragraphs(fixture_root()))
-        tables = generator.extract_v8_tables(fixture_root())
+        document_root = fixture_root()
+        paragraphs = list(generator.extract_v8_paragraphs(document_root))
+        tables = generator.extract_v8_tables(
+            document_root, pid_by_element(document_root)
+        )
         title_positions = [
             index
             for index, paragraph in enumerate(paragraphs)
@@ -203,6 +254,13 @@ class V8SnapshotValidationTests(unittest.TestCase):
         self.assertEqual(generator.EXPECTED_NON_WHITESPACE_CHARS, 155721)
         self.assertEqual(generator.EXPECTED_TABLES, 117)
         self.assertEqual(generator.EXPECTED_SECTIONS, 16)
+        self.assertEqual(generator.EXPECTED_SECTION_START_IDS, EXPECTED_SECTION_START_IDS)
+        self.assertEqual(generator.EXPECTED_ENVELOPE_RANGE, ("V8-P0001", "V8-P0333"))
+        self.assertEqual(
+            tuple(section.start_heading_id for section in self.snapshot.sections),
+            EXPECTED_SECTION_START_IDS,
+        )
+        self.assertEqual(self.snapshot.sections[-1].paragraph_ids[-1], "V8-P3863")
         self.assertEqual(generator.validate_v8_snapshot(self.snapshot), [])
 
     def test_validate_snapshot_rejects_wrong_sha(self) -> None:
@@ -222,6 +280,57 @@ class V8SnapshotValidationTests(unittest.TestCase):
             with self.subTest(label=label):
                 errors = generator.validate_v8_snapshot(candidate)
                 self.assertTrue(any("anchor" in error for error in errors), errors)
+
+    def test_validate_snapshot_rejects_first_heading_at_p0001(self) -> None:
+        paragraphs = list(self.snapshot.paragraphs)
+        first_heading_index = int(EXPECTED_SECTION_START_IDS[0][4:]) - 1
+        paragraphs[0], paragraphs[first_heading_index] = (
+            replace(
+                paragraphs[0],
+                style=paragraphs[first_heading_index].style,
+                text=paragraphs[first_heading_index].text,
+            ),
+            replace(
+                paragraphs[first_heading_index],
+                style=self.snapshot.paragraphs[0].style,
+                text=self.snapshot.paragraphs[0].text,
+            ),
+        )
+        paragraph_tuple = tuple(paragraphs)
+        sections = generator.split_v8_sections(paragraph_tuple, self.snapshot.tables)
+        candidate = replace(
+            self.snapshot,
+            paragraphs=paragraph_tuple,
+            sections=sections,
+        )
+        errors = generator.validate_v8_snapshot(candidate)
+        self.assertTrue(any("section start anchor" in error for error in errors), errors)
+        self.assertTrue(any("source envelope" in error for error in errors), errors)
+
+    def test_validate_snapshot_rejects_any_shifted_section_start(self) -> None:
+        paragraphs = list(self.snapshot.paragraphs)
+        second_heading_index = int(EXPECTED_SECTION_START_IDS[1][4:]) - 1
+        paragraphs[second_heading_index], paragraphs[second_heading_index + 1] = (
+            replace(
+                paragraphs[second_heading_index],
+                style=paragraphs[second_heading_index + 1].style,
+                text=paragraphs[second_heading_index + 1].text,
+            ),
+            replace(
+                paragraphs[second_heading_index + 1],
+                style=self.snapshot.paragraphs[second_heading_index].style,
+                text=self.snapshot.paragraphs[second_heading_index].text,
+            ),
+        )
+        paragraph_tuple = tuple(paragraphs)
+        sections = generator.split_v8_sections(paragraph_tuple, self.snapshot.tables)
+        candidate = replace(
+            self.snapshot,
+            paragraphs=paragraph_tuple,
+            sections=sections,
+        )
+        errors = generator.validate_v8_snapshot(candidate)
+        self.assertTrue(any("section start anchor" in error for error in errors), errors)
 
 
 class V8GeneratedTreeValidationTests(unittest.TestCase):
@@ -247,7 +356,7 @@ class V8GeneratedTreeValidationTests(unittest.TestCase):
         self.assertTrue(any("content mismatch" in error for error in errors), errors)
 
     def test_deleted_and_duplicate_generated_anchors_are_rejected(self) -> None:
-        marker = "<!-- source_paragraph:V8-P1502 style= -->"
+        marker = "<!-- source_paragraph:V8-P3736 style= -->"
         for label, replacement in (("deleted", ""), ("duplicate", f"{marker}\n{marker}")):
             with self.subTest(label=label), tempfile.TemporaryDirectory() as directory:
                 stage = self.render(Path(directory))
@@ -345,6 +454,28 @@ class V8GenerationSafetyTests(unittest.TestCase):
                 with self.assertRaisesRegex(OSError, "injected install failure"):
                     generator.atomic_replace_tree(stage, live)
             self.assertEqual((live / "sentinel.txt").read_text(encoding="utf-8"), "old")
+            self.assertFalse(stage.exists())
+            self.assertEqual(list(parent.glob(".v8-full-source.backup-*")), [])
+
+    def test_atomic_replace_first_move_failure_never_deletes_live_tree(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            parent = Path(directory)
+            live = parent / "v8-full-source"
+            stage = parent / ".v8-full-source.stage-test"
+            live.mkdir()
+            stage.mkdir()
+            sentinel = live / "sentinel.txt"
+            sentinel.write_text("old", encoding="utf-8")
+            (stage / "new.txt").write_text("new", encoding="utf-8")
+
+            with mock.patch.object(
+                generator.os,
+                "replace",
+                side_effect=OSError("injected first move failure"),
+            ):
+                with self.assertRaisesRegex(OSError, "injected first move failure"):
+                    generator.atomic_replace_tree(stage, live)
+            self.assertEqual(sentinel.read_text(encoding="utf-8"), "old")
             self.assertFalse(stage.exists())
             self.assertEqual(list(parent.glob(".v8-full-source.backup-*")), [])
 
