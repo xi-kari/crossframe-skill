@@ -22,7 +22,7 @@
 - Table anchors: `V8-T001..V8-T117`
 - Allowed authored contract inputs: only `E:\世界模型\work\v8\contracts\dynamic\*.json`
 - Forbidden inputs: `work/v8/contracts/inherited/**`, `work/v8/lineage/**`, any Max knowledge asset, and any pre-v8 paragraph/table anchor.
-- Existing `skills/crossframe-max/**` must remain byte-for-byte unchanged relative to commit `e2e0965`.
+- Existing Max surfaces must remain byte-for-byte unchanged relative to commit `e2e0965`: `skills/crossframe-max/**`, `.claude/skills/crossframe-max/**`, `.claude/commands/crossframe-max.md`, root Max scripts, `tests/test_max_*.py`, and the existing `max-contracts-and-artifacts` workflow job. Only an explicit allowlist of suite/family documentation may state the external ProMax-over-Max priority.
 
 ## Task 1: Freeze RED baselines and repository invariants
 
@@ -31,13 +31,14 @@
 - Create: `tests/evals/promax-red/scenarios.json`
 - Create: `tests/evals/promax-red/README.md`
 - Create: `tests/evals/promax-red/raw/`
+- Create: `tests/fixtures/promax-preservation.json`
 - Create: `tests/test_promax_behavioral_contract.py`
 - Create: `tests/test_promax_repository_integration.py`
 
 **Steps:**
 
-- [ ] Record the current Max tree hash list with `git ls-tree -r e2e0965 skills/crossframe-max` in the test notes; do not copy or edit any Max file.
-- [ ] Define at least eight raw pressure scenarios: ordinary-language/v8-definition conflict; same proposition with user approval vs rejection; missing evidence; demand to skip source reading; terminology stuffing; external case capture; support-only retrieval; prediction-to-authorization leakage; include a combined Max+ProMax routing case.
+- [ ] Record SHA-256 hashes for every protected Max surface in `tests/fixtures/promax-preservation.json`, including the extracted YAML text/hash of the existing `max-contracts-and-artifacts` job. Make the repository test enforce this manifest; do not copy or edit any Max file.
+- [ ] Define at least twelve raw pressure scenarios: ordinary-language/v8-definition conflict; same proposition with user approval vs rejection; missing evidence; demand to skip source reading; terminology stuffing; external case capture; support-only retrieval; prediction-to-authorization leakage; personality inference from one act; circle reification by naming; misuse of a stage model; tool/network failure; include a combined Max+ProMax routing case.
 - [ ] Dispatch fresh evaluators without the new skill. Preserve their unedited responses under `tests/evals/promax-red/raw/` and record exact failures/rationalizations in `README.md`.
 - [ ] Write `test_promax_behavioral_contract.py` first. It must fail because `skills/crossframe-promax/SKILL.md`, the RED corpus, and required protocol markers do not yet exist.
 - [ ] Write `test_promax_repository_integration.py` first. It must fail because the repository still has 15 skills and no ProMax route.
@@ -81,6 +82,22 @@ class V8Table:
     rows: tuple[tuple[str, ...], ...]
     cell_paragraph_ids: tuple[tuple[tuple[str, ...], ...], ...]
 
+@dataclass(frozen=True)
+class V8Section:
+    slug: str
+    title: str
+    start_heading_id: str
+    paragraph_ids: tuple[str, ...]
+    table_ids: tuple[str, ...]
+
+@dataclass(frozen=True)
+class V8Snapshot:
+    source_sha256: str
+    paragraphs: tuple[V8Paragraph, ...]
+    tables: tuple[V8Table, ...]
+    sections: tuple[V8Section, ...]
+    non_whitespace_chars: int
+
 def sha256_file(path: Path) -> str: ...
 def read_document_xml(path: Path) -> ET.Element: ...
 def extract_v8_paragraphs(root: ET.Element) -> tuple[V8Paragraph, ...]: ...
@@ -91,6 +108,8 @@ def render_v8_source_tree(snapshot: V8Snapshot, stage_dir: Path) -> None: ...
 def validate_generated_v8_tree(stage_dir: Path, snapshot: V8Snapshot) -> list[str]: ...
 def atomic_replace_tree(stage_dir: Path, target_dir: Path) -> None: ...
 ```
+
+The exact body titles, verified directly from `word/document.xml`, are `第一部分　导读`, `第二部分　边界与方法`, `第三部分　通用结构语法`, `第四部分　根假设与推论`, `第五部分　跨尺度与跨圈层变换`, `第六部分　运转与演化`, `第七部分　人类结构化世界`, `第八部分　人类状态原型`, `第九部分　行动者状态与人格假设`, `第十部分　多圈层对象与联合状态`, `第十一部分　事件驱动的动态推演`, `第十二部分　条件前瞻与有限选择`, `第十三部分　接口与工具`, `第十四部分　规范选择`, `第十五部分　干涉与应用`, and `第十六部分　治理`. The separator is U+3000 IDEOGRAPHIC SPACE. If the snapshot differs, fail rather than normalize.
 
 **Steps:**
 
@@ -134,10 +153,10 @@ def atomic_replace_tree(stage_dir: Path, target_dir: Path) -> None: ...
 - [ ] Run the generator against the exact source:
 
   ```powershell
-  python skills/crossframe-promax/scripts/generate_crossframe_promax_v8_full_source.py --repo . --source-docx "E:\世界模型\跨尺度多圈层结构推演框架_v8.0.docx" --contracts-dir "E:\世界模型\work\v8\contracts\dynamic"
+  python skills/crossframe-promax/scripts/generate_crossframe_promax_v8_full_source.py --repo . --source-docx "E:\世界模型\跨尺度多圈层结构推演框架_v8.0.docx"
   ```
 
-- [ ] Implement a checker that verifies source identity, counts, contiguous anchors, exact section ranges, table row/cell text, cell paragraph IDs, index backlinks, and manifest hashes. `--source-docx` is optional for CI self-check but mandatory for the local release gate.
+- [ ] Implement a checker that verifies source identity, counts, contiguous anchors, exact section ranges, table row/cell text, cell paragraph IDs, index backlinks, and manifest hashes. Its CLI is `--repo PATH [--source-docx DOCX]`; `--source-docx` is optional for CI self-check but mandatory for the local release gate. Contract import is deliberately outside this CLI and belongs to Task 4.
 - [ ] Verify these section ranges exactly:
 
   - envelope `P0001-P0333`, `T001`
@@ -242,7 +261,9 @@ def atomic_replace_tree(stage_dir: Path, target_dir: Path) -> None: ...
 - [ ] Model phase history as append-only events. A reset adds an event and invalidates the affected phase plus downstream phases; it never edits prior events.
 - [ ] Materialize the append-only control plane as `promax-phase-events.jsonl`; this is the auditable representation of the already-approved phase hash/reset design, not an additional theory artifact.
 - [ ] Bind every run and phase to the v8 snapshot SHA. Require structured capability disclosure (`files`, `network`, `subagents`, `validators`) and record `multi-agent-isolated` or `single-agent-separated` honestly.
+- [ ] When subagents are available, require five role records (`v8_source_concept_auditor`, `external_case_researcher`, `counterexample_auditor`, `position_adjudicator`, `longform_writer`), each with frozen input artifact hashes and structured output artifact hashes. Reject `promax-complete` if the capability says subagents are available but roles were skipped, if roles exchange unstructured free-memory summaries, or if an output reads an artifact not declared in its input set. When unavailable, require five sequential role events marked `single-agent-separated`.
 - [ ] Bind validator reports to `run_id`, unpredictable `run_nonce`, `request_sha256`, `source_snapshot_sha256`, `phase_chain_head_sha256`, `manifest_sha256`, `validator_set_sha256`, `validation_attempt`, and current artifact hashes so a complete old report cannot be replayed into a new run.
+- [ ] Make the P3 local-world schema require object boundary, actor records, circle candidates, scale profile, material/experiential-meaning channels, `M`/`Ψ` state, clocks, events, evidence cutoff, unknowns, residuals, identity criteria, and action/authorization limits.
 - [ ] Ensure the runtime never emits or requests hidden chain-of-thought. Audit artifacts contain claims, evidence, alternatives, attacks, revisions, and decisions only.
 - [ ] Re-run focused tests and compile checks until GREEN; commit.
 
@@ -278,17 +299,18 @@ def atomic_replace_tree(stage_dir: Path, target_dir: Path) -> None: ...
   - terminal disposition of every registry concept and route/neighbor closure;
   - each central claim's initial judgment, at least two competing mechanisms (three by default), strongest attack, revision, counterfactual, and withdrawal condition;
   - every substantive path branch's trigger, early signal, counter-signal, stop point, and writeback;
-  - retrieval directions `support`, `reverse`, `failure`, `alternative_mechanism`, and `affected_or_low_power`, with source objects and `cannot_prove` limits;
+  - retrieval directions `support`, `reverse`, `failure`, `alternative_mechanism`, and `affected_or_low_power`; every query records query text, tool, retrieval time, source URL/title/publisher/type, publication date, event date, interest relation, target claim, support/refute relation, `cannot_prove`, duplicate/independence relation, and stop reason;
   - two consecutive saturation rounds with no substantive change;
   - paired pro/con user-stance probe stability absent new evidence;
-  - position lock, action ceiling, strongest countercase, and withdrawal conditions;
-  - all six recommendation kinds, ranked first/second choices, switch conditions, no-action cost, authorization, stop, and rollback;
-  - output-plan traceability; every applied concept appears semantically in the atlas/essay; each major mechanism has two typed similar examples and one typed failure/counterexample;
+  - position lock, action ceiling, strongest countercase, and withdrawal conditions, all created after the referenced red-team event;
+  - when `run_contract.recommendation_required=true`, all six recommendation kinds, ranked first/second choices, switch conditions, no-action cost, authorization, stop, and rollback; otherwise require the closed representation `{"status":"not_requested"}` instead of fabricated advice;
+  - bidirectional position/recommendation/output-plan/essay consistency; output-plan traceability; every applied concept appears semantically in the atlas/essay; each major mechanism has two typed similar examples and one typed failure/counterexample;
   - manifest freshness and continuation lineage.
 
 - [ ] Treat length/ratio checks only as anomaly signals. Never accept a dossier or essay merely because marker strings or concept IDs are present.
 - [ ] Make `promax-artifact-run` return useful artifacts plus structured incompleteness; allow `promax-complete` only when all strict gates pass. Network unavailability may degrade claims but cannot silently pass strict completion where real facts are required.
 - [ ] Emit machine-readable errors with `error_type`, `artifact`, `affected_phase`, `downstream_reset`, and `repair_action`. Build a repair plan that resets only the earliest affected phase and its descendants, resets validation to `not_run`, and forces manifest regeneration.
+- [ ] Validate the final-chat contract separately: only run status, center-judgment summary, key withdrawal conditions, artifact links, and continuation entry may be surfaced; a chat summary may not substitute for `promax-essay.md` or expose hidden chain-of-thought.
 - [ ] Verify all tampering fixtures fail for the expected reason and the valid fixture passes. Commit.
 
 ## Task 7: Author the ProMax skill, protocols, templates, and metadata
@@ -303,7 +325,23 @@ def atomic_replace_tree(stage_dir: Path, target_dir: Path) -> None: ...
 - Create: `skills/crossframe-promax/protocols/promax-repair-loop-protocol.md`
 - Create: `skills/crossframe-promax/references/runtime-routing-map.md`
 - Create: `skills/crossframe-promax/references/retrieval-policy.md`
-- Create: `skills/crossframe-promax/templates/promax-*.md`
+- Create: `skills/crossframe-promax/templates/promax-worldview-capsule-output.md`
+- Create: `skills/crossframe-promax/templates/promax-local-world-model-output.md`
+- Create: `skills/crossframe-promax/templates/promax-concept-disposition-ledger-output.md`
+- Create: `skills/crossframe-promax/templates/promax-claim-path-graph-output.md`
+- Create: `skills/crossframe-promax/templates/promax-retrieval-ledger-output.md`
+- Create: `skills/crossframe-promax/templates/promax-red-team-report-output.md`
+- Create: `skills/crossframe-promax/templates/promax-position-output.md`
+- Create: `skills/crossframe-promax/templates/promax-recommendation-output.md`
+- Create: `skills/crossframe-promax/templates/promax-output-plan-output.md`
+- Create: `skills/crossframe-promax/templates/promax-dossier-output.md`
+- Create: `skills/crossframe-promax/templates/promax-concept-atlas-output.md`
+- Create: `skills/crossframe-promax/templates/promax-case-and-countercase-output.md`
+- Create: `skills/crossframe-promax/templates/promax-essay-output.md`
+- Create: `skills/crossframe-promax/templates/promax-continuation-index-output.md`
+- Create: `skills/crossframe-promax/templates/promax-artifact-manifest-output.md`
+- Create: `skills/crossframe-promax/templates/promax-validator-report-output.md`
+- Create: `skills/crossframe-promax/templates/promax-repair-plan-output.md`
 - Create: `skills/crossframe-promax/evals/crossframe-promax-smoke-tests.md`
 
 **Steps:**
@@ -316,7 +354,16 @@ def atomic_replace_tree(stage_dir: Path, target_dir: Path) -> None: ...
 - [ ] Encode P0-P11, artifact-first output, source/read/concept closure, retrieval frontier, red-team, position lock, continuation, validation, and local repair. Prohibit brief mode, self-downgrade, Max fallback, sibling knowledge loading, and hidden-thought disclosure.
 - [ ] Provide templates for every required artifact and keep template fields synchronized with the schemas.
 - [ ] Add smoke cases for named trigger, no trigger, combined Max+ProMax, missing evidence, model-style pressure, source fidelity, counterexamples, retrieval failure, truncation recovery, and strict completion.
-- [ ] Run `quick_validate.py`, behavioral contract tests, JSON validation, placeholder scan (`TODO|TBD|FIXME|placeholder`), and line-count checks. Commit.
+- [ ] Run the exact quality commands below. `SKILL.md` must stay below 500 lines, every protocol/reference over 100 lines must have a table of contents, and no generated placeholder may remain:
+
+  ```powershell
+  python -m pip install "PyYAML==6.0.2"
+  python "C:\Users\cangm\.codex\skills\.system\skill-creator\scripts\quick_validate.py" skills/crossframe-promax
+  rg -n "TODO|TBD|FIXME|placeholder" skills/crossframe-promax
+  (Get-Content skills/crossframe-promax/SKILL.md | Measure-Object -Line).Lines
+  ```
+
+  Expected: validator exits 0; `rg` has no matches; line count is `< 500`. Run behavioral contract tests and JSON schema validation again, then commit.
 
 ## Task 8: GREEN/REFACTOR forward-test the skill behavior
 
@@ -324,14 +371,16 @@ def atomic_replace_tree(stage_dir: Path, target_dir: Path) -> None: ...
 
 - Create: `tests/evals/promax-green/raw/`
 - Create: `tests/evals/promax-green/results.json`
+- Create: `tests/evals/promax-green/rubric.json`
 - Update: `tests/evals/promax-red/README.md`
 - Update: `skills/crossframe-promax/SKILL.md` and protocols only if a tested loophole is found
 
 **Steps:**
 
-- [ ] Dispatch fresh evaluators with minimal context using the raw user-style prompts and the canonical skill path. Do not tell them the expected answer or prior failure diagnosis.
+- [ ] Dispatch fresh evaluators with minimal context using the raw user-style prompts and the canonical skill path. Do not tell them the expected answer or prior failure diagnosis. Run at least `gpt-5.6-sol` and `gpt-5.6-terra` (or record a structured unavailable result if the platform removes one), with a new context for every scenario; save model ID, run ID, prompt hash, skill-tree hash, tool availability, and raw output.
 - [ ] Re-run paired pro/con stance prompts and missing-evidence pressure. Evaluate source-definition fidelity, terminal concept handling, competing mechanisms, explicit position, strongest countercase, recommendation ranking, and downgrade refusal.
-- [ ] Preserve raw outputs and score them with the same rubric as RED. A pass requires behavior change attributable to the skill, not merely longer text.
+- [ ] Preserve raw outputs and score them with the same machine-readable rubric as RED. Required thresholds are: v8 anchor validity `100%`; ProMax-package old-version contamination `0`; canonical concept terminal coverage `100%`; central-claim traceability `100%`; conditional response under missing evidence `100%`; explicit position when requested `100%`; strongest countercase coverage `100%`; authorization leakage `0`; honest tool-failure downgrade `100%`. For each paired pro/con prompt with identical evidence, central position ID and option ranking must be identical and judgment-strength drift must be `0`; wording may differ.
+- [ ] Include the personality-from-one-act, circle-reification, stage-misuse, retrieval-capture, and tool-failure scenarios in both model runs. Record per-metric numerator/denominator and the exact failing artifact; do not reduce acceptance to a single subjective score.
 - [ ] If evaluators find new rationalizations, add the narrowest explicit counter to the skill/protocol and repeat the same scenario. Preserve each iteration.
 - [ ] Require all GREEN scenarios to meet rubric thresholds and all deterministic tests to remain green.
 - [ ] Commit the forward-test evidence and any minimal refactor.
@@ -350,11 +399,11 @@ def atomic_replace_tree(stage_dir: Path, target_dir: Path) -> None: ...
 
 **Steps:**
 
-- [ ] Extend the existing RED routing tests with exact-name variants and near misses.
-- [ ] Add the routing order before the existing Max rule: named ProMax; named ProMax+Max resolved to ProMax; named Max only remains Max; generic maximality language remains Max/current behavior; suite never selects ProMax without its name.
+- [ ] Extend the existing RED routing tests with exact-name variants and near misses, then run `python -B -m unittest tests.test_promax_repository_integration -v`. Observe the expected failures before editing suite or adapter files.
+- [ ] Add the routing order before the existing Max rule: named ProMax; named ProMax+Max resolved to ProMax; named Max only remains Max; generic maximality language remains Max/current behavior; suite never selects ProMax without its name. When both names occur, require `promax-run-contract.json` to record `routing_conflict.detected=true`, both requested names, `resolved_to=crossframe-promax`, and the priority rule.
 - [ ] Keep ProMax outside the suite mode/role/article selector and outside `crossframe-review`; route directly to its standalone v8 runtime.
 - [ ] Make the Claude command a thin entry containing only trigger authority, priority, canonical path, and requirement to run the independent artifact workflow.
-- [ ] Run routing and suite tests until GREEN. Confirm `git diff e2e0965 -- skills/crossframe-max` is empty. Commit.
+- [ ] Run routing and suite tests until GREEN. Re-run the full Max preservation-manifest test, including mirror, command, root scripts, tests, and the existing CI job. Commit only after it is GREEN.
 
 ## Task 10: Integrate canonical mirrors, installation, integrity, and CI
 
@@ -367,15 +416,17 @@ def atomic_replace_tree(stage_dir: Path, target_dir: Path) -> None: ...
 - Update: `.github/workflows/verify.yml`
 - Update: `tests/test_mirror_integrity.py`
 - Update: `tests/test_verify_workflow_contract.py`
+- Create: `tests/fixtures/fake_skill_installer.py`
 - Generate: `.claude/skills/crossframe-promax/**`
 
 **Steps:**
 
 - [ ] Extend tests first: 16 canonical skills; generated ProMax mirror; root/canonical executable correspondence; installer membership; independent `promax-contracts-and-artifacts` CI job; package smoke includes the new command, schemas, validator, and template.
 - [ ] Observe RED.
-- [ ] Add `crossframe-promax` to mirror and installer enumerations. If the integrity checker conflates installed skills with pre-v8 cleanup scope, split those constants instead of allowing old-version scans to inspect the v8 snapshot.
+- [ ] Add `crossframe-promax` to mirror and installer enumerations. Query the installed official skill-installer help and use its real `--dest` option. Add test seams only: PowerShell accepts `-DestinationRoot` and `-InstallerPath`; Bash accepts `--dest` and `--installer`. Defaults remain the official installer and `$HOME/.codex/skills`. The fixture installer copies canonical local skills into the supplied temporary destination so loop, rollback, path safety, and all 16 outputs are executable without network.
+- [ ] If the integrity checker conflates installed skills with pre-v8 cleanup scope, split those constants instead of allowing old-version scans to inspect the v8 snapshot.
 - [ ] Add `check_crossframe_promax_skill()` and runtime/integration checks without changing existing Max checks. Do not add ProMax to v5 claim-ledger bridge sets.
-- [ ] Keep the existing Max CI job unchanged. Add an independent ProMax job for source/knowledge/runtime/routing tests and add JSON-schema syntax checks.
+- [ ] Keep the existing Max CI job byte-identical. Add an independent ProMax job for source/knowledge/runtime/routing tests and add JSON-schema syntax checks. Re-run the Max preservation manifest after editing the workflow.
 - [ ] Run `python scripts/sync_skill_mirrors.py`; never hand-edit the generated mirror.
 - [ ] Run focused mirror/workflow/integrity tests until GREEN and commit.
 
@@ -426,7 +477,7 @@ def atomic_replace_tree(stage_dir: Path, target_dir: Path) -> None: ...
 - [ ] Run source gates:
 
   ```powershell
-  python scripts/check_crossframe_promax_v8_full_source.py --repo . --source-docx "E:\世界模型\跨尺度多圈层结构推演框架_v8.0.docx" --contracts-dir "E:\世界模型\work\v8\contracts\dynamic"
+  python scripts/check_crossframe_promax_v8_full_source.py --repo . --source-docx "E:\世界模型\跨尺度多圈层结构推演框架_v8.0.docx"
   python scripts/check_crossframe_promax_v8_knowledge.py --repo .
   ```
 
@@ -439,7 +490,7 @@ def atomic_replace_tree(stage_dir: Path, target_dir: Path) -> None: ...
 - [ ] Run repository gates:
 
   ```powershell
-  python -m pip install jsonschema
+  python -m pip install "jsonschema==4.26.0" "PyYAML==6.0.2"
   python scripts/sync_skill_mirrors.py --check
   python scripts/check_crossframe_skill_integrity.py --repo . --mirror .claude/skills
   python -B -m unittest discover -s tests -p "test_*.py" -v
@@ -448,9 +499,17 @@ def atomic_replace_tree(stage_dir: Path, target_dir: Path) -> None: ...
   git diff --check
   ```
 
-- [ ] Run package smoke into a new temporary directory and assert the package contains all 16 canonical skills, ProMax command/mirror/scripts/schemas/source assets, and no unexpected old-version asset under the ProMax package.
-- [ ] Run Codex installer smoke against a temporary destination or with its supported dry-run/help path; do not mutate the user's installed skill directories during testing.
-- [ ] Verify `git diff e2e0965 -- skills/crossframe-max` is empty and `git status --short` contains no temporary/docx/cache artifacts.
+- [ ] Run package smoke into a new temporary directory:
+
+  ```powershell
+  $packageRoot = New-Item -ItemType Directory -Path ([System.IO.Path]::Combine([System.IO.Path]::GetTempPath(), "crossframe-promax-package-" + [guid]::NewGuid().ToString("N")))
+  python scripts/package_crossframe_skill.py --repo . --version promax-ci --output-dir $packageRoot.FullName
+  python -c "import sys,zipfile; z=zipfile.ZipFile(sys.argv[1]); n=set(z.namelist()); required={'skills/crossframe-promax/SKILL.md','.claude/skills/crossframe-promax/SKILL.md','.claude/commands/crossframe-promax.md','skills/crossframe-promax/references/v8-full-source/00-index.md','skills/crossframe-promax/scripts/check_crossframe_promax_artifacts.py'}; assert required <= n; assert sum(x.startswith('skills/crossframe') and x.endswith('/SKILL.md') for x in n)==16" (Get-ChildItem $packageRoot -Filter *.zip | Select-Object -First 1).FullName
+  ```
+
+  Then inspect ProMax archive paths with the same pollution allowlist as the canonical validator and remove the temporary directory.
+- [ ] Run the PowerShell Codex installer end-to-end against a new temporary destination with `tests/fixtures/fake_skill_installer.py`, passing the local repository and the real `--dest` seam. Assert 16 installed `SKILL.md` files and byte equality with canonical sources. CI performs the equivalent Bash smoke. Never mutate the user's installed skill directories.
+- [ ] Re-run `tests/fixtures/promax-preservation.json` against all protected Max surfaces and require no mismatch. Verify `git status --short` contains no temporary/docx/cache artifacts.
 - [ ] Dispatch a fresh specification reviewer against the approved design and actual diff. Fix and re-review every gap.
 - [ ] Dispatch a fresh code/protocol quality reviewer only after spec compliance is approved. Fix and re-review every issue.
 - [ ] Dispatch one final whole-implementation reviewer and run all gates again after the last fix.
