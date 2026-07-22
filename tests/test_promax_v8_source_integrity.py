@@ -12,6 +12,7 @@ import sys
 import tempfile
 import unittest
 from unittest import mock
+import warnings
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -767,6 +768,60 @@ class ProMaxV8GenerationSafetyTests(unittest.TestCase):
                     self.assertEqual(remaining_backups, [failed_backup_name])
                     self.assertFalse(stage_tree.exists())
                     self.assertFalse(stage_manifest.exists())
+
+    def test_warning_as_error_cannot_break_committed_release_cleanup(self) -> None:
+        generator = load_module(
+            "promax_v8_generator_warning_as_error",
+            GENERATOR_PATH,
+        )
+        transaction_id = "b" * 32
+        with tempfile.TemporaryDirectory() as directory:
+            references = Path(directory) / "references"
+            stage_tree = references / ".v8-full-source.stage-test"
+            live_tree = references / "v8-full-source"
+            stage_manifest = references / ".source_manifest.json.stage-test"
+            live_manifest = references / "source_manifest.json"
+            stage_tree.mkdir(parents=True)
+            live_tree.mkdir()
+            (stage_tree / "new.txt").write_bytes(b"new tree")
+            (live_tree / "old.txt").write_bytes(b"old tree")
+            stage_manifest.write_bytes(b'{"release":"new"}\n')
+            live_manifest.write_bytes(b'{"release":"old"}\n')
+            failed_backup = references / (
+                f".v8-full-source.backup-{transaction_id}"
+            )
+            manifest_backup = references / (
+                f".source_manifest.json.backup-{transaction_id}"
+            )
+            real_remove_tree = generator._remove_tree
+
+            def fail_tree_backup(path):
+                if Path(path) == failed_backup:
+                    raise OSError("injected tree backup cleanup failure")
+                return real_remove_tree(path)
+
+            with mock.patch.object(
+                generator,
+                "_remove_tree",
+                side_effect=fail_tree_backup,
+            ):
+                with warnings.catch_warnings():
+                    warnings.simplefilter("error", RuntimeWarning)
+                    generator.atomic_replace_release(
+                        stage_tree,
+                        live_tree,
+                        stage_manifest,
+                        live_manifest,
+                        transaction_id,
+                    )
+
+            self.assertEqual((live_tree / "new.txt").read_bytes(), b"new tree")
+            self.assertEqual(
+                live_manifest.read_bytes(),
+                b'{"release":"new"}\n',
+            )
+            self.assertTrue(failed_backup.exists())
+            self.assertFalse(manifest_backup.exists())
 
 
 if __name__ == "__main__":

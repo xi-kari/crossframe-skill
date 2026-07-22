@@ -1082,12 +1082,15 @@ def _cleanup_committed_backup(path: Path) -> None:
     try:
         _remove_tree(path)
     except OSError as error:
-        warnings.warn(
-            "release committed but backup cleanup failed; "
-            f"backup retained at {path}: {error}",
-            RuntimeWarning,
-            stacklevel=2,
-        )
+        try:
+            warnings.warn(
+                "release committed but backup cleanup failed; "
+                f"backup retained at {path}: {error}",
+                RuntimeWarning,
+                stacklevel=2,
+            )
+        except Exception:
+            pass
 
 
 def atomic_replace_tree(stage_dir: Path, live_dir: Path) -> None:
