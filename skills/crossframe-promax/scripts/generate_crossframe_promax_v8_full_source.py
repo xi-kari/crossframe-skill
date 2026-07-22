@@ -10,7 +10,6 @@ from pathlib import Path
 import re
 import shutil
 import sys
-import tempfile
 from uuid import uuid4
 from zipfile import ZipFile
 import xml.etree.ElementTree as ET
@@ -1113,6 +1112,120 @@ def atomic_replace_tree(stage_dir: Path, live_dir: Path) -> None:
         _remove_tree(backup)
 
 
+def atomic_replace_release(
+    stage_tree: Path,
+    live_tree: Path,
+    stage_manifest: Path,
+    live_manifest: Path,
+    transaction_id: str | None = None,
+) -> None:
+    stage_tree = Path(stage_tree)
+    live_tree = Path(live_tree)
+    stage_manifest = Path(stage_manifest)
+    live_manifest = Path(live_manifest)
+    resolved_paths = {
+        path.resolve()
+        for path in (stage_tree, live_tree, stage_manifest, live_manifest)
+    }
+    if len(resolved_paths) != 4:
+        raise ValueError("release stage and live paths must all be different")
+    if not stage_tree.is_dir():
+        raise ValueError(f"stage tree does not exist: {stage_tree}")
+    if not stage_manifest.is_file():
+        raise ValueError(f"stage manifest does not exist: {stage_manifest}")
+    release_parent = live_tree.parent.resolve()
+    if any(
+        path.parent.resolve() != release_parent
+        for path in (stage_tree, stage_manifest, live_manifest)
+    ):
+        raise ValueError("release stage and live paths must have the same parent")
+
+    if transaction_id is None:
+        transaction_id = uuid4().hex
+    if not re.fullmatch(r"[0-9a-f]{32}", transaction_id):
+        raise ValueError("transaction id must be 32 lowercase hexadecimal characters")
+    tree_backup = release_parent / (
+        f".{live_tree.name}.backup-{transaction_id}"
+    )
+    manifest_backup = release_parent / (
+        f".{live_manifest.name}.backup-{transaction_id}"
+    )
+    if tree_backup.exists() or manifest_backup.exists():
+        raise RuntimeError("release transaction backup path already exists")
+
+    tree_backup_created = False
+    manifest_backup_created = False
+    tree_installed = False
+    manifest_installed = False
+    try:
+        if live_tree.exists():
+            os.replace(live_tree, tree_backup)
+            tree_backup_created = True
+        if live_manifest.exists():
+            os.replace(live_manifest, manifest_backup)
+            manifest_backup_created = True
+        os.replace(stage_tree, live_tree)
+        tree_installed = True
+        os.replace(stage_manifest, live_manifest)
+        manifest_installed = True
+    except BaseException as install_error:
+        rollback_errors: list[str] = []
+
+        def rollback_step(label: str, operation) -> bool:
+            try:
+                operation()
+            except BaseException as rollback_error:
+                rollback_errors.append(f"{label}: {rollback_error}")
+                return False
+            return True
+
+        if manifest_installed and live_manifest.exists():
+            if rollback_step(
+                "remove installed manifest",
+                lambda: _remove_tree(live_manifest),
+            ):
+                manifest_installed = False
+        if tree_installed and live_tree.exists():
+            if rollback_step(
+                "remove installed tree",
+                lambda: _remove_tree(live_tree),
+            ):
+                tree_installed = False
+        if manifest_backup_created and manifest_backup.exists():
+            if rollback_step(
+                "restore manifest backup",
+                lambda: os.replace(manifest_backup, live_manifest),
+            ):
+                manifest_backup_created = False
+        if tree_backup_created and tree_backup.exists():
+            if rollback_step(
+                "restore tree backup",
+                lambda: os.replace(tree_backup, live_tree),
+            ):
+                tree_backup_created = False
+        if stage_manifest.exists():
+            rollback_step(
+                "remove staged manifest",
+                lambda: _remove_tree(stage_manifest),
+            )
+        if stage_tree.exists():
+            rollback_step(
+                "remove staged tree",
+                lambda: _remove_tree(stage_tree),
+            )
+        if rollback_errors:
+            detail = "; ".join(rollback_errors)
+            raise RuntimeError(
+                f"release rollback failed after {install_error}: {detail}"
+            ) from install_error
+        raise
+
+    if tree_backup_created and tree_backup.exists():
+        _remove_tree(tree_backup)
+    if manifest_backup_created and manifest_backup.exists():
+        _remove_tree(manifest_backup)
+
+
 def _acquire_generation_lock(lock_path: Path) -> str:
     token = uuid4().hex
     payload = json.dumps(
@@ -1156,18 +1269,7 @@ def build_source_manifest(
     snapshot: V8Snapshot, source_tree: Path
 ) -> dict[str, object]:
     source_tree = Path(source_tree)
-    file_entries = []
-    for path in sorted(source_tree.rglob("*")):
-        if not path.is_file():
-            continue
-        relative_path = path.relative_to(source_tree).as_posix()
-        file_entries.append(
-            {
-                "path": f"v8-full-source/{relative_path}",
-                "sha256": sha256_file(path),
-                "size": path.stat().st_size,
-            }
-        )
+    file_entries = _source_tree_file_entries(source_tree)
     source_ranges = [
         {
             "file": filename,
@@ -1202,24 +1304,66 @@ def build_source_manifest(
     }
 
 
-def write_source_manifest_atomic(
-    manifest_path: Path, manifest: dict[str, object]
-) -> None:
-    manifest_path = Path(manifest_path)
-    manifest_path.parent.mkdir(parents=True, exist_ok=True)
-    temporary_path = manifest_path.parent / (
-        f".{manifest_path.name}.tmp-{uuid4().hex}"
-    )
-    try:
-        temporary_path.write_text(
-            json.dumps(manifest, ensure_ascii=False, indent=2) + "\n",
-            encoding="utf-8",
-            newline="\n",
+def _source_tree_file_entries(source_tree: Path) -> list[dict[str, object]]:
+    source_tree = Path(source_tree)
+    file_entries: list[dict[str, object]] = []
+    for path in sorted(source_tree.rglob("*")):
+        if not path.is_file():
+            continue
+        relative_path = path.relative_to(source_tree).as_posix()
+        file_entries.append(
+            {
+                "path": f"v8-full-source/{relative_path}",
+                "sha256": sha256_file(path),
+                "size": path.stat().st_size,
+            }
         )
-        os.replace(temporary_path, manifest_path)
-    finally:
-        if temporary_path.exists():
-            temporary_path.unlink()
+    return file_entries
+
+
+def write_source_manifest_stage(
+    stage_path: Path, manifest: dict[str, object]
+) -> None:
+    stage_path = Path(stage_path)
+    if stage_path.exists():
+        raise ValueError(f"manifest stage already exists: {stage_path}")
+    stage_path.write_text(
+        json.dumps(manifest, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+        newline="\n",
+    )
+
+
+def validate_staged_source_manifest(
+    stage_path: Path,
+    source_tree: Path,
+    expected_manifest: dict[str, object],
+) -> list[str]:
+    stage_path = Path(stage_path)
+    source_tree = Path(source_tree)
+    errors: list[str] = []
+    try:
+        stage_bytes = stage_path.read_bytes()
+    except OSError as error:
+        return [f"cannot read staged source manifest: {error}"]
+    expected_bytes = (
+        json.dumps(expected_manifest, ensure_ascii=False, indent=2) + "\n"
+    ).encode("utf-8")
+    if stage_bytes != expected_bytes:
+        errors.append("staged source manifest bytes mismatch")
+    try:
+        staged_manifest = json.loads(stage_bytes.decode("utf-8"))
+    except (UnicodeError, json.JSONDecodeError) as error:
+        errors.append(f"invalid staged source manifest JSON: {error}")
+        return errors
+    if not isinstance(staged_manifest, dict):
+        errors.append("staged source manifest root must be an object")
+        return errors
+    if staged_manifest != expected_manifest:
+        errors.append("staged source manifest payload mismatch")
+    if staged_manifest.get("files") != _source_tree_file_entries(source_tree):
+        errors.append("staged source manifest tree inventory mismatch")
+    return list(dict.fromkeys(errors))
 
 
 def generate(repo: Path, source_docx: Path) -> Path:
@@ -1250,15 +1394,16 @@ def generate(repo: Path, source_docx: Path) -> Path:
 
     live_dir = repo / "skills/crossframe-promax/references/v8-full-source"
     live_dir.parent.mkdir(parents=True, exist_ok=True)
+    manifest_path = live_dir.parent / "source_manifest.json"
     lock_path = live_dir.parent / f".{live_dir.name}.lock"
     lock_token = _acquire_generation_lock(lock_path)
+    transaction_id = uuid4().hex
+    stage_dir = live_dir.parent / f".{live_dir.name}.stage-{transaction_id}"
+    manifest_stage = live_dir.parent / (
+        f".{manifest_path.name}.stage-{transaction_id}"
+    )
     try:
-        stage_dir = Path(
-            tempfile.mkdtemp(
-                prefix=f".{live_dir.name}.stage-",
-                dir=live_dir.parent,
-            )
-        )
+        stage_dir.mkdir()
         try:
             render_v8_source_tree(snapshot, stage_dir)
             generated_errors = validate_generated_v8_tree(stage_dir, snapshot)
@@ -1268,11 +1413,27 @@ def generate(repo: Path, source_docx: Path) -> Path:
                     + "; ".join(generated_errors)
                 )
             manifest = build_source_manifest(snapshot, stage_dir)
-            atomic_replace_tree(stage_dir, live_dir)
-            write_source_manifest_atomic(
-                live_dir.parent / "source_manifest.json", manifest
+            write_source_manifest_stage(manifest_stage, manifest)
+            manifest_errors = validate_staged_source_manifest(
+                manifest_stage,
+                stage_dir,
+                manifest,
+            )
+            if manifest_errors:
+                raise ValueError(
+                    "generated source manifest validation failed: "
+                    + "; ".join(manifest_errors)
+                )
+            atomic_replace_release(
+                stage_dir,
+                live_dir,
+                manifest_stage,
+                manifest_path,
+                transaction_id,
             )
         finally:
+            if manifest_stage.exists():
+                _remove_tree(manifest_stage)
             if stage_dir.exists():
                 _remove_tree(stage_dir)
     finally:

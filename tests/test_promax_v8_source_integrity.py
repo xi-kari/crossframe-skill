@@ -557,6 +557,76 @@ class ProMaxV8SourceComparisonTests(unittest.TestCase):
 
 
 class ProMaxV8GenerationSafetyTests(unittest.TestCase):
+    @staticmethod
+    def assert_no_transaction_residue(references: Path) -> None:
+        prefixes = (
+            ".v8-full-source.stage-",
+            ".v8-full-source.backup-",
+            ".source_manifest.json.stage-",
+            ".source_manifest.json.backup-",
+            ".source_manifest.json.tmp-",
+        )
+        residue = sorted(
+            path.name
+            for path in references.iterdir()
+            if path.name == ".v8-full-source.lock"
+            or path.name.startswith(prefixes)
+        )
+        if residue:
+            raise AssertionError(f"transaction residue remains: {residue}")
+
+    def assert_manifest_install_failure_restores_release(
+        self, old_manifest: bytes | None
+    ) -> None:
+        if not REAL_SOURCE.is_file():
+            self.skipTest(f"source DOCX unavailable: {REAL_SOURCE}")
+
+        generator = load_module(
+            f"promax_v8_generator_transaction_{old_manifest is not None}",
+            GENERATOR_PATH,
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            repo = Path(directory) / "repo"
+            references = repo / "skills/crossframe-promax/references"
+            live = references / "v8-full-source"
+            manifest_path = references / "source_manifest.json"
+            live.mkdir(parents=True)
+            sentinel = live / "sentinel.bin"
+            sentinel_bytes = b"old live tree\x00\xff"
+            sentinel.write_bytes(sentinel_bytes)
+            before = tree_fingerprint(live)
+            if old_manifest is not None:
+                manifest_path.write_bytes(old_manifest)
+
+            real_replace = os.replace
+
+            def fail_manifest_install(source, target):
+                source_name = Path(source).name
+                if Path(target) == manifest_path and (
+                    source_name.startswith(".source_manifest.json.stage-")
+                    or source_name.startswith(".source_manifest.json.tmp-")
+                ):
+                    raise OSError("injected manifest install failure")
+                return real_replace(source, target)
+
+            with mock.patch.object(
+                generator.os,
+                "replace",
+                side_effect=fail_manifest_install,
+            ):
+                with self.assertRaisesRegex(
+                    OSError, "injected manifest install failure"
+                ):
+                    generator.generate(repo, REAL_SOURCE)
+
+            self.assertEqual(tree_fingerprint(live), before)
+            self.assertEqual(sentinel.read_bytes(), sentinel_bytes)
+            if old_manifest is None:
+                self.assertFalse(manifest_path.exists())
+            else:
+                self.assertEqual(manifest_path.read_bytes(), old_manifest)
+            self.assert_no_transaction_residue(references)
+
     def test_generation_failure_preserves_the_committed_live_tree(self) -> None:
         generator = load_module("promax_v8_generator_integrity", GENERATOR_PATH)
         with copied_repository() as repo, tempfile.TemporaryDirectory() as directory:
@@ -567,6 +637,14 @@ class ProMaxV8GenerationSafetyTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "SHA256"):
                 generator.generate(repo, wrong_source)
             self.assertEqual(tree_fingerprint(live), before)
+
+    def test_manifest_install_failure_restores_old_tree_and_manifest(self) -> None:
+        self.assert_manifest_install_failure_restores_release(
+            b'{"release":"old"}\r\n'
+        )
+
+    def test_manifest_install_failure_without_old_manifest_restores_old_tree(self) -> None:
+        self.assert_manifest_install_failure_restores_release(None)
 
 
 if __name__ == "__main__":
