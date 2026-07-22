@@ -230,6 +230,20 @@ class ProMaxV8VersionIsolationTests(unittest.TestCase):
             ),
             [],
         )
+        self.assertEqual(
+            self.checker.pollution_errors_for_text(
+                '      "const": "crossframe-max"',
+                "schemas/promax-run-contract.schema.json",
+            ),
+            [],
+        )
+        self.assert_polluted(
+            self.checker.pollution_errors_for_text(
+                '      "description": "crossframe-max is the knowledge source"',
+                "schemas/promax-run-contract.schema.json",
+            ),
+            "knowledge source",
+        )
 
     def test_max_skill_spelling_variants_cannot_bypass_isolation(self) -> None:
         variants = (

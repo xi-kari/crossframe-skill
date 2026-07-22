@@ -1039,6 +1039,7 @@ def pollution_errors_for_text(text: str, path_label: str) -> list[str]:
 
     max_word = "m" + "ax"
     family_word = "cross" + "frame"
+    route_skill_name = family_word + "-" + max_word
     other_skill = re.compile(
         rf"(?i)(?<![A-Za-z0-9]){family_word}[-_ ]+"
         r"(?P<name>[a-z0-9]+(?:[-_][a-z0-9]+)*)(?![A-Za-z0-9_])"
@@ -1079,6 +1080,16 @@ def pollution_errors_for_text(text: str, path_label: str) -> list[str]:
         "schemas/promax-run-contract.schema.json",
     }
     max_pattern = re.compile(rf"(?i)(?<![A-Za-z0-9_]){max_word}(?![A-Za-z0-9_])")
+    schema_route_pattern = re.compile(
+        rf'[ \t]*"const"[ \t]*:[ \t]*"{re.escape(route_skill_name)}"[ \t]*,?[ \t]*'
+    )
+    schema_route_literal_present = (
+        lowered_path == "schemas/promax-run-contract.schema.json"
+        and any(
+            schema_route_pattern.fullmatch(candidate)
+            for candidate in normalized_text.splitlines()
+        )
+    )
     candidate_lines = list(normalized_text.splitlines())
     candidate_lines.extend(decoded_quoted_strings)
     candidate_lines.append(normalized_path)
@@ -1119,9 +1130,19 @@ def pollution_errors_for_text(text: str, path_label: str) -> list[str]:
         only_priority_other = all(
             match.group("name").casefold() == max_word for match in other_matches
         )
+        schema_route_literal = (
+            schema_route_literal_present
+            and (
+                schema_route_pattern.fullmatch(line) is not None
+                or line == route_skill_name
+            )
+            and not unsafe_context
+            and only_priority_other
+        )
         allowed_priority = control_surface and (
             (has_routing and has_promax and not unsafe_context and only_priority_other)
             or (machine_priority and not unsafe_context and only_priority_other)
+            or schema_route_literal
         ) and not has_forbidden_path and not has_base_alias
         if not allowed_priority:
             errors.append(
