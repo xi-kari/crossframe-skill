@@ -293,6 +293,33 @@ class ProMaxTargetBehaviorContractTests(unittest.TestCase):
             for marker in markers:
                 self.assertIn(marker, text, f"{contract_name}: {marker}")
 
+    def test_runtime_forbids_fixture_reuse_and_early_finalization(self) -> None:
+        skill = read_promax_contract(self, "skill")
+        runtime = read_promax_contract(self, "runtime")
+        for name, text in (("skill", skill), ("runtime", runtime)):
+            with self.subTest(contract=name):
+                self.assertIn("PROMAX-NO-TEST-FIXTURE-RUNTIME", text)
+                self.assertIn("crossframe_promax_fixture_factory.py", text)
+                self.assertIn("通用冻结工件", text)
+                self.assertIn("主题附录", text)
+                self.assertIn("PROMAX-NO-EARLY-FINAL", text)
+                self.assertIn("PROMAX-MATERIALIZE-BEFORE-INCOMPLETE", text)
+                self.assertRegex(text, r"init.{0,20}P0.{0,40}禁止.{0,20}最终")
+
+    def test_validation_and_final_chat_are_fresh_exact_projections(self) -> None:
+        skill = read_promax_contract(self, "skill")
+        runtime = read_promax_contract(self, "runtime")
+        for name, text in (("skill", skill), ("runtime", runtime)):
+            with self.subTest(contract=name):
+                self.assertRegex(
+                    text,
+                    r"check_crossframe_promax_artifacts\.py[^\n]*--final-chat[^\n]*--write-report",
+                )
+                self.assertIn("fresh validator report", text)
+                self.assertIn("final_chat_projection", text)
+                self.assertIn("逐值投影", text)
+                self.assertIn("不得改写", text)
+
 
 if __name__ == "__main__":
     unittest.main()

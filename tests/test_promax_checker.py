@@ -15,6 +15,7 @@ RUNTIME_SCRIPTS = ROOT / "skills/crossframe-promax/scripts"
 sys.path.insert(0, str(RUNTIME_SCRIPTS))
 
 import check_crossframe_promax_artifacts as checker
+import crossframe_promax_fixture_factory as fixture_factory
 
 
 MACHINE_FAILURE_FIELDS = {
@@ -27,6 +28,54 @@ MACHINE_FAILURE_FIELDS = {
 
 
 class ProMaxCheckerContractTests(unittest.TestCase):
+    def test_production_checker_rejects_test_fixture_provenance_by_default(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            workspace = Path(temp_dir) / "fixture"
+            fixture_factory.materialize_fixture(
+                ROOT,
+                scenario_id="valid-complete",
+                output=workspace,
+            )
+
+            production = checker.validate_workspace(
+                workspace,
+                repo=ROOT,
+                final_chat=True,
+            )
+            self.assertEqual(production["overall_status"], "fail")
+            self.assertEqual(
+                production["failures"][0]["error_type"],
+                "test_fixture_provenance_forbidden",
+            )
+            self.assertIsNone(production["final_chat_projection"])
+
+            internal_test = checker.validate_workspace(
+                workspace,
+                repo=ROOT,
+                final_chat=True,
+                allow_test_fixture=True,
+            )
+            self.assertEqual(internal_test["overall_status"], "pass")
+            self.assertEqual(internal_test["completion_status"], "promax-complete")
+            expected_projection = json.loads(
+                (workspace / checker.FINAL_CHAT_ARTIFACT).read_text(encoding="utf-8")
+            )
+            self.assertEqual(
+                internal_test["final_chat_projection"],
+                expected_projection,
+            )
+
+    def test_cli_requires_final_chat_and_exposes_no_fixture_bypass(self) -> None:
+        parser = checker._parser()
+        with self.assertRaises(SystemExit):
+            parser.parse_args(["--workspace", "run", "--repo", "repo"])
+
+        args = parser.parse_args(
+            ["--workspace", "run", "--repo", "repo", "--final-chat"]
+        )
+        self.assertIs(args.final_chat, True)
+        self.assertNotIn("--allow-test-fixture", parser.format_help())
+
     def test_checker_uses_only_the_fixed_safe_artifact_inventory(self) -> None:
         self.assertEqual(
             checker.JSON_ARTIFACTS["run_contract"],

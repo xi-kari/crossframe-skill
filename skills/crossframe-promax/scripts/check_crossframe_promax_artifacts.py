@@ -118,6 +118,7 @@ _PHASE_BY_KEY = {
 }
 
 _CAPABILITY_GAP_RE = re.compile(r"^[a-z0-9][a-z0-9-]{1,62}$")
+_TEST_FIXTURE_RUN_ID_RE = re.compile(r"^promax-fixture(?:-|$)", re.IGNORECASE)
 _MANIFEST_CURRENT_ARTIFACTS = {
     JSON_ARTIFACTS["source_snapshot"],
     JSONL_ARTIFACTS["read_events"],
@@ -732,6 +733,7 @@ def validate_workspace(
     final_chat: bool = False,
     write_report: bool = False,
     validated_at: str | None = None,
+    allow_test_fixture: bool = False,
 ) -> dict[str, object]:
     """Run all independent ProMax hard gates and aggregate repairable failures."""
 
@@ -832,6 +834,23 @@ def validate_workspace(
         if isinstance(run_contract, Mapping)
         else None
     )
+    if (
+        not allow_test_fixture
+        and isinstance(run_id, str)
+        and _TEST_FIXTURE_RUN_ID_RE.match(run_id) is not None
+    ):
+        failures.append(
+            machine_failure(
+                error_type="test_fixture_provenance_forbidden",
+                artifact=JSON_ARTIFACTS["run_contract"],
+                affected_phase="P0",
+                repair_action="restart_with_real_request_bound_artifacts",
+            )
+        )
+        diagnostics.append(
+            "test_fixture_provenance_forbidden:promax-run-contract.json:"
+            "production validation rejects deterministic fixture run_id values"
+        )
 
     # Schema checks are independent and therefore all run even when one fails.
     for key, schema_name in _SCHEMAS.items():
@@ -1218,6 +1237,7 @@ def validate_workspace(
                 error=error,
             )
 
+    final_chat_projection: dict[str, object] | None = None
     if (
         final_chat
         and isinstance(documents.get("final_chat"), Mapping)
@@ -1227,7 +1247,7 @@ def validate_workspace(
         and isinstance(documents.get("continuation_ledger"), Mapping)
     ):
         try:
-            validate_final_chat(
+            final_chat_projection = validate_final_chat(
                 documents["final_chat"],
                 run_contract=run_contract,
                 position=position,
@@ -1236,6 +1256,7 @@ def validate_workspace(
                 validated_output=validated_output,
             )
         except Exception as error:
+            final_chat_projection = None
             _append_failure(
                 failures,
                 diagnostics,
@@ -1411,6 +1432,7 @@ def validate_workspace(
         "validator_report": official_report,
         "repair_plan": repair_plan,
         "preflight_failure_anchor": failure_anchor,
+        "final_chat_projection": final_chat_projection if not failures else None,
     }
     return result
 
@@ -1422,8 +1444,9 @@ def check_workspace(
     final_chat: bool = False,
     write_report: bool = False,
     validated_at: str | None = None,
+    allow_test_fixture: bool = False,
 ) -> dict[str, object]:
-    """Canonical public alias used by fixture and integration callers."""
+    """Canonical alias; ``allow_test_fixture`` is reserved for repository tests."""
 
     return validate_workspace(
         workspace,
@@ -1431,6 +1454,7 @@ def check_workspace(
         final_chat=final_chat,
         write_report=write_report,
         validated_at=validated_at,
+        allow_test_fixture=allow_test_fixture,
     )
 
 
@@ -1443,6 +1467,7 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--final-chat",
         action="store_true",
+        required=True,
         help=f"also validate the fixed {FINAL_CHAT_ARTIFACT} delivery index",
     )
     parser.add_argument("--write-report", action="store_true")
@@ -1475,6 +1500,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             "diagnostics": [str(error)],
             "validator_report": None,
             "repair_plan": None,
+            "final_chat_projection": None,
         }
         if args.json:
             print(json.dumps(failed, ensure_ascii=False, sort_keys=True))

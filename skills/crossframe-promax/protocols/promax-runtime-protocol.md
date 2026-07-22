@@ -31,6 +31,10 @@
 6. 不存在 brief、自选轻量或因材料不足而停止结构推演的档位。
 7. 不输出隐藏思维链；只输出可复核的输入边界、结构结论、证据引用、竞争解释、攻击结果、改变条件和工件散列。
 8. 任何 marker、字符数、概念 ID 数量都不能单独证明语义完成。
+9. `PROMAX-NO-TEST-FIXTURE-RUNTIME`：`crossframe_promax_fixture_factory.py` 与 `tests/fixtures/promax-runtime` 仅供仓库测试；真实运行不得执行、复制、改名或派生测试夹具，也不得使用 `promax-fixture-*` run ID。
+10. 禁止把与请求无关的通用冻结工件锁定后再附加主题附录；通用冻结工件 + 主题附录不满足 request-bound artifact contract。
+11. `PROMAX-NO-EARLY-FINAL`：`init`/`P0` 后禁止给出最终聊天或任何自命名完成状态，必须继续执行所有能力允许的阶段。
+12. `PROMAX-MATERIALIZE-BEFORE-INCOMPLETE`：在记录未完成前，先生成所有能力允许生成的 P1–P10 工件；局部能力缺口不得成为跳过其余 P10 长文与控制面的理由。
 
 以下测试责任 marker 必须落实到相应工件与验证器，而不是只出现在文本中：
 
@@ -268,12 +272,14 @@ python skills/crossframe-promax/scripts/check_crossframe_promax_v8_knowledge.py 
 运行：
 
 ```text
-python skills/crossframe-promax/scripts/check_crossframe_promax_artifacts.py --workspace <工件目录> --repo <仓库根目录> --write-report --json
+python skills/crossframe-promax/scripts/check_crossframe_promax_artifacts.py --workspace <工件目录> --repo <仓库根目录> --final-chat --write-report --json
 ```
 
 验证器检查 schema、run 绑定、源覆盖、阶段链、概念闭包、claim/path、检索、red-team、position/recommendation、输出语义、manifest、continuation 与重放保护。`promax-validator-report.json` 不进入 manifest，避免报告与 manifest 形成散列循环。
 
-只有 fresh report 通过且 completion status 与 run mode 一致时才能声明完成。失败时使用 repair protocol；不得编辑 validator report 使其变绿。P11 是对已绑定 P10 状态的外部验证阶段，报告不回写到受验证输入集合。
+任何 validator-derived 状态只能取自本次命令刚写入并通过新鲜度检查的 fresh validator report。未运行验证器、只有 `init`/P0、缺少工件或找到旧报告都不能推导 `promax-artifact-incomplete:validation-failed`；先按 `PROMAX-MATERIALIZE-BEFORE-INCOMPLETE` 完成全部可生成 P10 工件，再验证。只有 fresh report 通过且 completion status 与 run mode 一致时才能声明完成。失败时使用 repair protocol；不得编辑 validator report 使其变绿。P11 是对已绑定 P10 状态的外部验证阶段，报告不回写到受验证输入集合。
+
+验证器 JSON 只有在 `final_chat_projection` 非空时才提供可交付五项。最终聊天必须逐值投影该字段所对应的已验证 `promax-final-chat.json`，字符串、数组、`null` 与顺序均不得改写、翻译、补写或以临时判断替换；字段为空时先修复并重新运行带 `--final-chat --write-report` 的命令。
 
 ## 阶段封存与角色隔离
 

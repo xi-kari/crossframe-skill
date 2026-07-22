@@ -29,6 +29,10 @@ python skills/crossframe-promax/scripts/crossframe_promax_runtime.py route --req
 - 只有全部严格门通过后才输出 `promax-complete`。
 - 只有源不可访问、文件系统不可写、必需工具被禁止、用户中止或更高优先级安全边界阻断时，才使用 `promax-blocked/progress`。
 - `promax-artifact-incomplete:<reason>` 只能由验证结果产生，不是模型自选档位。
+- `PROMAX-NO-TEST-FIXTURE-RUNTIME`：`crossframe_promax_fixture_factory.py` 与 `tests/fixtures/promax-runtime` 只服务仓库 TDD；真实运行禁止执行、复制、改名或派生其中的测试夹具，`promax-fixture-*` 也不是可交付的生产 run ID。
+- 禁止先锁定与用户请求无关的通用冻结工件，再追加主题附录来伪装请求绑定；通用冻结工件 + 主题附录不是同一轮结构推演。
+- `PROMAX-NO-EARLY-FINAL`：`init`/`P0` 后禁止给出最终聊天、完成或未完成状态；必须继续推进可执行阶段，不能把“尚未运行验证器”改写成 `promax-artifact-incomplete:validation-failed`。
+- `PROMAX-MATERIALIZE-BEFORE-INCOMPLETE`：文件与相应能力可用时，先生成所有可生成的 P1–P10 工件，尤其是完整 P10 长文与控制面，再运行验证器；某项能力缺失只限制依赖该能力的内容，不许可跳过其余可生成工件。
 - 材料不足时继续做条件分支、竞争机制、敏感性分析、当前排序和补证设计；降低结论强度，不取消分析。
 - 不公开隐藏思维链、英文自我规划、工具试错或逐步私有推理。用事实边界、v8 锚点、概念处置、claim-path、反证、判断理由、撤回条件和验证报告提供可审计性。
 - 不用术语数量、篇幅、marker 或概念 ID 堆积冒充理解。每个概念和案例都必须承担可验证的结构作用。
@@ -117,12 +121,12 @@ python skills/crossframe-promax/scripts/crossframe_promax_runtime.py init --repo
 ```text
 python skills/crossframe-promax/scripts/check_crossframe_promax_v8_full_source.py --repo <仓库根目录>
 python skills/crossframe-promax/scripts/check_crossframe_promax_v8_knowledge.py --repo <仓库根目录>
-python skills/crossframe-promax/scripts/check_crossframe_promax_artifacts.py --workspace <工件目录> --repo <仓库根目录> --write-report --json
+python skills/crossframe-promax/scripts/check_crossframe_promax_artifacts.py --workspace <工件目录> --repo <仓库根目录> --final-chat --write-report --json
 ```
 
 验证失败时读取 `protocols/promax-repair-loop-protocol.md`，持久化机器可读 repair plan，按最早 `affected_phase` 局部重跑，重新生成 manifest，并运行全套验证。禁止只补 marker、只改报告、整轮重抽或删除已交付长文来伪装通过。
 
-只有 fresh validator report 的 `overall_status=pass` 且 `completion_status=promax-complete` 时，才能宣称严格完成。artifact-run 有能力缺口或未满足项时，仍交付可用的完整工件和结构化未完成原因。
+任何 validator-derived 状态都必须来自本次命令刚写入并通过新鲜度校验的 fresh validator report；不得根据 `init`、P0、缺文件、旧报告或模型自检自行命名状态。只有该报告的 `overall_status=pass` 且 `completion_status=promax-complete` 时，才能宣称严格完成。artifact-run 有能力缺口或未满足项时，仍先交付所有能力允许生成的完整工件，再引用 fresh report 的结构化未完成原因。
 
 ## 最终聊天合同
 
@@ -133,5 +137,7 @@ python skills/crossframe-promax/scripts/check_crossframe_promax_artifacts.py --w
 3. `key_withdrawal_conditions`
 4. `artifact_links`
 5. `continuation_entry`
+
+这五项必须从 checker JSON 的 `final_chat_projection` 逐值投影已验证的 `promax-final-chat.json`：保持每个字符串、数组、`null` 与顺序原值，不得改写、翻译、补充或用临时场景化判断替换。若 `final_chat_projection` 为空，禁止最终交付，先修复并重跑带 `--final-chat --write-report` 的验证命令。
 
 完整解释留在 `promax-essay.md` 等独立工件中。若平台不能写文件，则严格按 continuation index 分段交付同一内容与顺序，不能把五项聊天索引冒充完整正文。

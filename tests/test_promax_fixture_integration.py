@@ -11,9 +11,14 @@ import unittest
 
 
 ROOT = Path(__file__).resolve().parents[1]
+RUNTIME_SCRIPTS = ROOT / "skills/crossframe-promax/scripts"
+sys.path.insert(0, str(RUNTIME_SCRIPTS))
+
+import check_crossframe_promax_artifacts as checker
+
+
 CATALOG_PATH = ROOT / "tests/fixtures/promax-runtime/scenarios.json"
 FACTORY_CLI = ROOT / "scripts/crossframe_promax_fixture_factory.py"
-CHECKER_CLI = ROOT / "scripts/check_crossframe_promax_artifacts.py"
 ADVERSARIAL_SCENARIOS = (
     "marker-stuffing",
     "empty-strings",
@@ -187,34 +192,29 @@ class ProMaxFixtureEndToEndTests(unittest.TestCase):
             *ADVERSARIAL_SCENARIOS,
         )
         for scenario_id in selected:
-            result = subprocess.run(
-                [
-                    sys.executable,
-                    str(CHECKER_CLI),
-                    "--workspace",
-                    str(self._first / scenario_id),
-                    "--repo",
-                    str(ROOT),
-                    "--json",
-                ],
-                cwd=ROOT,
-                env=self._command_environment(),
-                capture_output=True,
-                text=True,
-                encoding="utf-8",
-                check=False,
+            report = checker.validate_workspace(
+                self._first / scenario_id,
+                repo=ROOT,
+                final_chat=True,
+                allow_test_fixture=True,
             )
-            report = parse_json_stdout(result)
+            returncode = (
+                0
+                if report["overall_status"] == "pass"
+                else 2
+                if report["overall_status"] == "blocked"
+                else 1
+            )
             scenario = records[scenario_id]
             with self.subTest(scenario=scenario_id):
                 if scenario_id == "valid-complete":
-                    self.assertEqual(result.returncode, 0, result.stderr)
+                    self.assertEqual(returncode, 0)
                     self.assertEqual(report.get("overall_status"), "pass")
                     self.assertEqual(report.get("completion_status"), "promax-complete")
                     self.assertEqual(report.get("failures"), [])
                     continue
                 if scenario_id == "artifact-incomplete":
-                    self.assertIn(result.returncode, {0, 2}, result.stderr)
+                    self.assertIn(returncode, {0, 2})
                     self.assertEqual(report.get("overall_status"), "blocked")
                     self.assertEqual(
                         report.get("completion_status"),
@@ -222,7 +222,7 @@ class ProMaxFixtureEndToEndTests(unittest.TestCase):
                     )
                     self.assertEqual(report.get("failures"), [])
                     continue
-                self.assertNotEqual(result.returncode, 0, result.stderr)
+                self.assertNotEqual(returncode, 0)
                 self.assertEqual(report.get("overall_status"), "fail")
                 failures = report.get("failures")
                 self.assertIsInstance(failures, list)
