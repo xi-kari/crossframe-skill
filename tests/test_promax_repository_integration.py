@@ -154,34 +154,17 @@ def current_protected_surfaces() -> dict[str, set[str]]:
         "root_max_scripts_excluding_promax": set(),
         "max_contract_tests": set(),
     }
-    recursive_parents = (
-        ROOT / "skills/crossframe-max",
-        ROOT / ".claude/skills/crossframe-max",
-    )
-    direct_parents = (ROOT / "scripts", ROOT / "tests")
-    for parent in recursive_parents:
-        if not parent.exists():
+    raw = run_git("ls-files", "-z")
+    for path_bytes in raw.split(b"\0"):
+        if not path_bytes:
             continue
-        for path in parent.rglob("*"):
-            if not path.is_file():
-                continue
-            repo_path = path.relative_to(ROOT).as_posix()
-            name = protected_surface_name(repo_path)
-            if name is not None:
-                surfaces[name].add(repo_path)
-    for parent in direct_parents:
-        if not parent.exists():
-            continue
-        for path in parent.iterdir():
-            if not path.is_file():
-                continue
-            repo_path = path.relative_to(ROOT).as_posix()
-            name = protected_surface_name(repo_path)
-            if name is not None:
-                surfaces[name].add(repo_path)
-    command = ROOT / ".claude/commands/crossframe-max.md"
-    if command.is_file():
-        surfaces["claude_command_crossframe_max"].add(command.relative_to(ROOT).as_posix())
+        try:
+            repo_path = path_bytes.decode("utf-8")
+        except UnicodeDecodeError as error:
+            raise AssertionError(f"could not decode tracked Git path: {path_bytes!r}") from error
+        name = protected_surface_name(repo_path)
+        if name is not None:
+            surfaces[name].add(repo_path)
     return surfaces
 
 
@@ -279,6 +262,25 @@ def workflow_job_blocks(text: str) -> dict[str, str]:
     return blocks
 
 
+def assert_frozen_workflow_job(
+    test: unittest.TestCase,
+    text: str,
+    job: dict[str, object],
+    source: str,
+) -> str:
+    blocks = workflow_job_blocks(text)
+    job_id = str(job["job_id"])
+    test.assertIn(job_id, blocks, f"{source} workflow job is missing: {job_id}")
+    actual = blocks[job_id]
+    test.assertEqual(actual, job["raw_text"], f"{source} Max workflow job text changed")
+    test.assertEqual(
+        hashlib.sha256(actual.encode("utf-8")).hexdigest(),
+        job["sha256"],
+        f"{source} Max workflow job hash changed",
+    )
+    return actual
+
+
 def routing_block(test: unittest.TestCase, text: str, path: Path) -> str:
     relative = path.relative_to(ROOT).as_posix()
     test.assertEqual(
@@ -339,18 +341,36 @@ class ProMaxPreservationTests(unittest.TestCase):
         job = manifest["workflow_job"]
         workflow_path = ROOT / job["workflow_path"]
         self.assertTrue(workflow_path.is_file(), workflow_path.as_posix())
-        assert_tracked_surface_unchanged(self, [job["workflow_path"]])
         try:
-            workflow_text = run_git("show", f"{BASE_COMMIT}:{job['workflow_path']}").decode(
-                "utf-8"
-            )
+            baseline_text = run_git(
+                "show", f"{BASE_COMMIT}:{job['workflow_path']}"
+            ).decode("utf-8")
+            current_text = workflow_path.read_text(encoding="utf-8")
+        except OSError as error:
+            raise AssertionError(
+                f"could not read current workflow: {workflow_path.as_posix()}: {error}"
+            ) from error
         except UnicodeDecodeError as error:
-            raise AssertionError(f"workflow is not valid UTF-8: {workflow_path.as_posix()}") from error
-        blocks = workflow_job_blocks(workflow_text)
-        self.assertIn(job["job_id"], blocks, f"workflow job is missing: {job['job_id']}")
-        actual = blocks[job["job_id"]]
-        self.assertEqual(actual, job["raw_text"])
-        self.assertEqual(hashlib.sha256(actual.encode("utf-8")).hexdigest(), job["sha256"])
+            raise AssertionError(
+                f"workflow is not valid UTF-8: {workflow_path.as_posix()}"
+            ) from error
+        baseline_job = assert_frozen_workflow_job(
+            self,
+            baseline_text,
+            job,
+            f"baseline {BASE_COMMIT}",
+        )
+        current_job = assert_frozen_workflow_job(
+            self,
+            current_text,
+            job,
+            "current worktree",
+        )
+        self.assertEqual(
+            current_job,
+            baseline_job,
+            "current Max workflow job differs from its baseline block",
+        )
 
 
 class ProMaxRepositoryTargetTests(unittest.TestCase):

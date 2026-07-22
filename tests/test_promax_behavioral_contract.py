@@ -167,8 +167,9 @@ class ProMaxRedBaselineCaptureTests(unittest.TestCase):
             text = path.read_text(encoding="utf-8")
             self.assertTrue(text.startswith(f"## SCENARIO {scenario_id}\n"), path.as_posix())
             self.assertGreater(len(text.strip()), 100, path.as_posix())
+            raw_markdown_lf = path.read_bytes().replace(b"\r\n", b"\n")
             self.assertEqual(
-                hashlib.sha256(path.read_bytes()).hexdigest(),
+                hashlib.sha256(raw_markdown_lf).hexdigest(),
                 EXPECTED_RAW_SHA256[scenario_id],
                 path.as_posix(),
             )
