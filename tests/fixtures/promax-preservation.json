@@ -1,27 +1,27 @@
 {
   "schema_version": 1,
   "base_commit": "e2e0965",
-  "tree_hash_algorithm": "SHA-256 over each repository-relative POSIX path in lexical order: path_utf8 + NUL + bytes + NUL",
+  "tree_hash_algorithm": "SHA-256 over each base-commit blob in repository-relative POSIX path order: path_utf8 + NUL + git_mode_ascii + NUL + git_show_blob_bytes + NUL",
   "surfaces": {
     "skills_crossframe_max": {
       "file_count": 105,
-      "tree_sha256": "8b1076eb664f05cad9f8e64e46889bbab4f31857e8c53a07bbe6148bbdd7d90a"
+      "tree_sha256": "c72a8c72809603d6e0c7eae9bfe81d8edbc642ef1023a060ecebbf97b85a70eb"
     },
     "claude_skills_crossframe_max": {
       "file_count": 105,
-      "tree_sha256": "72f7d446706191c63c8b9b1e4fff5a82fef5d92508019bc690487f3f3bb39333"
+      "tree_sha256": "81f0e6d04256d1df53e5eca697b911063041c3ec2ac5a297ff9d45a4a5892c6c"
     },
     "claude_command_crossframe_max": {
       "file_count": 1,
-      "tree_sha256": "00e6ed60fd67d7baf56c4d7d1abe9e823a9344cd49fa87fec9510639dd195c3e"
+      "tree_sha256": "5e50420cb1d553e40677369dff826e9f6056f668eab7e26ea63d1f39995e5ae2"
     },
     "root_max_scripts_excluding_promax": {
       "file_count": 11,
-      "tree_sha256": "ebe7bc28a7ded3ec14dbef42de654b491495cc446b489cca6915f4bb434e5d7f"
+      "tree_sha256": "2d86e2139a58308f5264a7a784077555a94785b5f649005aa6c17fdc991d4850"
     },
     "max_contract_tests": {
       "file_count": 7,
-      "tree_sha256": "b9caa79947a8e7ae87ee103717342fcf213c355b24f73390d12ab8b3e971c64e"
+      "tree_sha256": "0a2504341b86b9976e36ef88259394686be35846b42f9d7de25a75eb45ba5465"
     }
   },
   "workflow_job": {

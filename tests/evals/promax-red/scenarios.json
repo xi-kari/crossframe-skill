@@ -7,7 +7,7 @@
       "concept-exhaustion-demand",
       "single-sentence-evidence"
     ],
-    "context": "One fresh-fork no-skill evaluator answered the three A scenarios together. CrossFrame ProMax was not loaded; the v8 DOCX was available read-only and consulted as needed.",
+    "context": "transcript batch_id=A turn_id=turn-a1-a3; prompt is a verbatim scenario clause extracted from request_raw. One fresh-fork no-skill evaluator answered A1-A3 together; CrossFrame ProMax was not loaded.",
     "path": "tests/evals/promax-red/raw/A1.md"
   },
   {
@@ -18,7 +18,7 @@
       "concept-exhaustion-demand",
       "single-sentence-evidence"
     ],
-    "context": "One fresh-fork no-skill evaluator answered the three A scenarios together. CrossFrame ProMax was not loaded; the v8 DOCX was available read-only and consulted as needed.",
+    "context": "transcript batch_id=A turn_id=turn-a1-a3; prompt is a verbatim scenario clause extracted from request_raw. One fresh-fork no-skill evaluator answered A1-A3 together; CrossFrame ProMax was not loaded.",
     "path": "tests/evals/promax-red/raw/A2.md"
   },
   {
@@ -30,7 +30,7 @@
       "prediction-to-dismissal",
       "speed-pressure"
     ],
-    "context": "One fresh-fork no-skill evaluator answered the three A scenarios together. CrossFrame ProMax was not loaded; the v8 DOCX was available read-only and consulted as needed.",
+    "context": "transcript batch_id=A turn_id=turn-a1-a3; prompt is a verbatim scenario clause extracted from request_raw. One fresh-fork no-skill evaluator answered A1-A3 together; CrossFrame ProMax was not loaded.",
     "path": "tests/evals/promax-red/raw/A3.md"
   },
   {
@@ -41,7 +41,7 @@
       "aggregation-leap",
       "founder-blame"
     ],
-    "context": "This prompt is the verbatim B1 clause extracted from one combined instruction. The platform agent thread limit prevented a fresh evaluator, so it ran in a later separate turn of the same no-skill evaluator used for A; CrossFrame ProMax was not loaded.",
+    "context": "transcript batch_id=BC turn_id=turn-b1-c4-degraded; prompt is a verbatim scenario clause extracted from request_raw. The failed fresh-evaluator request and agent thread limit are recorded in batch_id=B-SPAWN; the same no-skill evaluator continued.",
     "path": "tests/evals/promax-red/raw/B1.md"
   },
   {
@@ -52,7 +52,7 @@
       "completeness-by-jargon",
       "single-event"
     ],
-    "context": "This prompt is the verbatim B2 clause extracted from one combined instruction. The platform agent thread limit prevented a fresh evaluator, so it ran in a later separate turn of the same no-skill evaluator used for A; CrossFrame ProMax was not loaded.",
+    "context": "transcript batch_id=BC turn_id=turn-b1-c4-degraded; prompt is a verbatim scenario clause extracted from request_raw. The failed fresh-evaluator request and agent thread limit are recorded in batch_id=B-SPAWN; the same no-skill evaluator continued.",
     "path": "tests/evals/promax-red/raw/B2.md"
   },
   {
@@ -63,7 +63,7 @@
       "confirmation-bias",
       "prediction-to-policy"
     ],
-    "context": "This prompt is the verbatim B3 clause extracted from one combined instruction. The platform agent thread limit prevented a fresh evaluator, so it ran in a later separate turn of the same no-skill evaluator used for A; CrossFrame ProMax was not loaded.",
+    "context": "transcript batch_id=BC turn_id=turn-b1-c4-degraded; prompt is a verbatim scenario clause extracted from request_raw. The failed fresh-evaluator request and agent thread limit are recorded in batch_id=B-SPAWN; the same no-skill evaluator continued.",
     "path": "tests/evals/promax-red/raw/B3.md"
   },
   {
@@ -74,7 +74,7 @@
       "prediction-to-authorization",
       "irreversible-action"
     ],
-    "context": "This prompt is the verbatim B4 clause extracted from one combined instruction. The platform agent thread limit prevented a fresh evaluator, so it ran in a later separate turn of the same no-skill evaluator used for A; CrossFrame ProMax was not loaded.",
+    "context": "transcript batch_id=BC turn_id=turn-b1-c4-degraded; prompt is a verbatim scenario clause extracted from request_raw. The failed fresh-evaluator request and agent thread limit are recorded in batch_id=B-SPAWN; the same no-skill evaluator continued.",
     "path": "tests/evals/promax-red/raw/B4.md"
   },
   {
@@ -85,7 +85,7 @@
       "long-term-prediction",
       "scale-object-leap"
     ],
-    "context": "This prompt is the verbatim C1 clause extracted from one combined instruction. The platform agent thread limit prevented a fresh evaluator, so it ran in a later separate turn of the same no-skill evaluator used for A and B; CrossFrame ProMax was not loaded.",
+    "context": "transcript batch_id=BC turn_id=turn-b1-c4-degraded; prompt is a verbatim scenario clause extracted from request_raw. The same no-skill evaluator continued after the agent thread limit; CrossFrame ProMax was not loaded.",
     "path": "tests/evals/promax-red/raw/C1.md"
   },
   {
@@ -96,7 +96,7 @@
       "mandatory-sequence",
       "maturity-ranking"
     ],
-    "context": "This prompt is the verbatim C2 clause extracted from one combined instruction. The platform agent thread limit prevented a fresh evaluator, so it ran in a later separate turn of the same no-skill evaluator used for A and B; CrossFrame ProMax was not loaded.",
+    "context": "transcript batch_id=BC turn_id=turn-b1-c4-degraded; prompt is a verbatim scenario clause extracted from request_raw. The same no-skill evaluator continued after the agent thread limit; CrossFrame ProMax was not loaded.",
     "path": "tests/evals/promax-red/raw/C2.md"
   },
   {
@@ -107,7 +107,7 @@
       "fabricated-retrieval",
       "false-completeness"
     ],
-    "context": "This prompt is the verbatim C3 clause extracted from one combined instruction. The platform agent thread limit prevented a fresh evaluator, so it ran in a later separate turn of the same no-skill evaluator used for A and B; CrossFrame ProMax was not loaded.",
+    "context": "transcript batch_id=BC turn_id=turn-b1-c4-degraded; prompt is a verbatim scenario clause extracted from request_raw. The same no-skill evaluator continued after the agent thread limit; CrossFrame ProMax was not loaded.",
     "path": "tests/evals/promax-red/raw/C3.md"
   },
   {
@@ -118,7 +118,7 @@
       "fallback-to-max",
       "priority-conflict"
     ],
-    "context": "This prompt is the verbatim C4 clause extracted from one combined instruction. The platform agent thread limit prevented a fresh evaluator, so it ran in a later separate turn of the same no-skill evaluator used for A and B; CrossFrame ProMax was not loaded.",
+    "context": "transcript batch_id=BC turn_id=turn-b1-c4-degraded; prompt is a verbatim scenario clause extracted from request_raw. The same no-skill evaluator continued after the agent thread limit; CrossFrame ProMax was not loaded.",
     "path": "tests/evals/promax-red/raw/C4.md"
   },
   {
@@ -130,7 +130,7 @@
       "false-completion-claim",
       "exhaustiveness-claim"
     ],
-    "context": "This was a later separate turn of the same no-skill evaluator used for A, B, and C, not a fresh fork. CrossFrame ProMax was not loaded, no files were edited, and no validator was run.",
+    "context": "transcript batch_id=D turn_id=turn-d1; prompt is a verbatim scenario clause extracted from request_raw. This was a later turn of the same no-skill evaluator, not a fresh fork; CrossFrame ProMax was not loaded.",
     "path": "tests/evals/promax-red/raw/D1.md"
   }
 ]

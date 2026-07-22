@@ -3,105 +3,364 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import subprocess
 import unittest
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 
 ROOT = Path(__file__).resolve().parents[1]
+BASE_COMMIT = "e2e0965"
 PRESERVATION_PATH = ROOT / "tests/fixtures/promax-preservation.json"
 SUITE_ROUTE_PATHS = (
     ROOT / "skills/crossframe-suite/SKILL.md",
     ROOT / "skills/crossframe-suite/protocols/suite-dispatch-protocol.md",
     ROOT / "skills/crossframe-suite/references/workflow-routing-map.md",
 )
+EXPECTED_CROSSFRAME_SKILLS = {
+    "crossframe",
+    "crossframe-casebook",
+    "crossframe-critical",
+    "crossframe-debate",
+    "crossframe-dialogue",
+    "crossframe-essay",
+    "crossframe-history",
+    "crossframe-inquiry",
+    "crossframe-max",
+    "crossframe-notebook",
+    "crossframe-org",
+    "crossframe-promax",
+    "crossframe-public",
+    "crossframe-review",
+    "crossframe-suite",
+    "crossframe-teach",
+}
+ROUTING_BEGIN = "<!-- PROMAX-ROUTING-BEGIN -->"
+ROUTING_END = "<!-- PROMAX-ROUTING-END -->"
+ROUTING_REQUIRED_MARKERS = (
+    "PROMAX-NAMED-ONLY",
+    "PROMAX-PRIORITY-OVER-MAX",
+    "PROMAX-NO-FALLBACK-TO-MAX",
+    "PROMAX-GENERIC-MAX-STAYS-MAX",
+)
+ROUTING_TARGET_MATRIX = {
+    "exact-promax": "PROMAX-ROUTE-EXACT-PROMAX-TO-PROMAX",
+    "both-names": "PROMAX-ROUTE-BOTH-NAMES-TO-PROMAX",
+    "max-only": "PROMAX-ROUTE-MAX-ONLY-TO-MAX",
+    "generic-max": "PROMAX-GENERIC-MAX-STAYS-MAX",
+    "near-miss": "PROMAX-ROUTE-NEAR-MISS-NO-MATCH",
+}
+FORBIDDEN_FALLBACK_PATTERNS = (
+    r"(?i)(?<!not )(?<!n't )\ballow(?:s|ed|ing)?\b.{0,40}\b(?:fallback|degrad(?:e|ation))\b",
+    r"(?i)\b(?:fallback|degrad(?:e|ation))\b.{0,40}(?<!not )(?<!n't )\ballow(?:s|ed|ing)?\b",
+    r"(?<!不)(?:允许|可以|可).{0,24}(?:自动)?.{0,8}(?:退回|回退|降级)",
+)
+FORBIDDEN_FALLBACK_MARKERS = (
+    "PROMAX-FALLBACK-ALLOWED",
+    "PROMAX-AUTOMATIC-FALLBACK-TO-MAX",
+    "PROMAX-AUTO-DEGRADE-TO-MAX",
+)
 
 
-def canonical_git_bytes(path: Path) -> bytes:
-    # Git's text clean filter stores LF. Normalize only checkout line endings so
-    # this byte-level preservation contract is stable on Windows and Linux.
-    return path.read_bytes().replace(b"\r\n", b"\n")
+def run_git(*args: str, allowed_codes: tuple[int, ...] = (0,)) -> bytes:
+    try:
+        result = subprocess.run(
+            ["git", *args],
+            cwd=ROOT,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            check=False,
+        )
+    except OSError as error:
+        raise AssertionError(f"unable to execute git {' '.join(args)}: {error}") from error
+    if result.returncode not in allowed_codes:
+        stderr = result.stderr.decode("utf-8", errors="replace").strip()
+        raise AssertionError(
+            f"git {' '.join(args)} failed with exit code {result.returncode}: "
+            f"{stderr or '<no stderr>'}"
+        )
+    return result.stdout
 
 
-def tree_hash(paths: list[Path]) -> str:
+def base_tree_entries(base_commit: str) -> dict[str, tuple[str, str]]:
+    raw = run_git("ls-tree", "-r", "-z", base_commit)
+    entries: dict[str, tuple[str, str]] = {}
+    for record in raw.split(b"\0"):
+        if not record:
+            continue
+        try:
+            metadata, path_bytes = record.split(b"\t", 1)
+            mode_bytes, object_type, object_id = metadata.split(b" ", 2)
+            path = path_bytes.decode("utf-8")
+            mode = mode_bytes.decode("ascii")
+            blob_id = object_id.decode("ascii")
+        except (UnicodeDecodeError, ValueError) as error:
+            raise AssertionError(
+                f"could not parse git ls-tree record for {base_commit}: {record!r}"
+            ) from error
+        if object_type != b"blob":
+            raise AssertionError(
+                f"protected base tree entry is not a blob: {path} ({object_type!r})"
+            )
+        if path in entries:
+            raise AssertionError(f"duplicate path in git ls-tree output: {path}")
+        entries[path] = (mode, blob_id)
+    if not entries:
+        raise AssertionError(f"git ls-tree returned no blobs for base commit {base_commit}")
+    return entries
+
+
+def protected_surface_name(repo_path: str) -> str | None:
+    lower = repo_path.lower()
+    if "promax" in lower:
+        return None
+    if repo_path.startswith("skills/crossframe-max/"):
+        return "skills_crossframe_max"
+    if repo_path.startswith(".claude/skills/crossframe-max/"):
+        return "claude_skills_crossframe_max"
+    if repo_path == ".claude/commands/crossframe-max.md":
+        return "claude_command_crossframe_max"
+    pure_path = PurePosixPath(repo_path)
+    if pure_path.parent == PurePosixPath("scripts") and "max" in pure_path.name.lower():
+        return "root_max_scripts_excluding_promax"
+    if re.fullmatch(r"tests/test_max_[^/]*\.py", repo_path):
+        return "max_contract_tests"
+    return None
+
+
+def protected_base_surfaces(
+    entries: dict[str, tuple[str, str]],
+) -> dict[str, list[str]]:
+    surfaces = {
+        "skills_crossframe_max": [],
+        "claude_skills_crossframe_max": [],
+        "claude_command_crossframe_max": [],
+        "root_max_scripts_excluding_promax": [],
+        "max_contract_tests": [],
+    }
+    for repo_path in entries:
+        name = protected_surface_name(repo_path)
+        if name is not None:
+            surfaces[name].append(repo_path)
+    for paths in surfaces.values():
+        paths.sort()
+    return surfaces
+
+
+def current_protected_surfaces() -> dict[str, set[str]]:
+    surfaces = {
+        "skills_crossframe_max": set(),
+        "claude_skills_crossframe_max": set(),
+        "claude_command_crossframe_max": set(),
+        "root_max_scripts_excluding_promax": set(),
+        "max_contract_tests": set(),
+    }
+    recursive_parents = (
+        ROOT / "skills/crossframe-max",
+        ROOT / ".claude/skills/crossframe-max",
+    )
+    direct_parents = (ROOT / "scripts", ROOT / "tests")
+    for parent in recursive_parents:
+        if not parent.exists():
+            continue
+        for path in parent.rglob("*"):
+            if not path.is_file():
+                continue
+            repo_path = path.relative_to(ROOT).as_posix()
+            name = protected_surface_name(repo_path)
+            if name is not None:
+                surfaces[name].add(repo_path)
+    for parent in direct_parents:
+        if not parent.exists():
+            continue
+        for path in parent.iterdir():
+            if not path.is_file():
+                continue
+            repo_path = path.relative_to(ROOT).as_posix()
+            name = protected_surface_name(repo_path)
+            if name is not None:
+                surfaces[name].add(repo_path)
+    command = ROOT / ".claude/commands/crossframe-max.md"
+    if command.is_file():
+        surfaces["claude_command_crossframe_max"].add(command.relative_to(ROOT).as_posix())
+    return surfaces
+
+
+def base_surface_hash(
+    base_commit: str,
+    entries: dict[str, tuple[str, str]],
+    paths: list[str],
+) -> str:
     digest = hashlib.sha256()
-    for path in sorted(paths, key=lambda item: item.relative_to(ROOT).as_posix()):
-        relative = path.relative_to(ROOT).as_posix()
-        digest.update(relative.encode("utf-8"))
+    for repo_path in paths:
+        mode, _blob_id = entries[repo_path]
+        blob = run_git("show", f"{base_commit}:{repo_path}")
+        digest.update(repo_path.encode("utf-8"))
         digest.update(b"\0")
-        digest.update(canonical_git_bytes(path))
+        digest.update(mode.encode("ascii"))
+        digest.update(b"\0")
+        digest.update(blob)
         digest.update(b"\0")
     return digest.hexdigest()
 
 
-def current_surfaces() -> dict[str, list[Path]]:
-    return {
-        "skills_crossframe_max": [
-            path for path in (ROOT / "skills/crossframe-max").rglob("*") if path.is_file()
-        ],
-        "claude_skills_crossframe_max": [
-            path for path in (ROOT / ".claude/skills/crossframe-max").rglob("*") if path.is_file()
-        ],
-        "claude_command_crossframe_max": [
-            ROOT / ".claude/commands/crossframe-max.md"
-        ],
-        "root_max_scripts_excluding_promax": [
-            path
-            for path in (ROOT / "scripts").iterdir()
-            if path.is_file()
-            and "max" in path.name.lower()
-            and "promax" not in path.name.lower()
-        ],
-        "max_contract_tests": list((ROOT / "tests").glob("test_max_*.py")),
-    }
+def assert_tracked_surface_unchanged(test: unittest.TestCase, paths: list[str]) -> None:
+    if not paths:
+        raise AssertionError("protected Git surface unexpectedly has no base paths")
+    try:
+        result = subprocess.run(
+            ["git", "diff", "--quiet", BASE_COMMIT, "--", *paths],
+            cwd=ROOT,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            check=False,
+        )
+    except OSError as error:
+        raise AssertionError(f"unable to execute git diff --quiet: {error}") from error
+    if result.returncode == 0:
+        return
+    if result.returncode > 1:
+        stderr = result.stderr.decode("utf-8", errors="replace").strip()
+        raise AssertionError(
+            f"git diff --quiet failed with exit code {result.returncode}: "
+            f"{stderr or '<no stderr>'}"
+        )
+    changed = run_git("diff", "--name-status", BASE_COMMIT, "--", *paths).decode(
+        "utf-8", errors="replace"
+    )
+    test.fail(f"protected tracked paths differ from {BASE_COMMIT}:\n{changed.strip()}")
+
+
+def untracked_protected_paths() -> dict[str, set[str]]:
+    surfaces: dict[str, set[str]] = {}
+    raw = run_git("ls-files", "--others", "--exclude-standard", "-z")
+    for path_bytes in raw.split(b"\0"):
+        if not path_bytes:
+            continue
+        try:
+            repo_path = path_bytes.decode("utf-8")
+        except UnicodeDecodeError as error:
+            raise AssertionError(f"could not decode untracked Git path: {path_bytes!r}") from error
+        name = protected_surface_name(repo_path)
+        if name is not None:
+            surfaces.setdefault(name, set()).add(repo_path)
+    return surfaces
 
 
 def workflow_job_blocks(text: str) -> dict[str, str]:
-    jobs_text = text.split("\njobs:\n", 1)[1]
-    matches = list(re.finditer(r"(?m)^  ([a-z0-9-]+):\s*$", jobs_text))
-    return {
-        match.group(1): jobs_text[
-            match.start() : matches[index + 1].start() if index + 1 < len(matches) else len(jobs_text)
-        ]
-        for index, match in enumerate(matches)
-    }
+    jobs_markers = list(re.finditer(r"(?m)^jobs:[ \t]*\r?$", text))
+    if len(jobs_markers) != 1:
+        raise AssertionError(
+            f"workflow must contain exactly one unindented jobs mapping; found {len(jobs_markers)}"
+        )
+    payload_start = jobs_markers[0].end()
+    if text[payload_start : payload_start + 2] == "\r\n":
+        payload_start += 2
+    elif text[payload_start : payload_start + 1] == "\n":
+        payload_start += 1
+    else:
+        raise AssertionError("workflow jobs mapping is not followed by a line ending")
+    jobs_text = text[payload_start:]
+    matches = list(re.finditer(r"(?m)^  ([a-z0-9][a-z0-9-]*):[ \t]*(?:\r?\n|$)", jobs_text))
+    if not matches:
+        raise AssertionError("workflow jobs mapping contains no sliceable two-space job headers")
+    job_ids = [match.group(1) for match in matches]
+    duplicates = sorted({job_id for job_id in job_ids if job_ids.count(job_id) > 1})
+    if duplicates:
+        raise AssertionError(f"workflow contains duplicate job headers: {', '.join(duplicates)}")
+    blocks: dict[str, str] = {}
+    for index, match in enumerate(matches):
+        end = matches[index + 1].start() if index + 1 < len(matches) else len(jobs_text)
+        if end <= match.start():
+            raise AssertionError(f"workflow job cannot be sliced: {match.group(1)}")
+        block = jobs_text[match.start() : end]
+        if not block.startswith(f"  {match.group(1)}:"):
+            raise AssertionError(f"workflow job slice has the wrong header: {match.group(1)}")
+        blocks[match.group(1)] = block
+    return blocks
+
+
+def routing_block(test: unittest.TestCase, text: str, path: Path) -> str:
+    relative = path.relative_to(ROOT).as_posix()
+    test.assertEqual(
+        text.count(ROUTING_BEGIN),
+        1,
+        f"{relative} must contain exactly one {ROUTING_BEGIN} marker",
+    )
+    test.assertEqual(
+        text.count(ROUTING_END),
+        1,
+        f"{relative} must contain exactly one {ROUTING_END} marker",
+    )
+    start = text.find(ROUTING_BEGIN) + len(ROUTING_BEGIN)
+    end = text.find(ROUTING_END)
+    test.assertLess(start, end, f"{relative} has reversed ProMax routing markers")
+    block = text[start:end]
+    test.assertTrue(block.strip(), f"{relative} has an empty ProMax routing block")
+    return block
 
 
 class ProMaxPreservationTests(unittest.TestCase):
-    def test_all_max_surfaces_match_frozen_tree_hashes(self) -> None:
+    def test_all_max_surfaces_match_frozen_git_trees(self) -> None:
         manifest = json.loads(PRESERVATION_PATH.read_text(encoding="utf-8"))
-        self.assertEqual(manifest["base_commit"], "e2e0965")
+        self.assertEqual(manifest["base_commit"], BASE_COMMIT)
         self.assertEqual(
             manifest["tree_hash_algorithm"],
-            "SHA-256 over each repository-relative POSIX path in lexical order: "
-            "path_utf8 + NUL + bytes + NUL",
+            "SHA-256 over each base-commit blob in repository-relative POSIX path order: "
+            "path_utf8 + NUL + git_mode_ascii + NUL + git_show_blob_bytes + NUL",
         )
-        surfaces = current_surfaces()
-        self.assertEqual(set(surfaces), set(manifest["surfaces"]))
-        for name, paths in surfaces.items():
+        entries = base_tree_entries(BASE_COMMIT)
+        base_surfaces = protected_base_surfaces(entries)
+        current_surfaces = current_protected_surfaces()
+        self.assertEqual(set(base_surfaces), set(manifest["surfaces"]))
+        self.assertEqual(set(current_surfaces), set(manifest["surfaces"]))
+
+        untracked = untracked_protected_paths()
+        self.assertEqual(untracked, {}, f"untracked files added to protected Max surfaces: {untracked}")
+        for name, base_paths in base_surfaces.items():
             expected = manifest["surfaces"][name]
             with self.subTest(surface=name):
-                self.assertTrue(all(path.is_file() for path in paths))
-                self.assertEqual(len(paths), expected["file_count"])
-                self.assertEqual(tree_hash(paths), expected["tree_sha256"])
+                self.assertEqual(set(base_paths), current_surfaces[name])
+                self.assertEqual(len(base_paths), expected["file_count"])
+                self.assertEqual(
+                    base_surface_hash(BASE_COMMIT, entries, base_paths),
+                    expected["tree_sha256"],
+                )
+                assert_tracked_surface_unchanged(self, base_paths)
 
     def test_max_workflow_job_matches_frozen_raw_text_and_hash(self) -> None:
+        with self.assertRaisesRegex(AssertionError, "exactly one unindented jobs mapping"):
+            workflow_job_blocks("name: no-jobs\n")
+        with self.assertRaisesRegex(AssertionError, "no sliceable two-space job headers"):
+            workflow_job_blocks("jobs:\n  # no job headers\n")
+        with self.assertRaisesRegex(AssertionError, "duplicate job headers: build"):
+            workflow_job_blocks("jobs:\n  build:\n  build:\n")
+
         manifest = json.loads(PRESERVATION_PATH.read_text(encoding="utf-8"))
         job = manifest["workflow_job"]
-        workflow_text = canonical_git_bytes(ROOT / job["workflow_path"]).decode("utf-8")
-        actual = workflow_job_blocks(workflow_text)[job["job_id"]]
+        workflow_path = ROOT / job["workflow_path"]
+        self.assertTrue(workflow_path.is_file(), workflow_path.as_posix())
+        assert_tracked_surface_unchanged(self, [job["workflow_path"]])
+        try:
+            workflow_text = run_git("show", f"{BASE_COMMIT}:{job['workflow_path']}").decode(
+                "utf-8"
+            )
+        except UnicodeDecodeError as error:
+            raise AssertionError(f"workflow is not valid UTF-8: {workflow_path.as_posix()}") from error
+        blocks = workflow_job_blocks(workflow_text)
+        self.assertIn(job["job_id"], blocks, f"workflow job is missing: {job['job_id']}")
+        actual = blocks[job["job_id"]]
         self.assertEqual(actual, job["raw_text"])
         self.assertEqual(hashlib.sha256(actual.encode("utf-8")).hexdigest(), job["sha256"])
 
 
 class ProMaxRepositoryTargetTests(unittest.TestCase):
-    def test_crossframe_skill_inventory_has_sixteen_entries(self) -> None:
-        skills = sorted(
+    def test_crossframe_skill_inventory_matches_frozen_sixteen_entries(self) -> None:
+        skills = {
             path.name
             for path in (ROOT / "skills").iterdir()
             if path.is_dir() and (path / "SKILL.md").is_file()
-        )
-        self.assertEqual(len(skills), 16, f"expected 16 CrossFrame skills, got {len(skills)}")
-        self.assertIn("crossframe-promax", skills)
+        }
+        self.assertEqual(skills, EXPECTED_CROSSFRAME_SKILLS)
 
     def test_promax_canonical_skill_exists(self) -> None:
         path = ROOT / "skills/crossframe-promax/SKILL.md"
@@ -111,18 +370,19 @@ class ProMaxRepositoryTargetTests(unittest.TestCase):
         path = ROOT / ".claude/commands/crossframe-promax.md"
         self.assertTrue(path.is_file(), path.as_posix())
 
-    def test_suite_routes_named_promax_before_max(self) -> None:
+    def test_suite_has_one_complete_promax_routing_contract_per_file(self) -> None:
         for path in SUITE_ROUTE_PATHS:
             text = path.read_text(encoding="utf-8")
-            lower = text.lower()
             with self.subTest(path=path.relative_to(ROOT).as_posix()):
-                self.assertTrue(
-                    "crossframe-promax" in lower,
-                    f"missing named ProMax route in {path.relative_to(ROOT).as_posix()}",
-                )
-                self.assertIn("crossframe-max", lower)
-                self.assertLess(lower.index("crossframe-promax"), lower.index("crossframe-max"))
-                self.assertRegex(lower, r"named-only|精确点名|显式点名")
+                block = routing_block(self, text, path)
+                for marker in ROUTING_REQUIRED_MARKERS:
+                    self.assertIn(marker, block, f"missing {marker}")
+                for case, marker in ROUTING_TARGET_MATRIX.items():
+                    self.assertIn(marker, block, f"routing matrix case {case} is missing")
+                for marker in FORBIDDEN_FALLBACK_MARKERS:
+                    self.assertNotIn(marker, block)
+                for pattern in FORBIDDEN_FALLBACK_PATTERNS:
+                    self.assertNotRegex(block, pattern)
 
     def test_generic_maximum_requests_still_route_to_max(self) -> None:
         text = (ROOT / "skills/crossframe-suite/SKILL.md").read_text(encoding="utf-8")

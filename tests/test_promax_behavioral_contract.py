@@ -11,8 +11,15 @@ ROOT = Path(__file__).resolve().parents[1]
 EVAL_ROOT = ROOT / "tests/evals/promax-red"
 SCENARIOS_PATH = EVAL_ROOT / "scenarios.json"
 README_PATH = EVAL_ROOT / "README.md"
+TRANSCRIPT_PATH = EVAL_ROOT / "transcript.json"
 PROMAX_ROOT = ROOT / "skills/crossframe-promax"
-PROMAX_SKILL = PROMAX_ROOT / "SKILL.md"
+PROMAX_CONTRACT_PATHS = {
+    "skill": PROMAX_ROOT / "SKILL.md",
+    "runtime": PROMAX_ROOT / "protocols/promax-runtime-protocol.md",
+    "judgment": PROMAX_ROOT / "protocols/promax-judgment-constitution.md",
+    "retrieval": PROMAX_ROOT / "protocols/promax-retrieval-red-team-protocol.md",
+    "repair": PROMAX_ROOT / "protocols/promax-repair-loop-protocol.md",
+}
 
 EXPECTED_SCENARIO_IDS = (
     "A1",
@@ -48,22 +55,28 @@ EXPLICIT_ONLY_FORMS = (
     "/crossframe-promax",
     "CrossFrame ProMax",
 )
-REQUIRED_RUNTIME_MARKERS = (
-    "v8-anchor",
-    "read-event",
-    "concept-terminal-closure",
-    "claim-path",
-    "retrieval-ledger",
-    "red-team-saturation",
-    "typed-example",
-    "artifact-contract",
-    "artifact-validation",
-    "position-ledger",
-    "recommendation-ledger",
-    "continuation-ledger",
-    "validator",
-    "repair-loop",
-)
+RESPONSIBLE_MARKERS = {
+    "runtime": (
+        "v8-anchor",
+        "read-event",
+        "concept-terminal-closure",
+        "claim-path",
+        "typed-example",
+        "artifact-contract",
+        "position-ledger",
+        "recommendation-ledger",
+        "continuation-ledger",
+    ),
+    "retrieval": (
+        "retrieval-ledger",
+        "red-team-saturation",
+    ),
+    "repair": (
+        "artifact-validation",
+        "validator",
+        "repair-loop",
+    ),
+}
 EXPECTED_RAW_SHA256 = {
     "A1": "6fabf3a24e252f160415fa455f9a94507abffc394726b330e83c7709d3c4a3fb",
     "A2": "1e864f8e6319e705cad1252e52a8cfe9556ff1b3129be552c11e32f66dbd01df",
@@ -78,24 +91,35 @@ EXPECTED_RAW_SHA256 = {
     "C4": "8a86a76648851a8dfa9dc4a6fbfeb1d3dcca8e563eea27843d002a1122f1e484",
     "D1": "5f4c1b1980a398bd507aa24422fd7b3aa3a42234396be70eb121dc4df78cd5bf",
 }
+EXPECTED_TRANSCRIPT_REQUEST_SHA256 = {
+    "A": "2be604fc371e20630712f3364ceb7ddc116c9f34564d5e4affb414fd9f6b9fef",
+    "B-SPAWN": "6a10979a163b734a5347dd3e727be99e812a1feabad14780722c02a2abd0bd51",
+    "BC": "4197f8067d5256e1b57950fe8e530ebc805b64fcacb2195aabc73f587adfb1cd",
+    "D": "dd2a903190fb54e86b396a2fe367b035528978e839069f3aea45deab794e1bf9",
+}
+EXPECTED_TRANSCRIPT_SCENARIOS = {
+    "A": ["A1", "A2", "A3"],
+    "B-SPAWN": ["B1", "B2", "B3", "B4"],
+    "BC": ["B1", "B2", "B3", "B4", "C1", "C2", "C3", "C4"],
+    "D": ["D1"],
+}
 
 
 def load_scenarios() -> list[dict[str, object]]:
     return json.loads(SCENARIOS_PATH.read_text(encoding="utf-8"))
 
 
-def promax_corpus(test: unittest.TestCase) -> str:
-    test.assertTrue(
-        PROMAX_SKILL.is_file(),
-        "CrossFrame ProMax canonical skill is missing: skills/crossframe-promax/SKILL.md",
-    )
-    files = sorted(
-        path
-        for path in PROMAX_ROOT.rglob("*")
-        if path.is_file() and path.suffix.lower() in {".md", ".json", ".yaml", ".yml", ".py"}
-    )
-    test.assertTrue(files, "CrossFrame ProMax protocol corpus is empty")
-    return "\n".join(path.read_text(encoding="utf-8") for path in files)
+def load_transcript() -> list[dict[str, object]]:
+    return json.loads(TRANSCRIPT_PATH.read_text(encoding="utf-8"))
+
+
+def read_promax_contract(test: unittest.TestCase, name: str) -> str:
+    path = PROMAX_CONTRACT_PATHS[name]
+    relative = path.relative_to(ROOT).as_posix()
+    test.assertTrue(path.is_file(), f"CrossFrame ProMax contract is missing: {relative}")
+    text = path.read_text(encoding="utf-8")
+    test.assertTrue(text.strip(), f"CrossFrame ProMax contract is empty: {relative}")
+    return text
 
 
 class ProMaxRedBaselineCaptureTests(unittest.TestCase):
@@ -130,7 +154,8 @@ class ProMaxRedBaselineCaptureTests(unittest.TestCase):
             self.assertIn("thread limit", contexts[scenario_id])
             self.assertIn("same no-skill evaluator", contexts[scenario_id])
             self.assertIn("verbatim", contexts[scenario_id])
-            self.assertIn("combined instruction", contexts[scenario_id])
+            self.assertIn("batch_id=BC", contexts[scenario_id])
+            self.assertIn("turn_id=turn-b1-c4-degraded", contexts[scenario_id])
         self.assertIn("not a fresh fork", contexts["D1"])
         self.assertIn("same no-skill evaluator", contexts["D1"])
 
@@ -142,12 +167,82 @@ class ProMaxRedBaselineCaptureTests(unittest.TestCase):
             text = path.read_text(encoding="utf-8")
             self.assertTrue(text.startswith(f"## SCENARIO {scenario_id}\n"), path.as_posix())
             self.assertGreater(len(text.strip()), 100, path.as_posix())
-            canonical_bytes = path.read_bytes().replace(b"\r\n", b"\n")
             self.assertEqual(
-                hashlib.sha256(canonical_bytes).hexdigest(),
+                hashlib.sha256(path.read_bytes()).hexdigest(),
                 EXPECTED_RAW_SHA256[scenario_id],
                 path.as_posix(),
             )
+
+    def test_transcript_freezes_turn_provenance_and_response_mapping(self) -> None:
+        transcript = load_transcript()
+        self.assertEqual(
+            [(turn["batch_id"], turn["turn_id"]) for turn in transcript],
+            [
+                ("A", "turn-a1-a3"),
+                ("B-SPAWN", "turn-b-spawn-request"),
+                ("BC", "turn-b1-c4-degraded"),
+                ("D", "turn-d1"),
+            ],
+        )
+        required_fields = {
+            "batch_id",
+            "turn_id",
+            "fresh_fork",
+            "skill_loaded",
+            "request_raw",
+            "scenario_ids",
+            "response_paths",
+        }
+        for turn in transcript:
+            self.assertTrue(required_fields <= set(turn), turn.get("turn_id"))
+            self.assertIs(type(turn["fresh_fork"]), bool, turn["turn_id"])
+            self.assertIs(type(turn["skill_loaded"]), bool, turn["turn_id"])
+            self.assertFalse(turn["skill_loaded"], turn["turn_id"])
+            self.assertTrue(str(turn["request_raw"]), turn["turn_id"])
+            self.assertIsInstance(turn["scenario_ids"], list, turn["turn_id"])
+            self.assertIsInstance(turn["response_paths"], list, turn["turn_id"])
+            batch_id = str(turn["batch_id"])
+            self.assertEqual(turn["scenario_ids"], EXPECTED_TRANSCRIPT_SCENARIOS[batch_id])
+            self.assertEqual(
+                hashlib.sha256(str(turn["request_raw"]).encode("utf-8")).hexdigest(),
+                EXPECTED_TRANSCRIPT_REQUEST_SHA256[batch_id],
+                turn["turn_id"],
+            )
+
+        turns = {str(turn["batch_id"]): turn for turn in transcript}
+        self.assertTrue(turns["A"]["fresh_fork"])
+        self.assertFalse(turns["BC"]["fresh_fork"])
+        self.assertFalse(turns["D"]["fresh_fork"])
+        spawn_turn = turns["B-SPAWN"]
+        self.assertFalse(spawn_turn["fresh_fork"])
+        self.assertIs(spawn_turn["requested_fresh_fork"], True)
+        self.assertEqual(spawn_turn["response_paths"], [])
+        self.assertEqual(
+            spawn_turn["platform_feedback"],
+            "collab spawn failed: agent thread limit reached",
+        )
+
+        mapped: dict[str, tuple[dict[str, object], str]] = {}
+        for turn in transcript:
+            scenario_ids = [str(value) for value in turn["scenario_ids"]]
+            response_paths = [str(value) for value in turn["response_paths"]]
+            self.assertIn(len(response_paths), (0, len(scenario_ids)), turn["turn_id"])
+            if not response_paths:
+                continue
+            for scenario_id, response_path in zip(scenario_ids, response_paths, strict=True):
+                self.assertNotIn(scenario_id, mapped, scenario_id)
+                mapped[scenario_id] = (turn, response_path)
+
+        scenarios = load_scenarios()
+        self.assertEqual(set(mapped), {str(item["id"]) for item in scenarios})
+        for scenario in scenarios:
+            scenario_id = str(scenario["id"])
+            turn, response_path = mapped[scenario_id]
+            self.assertIn(str(scenario["prompt"]), str(turn["request_raw"]), scenario_id)
+            self.assertEqual(response_path, scenario["path"], scenario_id)
+            self.assertIn(f"batch_id={turn['batch_id']}", str(scenario["context"]), scenario_id)
+            self.assertIn(f"turn_id={turn['turn_id']}", str(scenario["context"]), scenario_id)
+            self.assertTrue((ROOT / response_path).is_file(), response_path)
 
     def test_readme_records_method_limitations_and_observable_gaps(self) -> None:
         text = README_PATH.read_text(encoding="utf-8")
@@ -164,6 +259,7 @@ class ProMaxRedBaselineCaptureTests(unittest.TestCase):
             "artifact validation",
             "C4",
             "Max fallback",
+            "[transcript.json](transcript.json)",
         ):
             self.assertIn(marker, text)
         for scenario_id in EXPECTED_SCENARIO_IDS:
@@ -172,29 +268,29 @@ class ProMaxRedBaselineCaptureTests(unittest.TestCase):
 
 class ProMaxTargetBehaviorContractTests(unittest.TestCase):
     def test_canonical_skill_and_protocol_corpus_exist(self) -> None:
-        corpus = promax_corpus(self)
-        protocol_files = list((PROMAX_ROOT / "protocols").glob("*.md"))
-        self.assertTrue(protocol_files, "CrossFrame ProMax protocols are missing")
-        self.assertTrue(corpus.strip())
+        for name in PROMAX_CONTRACT_PATHS:
+            read_promax_contract(self, name)
 
     def test_explicit_only_forms_and_no_max_fallback_contract_exist(self) -> None:
-        corpus = promax_corpus(self)
+        skill = read_promax_contract(self, "skill")
         for form in EXPLICIT_ONLY_FORMS:
-            self.assertIn(form, corpus)
-        self.assertIn("PROMAX-NAMED-ONLY", corpus)
-        self.assertIn("PROMAX-NO-FALLBACK-TO-MAX", corpus)
-        self.assertIn("PROMAX-PRIORITY-OVER-MAX", corpus)
+            self.assertIn(form, skill)
+        self.assertIn("PROMAX-NAMED-ONLY", skill)
+        self.assertIn("PROMAX-NO-FALLBACK-TO-MAX", skill)
+        self.assertIn("PROMAX-PRIORITY-OVER-MAX", skill)
 
     def test_judgment_charter_and_all_twelve_phases_exist(self) -> None:
-        corpus = promax_corpus(self)
-        self.assertIn("PROMAX-JUDGMENT-CHARTER", corpus)
+        judgment = read_promax_contract(self, "judgment")
+        runtime = read_promax_contract(self, "runtime")
+        self.assertIn("PROMAX-JUDGMENT-CHARTER", judgment)
         for phase in range(12):
-            self.assertRegex(corpus, rf"(?<![A-Z0-9])P{phase}(?![0-9])")
+            self.assertRegex(runtime, rf"(?<![A-Z0-9])P{phase}(?![0-9])")
 
     def test_runtime_closure_and_validation_markers_exist(self) -> None:
-        corpus = promax_corpus(self)
-        for marker in REQUIRED_RUNTIME_MARKERS:
-            self.assertIn(marker, corpus, marker)
+        for contract_name, markers in RESPONSIBLE_MARKERS.items():
+            text = read_promax_contract(self, contract_name)
+            for marker in markers:
+                self.assertIn(marker, text, f"{contract_name}: {marker}")
 
 
 if __name__ == "__main__":

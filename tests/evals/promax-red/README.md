@@ -2,7 +2,7 @@
 
 ## Method
 
-This fixture freezes twelve actual no-ProMax answers before the ProMax runtime exists. The prompts, evaluator conditions, pressure tags, and raw response paths are indexed by `scenarios.json`; each response is preserved without post-hoc rewriting under `raw/`. The `## SCENARIO ...` heading in every raw file was part of the original final response and is therefore retained.
+This fixture freezes twelve actual no-ProMax answers before the ProMax runtime exists. The prompts, evaluator conditions, pressure tags, and raw response paths are indexed by `scenarios.json`; the full requests, turn identities, fork status, thread-limit feedback, and response mapping are frozen in [transcript.json](transcript.json). Each response is preserved without post-hoc rewriting under `raw/`. The `## SCENARIO ...` heading in every raw file was part of the original final response and is therefore retained.
 
 One fresh-fork no-skill evaluator answered A1-A3 together; CrossFrame ProMax was not loaded, and the v8 DOCX was consulted read-only as needed. A requested fresh evaluator for B could not be created because the platform returned `agent thread limit reached`. B, C, and D therefore ran in later separate turns of that same no-skill evaluator. D was not a fresh fork. This limitation is recorded rather than describing any B, C, or D scenario as independently fresh.
 
@@ -45,19 +45,19 @@ python -B -m unittest tests.test_mirror_integrity tests.test_verify_workflow_con
 
 ## RED result summary
 
-Observed after the provenance correction:
+Observed after the provenance and contract hardening:
 
 ```text
-Ran 15 tests
+Ran 16 tests
 FAILED (failures=10; errors=0)
 ```
 
-There were no import, syntax, fixture, or runtime errors. Seven checks passed: all three frozen-baseline checks, both Max preservation checks, the generic maximum-request routing check, and the named-Max identity check. The ten expected assertion failures were:
+There were no import, syntax, fixture, or runtime errors. Eight checks passed: all four frozen-baseline and transcript checks, both Git-authoritative Max preservation checks, the generic maximum-request routing check, and the named-Max identity check. The ten expected assertion failures were:
 
-- four behavioral-contract assertions stopped at the missing `skills/crossframe-promax/SKILL.md`;
+- four behavioral-contract assertions stopped at the missing canonical skill or its specifically assigned protocol file;
 - inventory reported `expected 16 CrossFrame skills, got 15`;
 - the canonical ProMax skill and Claude command were absent;
-- the suite named-only priority assertion failed independently for `SKILL.md`, `suite-dispatch-protocol.md`, and `workflow-routing-map.md` because none yet contains `crossframe-promax`.
+- the exact bounded routing-contract assertion failed independently for `SKILL.md`, `suite-dispatch-protocol.md`, and `workflow-routing-map.md` because none yet contains its single `PROMAX-ROUTING-BEGIN` / `PROMAX-ROUTING-END` block.
 
 This is the intended RED state: the captured controls and Max preservation manifest are valid, while only the not-yet-implemented ProMax production contracts fail.
 
