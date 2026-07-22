@@ -594,10 +594,6 @@ class ProMaxV8CheckoutAndCoordinationTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.checker = load_module("promax_v8_source_checker_coordination", CHECKER_PATH)
-        cls.generator = load_module(
-            "promax_v8_generator_coordination",
-            GENERATOR_PATH,
-        )
 
     def test_protected_release_files_are_forced_to_lf_by_git_attributes(self) -> None:
         content = GITATTRIBUTES_PATH.read_text(encoding="utf-8")
@@ -652,12 +648,47 @@ class ProMaxV8CheckoutAndCoordinationTests(unittest.TestCase):
             references = repo / "skills/crossframe-promax/references"
             live = references / "v8-full-source"
             lock = references / ".v8-full-source.lock"
-            generation_lock = self.generator._acquire_generation_lock(lock)
+            script = r'''
+import importlib.util
+from pathlib import Path
+import sys
+
+module_path, lock_path = sys.argv[1:]
+spec = importlib.util.spec_from_file_location("promax_lock_holder", module_path)
+module = importlib.util.module_from_spec(spec)
+sys.modules[spec.name] = module
+spec.loader.exec_module(module)
+generation_lock = module._acquire_generation_lock(Path(lock_path))
+print("locked", flush=True)
+sys.stdin.readline()
+module._release_generation_lock(generation_lock)
+'''
+            process = subprocess.Popen(
+                [sys.executable, "-c", script, str(GENERATOR_PATH), str(lock)],
+                cwd=ROOT,
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+            )
             try:
+                self.assertIsNotNone(process.stdout)
+                self.assertEqual(process.stdout.readline().strip(), "locked")
                 os.replace(live, references / ".v8-full-source.backup-active")
                 errors = self.checker.check_repository(repo)
             finally:
-                self.generator._release_generation_lock(generation_lock)
+                if process.poll() is None:
+                    if process.stdin is not None:
+                        process.stdin.write("release\n")
+                        process.stdin.flush()
+                    try:
+                        process.wait(timeout=10)
+                    except subprocess.TimeoutExpired:
+                        process.kill()
+                        process.wait(timeout=10)
+                for stream in (process.stdin, process.stdout, process.stderr):
+                    if stream is not None:
+                        stream.close()
         self.assertEqual(len(errors), 1, errors)
         self.assertIn("generation busy", errors[0].lower())
 
