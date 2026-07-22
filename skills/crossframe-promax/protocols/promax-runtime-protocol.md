@@ -63,7 +63,29 @@
 python skills/crossframe-promax/scripts/crossframe_promax_runtime.py init --repo <仓库根目录> --run-dir <新工件目录> --request <原始请求> --mode promax-artifact-run
 ```
 
-不得覆盖已存在的 run 目录。根据实际能力加入 `--network`、`--subagents` 和 `--recommendation-required`，并按该 CLI 的 `--help` 设置并发上限；不要声称不存在的能力可用。
+run mode 冻结的是目标契约，不是完成结论。只有当本轮确实具备严格完成所需的 v8 文件、验证器与实际任务所需能力，并以严格闭合为目标时，才把初始化参数改为 `--mode promax-complete`；这不等于已经完成。最终状态只能来自本轮 fresh canonical checker report。已知有能力缺口时使用 `promax-artifact-run`，不得虚报能力、把目标模式当作结果，或在运行途中改写 mode。
+
+不得覆盖已存在的 run 目录。根据实际能力加入 `--network` 和 `--recommendation-required`。只有宿主确实提供隔离子代理并暴露五个真实、唯一的执行 ID 时才加入 `--subagents`，再按该 CLI 的 `--help` 设置并发上限；否则冻结为 `single-agent-separated`，不要声称不存在的能力可用。
+
+### 生产 authoring 与物化
+
+`PROMAX-PRODUCTION-MATERIALIZER` 固定“模型写语义，运行时写控制面”的边界。P0 后运行：
+
+```text
+python skills/crossframe-promax/scripts/crossframe_promax_runtime.py prepare --repo <仓库根目录> --run-dir <工件目录> --authoring-dir <新 authoring 目录>
+```
+
+`prepare` 负责 P1 的 3,980 条 canonical read-event、阶段封存和 authoring pack；它不会生成任何中心判断、机制、案例、立场或建议。`promax-concept-decisions.json` 的 709 项必须由模型逐项完成 terminal status、独立 rationale、evidence、output section 与 pending evidence。禁止默认状态，禁止一个 bulk selector、统一理由，或仅替换概念名、序号、散列的同骨架句替整批概念作语义裁决；运行时会对 rationale 做规范化批量模板审计，同时只派生 registry hash、neighbor 与 misuse 原值，不替模型决定终态。
+
+模型按 pack 中的固定模板路径写完 P2–P10 语义工件后运行：
+
+```text
+python skills/crossframe-promax/scripts/crossframe_promax_runtime.py materialize --repo <仓库根目录> --run-dir <工件目录> --authoring-dir <authoring 目录> --request <原始请求>
+```
+
+`materialize` 验证原始请求 hash 与实质关键词是否同时进入对象边界、中心 claim、position、dossier、essay 及每个概念 rationale；不接受通用冻结工件加主题附录。随后只生成 schema/run/source 绑定、规范时间、真实 hash、P2–P10 phase lineage、role records、manifest、continuation 与 final-chat。所有输入先在隔离 staging workspace 通过同一 canonical checker；发布时持有正式 run 的跨进程锁，重新 CAS 校验 P1 head，以持久备份事务逐文件提交并在 phase log 后置后做 postcheck。写入异常、并发冲突或 postcheck 失败都恢复原 P1；硬中断遗留事务由下次调用先恢复。没有 `published=true` 与非空 `final_chat_projection` 时禁止最终交付。
+
+若 P0 声明 `multi-agent-isolated`，`schema_version=2` 的 authoring pack 要求五个实际角色分别记录宿主可见的唯一执行 ID、固定路径、观测输入字节散列、产出字节散列与完成时间；运行时逐字节复核并把 ID、artifact refs 和 claim hash 写入 manifest。该 attestation 提供可审计绑定，但不能替代宿主签名，也不能仅凭模型自填字符串证明角色隔离；拿不到真实宿主执行 ID 时必须使用 `single-agent-separated`。单代理仍按冻结顺序逐角色完成语义，不声称独立代理审查。
 
 ## P0：run contract
 

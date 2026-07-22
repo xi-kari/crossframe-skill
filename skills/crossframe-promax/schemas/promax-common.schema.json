@@ -166,8 +166,58 @@
           "uniqueItems": true,
           "items": {"$ref": "#/$defs/artifactHash"}
         },
+        "agent_id": {"$ref": "#/$defs/nonemptyString"},
+        "execution_attestation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "run_id",
+            "request_sha256",
+            "source_snapshot_sha256",
+            "completed_at",
+            "observed_input_artifacts",
+            "produced_output_artifacts",
+            "claim_sha256"
+          ],
+          "properties": {
+            "run_id": {"$ref": "#/$defs/runId"},
+            "request_sha256": {"$ref": "#/$defs/sha256"},
+            "source_snapshot_sha256": {"$ref": "#/$defs/v8SnapshotSha256"},
+            "completed_at": {"$ref": "#/$defs/timestamp"},
+            "observed_input_artifacts": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {"$ref": "#/$defs/artifactHash"}
+            },
+            "produced_output_artifacts": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {"$ref": "#/$defs/artifactHash"}
+            },
+            "claim_sha256": {"$ref": "#/$defs/sha256"}
+          }
+        },
         "status": {"enum": ["completed", "blocked", "invalidated"]}
-      }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {"execution_mode": {"const": "multi-agent-isolated"}},
+            "required": ["execution_mode"]
+          },
+          "then": {"required": ["agent_id", "execution_attestation"]},
+          "else": {
+            "not": {
+              "anyOf": [
+                {"required": ["agent_id"]},
+                {"required": ["execution_attestation"]}
+              ]
+            }
+          }
+        }
+      ]
     },
     "orderedRolePlan": {
       "type": "array",

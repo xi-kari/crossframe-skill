@@ -1294,6 +1294,27 @@ def validate_workspace(
     outcome = classify_outcome(
         mode, failures=failures, capability_gaps=capability_gaps
     )
+    if (
+        final_chat
+        and isinstance(final_chat_projection, Mapping)
+        and final_chat_projection.get("run_status") != outcome["completion_status"]
+    ):
+        _append_failure(
+            failures,
+            diagnostics,
+            key="final_chat",
+            error_type="final_chat_status_mismatch",
+            repair_action="project_the_fresh_checker_completion_status_and_revalidate",
+            error=ValueError(
+                "final chat run status does not equal the fresh checker completion status"
+            ),
+        )
+        failures = _ordered_failures(failures)
+        outcome = classify_outcome(
+            mode,
+            failures=failures,
+            capability_gaps=capability_gaps,
+        )
 
     official_report = None
     repair_plan = None

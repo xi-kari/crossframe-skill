@@ -1096,8 +1096,21 @@ def validate_final_chat(
         raise ValueError("final chat requires a separately materialized current promax-essay.md")
 
     status = payload.get("run_status")
-    if status != contract.get("mode"):
-        raise ValueError("final chat run status must exactly match the frozen run mode")
+    frozen_mode = contract.get("mode")
+    incomplete_artifact_status = (
+        isinstance(status, str)
+        and re.fullmatch(
+            r"promax-artifact-incomplete:[a-z0-9-]+(?:\+[a-z0-9-]+)*",
+            status,
+        )
+        is not None
+    )
+    if status != frozen_mode and not (
+        frozen_mode == "promax-artifact-run" and incomplete_artifact_status
+    ):
+        raise ValueError(
+            "final chat run status must match the frozen mode or its checker downgrade"
+        )
     summary = payload.get("center_judgment_summary")
     if not isinstance(summary, str) or not summary.strip():
         raise ValueError("center judgment summary must be non-empty text")

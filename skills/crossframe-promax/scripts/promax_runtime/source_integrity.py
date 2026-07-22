@@ -303,6 +303,41 @@ def load_canonical_read_targets(
     return tuple(targets)
 
 
+def build_read_events(
+    repo: Path | str,
+    *,
+    run_id: str,
+    read_at: str,
+) -> list[dict[str, object]]:
+    """Materialize the deterministic P1 proof for every canonical v8 target.
+
+    This function only records the bytes that the runtime actually traverses.
+    It does not generate analysis, concept decisions, or any other model-owned
+    semantics.
+    """
+
+    if not isinstance(run_id, str) or not run_id.strip():
+        raise ValueError("run_id must be non-empty text")
+    if not isinstance(read_at, str) or not read_at.strip():
+        raise ValueError("read_at must be a non-empty timestamp")
+    return [
+        {
+            "schema_id": "crossframe.promax.v8.read-event",
+            "schema_version": 1,
+            "event_id": f"read-event-{sequence:06d}",
+            "run_id": run_id,
+            "source_snapshot_sha256": V8_SOURCE_SNAPSHOT_SHA256,
+            "sequence": sequence,
+            "source_kind": target["source_kind"],
+            "source_anchor": target["source_anchor"],
+            "source_file": target["source_file"],
+            "content_sha256": target["content_sha256"],
+            "read_at": read_at.strip(),
+        }
+        for sequence, target in enumerate(load_canonical_read_targets(repo), start=1)
+    ]
+
+
 def validate_read_event_coverage(
     events: Sequence[Mapping[str, object]],
     *,

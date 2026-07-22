@@ -25,6 +25,19 @@ ROLE_IDS = (
     "position_adjudicator",
     "longform_writer",
 )
+CANONICAL_VALIDATOR_IDS = (
+    "schema",
+    "source-integrity",
+    "version-isolation",
+    "concept-closure",
+    "claim-path",
+    "retrieval",
+    "position",
+    "output",
+    "manifest",
+    "state-machine",
+    "continuation",
+)
 _ROLE_INPUT_MAX_PHASE = ("P3", "P5", "P6", "P7", "P9")
 _ROLE_OUTPUT_PHASE = ("P4", "P6", "P7", "P8", "P10")
 ALLOWED_MODES = (
@@ -44,11 +57,7 @@ def build_capability_disclosure(
     *,
     subagents_available: bool,
     max_parallelism: int,
-    validator_ids: Iterable[str] = (
-        "schema",
-        "source-integrity",
-        "state-machine",
-    ),
+    validator_ids: Iterable[str] = CANONICAL_VALIDATOR_IDS,
     files_available: bool = True,
     files_readable: bool = True,
     files_writable: bool = True,
@@ -390,6 +399,25 @@ def _validate_artifact_ref(
     return path, digest, media_type
 
 
+def _validate_attestation_artifact_ref(
+    value: object,
+    *,
+    field: str,
+) -> tuple[str, str, str]:
+    if not isinstance(value, Mapping) or set(value) != {
+        "path",
+        "sha256",
+        "media_type",
+    }:
+        raise ValueError(f"{field} must be a closed structured artifact reference")
+    path = _safe_relative_path(value["path"])
+    digest = _require_sha256(value["sha256"], field=f"{field}.sha256")
+    media_type = value["media_type"]
+    if media_type != _media_type(path):
+        raise ValueError(f"{field}.media_type does not match the artifact path: {path}")
+    return path, digest, str(media_type)
+
+
 def validate_role_records(
     run_contract: Mapping[str, object],
     role_records: Sequence[Mapping[str, object]],
@@ -434,7 +462,7 @@ def validate_role_records(
         raise ValueError("all five planned role records are required")
     normalized: list[dict[str, object]] = []
     output_owners: dict[str, int] = {}
-    expected_keys = {
+    base_expected_keys = {
         "role_id",
         "sequence",
         "execution_mode",
@@ -464,12 +492,16 @@ def validate_role_records(
                 )
             output_owners[folded_output] = owner_index
 
+    multi_agent_ids: list[str] = []
     for index, (planned, raw_record) in enumerate(
         zip(plan, role_records), start=1
     ):
         if not isinstance(planned, Mapping) or not isinstance(raw_record, Mapping):
             raise ValueError(f"role record {index} must be a structured object")
         record = copy.deepcopy(dict(raw_record))
+        expected_keys = set(base_expected_keys)
+        if planned.get("execution_mode") == "multi-agent-isolated":
+            expected_keys.update({"agent_id", "execution_attestation"})
         if set(record) != expected_keys:
             raise ValueError(f"role record {index} has an open or incomplete shape")
         for key in (
@@ -486,6 +518,62 @@ def validate_role_records(
             raise ValueError(f"role record {index} has an invalid status")
         if run_contract.get("mode") == "promax-complete" and record["status"] != "completed":
             raise ValueError("promax-complete requires all five roles to complete")
+        if planned.get("execution_mode") == "multi-agent-isolated":
+            agent_id = record.get("agent_id")
+            if not isinstance(agent_id, str) or len(agent_id.strip()) < 3:
+                raise ValueError(f"role record {index} lacks a stable agent identity")
+            normalized_agent_id = agent_id.strip()
+            multi_agent_ids.append(normalized_agent_id)
+            attestation = record.get("execution_attestation")
+            expected_attestation_keys = {
+                "run_id",
+                "request_sha256",
+                "source_snapshot_sha256",
+                "completed_at",
+                "observed_input_artifacts",
+                "produced_output_artifacts",
+                "claim_sha256",
+            }
+            if not isinstance(attestation, Mapping) or set(attestation) != expected_attestation_keys:
+                raise ValueError(f"role record {index} execution attestation is incomplete")
+            for field in ("run_id", "request_sha256", "source_snapshot_sha256"):
+                if attestation.get(field) != run_contract.get(field):
+                    raise ValueError(
+                        f"role record {index} execution attestation changes {field}"
+                    )
+            completed_at = attestation.get("completed_at")
+            if not isinstance(completed_at, str) or not completed_at.strip():
+                raise ValueError(f"role record {index} lacks an attested completion time")
+            attested_refs: dict[str, list[dict[str, object]]] = {}
+            for field in ("observed_input_artifacts", "produced_output_artifacts"):
+                values = attestation.get(field)
+                if not isinstance(values, list) or len(values) != 1:
+                    raise ValueError(f"role record {index}.{field} must contain one artifact")
+                path, digest, media_type = _validate_attestation_artifact_ref(
+                    values[0],
+                    field=f"role_records[{index - 1}].execution_attestation.{field}[0]",
+                )
+                if path in known_artifacts and known_artifacts[path] != digest:
+                    raise ValueError(
+                        f"role record {index} execution attestation does not bind "
+                        f"published artifact bytes: {path}"
+                    )
+                attested_refs[field] = [
+                    {"path": path, "sha256": digest, "media_type": media_type}
+                ]
+            claim = {
+                "run_id": run_contract["run_id"],
+                "request_sha256": run_contract["request_sha256"],
+                "source_snapshot_sha256": run_contract["source_snapshot_sha256"],
+                "role_id": record["role_id"],
+                "sequence": record["sequence"],
+                "agent_id": normalized_agent_id,
+                "completed_at": completed_at.strip(),
+                "observed_input_artifacts": attested_refs["observed_input_artifacts"],
+                "produced_output_artifacts": attested_refs["produced_output_artifacts"],
+            }
+            if attestation.get("claim_sha256") != sha256_json(claim):
+                raise ValueError(f"role record {index} execution claim hash mismatch")
 
         parsed: dict[str, list[tuple[str, str, str]]] = {}
         for field in (
@@ -562,6 +650,8 @@ def validate_role_records(
                         f"role record {index} output lineage must equal its observed inputs"
                     )
         normalized.append(record)
+    if multi_agent_ids and len(set(multi_agent_ids)) != len(multi_agent_ids):
+        raise ValueError("multi-agent role records require unique agent identities")
     return normalized
 
 

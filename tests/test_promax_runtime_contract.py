@@ -75,15 +75,39 @@ def actual_role_records(
         output_sha = hashlib.sha256(output_path.encode("utf-8")).hexdigest()
         known[input_path] = input_sha
         known[output_path] = output_sha
-        records.append(
-            {
-                **plan,
-                "input_artifacts": [artifact_ref(input_path, input_sha)],
-                "observed_input_artifacts": [artifact_ref(input_path, input_sha)],
-                "output_artifacts": [artifact_ref(output_path, output_sha)],
-                "status": "completed",
+        input_ref = artifact_ref(input_path, input_sha)
+        output_ref = artifact_ref(output_path, output_sha)
+        record = {
+            **plan,
+            "input_artifacts": [input_ref],
+            "observed_input_artifacts": [copy.deepcopy(input_ref)],
+            "output_artifacts": [output_ref],
+            "status": "completed",
+        }
+        if plan["execution_mode"] == "multi-agent-isolated":
+            agent_id = f"runtime-agent-{sequence}"
+            claim = {
+                "run_id": contract["run_id"],
+                "request_sha256": contract["request_sha256"],
+                "source_snapshot_sha256": contract["source_snapshot_sha256"],
+                "role_id": plan["role_id"],
+                "sequence": sequence,
+                "agent_id": agent_id,
+                "completed_at": STAMP,
+                "observed_input_artifacts": [copy.deepcopy(input_ref)],
+                "produced_output_artifacts": [copy.deepcopy(output_ref)],
             }
-        )
+            record["agent_id"] = agent_id
+            record["execution_attestation"] = {
+                "run_id": claim["run_id"],
+                "request_sha256": claim["request_sha256"],
+                "source_snapshot_sha256": claim["source_snapshot_sha256"],
+                "completed_at": claim["completed_at"],
+                "observed_input_artifacts": claim["observed_input_artifacts"],
+                "produced_output_artifacts": claim["produced_output_artifacts"],
+                "claim_sha256": sha256_json(claim),
+            }
+        records.append(record)
     return records, known
 
 
@@ -475,6 +499,27 @@ class ProMaxStructuredRoleExchangeTests(unittest.TestCase):
     def test_all_five_actual_role_records_are_structured_and_hash_bound(self) -> None:
         validated = validate_role_records(self.contract, self.records, self.known)
         self.assertEqual([item["role_id"] for item in validated], list(ROLE_IDS))
+
+    def test_execution_attestation_cannot_claim_different_published_bytes(self) -> None:
+        records = copy.deepcopy(self.records)
+        record = records[1]
+        attestation = record["execution_attestation"]
+        attestation["produced_output_artifacts"][0]["sha256"] = HASH_A
+        claim = {
+            "run_id": self.contract["run_id"],
+            "request_sha256": self.contract["request_sha256"],
+            "source_snapshot_sha256": self.contract["source_snapshot_sha256"],
+            "role_id": record["role_id"],
+            "sequence": record["sequence"],
+            "agent_id": record["agent_id"],
+            "completed_at": attestation["completed_at"],
+            "observed_input_artifacts": attestation["observed_input_artifacts"],
+            "produced_output_artifacts": attestation["produced_output_artifacts"],
+        }
+        attestation["claim_sha256"] = sha256_json(claim)
+
+        with self.assertRaisesRegex(ValueError, "published artifact bytes"):
+            validate_role_records(self.contract, records, self.known)
 
     def test_undeclared_observation_wrong_output_or_free_memory_is_rejected(self) -> None:
         cases: list[list[dict[str, object]]] = []

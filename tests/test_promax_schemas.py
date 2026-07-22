@@ -119,7 +119,7 @@ def role_record(
     sequence: int,
     execution_mode: str,
 ) -> dict[str, Any]:
-    return {
+    record = {
         **role_plan_record(role_id, sequence, execution_mode),
         "input_artifacts": [artifact(f"inputs/{sequence}.json", HASH_A)],
         "observed_input_artifacts": [
@@ -128,6 +128,26 @@ def role_record(
         "output_artifacts": [artifact(f"outputs/{sequence}.json", HASH_B)],
         "status": "completed",
     }
+    if execution_mode == "multi-agent-isolated":
+        record.update(
+            {
+                "agent_id": f"schema-agent-{sequence}",
+                "execution_attestation": {
+                    "run_id": RUN_ID,
+                    "request_sha256": HASH_A,
+                    "source_snapshot_sha256": SOURCE_SNAPSHOT_SHA256,
+                    "completed_at": STAMP,
+                    "observed_input_artifacts": [
+                        artifact(f"inputs/{sequence}.json", HASH_A)
+                    ],
+                    "produced_output_artifacts": [
+                        artifact(f"outputs/{sequence}.json", HASH_B)
+                    ],
+                    "claim_sha256": HASH_C,
+                },
+            }
+        )
+    return record
 
 
 def capabilities(subagents: bool) -> dict[str, Any]:

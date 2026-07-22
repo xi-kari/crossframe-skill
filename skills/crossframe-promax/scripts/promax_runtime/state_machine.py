@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from contextlib import contextmanager
 from dataclasses import dataclass
 import errno
 import os
@@ -7,7 +8,7 @@ from pathlib import Path
 import re
 import stat
 from types import MappingProxyType
-from typing import BinaryIO, Iterable, Mapping
+from typing import BinaryIO, Iterable, Iterator, Mapping
 import warnings
 
 from .errors import (
@@ -110,6 +111,9 @@ class _EventLock:
     path: Path
     handle: BinaryIO
     released: bool = False
+
+
+_NO_EXPECTED_HEAD = object()
 
 
 def _warn_nonfatal(message: str) -> None:
@@ -665,6 +669,56 @@ def _release_event_lock(event_lock: _EventLock) -> None:
                     f"{fallback_error}"
                 )
         event_lock.released = True
+
+
+@contextmanager
+def exclusive_run_lock(run_dir: Path | str) -> Iterator[None]:
+    """Hold the cross-process transaction lock for one artifact run."""
+
+    candidate = Path(run_dir)
+    try:
+        resolved = candidate.resolve(strict=True)
+    except OSError as error:
+        raise PhaseHistoryError(f"cannot resolve artifact run for locking: {candidate}") from error
+    if not resolved.is_dir() or resolved.is_symlink():
+        raise PhaseHistoryError(f"artifact run lock target must be a real directory: {resolved}")
+    lock_path = resolved.parent / f".{resolved.name}.promax-runtime.lock"
+    event_lock = _acquire_event_lock(lock_path)
+    try:
+        yield
+    finally:
+        _release_event_lock(event_lock)
+
+
+@contextmanager
+def phase_event_cas_guard(
+    path: Path | str,
+    *,
+    expected_head_sha256: str | None | object = _NO_EXPECTED_HEAD,
+    expected_binding: RunBinding | None = None,
+) -> Iterator[tuple[list[dict[str, object]], PhaseState, bytes]]:
+    """Lock and canonically reload one phase log for a multi-file transaction."""
+
+    event_path = _canonical_event_log_path(path)
+    _assert_single_link_event_log(event_path)
+    lock_path = event_path.with_name(f".{event_path.name}.lock")
+    event_lock = _acquire_event_lock(lock_path)
+    try:
+        _assert_single_link_event_log(event_path)
+        records = _load_canonical_phase_events(event_path) if event_path.exists() else []
+        state = validate_phase_history(records, expected_binding=expected_binding)
+        if (
+            expected_head_sha256 is not _NO_EXPECTED_HEAD
+            and state.chain_head_sha256 != expected_head_sha256
+        ):
+            raise PhaseCASMismatch(
+                "phase event CAS mismatch: expected head "
+                f"{expected_head_sha256}, current head {state.chain_head_sha256}"
+            )
+        raw = event_path.read_bytes() if event_path.exists() else b""
+        yield records, state, raw
+    finally:
+        _release_event_lock(event_lock)
 
 
 def _load_canonical_phase_events(event_path: Path) -> list[dict[str, object]]:

@@ -67,7 +67,31 @@ python skills/crossframe-promax/scripts/crossframe_promax_runtime.py route --req
 python skills/crossframe-promax/scripts/crossframe_promax_runtime.py init --repo <仓库根目录> --run-dir <新工件目录> --request <原始请求> --mode promax-artifact-run
 ```
 
-有网络能力时加入 `--network`；有隔离子代理能力时加入 `--subagents`，并按该 CLI 的 `--help` 设置并发上限。能力不存在时如实登记，不要冒充工具已运行。`init` 负责生成并绑定 `promax-run-contract.json`、`promax-source-snapshot.json` 和初始 `promax-phase-events.jsonl`。
+档位表达本轮要兑现的目标契约，不是模型对结果的预先宣告。若本轮确实具备严格完成所需的 v8 文件、验证器与实际任务所需能力，并以严格闭合为目标，初始化时改用 `--mode promax-complete`；这不等于已经完成。只有本轮 fresh canonical checker report 才能判定是否达到 `promax-complete`。已知存在能力缺口时保持默认 `promax-artifact-run`，不得为了得到完成标签虚报能力或事后更改冻结档位。
+
+有网络能力时加入 `--network`。只有宿主确实提供隔离子代理，而且能取得五次真实执行的宿主可见唯一 ID 时才加入 `--subagents`，并按该 CLI 的 `--help` 设置并发上限；否则使用 `single-agent-separated`。能力不存在时如实登记，不要冒充工具已运行。`init` 负责生成并绑定 `promax-run-contract.json`、`promax-source-snapshot.json` 和初始 `promax-phase-events.jsonl`。
+
+## 生产物化入口
+
+`PROMAX-PRODUCTION-MATERIALIZER`：真实运行必须使用生产 `prepare` 与 `materialize`，不得手写控制面，也不得借用测试 fixture。这里的责任边界是“模型写语义，运行时写控制面”。
+
+P0 后立即创建一个全新的 authoring 目录并运行：
+
+```text
+python skills/crossframe-promax/scripts/crossframe_promax_runtime.py prepare --repo <仓库根目录> --run-dir <工件目录> --authoring-dir <新 authoring 目录>
+```
+
+`prepare` 会遍历并封存 3,863 个段落与 117 张表的 3,980 条 P1 read-event，同时生成 `promax-concept-decisions.json`。该文件包含 709 个只预填 canonical ID、权威名称和定义散列的裁决槽；逐项读取对应 v8 定义后，模型必须为每项填写 terminal status、请求绑定的独立 rationale、evidence、output section 与 pending evidence。禁止默认状态、bulk selector、统一兜底理由，以及用“替换概念名、序号或散列”的同骨架句批量伪装独立判断；运行时会归一化审计批量模板。不得让运行时替任何概念选择 `applied`、`tested_rejected`、`not_applicable`、`unknown_pending`。
+
+按模板在 authoring 目录完成 P2–P10 的模型语义工件。中心 claim、对象边界、position、dossier、essay 和每条概念 rationale 必须共同包含从原始请求提取的实质关键词；只绑定 request hash、只在末尾追加主题附录或只换最终聊天不算请求绑定。若 run contract 声明 `multi-agent-isolated`，还必须完成 `schema_version=2` 的 `promax-role-attestations.json`：逐角色记录真实宿主执行 ID、实际观测输入字节散列、实际产出字节散列与完成时间。运行时会把身份、artifact refs 与 claim hash 保留进 manifest。该记录是可复核执行声明，不是宿主密码学签名；拿不到真实执行 ID 时禁止自填标签，改用 `single-agent-separated`。
+
+全部模型语义写完后运行：
+
+```text
+python skills/crossframe-promax/scripts/crossframe_promax_runtime.py materialize --repo <仓库根目录> --run-dir <工件目录> --authoring-dir <authoring 目录> --request <原始请求>
+```
+
+`materialize` 只注入 schema/run/source 绑定、canonical neighbor 与 misuse 原值、规范时间、真实文件散列、P2–P10 append-only 阶段链、role records、manifest、continuation 和五项 final-chat。它先在临时工作区运行完整 checker，再持有正式 run 的跨进程锁，重新 CAS 校验 P1 head，并通过持久备份事务发布；写入中断、并发调用或 postcheck 失败时恢复逐字节一致的 P1，遗留事务在下次运行先恢复。缺少任何模型语义、709 项中任一项未裁决、请求绑定不成立或 checker 有 failure 时，只在 authoring 目录写 `promax-materialization-result.json`。修正后重跑同一命令，不能在 P1 后提前给最终答复。
 
 ## 固定阶段
 

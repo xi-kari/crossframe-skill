@@ -10,8 +10,13 @@ import shutil
 import tempfile
 from typing import Sequence
 
-from promax_runtime import build_capability_disclosure, initialize_run
+from promax_runtime import (
+    CANONICAL_VALIDATOR_IDS,
+    build_capability_disclosure,
+    initialize_run,
+)
 from promax_runtime.jsonio import canonical_json_bytes
+from promax_runtime.materialization import materialize_run, prepare_run
 from promax_runtime.pollution import resolve_explicit_route
 from promax_runtime.source_integrity import build_source_snapshot
 from promax_runtime.state_machine import (
@@ -126,6 +131,25 @@ def _parser() -> argparse.ArgumentParser:
     )
     init.add_argument("--blocker-category")
     init.add_argument("--blocker-detail")
+
+    prepare = subparsers.add_parser(
+        "prepare",
+        help="seal deterministic P1 reads and create a 709-item authoring pack",
+    )
+    prepare.add_argument("--repo", type=Path, default=Path.cwd())
+    prepare.add_argument("--run-dir", type=Path, required=True)
+    prepare.add_argument("--authoring-dir", type=Path, required=True)
+    prepare.add_argument("--read-at", default=None)
+
+    materialize = subparsers.add_parser(
+        "materialize",
+        help="validate model semantics and publish the P2-P10 control plane",
+    )
+    materialize.add_argument("--repo", type=Path, default=Path.cwd())
+    materialize.add_argument("--run-dir", type=Path, required=True)
+    materialize.add_argument("--authoring-dir", type=Path, required=True)
+    materialize.add_argument("--request", required=True)
+    materialize.add_argument("--generated-at", default=None)
     return parser
 
 
@@ -141,6 +165,25 @@ def main(argv: Sequence[str] | None = None) -> int:
         )
         print(json.dumps(snapshot, ensure_ascii=False, sort_keys=True))
         return 0
+    if args.command == "prepare":
+        prepared = prepare_run(
+            args.repo,
+            run_dir=args.run_dir,
+            authoring_dir=args.authoring_dir,
+            read_at=args.read_at or _utc_now(),
+        )
+        print(json.dumps(prepared, ensure_ascii=False, sort_keys=True))
+        return 0
+    if args.command == "materialize":
+        materialized = materialize_run(
+            args.repo,
+            run_dir=args.run_dir,
+            authoring_dir=args.authoring_dir,
+            request_text=args.request,
+            generated_at=args.generated_at or _utc_now(),
+        )
+        print(json.dumps(materialized, ensure_ascii=False, sort_keys=True))
+        return 0 if materialized.get("published") is True else 1
 
     created_at = args.created_at or _utc_now()
     blocker = None
@@ -163,7 +206,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             ()
             if blocker is not None
             and blocker.get("category") == "required_tool_forbidden"
-            else ("schema", "source-integrity", "state-machine")
+            else CANONICAL_VALIDATOR_IDS
         ),
         validators_available=(
             blocker is None or blocker.get("category") != "required_tool_forbidden"

@@ -306,6 +306,32 @@ class ProMaxTargetBehaviorContractTests(unittest.TestCase):
                 self.assertIn("PROMAX-MATERIALIZE-BEFORE-INCOMPLETE", text)
                 self.assertRegex(text, r"init.{0,20}P0.{0,40}禁止.{0,20}最终")
 
+    def test_runtime_requires_the_production_prepare_and_materialize_path(self) -> None:
+        skill = read_promax_contract(self, "skill")
+        runtime = read_promax_contract(self, "runtime")
+        for name, text in (("skill", skill), ("runtime", runtime)):
+            with self.subTest(contract=name):
+                self.assertIn("PROMAX-PRODUCTION-MATERIALIZER", text)
+                self.assertRegex(
+                    text,
+                    r"crossframe_promax_runtime\.py prepare[^\n]*--authoring-dir",
+                )
+                self.assertRegex(
+                    text,
+                    r"crossframe_promax_runtime\.py materialize[^\n]*--authoring-dir",
+                )
+                self.assertIn("709", text)
+                self.assertIn("禁止默认状态", text)
+                self.assertIn("模型写语义", text)
+                self.assertIn("运行时写控制面", text)
+                self.assertIn("--mode promax-complete", text)
+                self.assertIn("不等于已经完成", text)
+                self.assertIn("跨进程锁", text)
+                self.assertIn("CAS", text)
+                self.assertIn("批量模板", text)
+                self.assertIn("claim hash", text)
+                self.assertIn("single-agent-separated", text)
+
     def test_validation_and_final_chat_are_fresh_exact_projections(self) -> None:
         skill = read_promax_contract(self, "skill")
         runtime = read_promax_contract(self, "runtime")

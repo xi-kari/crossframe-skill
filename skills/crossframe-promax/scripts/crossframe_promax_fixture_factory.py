@@ -1344,7 +1344,11 @@ def _materialize_into(
         continuation["parent_manifest_sha256"] = "f" * 64
     _write_json(stage, "promax-continuation-ledger.json", continuation)
     final_chat = {
-        "run_status": mode,
+        "run_status": (
+            "promax-artifact-incomplete:network-unavailable"
+            if incomplete
+            else mode
+        ),
         "center_judgment_summary": position["position"],
         "key_withdrawal_conditions": position["withdrawal_conditions"],
         "artifact_links": list(output_plan["required_artifacts"]),
