@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import replace
 import importlib.util
 import inspect
+import json
 import os
 from pathlib import Path
 import sys
@@ -15,6 +16,8 @@ import xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURE_XML = ROOT / "tests/fixtures/promax-v8-source/document.xml"
+DOCUMENT_ORDER_XML = ROOT / "tests/fixtures/promax-v8-source/document-order.xml"
+NESTED_TABLE_XML = ROOT / "tests/fixtures/promax-v8-source/nested-table.xml"
 GENERATOR_PATH = (
     ROOT
     / "skills/crossframe-promax/scripts/generate_crossframe_promax_v8_full_source.py"
@@ -59,20 +62,6 @@ def write_fixture_docx(path: Path, xml_bytes: bytes | None = None) -> None:
 
 def fixture_root() -> ET.Element:
     return ET.fromstring(FIXTURE_XML.read_bytes())
-
-
-def pid_by_element(document_root: ET.Element) -> dict[int, str]:
-    elements = [
-        paragraph
-        for paragraph in document_root.iter(f"{generator.W}p")
-        if "".join(
-            node.text or "" for node in paragraph.iter(f"{generator.W}t")
-        ).strip()
-    ]
-    return {
-        id(element): f"V8-P{index:04d}"
-        for index, element in enumerate(elements, start=1)
-    }
 
 
 def non_whitespace(text: str) -> int:
@@ -145,6 +134,13 @@ class V8XmlExtractionTests(unittest.TestCase):
             root = generator.read_document_xml(source)
         self.assertTrue(root.tag.endswith("}document"))
 
+    def test_read_document_xml_bytes_reads_the_same_ooxml_body(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            source = Path(directory) / "fixture.docx"
+            write_fixture_docx(source)
+            root = generator.read_document_xml_bytes(source.read_bytes())
+        self.assertTrue(root.tag.endswith("}document"))
+
     def test_extract_paragraphs_walks_table_cells_in_document_order(self) -> None:
         paragraphs = generator.extract_v8_paragraphs(fixture_root())
         self.assertEqual(
@@ -167,10 +163,27 @@ class V8XmlExtractionTests(unittest.TestCase):
             [f"V8-P{index:04d}" for index in range(1, len(paragraphs) + 1)],
         )
 
+    def test_extract_paragraph_text_preserves_ooxml_tabs_and_breaks(self) -> None:
+        root = ET.fromstring(DOCUMENT_ORDER_XML.read_bytes())
+        paragraphs = generator.extract_v8_paragraphs(root)
+        self.assertEqual([paragraph.text for paragraph in paragraphs], ["左\t中\n下\n底"])
+        self.assertEqual(non_whitespace(paragraphs[0].text), 4)
+
+    def test_production_paragraph_index_drives_table_bindings(self) -> None:
+        document_root = fixture_root()
+        paragraphs = generator.extract_v8_paragraphs(document_root)
+        paragraph_index = generator.index_v8_paragraph_elements(document_root)
+        tables = generator.extract_v8_tables(document_root, paragraph_index)
+        self.assertEqual(
+            tuple(paragraph_index.values()),
+            tuple(paragraph.pid for paragraph in paragraphs),
+        )
+        self.assertEqual(tables[0].paragraph_ids, tuple(f"V8-P{i:04d}" for i in range(5, 9)))
+
     def test_extract_tables_preserves_rows_cells_and_source_bindings(self) -> None:
         document_root = fixture_root()
         tables = generator.extract_v8_tables(
-            document_root, pid_by_element(document_root)
+            document_root, generator.index_v8_paragraph_elements(document_root)
         )
         self.assertEqual(len(tables), 1)
         self.assertEqual(tables[0].tid, "V8-T001")
@@ -190,11 +203,34 @@ class V8XmlExtractionTests(unittest.TestCase):
             ("document_root", "pid_by_element"),
         )
 
+    def test_nested_tables_use_depth_first_descendant_cell_bindings(self) -> None:
+        document_root = ET.fromstring(NESTED_TABLE_XML.read_bytes())
+        paragraphs = generator.extract_v8_paragraphs(document_root)
+        tables = generator.extract_v8_tables(
+            document_root, generator.index_v8_paragraph_elements(document_root)
+        )
+        self.assertEqual(
+            tuple(paragraph.text for paragraph in paragraphs),
+            ("outer-before", "inner", "outer-after"),
+        )
+        self.assertEqual(len(tables), 2)
+        self.assertEqual(
+            tables[0].rows,
+            (("outer-before\ninner\nouter-after",),),
+        )
+        self.assertEqual(
+            tables[0].cell_paragraph_ids,
+            ((("V8-P0001", "V8-P0002", "V8-P0003"),),),
+        )
+        self.assertEqual(tables[0].paragraph_ids, ("V8-P0001", "V8-P0002", "V8-P0003"))
+        self.assertEqual(tables[1].rows, (("inner",),))
+        self.assertEqual(tables[1].cell_paragraph_ids, ((("V8-P0002",),),))
+
     def test_split_sections_ignores_same_named_toc1_and_uses_exact_style1(self) -> None:
         document_root = fixture_root()
         paragraphs = generator.extract_v8_paragraphs(document_root)
         tables = generator.extract_v8_tables(
-            document_root, pid_by_element(document_root)
+            document_root, generator.index_v8_paragraph_elements(document_root)
         )
         sections = generator.split_v8_sections(paragraphs, tables)
         self.assertEqual(len(sections), 16)
@@ -207,7 +243,7 @@ class V8XmlExtractionTests(unittest.TestCase):
         document_root = fixture_root()
         paragraphs = list(generator.extract_v8_paragraphs(document_root))
         tables = generator.extract_v8_tables(
-            document_root, pid_by_element(document_root)
+            document_root, generator.index_v8_paragraph_elements(document_root)
         )
         title_positions = [
             index
@@ -344,6 +380,80 @@ class V8GeneratedTreeValidationTests(unittest.TestCase):
         self.assertEqual(generator.validate_generated_v8_tree(stage, self.snapshot), [])
         return stage
 
+    def test_source_files_embed_canonical_paragraph_json(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            stage = self.render(Path(directory))
+            content = (stage / "00-source-envelope.md").read_text(encoding="utf-8")
+        canonical = content.split("## Canonical Structure\n\n```json\n", 1)[1]
+        payload = json.loads(canonical.split("\n```", 1)[0])
+        self.assertEqual(payload[0], {"pid": "V8-P0001", "style": "", "text": "x"})
+        self.assertEqual(payload[-1]["pid"], "V8-P0333")
+
+    def test_validator_does_not_invoke_the_renderer(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            stage = self.render(Path(directory))
+            with mock.patch.object(
+                generator,
+                "render_v8_source_tree",
+                side_effect=AssertionError("validator called renderer"),
+            ):
+                errors = generator.validate_generated_v8_tree(stage, self.snapshot)
+        self.assertEqual(errors, [])
+
+    def test_systematic_source_renderer_corruption_is_rejected(self) -> None:
+        real_source_file_lines = generator._source_file_lines
+
+        def corrupt_source_file_lines(*args, **kwargs):
+            lines = real_source_file_lines(*args, **kwargs)
+            return [
+                "y" if line == "x" else line.replace('"text": "x"', '"text": "y"')
+                for line in lines
+            ]
+
+        with tempfile.TemporaryDirectory() as directory, mock.patch.object(
+            generator,
+            "_source_file_lines",
+            side_effect=corrupt_source_file_lines,
+        ):
+            stage = Path(directory) / "v8-full-source"
+            generator.render_v8_source_tree(self.snapshot, stage)
+            errors = generator.validate_generated_v8_tree(stage, self.snapshot)
+        self.assertTrue(any("canonical paragraph" in error for error in errors), errors)
+
+    def test_systematic_table_renderer_corruption_is_rejected(self) -> None:
+        real_render_table = generator._render_table
+
+        def corrupt_render_table(table, source_sha256, output_path):
+            real_render_table(table, source_sha256, output_path)
+            content = output_path.read_text(encoding="utf-8")
+            output_path.write_text(
+                content.replace("x", "y"),
+                encoding="utf-8",
+                newline="\n",
+            )
+
+        with tempfile.TemporaryDirectory() as directory, mock.patch.object(
+            generator,
+            "_render_table",
+            side_effect=corrupt_render_table,
+        ):
+            stage = Path(directory) / "v8-full-source"
+            generator.render_v8_source_tree(self.snapshot, stage)
+            errors = generator.validate_generated_v8_tree(stage, self.snapshot)
+        self.assertTrue(any("canonical table" in error for error in errors), errors)
+
+    def test_prose_and_canonical_json_disagreement_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            stage = self.render(Path(directory))
+            source_file = stage / "16-governance.md"
+            original = source_file.read_text(encoding="utf-8")
+            marker = "<!-- source_paragraph:V8-P3736 style= -->"
+            changed = original.replace(f"{marker}\nx\n", f"{marker}\ny\n", 1)
+            self.assertNotEqual(changed, original)
+            source_file.write_text(changed, encoding="utf-8", newline="\n")
+            errors = generator.validate_generated_v8_tree(stage, self.snapshot)
+        self.assertTrue(any("prose/JSON" in error for error in errors), errors)
+
     def test_changed_character_with_same_count_is_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             stage = self.render(Path(directory))
@@ -478,6 +588,114 @@ class V8GenerationSafetyTests(unittest.TestCase):
             self.assertEqual(sentinel.read_text(encoding="utf-8"), "old")
             self.assertFalse(stage.exists())
             self.assertEqual(list(parent.glob(".v8-full-source.backup-*")), [])
+
+    def test_atomic_replace_rejects_the_same_resolved_stage_and_live_path(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            live = Path(directory) / "v8-full-source"
+            live.mkdir()
+            sentinel = live / "sentinel.txt"
+            sentinel.write_text("old", encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "different directories"):
+                generator.atomic_replace_tree(live, live)
+            self.assertEqual(sentinel.read_text(encoding="utf-8"), "old")
+
+    def test_preexisting_generation_lock_fails_without_touching_live_tree(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            repo = root / "repo"
+            live = repo / "skills/crossframe-promax/references/v8-full-source"
+            live.mkdir(parents=True)
+            sentinel = live / "sentinel.txt"
+            sentinel.write_text("keep-me", encoding="utf-8")
+            lock = live.parent / ".v8-full-source.lock"
+            lock.write_text('{"pid": 999, "token": "other"}', encoding="utf-8")
+            source = root / "fixture.docx"
+            write_fixture_docx(source)
+            fixture_sha = generator.sha256_file(source)
+            with mock.patch.object(
+                generator, "EXPECTED_SOURCE_SHA256", fixture_sha
+            ), mock.patch.object(generator, "validate_v8_snapshot", return_value=[]):
+                with self.assertRaisesRegex(RuntimeError, "generation lock exists"):
+                    generator.generate(repo, source)
+            self.assertEqual(sentinel.read_text(encoding="utf-8"), "keep-me")
+            self.assertEqual(
+                lock.read_text(encoding="utf-8"),
+                '{"pid": 999, "token": "other"}',
+            )
+            self.assertEqual(list(live.parent.glob(".v8-full-source.stage-*")), [])
+
+    def test_competing_generation_fails_while_first_generation_holds_lock(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            repo = root / "repo"
+            source = root / "fixture.docx"
+            write_fixture_docx(source)
+            fixture_sha = generator.sha256_file(source)
+            live = repo / "skills/crossframe-promax/references/v8-full-source"
+            lock = live.parent / ".v8-full-source.lock"
+            real_render = generator.render_v8_source_tree
+            contender_attempted = False
+            contender_failed = False
+
+            def render_with_contender(snapshot, output_dir):
+                nonlocal contender_attempted, contender_failed
+                if contender_attempted:
+                    real_render(snapshot, output_dir)
+                    return
+                contender_attempted = True
+                lock_payload = json.loads(lock.read_text(encoding="utf-8"))
+                self.assertEqual(lock_payload["pid"], os.getpid())
+                self.assertRegex(lock_payload["token"], r"^[0-9a-f]{32}$")
+                with self.assertRaisesRegex(RuntimeError, "generation lock exists"):
+                    generator.generate(repo, source)
+                contender_failed = True
+                real_render(snapshot, output_dir)
+
+            with mock.patch.object(
+                generator, "EXPECTED_SOURCE_SHA256", fixture_sha
+            ), mock.patch.object(
+                generator, "validate_v8_snapshot", return_value=[]
+            ), mock.patch.object(
+                generator,
+                "render_v8_source_tree",
+                side_effect=render_with_contender,
+            ):
+                result = generator.generate(repo, source)
+            self.assertTrue(contender_failed)
+            self.assertEqual(result, live)
+            self.assertTrue((live / "00-index.md").is_file())
+            self.assertFalse(lock.exists())
+
+    def test_generate_reads_source_bytes_exactly_once(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            repo = root / "repo"
+            source = root / "fixture.docx"
+            write_fixture_docx(source)
+            fixture_sha = generator.sha256_file(source)
+            real_read_bytes = Path.read_bytes
+            source_reads = 0
+
+            def counted_read_bytes(path):
+                nonlocal source_reads
+                if Path(path) == source:
+                    source_reads += 1
+                    if source_reads > 1:
+                        return b"replacement bytes are not a docx"
+                return real_read_bytes(path)
+
+            with mock.patch.object(
+                generator, "EXPECTED_SOURCE_SHA256", fixture_sha
+            ), mock.patch.object(
+                generator, "validate_v8_snapshot", return_value=[]
+            ), mock.patch.object(
+                Path,
+                "read_bytes",
+                autospec=True,
+                side_effect=counted_read_bytes,
+            ):
+                generator.generate(repo, source)
+            self.assertEqual(source_reads, 1)
 
 
 if __name__ == "__main__":

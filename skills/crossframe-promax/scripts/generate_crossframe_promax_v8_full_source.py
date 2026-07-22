@@ -3,9 +3,11 @@ from __future__ import annotations
 import argparse
 from dataclasses import dataclass
 import hashlib
+from io import BytesIO
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import sys
 import tempfile
@@ -125,12 +127,24 @@ def sha256_file(path: Path) -> str:
 
 
 def read_document_xml(source_docx: Path) -> ET.Element:
-    with ZipFile(Path(source_docx)) as archive:
+    return read_document_xml_bytes(Path(source_docx).read_bytes())
+
+
+def read_document_xml_bytes(source_bytes: bytes) -> ET.Element:
+    with ZipFile(BytesIO(source_bytes)) as archive:
         return ET.fromstring(archive.read("word/document.xml"))
 
 
 def _paragraph_text(element: ET.Element) -> str:
-    return "".join(node.text or "" for node in element.iter(f"{W}t"))
+    parts: list[str] = []
+    for node in element.iter():
+        if node.tag == f"{W}t":
+            parts.append(node.text or "")
+        elif node.tag == f"{W}tab":
+            parts.append("\t")
+        elif node.tag in {f"{W}br", f"{W}cr"}:
+            parts.append("\n")
+    return "".join(parts)
 
 
 def _paragraph_style(element: ET.Element) -> str:
@@ -150,34 +164,33 @@ def _paragraph_elements(
     return tuple(found)
 
 
-def _extract_v8_paragraphs_and_ids(
-    document_root: ET.Element,
-) -> tuple[tuple[V8Paragraph, ...], dict[int, str]]:
-    elements = _paragraph_elements(document_root)
-    paragraphs = tuple(
+def extract_v8_paragraphs(document_root: ET.Element) -> tuple[V8Paragraph, ...]:
+    return tuple(
         V8Paragraph(f"V8-P{index:04d}", style, text)
         for index, (_element, style, text) in enumerate(
-            elements, start=1
+            _paragraph_elements(document_root), start=1
         )
     )
-    pid_by_element = {
-        id(element): paragraph.pid
-        for (element, _style, _text), paragraph in zip(
-            elements, paragraphs, strict=True
+
+
+def index_v8_paragraph_elements(document_root: ET.Element) -> dict[int, str]:
+    return {
+        id(element): f"V8-P{index:04d}"
+        for index, (element, _style, _text) in enumerate(
+            _paragraph_elements(document_root), start=1
         )
     }
-    return paragraphs, pid_by_element
-
-
-def extract_v8_paragraphs(document_root: ET.Element) -> tuple[V8Paragraph, ...]:
-    paragraphs, _pid_by_element = _extract_v8_paragraphs_and_ids(document_root)
-    return paragraphs
 
 
 def extract_v8_tables(
     document_root: ET.Element,
     pid_by_element: dict[int, str],
 ) -> tuple[V8Table, ...]:
+    """Bind tables to global paragraph IDs using depth-first descendant order.
+
+    An outer cell includes paragraphs from nested tables, while each nested table
+    also records those paragraphs in its own table-local structure.
+    """
     tables: list[V8Table] = []
     for table_index, table_element in enumerate(
         document_root.iter(f"{W}tbl"), start=1
@@ -442,6 +455,26 @@ def _source_file_lines(
                 "",
             ]
         )
+    lines.extend(
+        [
+            "## Canonical Structure",
+            "",
+            "```json",
+            json.dumps(
+                [
+                    {
+                        "pid": paragraph.pid,
+                        "style": paragraph.style,
+                        "text": paragraph.text,
+                    }
+                    for paragraph in paragraphs
+                ],
+                ensure_ascii=False,
+                indent=2,
+            ),
+            "```",
+        ]
+    )
     return lines
 
 
@@ -618,12 +651,271 @@ def render_v8_source_tree(snapshot: V8Snapshot, output_dir: Path) -> None:
     _write_text(output_dir / "00-table-index.md", table_index_lines)
 
 
-def _tree_bytes(root: Path) -> dict[str, bytes]:
-    return {
-        path.relative_to(root).as_posix(): path.read_bytes()
-        for path in sorted(root.rglob("*"))
-        if path.is_file()
+def _expected_generated_paths(snapshot: V8Snapshot) -> set[str]:
+    paths = {
+        "00-heading-index.md",
+        "00-index.md",
+        "00-source-envelope.md",
+        "00-table-index.md",
+        "00-term-index.md",
     }
+    paths.update(f"{section.slug}.md" for section in snapshot.sections)
+    paths.update(f"tables/{table.tid}.md" for table in snapshot.tables)
+    return paths
+
+
+def _read_generated_text(path: Path, relative_path: str, errors: list[str]) -> str | None:
+    try:
+        return path.read_text(encoding="utf-8")
+    except (OSError, UnicodeError) as error:
+        errors.append(f"cannot read generated file {relative_path}: {error}")
+        return None
+
+
+def _parse_canonical_json(
+    content: str, relative_path: str, errors: list[str]
+) -> object | None:
+    marker = "## Canonical Structure\n\n```json\n"
+    if content.count(marker) != 1:
+        errors.append(
+            f"content mismatch: {relative_path} canonical JSON block count"
+        )
+        return None
+    payload_text = content.split(marker, 1)[1]
+    payload_text, fence, _trailing = payload_text.partition("\n```")
+    if not fence:
+        errors.append(f"content mismatch: {relative_path} canonical JSON fence")
+        return None
+    try:
+        return json.loads(payload_text)
+    except json.JSONDecodeError as error:
+        errors.append(f"content mismatch: {relative_path} canonical JSON: {error}")
+        return None
+
+
+def _validate_source_sha(
+    content: str,
+    relative_path: str,
+    source_sha256: str,
+    errors: list[str],
+) -> None:
+    expected = f"Source SHA256: `{source_sha256}`"
+    if content.count(expected) != 1:
+        errors.append(f"source SHA256 mismatch: {relative_path}")
+
+
+def _paragraph_records(
+    paragraphs: tuple[V8Paragraph, ...],
+) -> list[dict[str, str]]:
+    return [
+        {
+            "pid": paragraph.pid,
+            "style": paragraph.style,
+            "text": paragraph.text,
+        }
+        for paragraph in paragraphs
+    ]
+
+
+def _validate_source_artifact(
+    content: str,
+    relative_path: str,
+    expected_paragraphs: tuple[V8Paragraph, ...],
+    source_sha256: str,
+    errors: list[str],
+) -> tuple[list[str], list[str]]:
+    _validate_source_sha(content, relative_path, source_sha256, errors)
+    payload = _parse_canonical_json(content, relative_path, errors)
+    expected_records = _paragraph_records(expected_paragraphs)
+    records: list[dict[str, str]] | None = None
+    if isinstance(payload, list) and all(
+        isinstance(record, dict)
+        and set(record) == {"pid", "style", "text"}
+        and all(isinstance(record[key], str) for key in ("pid", "style", "text"))
+        for record in payload
+    ):
+        records = payload
+        if records != expected_records:
+            errors.append(
+                f"content mismatch: {relative_path} canonical paragraph JSON"
+            )
+    elif payload is not None:
+        errors.append(
+            f"content mismatch: {relative_path} canonical paragraph JSON shape"
+        )
+
+    prose_header = "## Source Paragraphs\n\n"
+    canonical_header = "## Canonical Structure\n\n```json\n"
+    prose_region = ""
+    if content.count(prose_header) != 1 or canonical_header not in content:
+        errors.append(f"content mismatch: {relative_path} source prose structure")
+    else:
+        prose_region = content.split(prose_header, 1)[1].split(
+            canonical_header, 1
+        )[0]
+    marker_ids = re.findall(
+        r"^<!-- source_paragraph:(V8-P\d{4}) style=.* -->$",
+        prose_region,
+        flags=re.MULTILINE,
+    )
+    if len(marker_ids) != len(set(marker_ids)):
+        errors.append(f"anchor coverage mismatch: {relative_path} duplicate prose marker")
+
+    json_ids: list[str] = []
+    if records is not None:
+        json_ids = [record["pid"] for record in records]
+        expected_prose = "".join(
+            f"<!-- source_paragraph:{record['pid']} style={record['style']} -->\n"
+            f"{record['text']}\n\n"
+            for record in records
+        )
+        if marker_ids != json_ids or prose_region != expected_prose:
+            errors.append(f"content mismatch: {relative_path} prose/JSON disagreement")
+    return marker_ids, json_ids
+
+
+def _table_payload(table: V8Table) -> dict[str, object]:
+    return {
+        "tid": table.tid,
+        "paragraph_ids": list(table.paragraph_ids),
+        "rows": [list(row) for row in table.rows],
+        "cell_paragraph_ids": [
+            [list(cell) for cell in row] for row in table.cell_paragraph_ids
+        ],
+    }
+
+
+def _validate_table_prose(
+    content: str,
+    relative_path: str,
+    payload: dict[str, object],
+    errors: list[str],
+) -> None:
+    rows = payload["rows"]
+    cell_paragraph_ids = payload["cell_paragraph_ids"]
+    if not isinstance(rows, list) or not isinstance(cell_paragraph_ids, list):
+        return
+    columns = max(
+        (len(row) for row in rows if isinstance(row, list)),
+        default=0,
+    )
+    row_lines: list[str] = []
+    if columns:
+        row_lines.append(
+            "| "
+            + " | ".join(f"column {index}" for index in range(1, columns + 1))
+            + " |"
+        )
+        row_lines.append("| " + " | ".join("---" for _ in range(columns)) + " |")
+        for row in rows:
+            if not isinstance(row, list) or any(not isinstance(cell, str) for cell in row):
+                return
+            padded = row + [""] * (columns - len(row))
+            cells = [
+                cell.replace("|", "\\|").replace("\n", "<br>").strip()
+                for cell in padded
+            ]
+            row_lines.append("| " + " | ".join(cells) + " |")
+    expected_rows = "\n".join(row_lines) + ("\n" if row_lines else "")
+
+    cell_lines: list[str] = []
+    for row_index, row in enumerate(cell_paragraph_ids, start=1):
+        if not isinstance(row, list):
+            return
+        for column_index, cell in enumerate(row, start=1):
+            if not isinstance(cell, list) or any(not isinstance(pid, str) for pid in cell):
+                return
+            value = ", ".join(f"`{pid}`" for pid in cell) or "`EMPTY`"
+            cell_lines.append(f"- R{row_index}C{column_index}: {value}")
+    expected_cells = "\n".join(cell_lines) + ("\n" if cell_lines else "")
+
+    rows_header = "## Rows\n\n"
+    cells_header = "## Cell Paragraph IDs\n\n"
+    canonical_header = "## Canonical Structure\n\n```json\n"
+    if (
+        content.count(rows_header) != 1
+        or content.count(cells_header) != 1
+        or canonical_header not in content
+    ):
+        errors.append(f"content mismatch: {relative_path} table prose structure")
+        return
+    actual_rows = content.split(rows_header, 1)[1].split("\n## Cell Paragraph IDs", 1)[0]
+    actual_cells = content.split(cells_header, 1)[1].split(
+        "\n## Canonical Structure", 1
+    )[0]
+    if actual_rows != expected_rows or actual_cells != expected_cells:
+        errors.append(f"content mismatch: {relative_path} table prose/JSON disagreement")
+
+
+def _validate_table_artifact(
+    content: str,
+    relative_path: str,
+    table: V8Table,
+    source_sha256: str,
+    errors: list[str],
+) -> None:
+    _validate_source_sha(content, relative_path, source_sha256, errors)
+    payload = _parse_canonical_json(content, relative_path, errors)
+    if not isinstance(payload, dict):
+        if payload is not None:
+            errors.append(f"content mismatch: {relative_path} canonical table JSON shape")
+        return
+    expected = _table_payload(table)
+    if payload != expected:
+        errors.append(f"content mismatch: {relative_path} canonical table JSON")
+    required_keys = {"tid", "paragraph_ids", "rows", "cell_paragraph_ids"}
+    if set(payload) != required_keys:
+        errors.append(f"content mismatch: {relative_path} canonical table JSON shape")
+        return
+    _validate_table_prose(content, relative_path, payload, errors)
+
+
+def _validate_control_artifacts(
+    generated_dir: Path, snapshot: V8Snapshot, errors: list[str]
+) -> None:
+    for relative_path in ("00-index.md", "00-table-index.md", "00-term-index.md"):
+        path = generated_dir / relative_path
+        if not path.is_file():
+            continue
+        content = _read_generated_text(path, relative_path, errors)
+        if content is not None:
+            _validate_source_sha(
+                content, relative_path, snapshot.source_sha256, errors
+            )
+
+    index_path = generated_dir / "00-index.md"
+    if index_path.is_file():
+        content = _read_generated_text(index_path, "00-index.md", errors)
+        if content is not None:
+            expected_metrics = (
+                f"Paragraph count: `{len(snapshot.paragraphs)}`",
+                f"Non-whitespace characters: `{snapshot.non_whitespace_chars}`",
+                f"Table count: `{len(snapshot.tables)}`",
+                f"Section count: `{len(snapshot.sections)}`",
+            )
+            if any(content.count(metric) != 1 for metric in expected_metrics):
+                errors.append("content mismatch: 00-index.md release metrics")
+
+    heading_path = generated_dir / "00-heading-index.md"
+    if heading_path.is_file():
+        content = _read_generated_text(heading_path, "00-heading-index.md", errors)
+        if content is not None:
+            expected_rows: list[str] = []
+            for paragraph in snapshot.paragraphs:
+                if not paragraph.style:
+                    continue
+                escaped_text = (
+                    paragraph.text.replace("|", "\\|")
+                    .replace("\n", "<br>")
+                    .strip()
+                )
+                expected_rows.append(
+                    f"| `{paragraph.pid}` | `{paragraph.style}` | {escaped_text} |"
+                )
+            header = "| --- | --- | --- |\n"
+            actual_rows = content.split(header, 1)[1].splitlines() if header in content else []
+            if actual_rows != expected_rows:
+                errors.append("content mismatch: 00-heading-index.md")
 
 
 def validate_generated_v8_tree(
@@ -635,22 +927,76 @@ def validate_generated_v8_tree(
     generated_dir = Path(generated_dir)
     if not generated_dir.is_dir():
         return [f"generated source tree does not exist: {generated_dir}"]
-    with tempfile.TemporaryDirectory() as directory:
-        expected_dir = Path(directory) / "expected"
-        render_v8_source_tree(snapshot, expected_dir)
-        expected = _tree_bytes(expected_dir)
-    actual = _tree_bytes(generated_dir)
     errors: list[str] = []
-    missing = sorted(set(expected) - set(actual))
-    extra = sorted(set(actual) - set(expected))
+    expected_paths = _expected_generated_paths(snapshot)
+    actual_paths = {
+        path.relative_to(generated_dir).as_posix()
+        for path in generated_dir.rglob("*")
+        if path.is_file()
+    }
+    missing = sorted(expected_paths - actual_paths)
+    extra = sorted(actual_paths - expected_paths)
     if missing:
         errors.append("missing generated files: " + ", ".join(missing))
     if extra:
         errors.append("unexpected generated files: " + ", ".join(extra))
-    for relative_path in sorted(set(expected) & set(actual)):
-        if actual[relative_path] != expected[relative_path]:
-            errors.append(f"content mismatch: {relative_path}")
-    return errors
+
+    paragraph_by_id = {
+        paragraph.pid: paragraph for paragraph in snapshot.paragraphs
+    }
+    first_section_start = _anchor_number(snapshot.sections[0].start_heading_id)
+    source_artifacts = [
+        ("00-source-envelope.md", snapshot.paragraphs[: first_section_start - 1])
+    ]
+    source_artifacts.extend(
+        (
+            f"{section.slug}.md",
+            tuple(paragraph_by_id[pid] for pid in section.paragraph_ids),
+        )
+        for section in snapshot.sections
+    )
+    all_prose_ids: list[str] = []
+    all_json_ids: list[str] = []
+    for relative_path, paragraphs in source_artifacts:
+        path = generated_dir / relative_path
+        if not path.is_file():
+            continue
+        content = _read_generated_text(path, relative_path, errors)
+        if content is None:
+            continue
+        prose_ids, json_ids = _validate_source_artifact(
+            content,
+            relative_path,
+            paragraphs,
+            snapshot.source_sha256,
+            errors,
+        )
+        all_prose_ids.extend(prose_ids)
+        all_json_ids.extend(json_ids)
+
+    expected_ids = [paragraph.pid for paragraph in snapshot.paragraphs]
+    if all_prose_ids != expected_ids:
+        errors.append("anchor coverage mismatch: source prose paragraphs")
+    if all_json_ids != expected_ids:
+        errors.append("anchor coverage mismatch: canonical paragraph JSON")
+
+    for table in snapshot.tables:
+        relative_path = f"tables/{table.tid}.md"
+        path = generated_dir / relative_path
+        if not path.is_file():
+            continue
+        content = _read_generated_text(path, relative_path, errors)
+        if content is not None:
+            _validate_table_artifact(
+                content,
+                relative_path,
+                table,
+                snapshot.source_sha256,
+                errors,
+            )
+
+    _validate_control_artifacts(generated_dir, snapshot, errors)
+    return list(dict.fromkeys(errors))
 
 
 def _remove_tree(path: Path) -> None:
@@ -663,6 +1009,8 @@ def _remove_tree(path: Path) -> None:
 def atomic_replace_tree(stage_dir: Path, live_dir: Path) -> None:
     stage_dir = Path(stage_dir)
     live_dir = Path(live_dir)
+    if stage_dir.resolve() == live_dir.resolve():
+        raise ValueError("stage and live must be different directories")
     if not stage_dir.is_dir():
         raise ValueError(f"stage directory does not exist: {stage_dir}")
     if stage_dir.parent.resolve() != live_dir.parent.resolve():
@@ -693,17 +1041,58 @@ def atomic_replace_tree(stage_dir: Path, live_dir: Path) -> None:
         _remove_tree(backup)
 
 
+def _acquire_generation_lock(lock_path: Path) -> str:
+    token = uuid4().hex
+    payload = json.dumps(
+        {"pid": os.getpid(), "token": token},
+        ensure_ascii=True,
+        sort_keys=True,
+    )
+    try:
+        descriptor = os.open(
+            lock_path,
+            os.O_CREAT | os.O_EXCL | os.O_WRONLY,
+            0o600,
+        )
+    except FileExistsError as error:
+        raise RuntimeError(f"generation lock exists: {lock_path}") from error
+    try:
+        with os.fdopen(descriptor, "w", encoding="utf-8", newline="\n") as handle:
+            handle.write(payload + "\n")
+    except BaseException:
+        try:
+            lock_path.unlink(missing_ok=True)
+        finally:
+            raise
+    return token
+
+
+def _release_generation_lock(lock_path: Path, token: str) -> None:
+    try:
+        payload = json.loads(lock_path.read_text(encoding="utf-8"))
+    except (FileNotFoundError, OSError, UnicodeError, json.JSONDecodeError):
+        return
+    if payload != {"pid": os.getpid(), "token": token}:
+        return
+    try:
+        lock_path.unlink()
+    except FileNotFoundError:
+        pass
+
+
 def generate(repo: Path, source_docx: Path) -> Path:
     repo = Path(repo).resolve()
     source_docx = Path(source_docx).resolve()
-    source_sha256 = sha256_file(source_docx)
+    source_bytes = source_docx.read_bytes()
+    source_sha256 = hashlib.sha256(source_bytes).hexdigest()
     if source_sha256 != EXPECTED_SOURCE_SHA256:
         raise ValueError(
             "source SHA256 mismatch: "
             f"expected {EXPECTED_SOURCE_SHA256}, got {source_sha256}"
         )
-    document_root = read_document_xml(source_docx)
-    paragraphs, pid_by_element = _extract_v8_paragraphs_and_ids(document_root)
+    document_root = read_document_xml_bytes(source_bytes)
+    paragraphs = extract_v8_paragraphs(document_root)
+    pid_by_element = index_v8_paragraph_elements(document_root)
     tables = extract_v8_tables(document_root, pid_by_element)
     sections = split_v8_sections(paragraphs, tables)
     snapshot = V8Snapshot(
@@ -719,24 +1108,29 @@ def generate(repo: Path, source_docx: Path) -> Path:
 
     live_dir = repo / "skills/crossframe-promax/references/v8-full-source"
     live_dir.parent.mkdir(parents=True, exist_ok=True)
-    stage_dir = Path(
-        tempfile.mkdtemp(
-            prefix=f".{live_dir.name}.stage-",
-            dir=live_dir.parent,
-        )
-    )
+    lock_path = live_dir.parent / f".{live_dir.name}.lock"
+    lock_token = _acquire_generation_lock(lock_path)
     try:
-        render_v8_source_tree(snapshot, stage_dir)
-        generated_errors = validate_generated_v8_tree(stage_dir, snapshot)
-        if generated_errors:
-            raise ValueError(
-                "generated v8 source validation failed: "
-                + "; ".join(generated_errors)
+        stage_dir = Path(
+            tempfile.mkdtemp(
+                prefix=f".{live_dir.name}.stage-",
+                dir=live_dir.parent,
             )
-        atomic_replace_tree(stage_dir, live_dir)
+        )
+        try:
+            render_v8_source_tree(snapshot, stage_dir)
+            generated_errors = validate_generated_v8_tree(stage_dir, snapshot)
+            if generated_errors:
+                raise ValueError(
+                    "generated v8 source validation failed: "
+                    + "; ".join(generated_errors)
+                )
+            atomic_replace_tree(stage_dir, live_dir)
+        finally:
+            if stage_dir.exists():
+                _remove_tree(stage_dir)
     finally:
-        if stage_dir.exists():
-            _remove_tree(stage_dir)
+        _release_generation_lock(lock_path, lock_token)
     return live_dir
 
 
