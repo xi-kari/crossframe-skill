@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 
 
-CURRENT_CROSSFRAME_SKILLS = [
+LEGACY_CROSSFRAME_SKILLS = [
     "crossframe",
     "crossframe-casebook",
     "crossframe-critical",
@@ -24,6 +24,11 @@ CURRENT_CROSSFRAME_SKILLS = [
     "crossframe-review",
     "crossframe-suite",
     "crossframe-teach",
+]
+
+CURRENT_CROSSFRAME_SKILLS = [
+    *LEGACY_CROSSFRAME_SKILLS,
+    "crossframe-promax",
 ]
 
 TECHNIQUE_FIELDS = [
@@ -239,7 +244,7 @@ def iter_schema_object_nodes(value, path: str = "root"):
 
 def iter_text_files(root: Path):
     suffixes = {".md", ".py", ".json", ".txt", ".ps1", ".sh", ".yaml", ".yml"}
-    for skill in CURRENT_CROSSFRAME_SKILLS:
+    for skill in LEGACY_CROSSFRAME_SKILLS:
         skill_dir = root / skill
         if not skill_dir.is_dir():
             continue
@@ -284,6 +289,69 @@ def check_no_retired_dirs(root: Path, label: str) -> None:
 def check_required_skill_dirs(root: Path, label: str) -> None:
     missing = [skill for skill in CURRENT_CROSSFRAME_SKILLS if not (root / skill / "SKILL.md").exists()]
     require(not missing, f"{label}: missing current crossframe skills: {', '.join(missing)}")
+
+
+def check_crossframe_promax_skill(root: Path, label: str) -> None:
+    promax = root / "crossframe-promax"
+    require((promax / "SKILL.md").is_file(), f"{label}: missing crossframe-promax/SKILL.md")
+    skill_text = read(promax / "SKILL.md")
+    for marker in [
+        "name: crossframe-promax",
+        "v8-only",
+        "PROMAX-NAMED-ONLY",
+        "PROMAX-PRIORITY-OVER-MAX",
+        "PROMAX-NO-FALLBACK-TO-MAX",
+        "PROMAX-NO-TEST-FIXTURE-RUNTIME",
+        "PROMAX-PRODUCTION-MATERIALIZER",
+        "PROMAX-MATERIALIZE-BEFORE-INCOMPLETE",
+    ]:
+        require(marker in skill_text, f"{label}: crossframe-promax missing marker: {marker}")
+
+    required_paths = [
+        "agents/openai.yaml",
+        "protocols/promax-runtime-protocol.md",
+        "references/source_manifest.json",
+        "references/concept-registry/v8-concept-registry.json",
+        "references/concept-contracts/v8-contract-map.json",
+        "references/v8-route-map.json",
+        "schemas/promax-run-contract.schema.json",
+        "schemas/promax-validator-report.schema.json",
+        "scripts/check_crossframe_promax_artifacts.py",
+        "scripts/check_crossframe_promax_v8_full_source.py",
+        "scripts/check_crossframe_promax_v8_knowledge.py",
+        "scripts/crossframe_promax_runtime.py",
+        "scripts/promax_runtime/materialization.py",
+        "templates/promax-artifact-manifest-output.md",
+    ]
+    missing = [relative for relative in required_paths if not (promax / relative).is_file()]
+    require(not missing, f"{label}: crossframe-promax required files missing: {', '.join(missing)}")
+
+    manifest = json.loads(read(promax / "references/source_manifest.json"))
+    expected = {
+        "framework_version": "v8.0",
+        "snapshot_sha256": "3186805a3e46e1b16948a4e51d08e7693a8e0dd04aa6b4604e796266d649936c",
+        "paragraph_count": 3863,
+        "non_whitespace_chars": 155721,
+        "table_count": 117,
+        "section_count": 16,
+    }
+    for field, value in expected.items():
+        require(manifest.get(field) == value, f"{label}: ProMax source manifest changed {field}")
+
+    for path in promax.rglob("*"):
+        if not path.is_file() or path.suffix.lower() not in {
+            ".md", ".py", ".json", ".txt", ".yaml", ".yml"
+        }:
+            continue
+        try:
+            lines = path.read_text(encoding="utf-8").splitlines()
+        except UnicodeDecodeError:
+            continue
+        for index, line in enumerate(lines, start=1):
+            require(
+                not line.endswith((" ", "\t")),
+                f"{label}: trailing whitespace in {path.relative_to(root)}:{index}",
+            )
 
 
 def check_repo_adapters(repo: Path, label: str) -> None:
@@ -2972,6 +3040,52 @@ def check_crossframe_max_runtime_tests(repo: Path, label: str) -> None:
         )
 
 
+def check_crossframe_promax_runtime_tests(repo: Path, label: str) -> None:
+    required_tests = {
+        "tests/test_promax_behavioral_contract.py": "PROMAX-MATERIALIZE-BEFORE-INCOMPLETE",
+        "tests/test_promax_materializer.py": "test_multi_agent_attestation_must_bind_canonical_published_bytes",
+        "tests/test_promax_repository_integration.py": "test_runtime_route_contract_matches_suite_priority_matrix",
+        "tests/test_promax_v8_version_isolation.py": "crossframe-promax",
+    }
+    for relative, marker in required_tests.items():
+        path = repo / relative
+        require(path.is_file(), f"{label}: missing ProMax runtime test: {relative}")
+        require(marker in read(path), f"{label}: {relative} missing marker: {marker}")
+
+    script_names = [
+        "build_crossframe_promax_repair_plan.py",
+        "check_crossframe_promax_artifacts.py",
+        "check_crossframe_promax_v8_full_source.py",
+        "check_crossframe_promax_v8_knowledge.py",
+        "crossframe_promax_fixture_factory.py",
+        "crossframe_promax_runtime.py",
+        "generate_crossframe_promax_v8_full_source.py",
+    ]
+    for name in script_names:
+        root_path = repo / "scripts" / name
+        canonical = repo / "skills/crossframe-promax/scripts" / name
+        require(root_path.is_file(), f"{label}: missing root ProMax wrapper: {name}")
+        require(canonical.is_file(), f"{label}: missing canonical ProMax script: {name}")
+        wrapper = read(root_path)
+        require(
+            "runpy.run_path" in wrapper or "spec_from_file_location" in wrapper,
+            f"{label}: ProMax root script is not a wrapper: {name}",
+        )
+        require("crossframe-promax" in wrapper, f"{label}: ProMax wrapper target is wrong: {name}")
+        require(name in wrapper, f"{label}: ProMax wrapper omits canonical filename: {name}")
+
+    command = repo / ".claude/commands/crossframe-promax.md"
+    require(command.is_file(), f"{label}: missing crossframe-promax Claude command")
+    command_text = read(command)
+    for marker in [
+        "PROMAX-NAMED-ONLY",
+        "PROMAX-PRIORITY-OVER-MAX",
+        "PROMAX-NO-FALLBACK-TO-MAX",
+        "skills/crossframe-promax/SKILL.md",
+    ]:
+        require(marker in command_text, f"{label}: ProMax command missing marker: {marker}")
+
+
 def check_root(root: Path, label: str) -> None:
     require(root.is_dir(), f"{label}: skill root does not exist: {root}")
     check_no_retired_dirs(root, label)
@@ -2992,6 +3106,7 @@ def check_root(root: Path, label: str) -> None:
     check_quality_gate_hardening(root, label)
     check_expression_layer_hardening(root, label)
     check_crossframe_max_skill(root, label)
+    check_crossframe_promax_skill(root, label)
     check_freeze_cleanup(root, label)
     check_no_trailing_whitespace(root, label)
 
@@ -3006,6 +3121,7 @@ def main() -> int:
     check_repo_adapters(repo, "repo")
     check_public_release_docs(repo, "repo")
     check_crossframe_max_runtime_tests(repo, "repo")
+    check_crossframe_promax_runtime_tests(repo, "repo")
 
     roots: list[tuple[Path, str]] = [(skill_root_from_arg(args.repo), "repo")]
     for idx, mirror in enumerate(args.mirror, start=1):
