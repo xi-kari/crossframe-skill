@@ -63,6 +63,7 @@ EXPECTED_SECTION_END_IDS = (
     "V8-P3863",
 )
 EXPECTED_ENVELOPE_RANGE = ("V8-P0001", "V8-P0333")
+GENERATOR_VERSION = "1.0.0"
 
 CANONICAL_PARTS = (
     ("01-guide", "第一部分　导读"),
@@ -83,6 +84,26 @@ CANONICAL_PARTS = (
     ("16-governance", "第十六部分　治理"),
 )
 CANONICAL_TITLES = tuple(title for _slug, title in CANONICAL_PARTS)
+
+EXPECTED_SOURCE_RANGES = (
+    ("00-source-envelope.md", "V8-P0001", "V8-P0333", "V8-T001", "V8-T001"),
+    ("01-guide.md", "V8-P0334", "V8-P0407", "V8-T002", "V8-T003"),
+    ("02-boundary-method.md", "V8-P0408", "V8-P0485", "V8-T004", "V8-T004"),
+    ("03-universal-grammar.md", "V8-P0486", "V8-P0543", None, None),
+    ("04-root-assumptions.md", "V8-P0544", "V8-P0806", "V8-T005", "V8-T010"),
+    ("05-scale-transformation.md", "V8-P0807", "V8-P0995", "V8-T011", "V8-T014"),
+    ("06-operation-evolution.md", "V8-P0996", "V8-P1072", "V8-T015", "V8-T015"),
+    ("07-human-world.md", "V8-P1073", "V8-P2243", "V8-T016", "V8-T073"),
+    ("08-human-state-prototype.md", "V8-P2244", "V8-P2526", "V8-T074", "V8-T083"),
+    ("09-actor-state-personality.md", "V8-P2527", "V8-P2715", "V8-T084", "V8-T089"),
+    ("10-multicircle-joint-state.md", "V8-P2716", "V8-P2906", "V8-T090", "V8-T095"),
+    ("11-event-dynamic-deduction.md", "V8-P2907", "V8-P3095", "V8-T096", "V8-T101"),
+    ("12-conditional-forecast-choice.md", "V8-P3096", "V8-P3306", "V8-T102", "V8-T109"),
+    ("13-interface-tools.md", "V8-P3307", "V8-P3558", "V8-T110", "V8-T117"),
+    ("14-normative-selection.md", "V8-P3559", "V8-P3625", None, None),
+    ("15-intervention-applications.md", "V8-P3626", "V8-P3734", None, None),
+    ("16-governance.md", "V8-P3735", "V8-P3863", None, None),
+)
 
 
 @dataclass(frozen=True)
@@ -229,6 +250,24 @@ def extract_v8_tables(
 
 def _anchor_number(anchor: str) -> int:
     return int(anchor.rsplit("P", 1)[1])
+
+
+def _source_file_for_paragraph_id(paragraph_id: str) -> str:
+    number = _anchor_number(paragraph_id)
+    for filename, start, end, _table_start, _table_end in EXPECTED_SOURCE_RANGES:
+        if _anchor_number(start) <= number <= _anchor_number(end):
+            return filename
+    raise ValueError(f"paragraph is outside fixed v8 source ranges: {paragraph_id}")
+
+
+def _table_ids_in_range(
+    table_start: str | None, table_end: str | None
+) -> tuple[str, ...]:
+    if table_start is None or table_end is None:
+        return ()
+    start = int(table_start.rsplit("T", 1)[1])
+    end = int(table_end.rsplit("T", 1)[1])
+    return tuple(f"V8-T{number:03d}" for number in range(start, end + 1))
 
 
 def split_v8_sections(
@@ -591,13 +630,13 @@ def render_v8_source_tree(snapshot: V8Snapshot, output_dir: Path) -> None:
         f"{envelope[0].pid}-{envelope[-1].pid}" if envelope else "EMPTY"
     )
     index_lines.append(
-        f"| `00-source-envelope.md` | Source envelope | `{envelope_range}` | "
-        f"`{len(envelope)}` | |"
+        f"| [00-source-envelope.md](00-source-envelope.md) | Source envelope | "
+        f"`{envelope_range}` | `{len(envelope)}` | V8-T001 |"
     )
     for section in snapshot.sections:
         table_ids = ", ".join(section.table_ids)
         index_lines.append(
-            f"| `{section.slug}.md` | {section.title} | "
+            f"| [{section.slug}.md]({section.slug}.md) | {section.title} | "
             f"`{section.paragraph_ids[0]}-{section.paragraph_ids[-1]}` | "
             f"`{len(section.paragraph_ids)}` | {table_ids} |"
         )
@@ -606,26 +645,51 @@ def render_v8_source_tree(snapshot: V8Snapshot, output_dir: Path) -> None:
     heading_lines = [
         "# CrossFrame ProMax v8 Heading Index",
         "",
-        "| paragraph id | style | text |",
-        "| --- | --- | --- |",
+        f"Source SHA256: `{snapshot.source_sha256}`",
+        "",
+        "| paragraph id | style | text | source file |",
+        "| --- | --- | --- | --- |",
     ]
     for paragraph in snapshot.paragraphs:
         if paragraph.style:
+            source_file = _source_file_for_paragraph_id(paragraph.pid)
             heading_lines.append(
-                f"| `{paragraph.pid}` | `{paragraph.style}` | "
-                f"{_markdown_cell(paragraph.text)} |"
+                f"| [{paragraph.pid}]({source_file}) | `{paragraph.style}` | "
+                f"{_markdown_cell(paragraph.text)} | [{source_file}]({source_file}) |"
             )
     _write_text(output_dir / "00-heading-index.md", heading_lines)
 
+    forms: dict[str, list[V8Paragraph]] = {}
+    for paragraph in snapshot.paragraphs:
+        if paragraph.style:
+            forms.setdefault(paragraph.text, []).append(paragraph)
+    term_lines = [
+        "# CrossFrame ProMax v8 Exact Source Form Locator",
+        "",
+        f"Source SHA256: `{snapshot.source_sha256}`",
+        "",
+        "## Exact Source Form Locator",
+        "",
+        "This locator groups exact styled source forms without adding definitions.",
+        "",
+        "| exact source form | styles | source anchors |",
+        "| --- | --- | --- |",
+    ]
+    for source_form in sorted(forms):
+        paragraphs_for_form = forms[source_form]
+        styles = ", ".join(
+            sorted({paragraph.style for paragraph in paragraphs_for_form})
+        )
+        anchors = ", ".join(
+            f"[{paragraph.pid}]({_source_file_for_paragraph_id(paragraph.pid)})"
+            for paragraph in paragraphs_for_form
+        )
+        term_lines.append(
+            f"| {_markdown_cell(source_form)} | `{styles}` | {anchors} |"
+        )
     _write_text(
         output_dir / "00-term-index.md",
-        [
-            "# CrossFrame ProMax v8 Term Index",
-            "",
-            f"Source SHA256: `{snapshot.source_sha256}`",
-            "",
-            "Use exact source anchors and full-text search; this locator does not replace source reads.",
-        ],
+        term_lines,
     )
 
     table_index_lines = [
@@ -641,7 +705,8 @@ def render_v8_source_tree(snapshot: V8Snapshot, output_dir: Path) -> None:
         columns = max((len(row) for row in table.rows), default=0)
         table_index_lines.append(
             f"| `{table.tid}` | `{len(table.paragraph_ids)}` | "
-            f"`{len(table.rows)}` | `{columns}` | `tables/{table.tid}.md` |"
+            f"`{len(table.rows)}` | `{columns}` | "
+            f"[{table.tid}.md](tables/{table.tid}.md) |"
         )
         _render_table(
             table,
@@ -873,7 +938,12 @@ def _validate_table_artifact(
 def _validate_control_artifacts(
     generated_dir: Path, snapshot: V8Snapshot, errors: list[str]
 ) -> None:
-    for relative_path in ("00-index.md", "00-table-index.md", "00-term-index.md"):
+    for relative_path in (
+        "00-heading-index.md",
+        "00-index.md",
+        "00-table-index.md",
+        "00-term-index.md",
+    ):
         path = generated_dir / relative_path
         if not path.is_file():
             continue
@@ -909,10 +979,12 @@ def _validate_control_artifacts(
                     .replace("\n", "<br>")
                     .strip()
                 )
+                source_file = _source_file_for_paragraph_id(paragraph.pid)
                 expected_rows.append(
-                    f"| `{paragraph.pid}` | `{paragraph.style}` | {escaped_text} |"
+                    f"| [{paragraph.pid}]({source_file}) | `{paragraph.style}` | "
+                    f"{escaped_text} | [{source_file}]({source_file}) |"
                 )
-            header = "| --- | --- | --- |\n"
+            header = "| --- | --- | --- | --- |\n"
             actual_rows = content.split(header, 1)[1].splitlines() if header in content else []
             if actual_rows != expected_rows:
                 errors.append("content mismatch: 00-heading-index.md")
@@ -1080,6 +1152,76 @@ def _release_generation_lock(lock_path: Path, token: str) -> None:
         pass
 
 
+def build_source_manifest(
+    snapshot: V8Snapshot, source_tree: Path
+) -> dict[str, object]:
+    source_tree = Path(source_tree)
+    file_entries = []
+    for path in sorted(source_tree.rglob("*")):
+        if not path.is_file():
+            continue
+        relative_path = path.relative_to(source_tree).as_posix()
+        file_entries.append(
+            {
+                "path": f"v8-full-source/{relative_path}",
+                "sha256": sha256_file(path),
+                "size": path.stat().st_size,
+            }
+        )
+    source_ranges = [
+        {
+            "file": filename,
+            "paragraph_start": paragraph_start,
+            "paragraph_end": paragraph_end,
+            "table_start": table_start,
+            "table_end": table_end,
+        }
+        for (
+            filename,
+            paragraph_start,
+            paragraph_end,
+            table_start,
+            table_end,
+        ) in EXPECTED_SOURCE_RANGES
+    ]
+    return {
+        "schema_id": "crossframe.promax.v8.source-manifest",
+        "schema_version": 1,
+        "framework_version": "v8.0",
+        "snapshot_sha256": snapshot.source_sha256,
+        "paragraph_count": len(snapshot.paragraphs),
+        "non_whitespace_chars": snapshot.non_whitespace_chars,
+        "table_count": len(snapshot.tables),
+        "section_count": len(snapshot.sections),
+        "generator": {
+            "version": GENERATOR_VERSION,
+            "sha256": sha256_file(Path(__file__).resolve()),
+        },
+        "source_ranges": source_ranges,
+        "files": file_entries,
+    }
+
+
+def write_source_manifest_atomic(
+    manifest_path: Path, manifest: dict[str, object]
+) -> None:
+    manifest_path = Path(manifest_path)
+    manifest_path.parent.mkdir(parents=True, exist_ok=True)
+    temporary_path = manifest_path.parent / (
+        f".{manifest_path.name}.tmp-{uuid4().hex}"
+    )
+    try:
+        temporary_path.write_text(
+            json.dumps(manifest, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+            newline="\n",
+        )
+        os.replace(temporary_path, manifest_path)
+    finally:
+        if temporary_path.exists():
+            temporary_path.unlink()
+
+
 def generate(repo: Path, source_docx: Path) -> Path:
     repo = Path(repo).resolve()
     source_docx = Path(source_docx).resolve()
@@ -1125,7 +1267,11 @@ def generate(repo: Path, source_docx: Path) -> Path:
                     "generated v8 source validation failed: "
                     + "; ".join(generated_errors)
                 )
+            manifest = build_source_manifest(snapshot, stage_dir)
             atomic_replace_tree(stage_dir, live_dir)
+            write_source_manifest_atomic(
+                live_dir.parent / "source_manifest.json", manifest
+            )
         finally:
             if stage_dir.exists():
                 _remove_tree(stage_dir)
