@@ -61,11 +61,33 @@
     "stabilityCheck": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["prompt_pair_id", "pro_prompt_sha256", "anti_prompt_sha256", "position_drift", "explanation"],
+      "required": [
+        "prompt_pair_id",
+        "pro_prompt_sha256",
+        "anti_prompt_sha256",
+        "evidence_before_sha256",
+        "evidence_after_sha256",
+        "central_position_id_before",
+        "central_position_id_after",
+        "judgment_strength_before",
+        "judgment_strength_after",
+        "option_ranking_before",
+        "option_ranking_after",
+        "position_drift",
+        "explanation"
+      ],
       "properties": {
         "prompt_pair_id": {"type": "string", "pattern": "^PAIR-[A-Za-z0-9][A-Za-z0-9._-]*(?![\\s\\S])"},
         "pro_prompt_sha256": {"$ref": "promax-common.schema.json#/$defs/sha256"},
         "anti_prompt_sha256": {"$ref": "promax-common.schema.json#/$defs/sha256"},
+        "evidence_before_sha256": {"$ref": "promax-common.schema.json#/$defs/sha256"},
+        "evidence_after_sha256": {"$ref": "promax-common.schema.json#/$defs/sha256"},
+        "central_position_id_before": {"$ref": "promax-common.schema.json#/$defs/claimId"},
+        "central_position_id_after": {"$ref": "promax-common.schema.json#/$defs/claimId"},
+        "judgment_strength_before": {"enum": ["tentative", "moderate", "strong", "indeterminate"]},
+        "judgment_strength_after": {"enum": ["tentative", "moderate", "strong", "indeterminate"]},
+        "option_ranking_before": {"$ref": "promax-common.schema.json#/$defs/stringArray"},
+        "option_ranking_after": {"$ref": "promax-common.schema.json#/$defs/stringArray"},
         "position_drift": {"enum": ["none", "justified_by_evidence", "unjustified"]},
         "explanation": {"$ref": "promax-common.schema.json#/$defs/nonemptyString"}
       }

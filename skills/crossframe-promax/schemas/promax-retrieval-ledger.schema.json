@@ -18,9 +18,9 @@
       "allOf": [
         {"contains": {"properties": {"direction": {"const": "support"}}, "required": ["direction"]}},
         {"contains": {"properties": {"direction": {"const": "reverse"}}, "required": ["direction"]}},
-        {"contains": {"properties": {"direction": {"const": "failure_case"}}, "required": ["direction"]}},
+        {"contains": {"properties": {"direction": {"const": "failure"}}, "required": ["direction"]}},
         {"contains": {"properties": {"direction": {"const": "alternative_mechanism"}}, "required": ["direction"]}},
-        {"contains": {"properties": {"direction": {"const": "affected_or_low_power_position"}}, "required": ["direction"]}}
+        {"contains": {"properties": {"direction": {"const": "affected_or_low_power"}}, "required": ["direction"]}}
       ]
     },
     "saturation_rounds": {
@@ -36,7 +36,7 @@
     "source": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["url", "title", "publisher", "published_at", "event_date", "source_type", "interest_relevance", "independence_group"],
+      "required": ["url", "title", "publisher", "published_at", "event_date", "source_type", "interest_relevance", "independence_group", "duplicate_relation", "duplicate_of_url"],
       "properties": {
         "url": {"type": "string", "format": "uri"},
         "title": {"$ref": "promax-common.schema.json#/$defs/nonemptyString"},
@@ -45,16 +45,32 @@
         "event_date": {"$ref": "promax-common.schema.json#/$defs/date"},
         "source_type": {"enum": ["primary", "official", "research", "journalistic", "first_person", "secondary"]},
         "interest_relevance": {"$ref": "promax-common.schema.json#/$defs/nonemptyString"},
-        "independence_group": {"$ref": "promax-common.schema.json#/$defs/nonemptyString"}
-      }
+        "independence_group": {"$ref": "promax-common.schema.json#/$defs/nonemptyString"},
+        "duplicate_relation": {"enum": ["independent", "same_origin", "syndicated", "derived", "duplicate"]},
+        "duplicate_of_url": {
+          "oneOf": [
+            {"type": "string", "format": "uri"},
+            {"type": "null"}
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"duplicate_relation": {"const": "independent"}}, "required": ["duplicate_relation"]},
+          "then": {"properties": {"duplicate_of_url": {"type": "null"}}},
+          "else": {"properties": {"duplicate_of_url": {"type": "string", "format": "uri"}}}
+        }
+      ]
     },
     "retrievalEntry": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["retrieval_id", "direction", "query", "tool", "retrieved_at", "sources", "claim_ids", "finding", "cannot_prove", "stop_reason"],
+      "required": ["retrieval_id", "round", "direction", "claim_relation", "query", "tool", "retrieved_at", "sources", "claim_ids", "finding", "cannot_prove", "stop_reason"],
       "properties": {
         "retrieval_id": {"type": "string", "pattern": "^RETRIEVAL-[A-Za-z0-9][A-Za-z0-9._-]*(?![\\s\\S])"},
-        "direction": {"enum": ["support", "reverse", "failure_case", "alternative_mechanism", "affected_or_low_power_position"]},
+        "round": {"type": "integer", "minimum": 1},
+        "direction": {"enum": ["support", "reverse", "failure", "alternative_mechanism", "affected_or_low_power"]},
+        "claim_relation": {"enum": ["supports", "refutes", "mixed", "contextual", "alternative_mechanism", "affected_position"]},
         "query": {"$ref": "promax-common.schema.json#/$defs/nonemptyString"},
         "tool": {"$ref": "promax-common.schema.json#/$defs/nonemptyString"},
         "retrieved_at": {"$ref": "promax-common.schema.json#/$defs/timestamp"},

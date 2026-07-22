@@ -2,54 +2,68 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://crossframe.local/schemas/promax-recommendation.schema.json",
   "title": "CrossFrame ProMax locked recommendation",
-  "type": "object",
-  "additionalProperties": false,
-  "required": [
-    "schema_id",
-    "schema_version",
-    "run_id",
-    "source_snapshot_sha256",
-    "position_sha256",
-    "options",
-    "evaluation_dimensions",
-    "ranking",
-    "preferred_option_id",
-    "second_option_id",
-    "switch_conditions",
-    "inaction_consequences",
-    "authorization_status",
-    "locked_at"
+  "oneOf": [
+    {"$ref": "#/$defs/fullRecommendation"},
+    {"$ref": "#/$defs/notRequested"}
   ],
-  "properties": {
-    "schema_id": {"const": "crossframe.promax.v8.recommendation"},
-    "schema_version": {"const": 1},
-    "run_id": {"$ref": "promax-common.schema.json#/$defs/runId"},
-    "source_snapshot_sha256": {"$ref": "promax-common.schema.json#/$defs/v8SnapshotSha256"},
-    "position_sha256": {"$ref": "promax-common.schema.json#/$defs/sha256"},
-    "options": {
-      "type": "array",
-      "minItems": 6,
-      "uniqueItems": true,
-      "items": {"$ref": "#/$defs/option"},
-      "allOf": [
-        {"contains": {"properties": {"action_kind": {"const": "proactive_action"}}, "required": ["action_kind"]}},
-        {"contains": {"properties": {"action_kind": {"const": "delay"}}, "required": ["action_kind"]}},
-        {"contains": {"properties": {"action_kind": {"const": "probe"}}, "required": ["action_kind"]}},
-        {"contains": {"properties": {"action_kind": {"const": "exit_or_transfer"}}, "required": ["action_kind"]}},
-        {"contains": {"properties": {"action_kind": {"const": "status_quo"}}, "required": ["action_kind"]}},
-        {"contains": {"properties": {"action_kind": {"const": "inaction"}}, "required": ["action_kind"]}}
-      ]
-    },
-    "evaluation_dimensions": {"$ref": "promax-common.schema.json#/$defs/nonemptyStringArray"},
-    "ranking": {"$ref": "promax-common.schema.json#/$defs/nonemptyStringArray"},
-    "preferred_option_id": {"type": "string", "pattern": "^OPTION-[A-Za-z0-9][A-Za-z0-9._-]*(?![\\s\\S])"},
-    "second_option_id": {"type": "string", "pattern": "^OPTION-[A-Za-z0-9][A-Za-z0-9._-]*(?![\\s\\S])"},
-    "switch_conditions": {"$ref": "promax-common.schema.json#/$defs/nonemptyStringArray"},
-    "inaction_consequences": {"$ref": "promax-common.schema.json#/$defs/nonemptyStringArray"},
-    "authorization_status": {"enum": ["conditional_recommendation_only", "authorized", "not_authorized", "authorization_unknown"]},
-    "locked_at": {"$ref": "promax-common.schema.json#/$defs/timestamp"}
-  },
   "$defs": {
+    "fullRecommendation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_id",
+        "schema_version",
+        "run_id",
+        "source_snapshot_sha256",
+        "position_sha256",
+        "options",
+        "evaluation_dimensions",
+        "ranking",
+        "preferred_option_id",
+        "second_option_id",
+        "switch_conditions",
+        "inaction_consequences",
+        "authorization_status",
+        "locked_at"
+      ],
+      "properties": {
+        "schema_id": {"const": "crossframe.promax.v8.recommendation"},
+        "schema_version": {"const": 1},
+        "run_id": {"$ref": "promax-common.schema.json#/$defs/runId"},
+        "source_snapshot_sha256": {"$ref": "promax-common.schema.json#/$defs/v8SnapshotSha256"},
+        "position_sha256": {"$ref": "promax-common.schema.json#/$defs/sha256"},
+        "options": {
+          "type": "array",
+          "minItems": 6,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/option"},
+          "allOf": [
+            {"contains": {"properties": {"action_kind": {"const": "proactive_action"}}, "required": ["action_kind"]}},
+            {"contains": {"properties": {"action_kind": {"const": "delay"}}, "required": ["action_kind"]}},
+            {"contains": {"properties": {"action_kind": {"const": "probe"}}, "required": ["action_kind"]}},
+            {"contains": {"properties": {"action_kind": {"const": "exit_or_transfer"}}, "required": ["action_kind"]}},
+            {"contains": {"properties": {"action_kind": {"const": "status_quo"}}, "required": ["action_kind"]}},
+            {"contains": {"properties": {"action_kind": {"const": "inaction"}}, "required": ["action_kind"]}}
+          ]
+        },
+        "evaluation_dimensions": {"$ref": "promax-common.schema.json#/$defs/nonemptyStringArray"},
+        "ranking": {"$ref": "promax-common.schema.json#/$defs/nonemptyStringArray"},
+        "preferred_option_id": {"type": "string", "pattern": "^OPTION-[A-Za-z0-9][A-Za-z0-9._-]*(?![\\s\\S])"},
+        "second_option_id": {"type": "string", "pattern": "^OPTION-[A-Za-z0-9][A-Za-z0-9._-]*(?![\\s\\S])"},
+        "switch_conditions": {"$ref": "promax-common.schema.json#/$defs/nonemptyStringArray"},
+        "inaction_consequences": {"$ref": "promax-common.schema.json#/$defs/nonemptyStringArray"},
+        "authorization_status": {"enum": ["conditional_recommendation_only", "authorized", "not_authorized", "authorization_unknown"]},
+        "locked_at": {"$ref": "promax-common.schema.json#/$defs/timestamp"}
+      }
+    },
+    "notRequested": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status"],
+      "properties": {
+        "status": {"const": "not_requested"}
+      }
+    },
     "option": {
       "type": "object",
       "additionalProperties": false,

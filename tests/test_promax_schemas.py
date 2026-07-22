@@ -181,6 +181,7 @@ def run_contract(
         "request_sha256": HASH_A,
         "source_snapshot_sha256": SOURCE_SNAPSHOT_SHA256,
         "mode": mode,
+        "recommendation_required": False,
         "blocker": (
             {
                 "category": "source_unavailable",
@@ -416,6 +417,14 @@ def claim_path_graph() -> dict[str, Any]:
         "run_id": RUN_ID,
         "source_snapshot_sha256": SOURCE_SNAPSHOT_SHA256,
         "central_claim_id": "CLAIM-1",
+        "central_claim_cycle": {
+            "central_claim_id": "CLAIM-1",
+            "initial_judgment": "当前结构更符合机制甲。",
+            "strongest_attack": "选择偏差可能产生同样的观察。",
+            "revision": "仅在时间顺序与传导证据同时存在时保留判断。",
+            "counterfactual": "若传导通道不存在，下游状态不应按该路径更新。",
+            "withdrawal_conditions": ["简单基线在样本外解释力相同时撤回"],
+        },
         "claims": [
             {
                 "claim_id": "CLAIM-1",
@@ -463,10 +472,17 @@ def retrieval_ledger() -> dict[str, Any]:
     directions = (
         "support",
         "reverse",
-        "failure_case",
+        "failure",
         "alternative_mechanism",
-        "affected_or_low_power_position",
+        "affected_or_low_power",
     )
+    relations = {
+        "support": "supports",
+        "reverse": "refutes",
+        "failure": "refutes",
+        "alternative_mechanism": "alternative_mechanism",
+        "affected_or_low_power": "affected_position",
+    }
     return {
         "schema_id": "crossframe.promax.v8.retrieval-ledger",
         "schema_version": 1,
@@ -475,7 +491,9 @@ def retrieval_ledger() -> dict[str, Any]:
         "entries": [
             {
                 "retrieval_id": f"RETRIEVAL-{index}",
+                "round": 1 if index <= 3 else 2,
                 "direction": direction,
+                "claim_relation": relations[direction],
                 "query": f"结构案例 {direction}",
                 "tool": "web-search",
                 "retrieved_at": STAMP,
@@ -489,6 +507,8 @@ def retrieval_ledger() -> dict[str, Any]:
                         "source_type": "primary",
                         "interest_relevance": "无直接利益关系",
                         "independence_group": f"GROUP-{index}",
+                        "duplicate_relation": "independent",
+                        "duplicate_of_url": None,
                     }
                 ],
                 "claim_ids": ["CLAIM-1"],
@@ -542,6 +562,14 @@ def red_team_report() -> dict[str, Any]:
                 "prompt_pair_id": "PAIR-1",
                 "pro_prompt_sha256": HASH_A,
                 "anti_prompt_sha256": HASH_B,
+                "evidence_before_sha256": HASH_C,
+                "evidence_after_sha256": HASH_C,
+                "central_position_id_before": "CLAIM-1",
+                "central_position_id_after": "CLAIM-1",
+                "judgment_strength_before": "moderate",
+                "judgment_strength_after": "moderate",
+                "option_ranking_before": ["OPTION-1", "OPTION-2"],
+                "option_ranking_after": ["OPTION-1", "OPTION-2"],
                 "position_drift": "none",
                 "explanation": "材料未变，中心判断不随用户表态漂移。",
             }
@@ -734,10 +762,11 @@ def repair_plan() -> dict[str, Any]:
         "failed_report_sha256": HASH_A,
         "failures": [
             {
-                "failure_code": "STALE_POSITION",
-                "affected_artifact_paths": ["promax-position.locked.json"],
+                "error_type": "stale_position",
+                "artifact": "promax-position.locked.json",
                 "affected_phase": "P8",
-                "evidence": ["position hash is not current"],
+                "downstream_reset": ["P8", "P9", "P10", "P11"],
+                "repair_action": "rebuild_position_and_downstream",
             }
         ],
         "reset_from_phase": "P8",
@@ -750,7 +779,10 @@ def repair_plan() -> dict[str, Any]:
                 "expected_output_paths": ["promax-position.locked.json"],
             }
         ],
+        "validation_state": "not_run",
+        "manifest_regeneration_required": True,
         "revalidation_required": True,
+        "revalidation_scope": "full-validator-set",
         "created_at": STAMP,
     }
 
@@ -1127,6 +1159,38 @@ class ProMaxRuntimeSchemaTests(unittest.TestCase):
         newline_alias["routing_conflict"]["conflicting_names"][1] = "crossframe-max\n"
         self.assertInvalid("promax-run-contract.schema.json", newline_alias)
 
+    def test_run_contract_requires_a_boolean_recommendation_request_switch(self) -> None:
+        requested = run_contract()
+        requested["recommendation_required"] = True
+        self.assertValid("promax-run-contract.schema.json", requested)
+
+        not_requested = run_contract()
+        not_requested["recommendation_required"] = False
+        self.assertValid("promax-run-contract.schema.json", not_requested)
+
+        missing = run_contract()
+        del missing["recommendation_required"]
+        self.assertInvalid("promax-run-contract.schema.json", missing)
+
+        wrong_type = run_contract()
+        wrong_type["recommendation_required"] = "false"
+        self.assertInvalid("promax-run-contract.schema.json", wrong_type)
+
+    def test_recommendation_schema_has_an_exact_closed_not_requested_branch(self) -> None:
+        self.assertValid(
+            "promax-recommendation.schema.json",
+            {"status": "not_requested"},
+        )
+        self.assertValid("promax-recommendation.schema.json", recommendation())
+        self.assertInvalid(
+            "promax-recommendation.schema.json",
+            {"status": "not_requested", "advice": "不得夹带建议"},
+        )
+        self.assertInvalid(
+            "promax-recommendation.schema.json",
+            {"status": "requested"},
+        )
+
     def test_capability_disclosure_is_structured_and_exact(self) -> None:
         valid = run_contract()
         self.assertEqual(
@@ -1368,6 +1432,56 @@ class ProMaxRuntimeSchemaTests(unittest.TestCase):
         del missing["entries"][0]["stop_reason"]
         self.assertInvalid("promax-retrieval-ledger.schema.json", missing)
 
+    def test_claim_cycle_is_explicit_closed_and_substantive(self) -> None:
+        self.assertValid("promax-claim-path-graph.schema.json", claim_path_graph())
+        missing = claim_path_graph()
+        missing.pop("central_claim_cycle")
+        self.assertInvalid("promax-claim-path-graph.schema.json", missing)
+
+        hidden = claim_path_graph()
+        hidden["central_claim_cycle"]["phase_marker"] = "initial-attack-revision"
+        self.assertInvalid("promax-claim-path-graph.schema.json", hidden)
+
+        blank = claim_path_graph()
+        blank["central_claim_cycle"]["strongest_attack"] = " "
+        self.assertInvalid("promax-claim-path-graph.schema.json", blank)
+
+    def test_retrieval_uses_exact_directions_and_structured_source_relations(self) -> None:
+        self.assertValid("promax-retrieval-ledger.schema.json", retrieval_ledger())
+        for legacy in ("failure_case", "affected_or_low_power_position"):
+            document = retrieval_ledger()
+            document["entries"][0]["direction"] = legacy
+            with self.subTest(legacy=legacy):
+                self.assertInvalid("promax-retrieval-ledger.schema.json", document)
+
+        missing_relation = retrieval_ledger()
+        missing_relation["entries"][0].pop("claim_relation")
+        self.assertInvalid("promax-retrieval-ledger.schema.json", missing_relation)
+
+        missing_round = retrieval_ledger()
+        missing_round["entries"][0].pop("round")
+        self.assertInvalid("promax-retrieval-ledger.schema.json", missing_round)
+
+        independent_with_parent = retrieval_ledger()
+        source_record = independent_with_parent["entries"][0]["sources"][0]
+        source_record["duplicate_of_url"] = "https://example.test/2"
+        self.assertInvalid(
+            "promax-retrieval-ledger.schema.json", independent_with_parent
+        )
+
+        dependent_without_parent = retrieval_ledger()
+        source_record = dependent_without_parent["entries"][0]["sources"][0]
+        source_record["duplicate_relation"] = "derived"
+        self.assertInvalid("promax-retrieval-ledger.schema.json", dependent_without_parent)
+
+    def test_stance_stability_checks_bind_before_and_after_evidence(self) -> None:
+        self.assertValid("promax-red-team-report.schema.json", red_team_report())
+        for field in ("evidence_before_sha256", "evidence_after_sha256"):
+            document = red_team_report()
+            document["stability_checks"][0].pop(field)
+            with self.subTest(field=field):
+                self.assertInvalid("promax-red-team-report.schema.json", document)
+
     def test_p3_clock_horizon_and_lag_are_strict_iso_8601_durations(self) -> None:
         for duration in ("P90D", "PT6H", "P2W", "P1Y2M3DT4H5M6.5S"):
             valid = local_world_model()
@@ -1472,14 +1586,20 @@ class ProMaxRuntimeSchemaTests(unittest.TestCase):
                 "reset_from_phase",
                 "invalidated_phases",
                 "repair_actions",
+                "validation_state",
+                "manifest_regeneration_required",
                 "revalidation_required",
+                "revalidation_scope",
             },
         }
         fixtures = minimal_instances()
         for schema_name, fields in expected_required.items():
             schema = self.runtime.load_schema(schema_name)
             with self.subTest(schema=schema_name):
-                self.assertTrue(fields.issubset(set(schema["required"])))
+                required = schema.get("required")
+                if schema_name == "promax-recommendation.schema.json":
+                    required = schema["$defs"]["fullRecommendation"]["required"]
+                self.assertTrue(fields.issubset(set(required)))
                 self.assertValid(schema_name, fixtures[schema_name])
 
 

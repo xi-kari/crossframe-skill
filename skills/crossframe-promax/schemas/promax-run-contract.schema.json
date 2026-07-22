@@ -13,6 +13,7 @@
     "request_sha256",
     "source_snapshot_sha256",
     "mode",
+    "recommendation_required",
     "blocker",
     "requested_skill_names",
     "routing_conflict",
@@ -39,6 +40,7 @@
         "promax-blocked/progress"
       ]
     },
+    "recommendation_required": {"type": "boolean"},
     "blocker": {
       "oneOf": [
         {"$ref": "#/$defs/blocker"},

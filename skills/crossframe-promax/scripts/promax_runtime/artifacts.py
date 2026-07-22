@@ -235,10 +235,13 @@ def initialize_run(
     created_at: str,
     run_id: str | None = None,
     blocker: Mapping[str, object] | None = None,
+    recommendation_required: bool = False,
 ) -> dict[str, dict[str, object]]:
     route = resolve_explicit_route(request_text)
     if mode not in ALLOWED_MODES:
         raise ValueError(f"unsupported ProMax mode: {mode!r}")
+    if type(recommendation_required) is not bool:
+        raise ValueError("recommendation_required must be a real boolean")
     allowed_blockers = {
         "source_unavailable",
         "filesystem_unwritable",
@@ -289,6 +292,7 @@ def initialize_run(
         "request_sha256": binding.request_sha256,
         "source_snapshot_sha256": binding.source_snapshot_sha256,
         "mode": mode,
+        "recommendation_required": recommendation_required,
         "blocker": normalized_blocker,
         **route,
         "capabilities": copy.deepcopy(dict(capabilities)),

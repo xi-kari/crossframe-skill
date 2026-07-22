@@ -10,13 +10,108 @@ from .errors import RunBindingError
 from .jsonio import sha256_json
 from .paths import validate_relative_artifact_path
 from .schemas import validate_instance
+from .state_machine import PHASES, downstream_phases
 
 
 _SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
+_ERROR_TYPE_RE = re.compile(r"^[a-z][a-z0-9_]{2,63}$")
+MACHINE_FAILURE_FIELDS = frozenset(
+    {
+        "error_type",
+        "artifact",
+        "affected_phase",
+        "downstream_reset",
+        "repair_action",
+    }
+)
 
 
-class ReplayBindingError(ValueError):
+def build_machine_failure(
+    *,
+    error_type: str,
+    artifact: str,
+    affected_phase: str,
+    repair_action: str,
+) -> dict[str, object]:
+    """Build the exact five-field deterministic validator failure contract."""
+
+    if not isinstance(error_type, str) or _ERROR_TYPE_RE.fullmatch(error_type) is None:
+        raise ValueError("error_type must be a stable lowercase identifier")
+    normalized_artifact = validate_relative_artifact_path(artifact)
+    if affected_phase not in PHASES:
+        raise ValueError("affected_phase must be one P0-P11 phase")
+    if not isinstance(repair_action, str) or not repair_action.strip():
+        raise ValueError("repair_action must be non-empty text")
+    return {
+        "error_type": error_type,
+        "artifact": normalized_artifact,
+        "affected_phase": affected_phase,
+        "downstream_reset": list(downstream_phases(affected_phase)),
+        "repair_action": repair_action.strip(),
+    }
+
+
+class MachineValidationError(ValueError):
+    """Validation failure with an immutable, locally repairable record."""
+
+    def __init__(
+        self,
+        message: str,
+        *,
+        error_type: str,
+        artifact: str,
+        affected_phase: str,
+        repair_action: str,
+    ) -> None:
+        super().__init__(message)
+        self._failure = build_machine_failure(
+            error_type=error_type,
+            artifact=artifact,
+            affected_phase=affected_phase,
+            repair_action=repair_action,
+        )
+
+    @property
+    def failure(self) -> dict[str, object]:
+        return copy.deepcopy(self._failure)
+
+    def as_dict(self) -> dict[str, object]:
+        return self.failure
+
+
+class ReplayBindingError(MachineValidationError):
     """Raised when a validator report is stale or belongs to another run."""
+
+    def __init__(
+        self,
+        message: str,
+        *,
+        error_type: str = "validator_report_replay",
+        artifact: str = "promax-validator-report.json",
+        affected_phase: str = "P11",
+        repair_action: str = "discard_stale_report_and_revalidate",
+    ) -> None:
+        super().__init__(
+            message,
+            error_type=error_type,
+            artifact=artifact,
+            affected_phase=affected_phase,
+            repair_action=repair_action,
+        )
+
+
+def _manifest_error(
+    message: str,
+    *,
+    error_type: str = "manifest_replay_or_tamper",
+) -> ReplayBindingError:
+    return ReplayBindingError(
+        message,
+        error_type=error_type,
+        artifact="promax-artifact-manifest.json",
+        affected_phase="P10",
+        repair_action="regenerate_manifest_and_revalidate",
+    )
 
 
 def validate_bound_document(
@@ -65,49 +160,52 @@ def _current_artifact_refs(
 ) -> list[dict[str, str]]:
     artifacts = manifest.get("artifacts")
     if not isinstance(artifacts, list):
-        raise ReplayBindingError("manifest artifacts must be an array")
+        raise _manifest_error("manifest artifacts must be an array")
     refs: list[dict[str, str]] = []
     seen: set[str] = set()
     for index, item in enumerate(artifacts):
         if not isinstance(item, Mapping):
-            raise ReplayBindingError(f"manifest artifact {index} is not an object")
+            raise _manifest_error(f"manifest artifact {index} is not an object")
         if item.get("status") != "current":
             continue
         path = item.get("path")
         digest = item.get("sha256")
         media_type = item.get("media_type")
         if not isinstance(path, str) or path in seen:
-            raise ReplayBindingError("manifest has duplicate or invalid current paths")
+            raise _manifest_error("manifest has duplicate or invalid current paths")
         if not isinstance(digest, str) or _SHA256_RE.fullmatch(digest) is None:
-            raise ReplayBindingError(f"manifest artifact hash is invalid: {path}")
+            raise _manifest_error(f"manifest artifact hash is invalid: {path}")
         if not isinstance(media_type, str) or "/" not in media_type:
-            raise ReplayBindingError(f"manifest media type is invalid: {path}")
+            raise _manifest_error(f"manifest media type is invalid: {path}")
         seen.add(path)
         refs.append({"path": path, "sha256": digest, "media_type": media_type})
     if not refs:
-        raise ReplayBindingError("manifest has no current artifacts")
+        raise _manifest_error("manifest has no current artifacts")
     return sorted(refs, key=lambda item: item["path"])
 
 
 def _assert_manifest_self_hash(manifest: Mapping[str, object]) -> None:
     expected = manifest.get("manifest_sha256")
     if not isinstance(expected, str) or _SHA256_RE.fullmatch(expected) is None:
-        raise ReplayBindingError("manifest_sha256 is invalid")
+        raise _manifest_error("manifest_sha256 is invalid")
     unsigned = dict(manifest)
     unsigned.pop("manifest_sha256", None)
     if sha256_json(unsigned) != expected:
-        raise ReplayBindingError("manifest_sha256 does not bind the current manifest")
+        raise _manifest_error("manifest_sha256 does not bind the current manifest")
 
 
 def _validate_manifest_semantics(
     run_contract: Mapping[str, object],
     manifest: Mapping[str, object],
 ) -> None:
-    validate_instance("promax-run-contract.schema.json", dict(run_contract))
-    validate_instance("promax-artifact-manifest.schema.json", dict(manifest))
+    try:
+        validate_instance("promax-run-contract.schema.json", dict(run_contract))
+        validate_instance("promax-artifact-manifest.schema.json", dict(manifest))
+    except Exception as error:
+        raise _manifest_error(f"manifest or run contract schema is invalid: {error}") from error
     _assert_manifest_self_hash(manifest)
     if manifest.get("run_contract_sha256") != sha256_json(dict(run_contract)):
-        raise ReplayBindingError("manifest is bound to a different run contract")
+        raise _manifest_error("manifest is bound to a different run contract")
     for field in (
         "run_id",
         "run_nonce",
@@ -117,34 +215,36 @@ def _validate_manifest_semantics(
         "orchestration_mode",
     ):
         if manifest.get(field) != run_contract.get(field):
-            raise ReplayBindingError(f"manifest changes immutable run binding: {field}")
+            raise _manifest_error(f"manifest changes immutable run binding: {field}")
 
     artifacts = manifest.get("artifacts")
     role_records = manifest.get("role_records")
     if not isinstance(artifacts, list) or not isinstance(role_records, list):
-        raise ReplayBindingError("manifest artifact and role records must be arrays")
+        raise _manifest_error("manifest artifact and role records must be arrays")
     known: dict[str, str] = {}
     folded_paths: dict[str, str] = {}
     for index, item in enumerate(artifacts):
         if not isinstance(item, Mapping):
-            raise ReplayBindingError(f"manifest artifact {index} is not an object")
+            raise _manifest_error(f"manifest artifact {index} is not an object")
         path = item.get("path")
         digest = item.get("sha256")
         if not isinstance(path, str) or not isinstance(digest, str):
-            raise ReplayBindingError(f"manifest artifact {index} has an invalid binding")
+            raise _manifest_error(
+                f"manifest artifact {index} has an invalid binding"
+            )
         try:
             validate_relative_artifact_path(path)
         except ValueError as error:
-            raise ReplayBindingError(
+            raise _manifest_error(
                 f"manifest artifact {index} has an unsafe path: {error}"
             ) from error
         if _SHA256_RE.fullmatch(digest) is None:
-            raise ReplayBindingError(f"manifest artifact {index} has an invalid hash")
+            raise _manifest_error(f"manifest artifact {index} has an invalid hash")
         if path in known:
-            raise ReplayBindingError(f"manifest contains duplicate artifact path: {path}")
+            raise _manifest_error(f"manifest contains duplicate artifact path: {path}")
         folded = path.casefold()
         if folded in folded_paths:
-            raise ReplayBindingError(
+            raise _manifest_error(
                 "manifest contains a casefold artifact path alias: "
                 f"{folded_paths[folded]!r} and {path!r}"
             )
@@ -159,7 +259,7 @@ def _validate_manifest_semantics(
             artifact_records=artifacts,
         )
     except (RunBindingError, TypeError, ValueError) as error:
-        raise ReplayBindingError(f"manifest role contract is invalid: {error}") from error
+        raise _manifest_error(f"manifest role contract is invalid: {error}") from error
 
 
 def _validate_current_artifact_bytes(
@@ -168,29 +268,52 @@ def _validate_current_artifact_bytes(
 ) -> None:
     artifacts = manifest.get("artifacts")
     if not isinstance(artifacts, list):
-        raise ReplayBindingError("manifest artifacts must be an array")
+        raise _manifest_error("manifest artifacts must be an array")
     expected: list[dict[str, object]] = []
-    metadata: dict[str, dict[str, object]] = {}
     for item in artifacts:
         if not isinstance(item, Mapping) or item.get("status") != "current":
             continue
         record = copy.deepcopy(dict(item))
         path = record.get("path")
         if not isinstance(path, str):
-            raise ReplayBindingError("current artifact path is invalid")
+            raise _manifest_error("current artifact path is invalid")
         expected.append(record)
-        metadata[path] = {
-            "generating_phase": record.get("generating_phase"),
-            "input_artifact_sha256s": record.get("input_artifact_sha256s"),
-            "status": "current",
+    if not expected:
+        raise _manifest_error("manifest has no current artifact bytes")
+
+    for record in expected:
+        path = str(record["path"])
+        phase = record.get("generating_phase")
+        affected_phase = phase if phase in PHASES else "P11"
+        metadata = {
+            path: {
+                "generating_phase": phase,
+                "input_artifact_sha256s": record.get("input_artifact_sha256s"),
+                "status": "current",
+            }
         }
-    try:
-        observed = inventory_artifacts(run_dir, metadata)
-    except (OSError, RuntimeError, TypeError, ValueError) as error:
-        raise ReplayBindingError(f"manifest current artifact bytes are stale: {error}") from error
-    key = lambda item: str(item.get("path"))
-    if sorted(observed, key=key) != sorted(expected, key=key):
-        raise ReplayBindingError("manifest does not match current artifact bytes")
+        try:
+            observed = inventory_artifacts(run_dir, metadata)
+        except (OSError, RuntimeError, TypeError, ValueError) as error:
+            raise ReplayBindingError(
+                f"manifest current artifact bytes are stale for {path}: {error}",
+                error_type="current_artifact_bytes_stale",
+                artifact=path,
+                affected_phase=str(affected_phase),
+                repair_action=(
+                    "rebuild_artifact_regenerate_manifest_and_revalidate"
+                ),
+            ) from error
+        if len(observed) != 1 or observed[0] != record:
+            raise ReplayBindingError(
+                f"manifest does not match current artifact bytes for {path}",
+                error_type="current_artifact_bytes_stale",
+                artifact=path,
+                affected_phase=str(affected_phase),
+                repair_action=(
+                    "rebuild_artifact_regenerate_manifest_and_revalidate"
+                ),
+            )
 
 
 def _frozen_validator_ids(run_contract: Mapping[str, object]) -> set[str]:
@@ -200,9 +323,17 @@ def _frozen_validator_ids(run_contract: Mapping[str, object]) -> set[str]:
     if not isinstance(validator_ids, list) or any(
         not isinstance(item, str) or not item for item in validator_ids
     ):
-        raise ReplayBindingError("run contract has an invalid frozen validator set")
+        raise ReplayBindingError(
+            "run contract has an invalid frozen validator set",
+            error_type="validator_set_invalid",
+            repair_action="restore_frozen_validator_set_and_revalidate",
+        )
     if len(set(validator_ids)) != len(validator_ids):
-        raise ReplayBindingError("run contract has duplicate frozen validators")
+        raise ReplayBindingError(
+            "run contract has duplicate frozen validators",
+            error_type="validator_set_invalid",
+            repair_action="restore_frozen_validator_set_and_revalidate",
+        )
     return set(validator_ids)
 
 
@@ -210,12 +341,21 @@ def _validate_validator_versions_binding(
     run_contract: Mapping[str, object],
     validator_versions: Mapping[str, str],
 ) -> set[str]:
-    validator_set_sha256(validator_versions)
+    try:
+        validator_set_sha256(validator_versions)
+    except (TypeError, ValueError) as error:
+        raise ReplayBindingError(
+            f"validator version set is invalid: {error}",
+            error_type="validator_set_invalid",
+            repair_action="restore_frozen_validator_set_and_revalidate",
+        ) from error
     supplied = set(validator_versions)
     frozen = _frozen_validator_ids(run_contract)
     if supplied != frozen:
         raise ReplayBindingError(
-            "validator versions must match the exact set frozen in the run contract"
+            "validator versions must match the exact set frozen in the run contract",
+            error_type="validator_set_replay",
+            repair_action="restore_frozen_validator_set_and_revalidate",
         )
     return supplied
 
@@ -362,8 +502,22 @@ def validate_validator_report_freshness(
     }
     for field, expected in bindings.items():
         if report.get(field) != expected:
+            if field == "phase_chain_head_sha256":
+                error_type = "phase_chain_replay"
+                repair_action = "discard_stale_report_and_validate_current_phase_chain"
+            elif field == "manifest_sha256":
+                error_type = "manifest_replay"
+                repair_action = "regenerate_manifest_and_revalidate"
+            elif field == "validator_set_sha256":
+                error_type = "validator_set_replay"
+                repair_action = "restore_frozen_validator_set_and_revalidate"
+            else:
+                error_type = "validator_report_replay"
+                repair_action = "discard_stale_report_and_revalidate"
             raise ReplayBindingError(
-                f"validator report replay binding mismatch for {field}"
+                f"validator report replay binding mismatch for {field}",
+                error_type=error_type,
+                repair_action=repair_action,
             )
     if report.get("current_artifact_hashes") != _current_artifact_refs(manifest):
         raise ReplayBindingError("validator report artifact inventory is stale")
@@ -387,5 +541,97 @@ def validate_validator_report_freshness(
     ):
         raise ReplayBindingError("validator report self-hash is stale")
     normalized = copy.deepcopy(dict(report))
-    validate_instance("promax-validator-report.schema.json", normalized)
+    try:
+        validate_instance("promax-validator-report.schema.json", normalized)
+    except Exception as error:
+        raise ReplayBindingError(
+            f"validator report schema is invalid: {error}",
+            error_type="validator_report_invalid",
+            repair_action="regenerate_validator_report",
+        ) from error
+    return normalized
+
+
+def _continuation_error(
+    message: str,
+    *,
+    error_type: str = "continuation_parent_stale",
+) -> ReplayBindingError:
+    return ReplayBindingError(
+        message,
+        error_type=error_type,
+        artifact="promax-continuation-ledger.json",
+        affected_phase="P10",
+        repair_action="reattach_continuation_to_current_parent",
+    )
+
+
+def validate_continuation_parent(
+    continuation_ledger: Mapping[str, object],
+    manifest: Mapping[str, object],
+) -> dict[str, object]:
+    """Bind every continuation entry to the current manifest generation.
+
+    The top-level parent prevents a ledger from being carried across manifest
+    generations.  Each entry must additionally name a current, non-self
+    artifact hash so a continuation cannot attach to an old delivery segment.
+    """
+
+    if not isinstance(continuation_ledger, Mapping):
+        raise _continuation_error(
+            "continuation ledger must be a structured object",
+            error_type="continuation_ledger_invalid",
+        )
+    if not isinstance(manifest, Mapping):
+        raise _manifest_error("manifest must be a structured object")
+    normalized = copy.deepcopy(dict(continuation_ledger))
+    try:
+        validate_instance("promax-continuation-ledger.schema.json", normalized)
+    except Exception as error:
+        raise _continuation_error(
+            f"continuation ledger schema is invalid: {error}",
+            error_type="continuation_ledger_invalid",
+        ) from error
+    try:
+        validate_instance("promax-artifact-manifest.schema.json", dict(manifest))
+    except Exception as error:
+        raise _manifest_error(f"manifest schema is invalid: {error}") from error
+    _assert_manifest_self_hash(manifest)
+
+    for field in ("run_id", "source_snapshot_sha256"):
+        if normalized.get(field) != manifest.get(field):
+            raise _continuation_error(
+                f"continuation ledger changes immutable manifest binding: {field}"
+            )
+    if normalized.get("parent_manifest_sha256") != manifest.get("manifest_sha256"):
+        raise _continuation_error(
+            "continuation ledger is attached to a stale parent manifest"
+        )
+
+    artifacts = manifest.get("artifacts")
+    if not isinstance(artifacts, list):
+        raise _manifest_error("manifest artifacts must be an array")
+    current_parent_hashes = {
+        item.get("sha256")
+        for item in artifacts
+        if isinstance(item, Mapping)
+        and item.get("status") == "current"
+        and item.get("path") != "promax-continuation-ledger.json"
+    }
+    continuations = normalized.get("continuations")
+    if not isinstance(continuations, list):
+        raise _continuation_error(
+            "continuation records must be an array",
+            error_type="continuation_ledger_invalid",
+        )
+    for index, continuation in enumerate(continuations, start=1):
+        if not isinstance(continuation, Mapping):
+            raise _continuation_error(
+                f"continuation {index} must be a structured object",
+                error_type="continuation_ledger_invalid",
+            )
+        if continuation.get("parent_artifact_sha256") not in current_parent_hashes:
+            raise _continuation_error(
+                f"continuation {index} is attached to a stale parent artifact"
+            )
     return normalized

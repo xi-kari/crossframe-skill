@@ -121,6 +121,9 @@ def _parser() -> argparse.ArgumentParser:
     init.add_argument("--no-subagents", action="store_false", dest="subagents")
     init.add_argument("--max-parallelism", type=int, default=4)
     init.add_argument("--network", action="store_true", default=False)
+    init.add_argument(
+        "--recommendation-required", action="store_true", default=False
+    )
     init.add_argument("--blocker-category")
     init.add_argument("--blocker-detail")
     return parser
@@ -177,6 +180,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         created_at=created_at,
         run_id=args.run_id,
         blocker=blocker,
+        recommendation_required=args.recommendation_required,
     )
     if blocker is not None and blocker.get("category") == "filesystem_unwritable":
         print(

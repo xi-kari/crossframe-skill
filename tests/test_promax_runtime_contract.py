@@ -175,6 +175,33 @@ class ProMaxExplicitRoutingTests(unittest.TestCase):
 
 
 class ProMaxRunInitializationTests(unittest.TestCase):
+    def test_initialization_freezes_the_recommendation_request_switch(self) -> None:
+        capabilities = build_capability_disclosure(
+            subagents_available=True,
+            max_parallelism=4,
+            validator_ids=("schema",),
+        )
+        required = initialize_run(
+            ROOT,
+            "请用 CrossFrame ProMax。",
+            mode="promax-artifact-run",
+            capabilities=capabilities,
+            created_at=STAMP,
+            run_id=RUN_ID,
+            recommendation_required=True,
+        )
+        self.assertIs(required["run_contract"]["recommendation_required"], True)
+
+        defaulted = initialize_run(
+            ROOT,
+            "请用 CrossFrame ProMax。",
+            mode="promax-artifact-run",
+            capabilities=capabilities,
+            created_at=STAMP,
+            run_id=RUN_ID,
+        )
+        self.assertIs(defaulted["run_contract"]["recommendation_required"], False)
+
     def test_initialization_uses_token_hex_32_and_binds_the_exact_v8_snapshot(self) -> None:
         nonce = "ab" * 32
         capabilities = build_capability_disclosure(
@@ -1118,6 +1145,7 @@ class ProMaxRuntimeCLITests(unittest.TestCase):
                 .splitlines()
             ]
             self.assertEqual(contract["orchestration_mode"], "single-agent-separated")
+            self.assertIs(contract["recommendation_required"], False)
             self.assertEqual(snapshot["source_snapshot_sha256"], V8_SOURCE_SNAPSHOT_SHA256)
             self.assertEqual(len(events), 1)
             self.assertEqual(events[0]["phase_id"], "P0")
@@ -1136,6 +1164,34 @@ class ProMaxRuntimeCLITests(unittest.TestCase):
                 "scratchpad",
             ):
                 self.assertNotIn(forbidden, serialized)
+
+    def test_init_cli_can_freeze_a_requested_recommendation(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            run_dir = Path(directory) / "run"
+            with mock.patch(
+                "promax_runtime.artifacts.secrets.token_hex", return_value="ef" * 32
+            ), mock.patch("sys.stdout", io.StringIO()):
+                exit_code = crossframe_promax_runtime.main(
+                    [
+                        "init",
+                        "--repo",
+                        str(ROOT),
+                        "--run-dir",
+                        str(run_dir),
+                        "--request",
+                        "请用 CrossFrame ProMax 给出建议。",
+                        "--run-id",
+                        RUN_ID,
+                        "--created-at",
+                        STAMP,
+                        "--recommendation-required",
+                    ]
+                )
+            self.assertEqual(exit_code, 0)
+            contract = json.loads(
+                (run_dir / "promax-run-contract.json").read_text(encoding="utf-8")
+            )
+            self.assertIs(contract["recommendation_required"], True)
 
     def test_cli_materializes_source_blocker_and_streams_unwritable_progress(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

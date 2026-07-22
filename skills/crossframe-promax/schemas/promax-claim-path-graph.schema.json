@@ -10,6 +10,7 @@
     "run_id",
     "source_snapshot_sha256",
     "central_claim_id",
+    "central_claim_cycle",
     "claims",
     "mechanisms",
     "path_nodes",
@@ -24,6 +25,7 @@
     "run_id": {"$ref": "promax-common.schema.json#/$defs/runId"},
     "source_snapshot_sha256": {"$ref": "promax-common.schema.json#/$defs/v8SnapshotSha256"},
     "central_claim_id": {"$ref": "promax-common.schema.json#/$defs/claimId"},
+    "central_claim_cycle": {"$ref": "#/$defs/centralClaimCycle"},
     "claims": {
       "type": "array",
       "minItems": 1,
@@ -52,6 +54,19 @@
     "updated_at": {"$ref": "promax-common.schema.json#/$defs/timestamp"}
   },
   "$defs": {
+    "centralClaimCycle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["central_claim_id", "initial_judgment", "strongest_attack", "revision", "counterfactual", "withdrawal_conditions"],
+      "properties": {
+        "central_claim_id": {"$ref": "promax-common.schema.json#/$defs/claimId"},
+        "initial_judgment": {"$ref": "promax-common.schema.json#/$defs/nonemptyString"},
+        "strongest_attack": {"$ref": "promax-common.schema.json#/$defs/nonemptyString"},
+        "revision": {"$ref": "promax-common.schema.json#/$defs/nonemptyString"},
+        "counterfactual": {"$ref": "promax-common.schema.json#/$defs/nonemptyString"},
+        "withdrawal_conditions": {"$ref": "promax-common.schema.json#/$defs/nonemptyStringArray"}
+      }
+    },
     "claim": {
       "type": "object",
       "additionalProperties": false,
