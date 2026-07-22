@@ -4,11 +4,17 @@ import hashlib
 import json
 import re
 import subprocess
+import sys
 import unittest
 from pathlib import Path, PurePosixPath
 
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "skills/crossframe-promax/scripts"))
+
+from promax_runtime.pollution import ExplicitRouteError, resolve_explicit_route
+
+
 BASE_COMMIT = "e2e0965"
 PRESERVATION_PATH = ROOT / "tests/fixtures/promax-preservation.json"
 SUITE_ROUTE_PATHS = (
@@ -49,6 +55,18 @@ ROUTING_TARGET_MATRIX = {
     "generic-max": "PROMAX-GENERIC-MAX-STAYS-MAX",
     "near-miss": "PROMAX-ROUTE-NEAR-MISS-NO-MATCH",
 }
+EXACT_PROMAX_FORMS = (
+    "crossframe-promax",
+    "CrossFrame ProMax",
+    "$crossframe-promax",
+    "/crossframe-promax",
+)
+PROMAX_NEAR_MISSES = (
+    "ProMax",
+    "crossframe pro max",
+    "crossframe-promaxx",
+    "crossframe-pro",
+)
 FORBIDDEN_FALLBACK_PATTERNS = (
     r"(?i)(?<!not )(?<!n't )\ballow(?:s|ed|ing)?\b.{0,40}\b(?:fallback|degrad(?:e|ation))\b",
     r"(?i)\b(?:fallback|degrad(?:e|ation))\b.{0,40}(?<!not )(?<!n't )\ballow(?:s|ed|ing)?\b",
@@ -390,6 +408,21 @@ class ProMaxRepositoryTargetTests(unittest.TestCase):
         path = ROOT / ".claude/commands/crossframe-promax.md"
         self.assertTrue(path.is_file(), path.as_posix())
 
+    def test_promax_claude_command_is_a_thin_no_fallback_entry(self) -> None:
+        path = ROOT / ".claude/commands/crossframe-promax.md"
+        text = path.read_text(encoding="utf-8")
+        self.assertLess(len(text), 2400)
+        self.assertIn("skills/crossframe-promax/SKILL.md", text)
+        self.assertIn("$ARGUMENTS", text)
+        for marker in ROUTING_REQUIRED_MARKERS[:3]:
+            self.assertIn(marker, text)
+        self.assertNotIn("skills/crossframe-max/", text)
+        self.assertNotIn("crossframe-review", text)
+        for marker in FORBIDDEN_FALLBACK_MARKERS:
+            self.assertNotIn(marker, text)
+        for pattern in FORBIDDEN_FALLBACK_PATTERNS:
+            self.assertNotRegex(text, pattern)
+
     def test_suite_has_one_complete_promax_routing_contract_per_file(self) -> None:
         for path in SUITE_ROUTE_PATHS:
             text = path.read_text(encoding="utf-8")
@@ -403,6 +436,54 @@ class ProMaxRepositoryTargetTests(unittest.TestCase):
                     self.assertNotIn(marker, block)
                 for pattern in FORBIDDEN_FALLBACK_PATTERNS:
                     self.assertNotRegex(block, pattern)
+                for exact_form in EXACT_PROMAX_FORMS:
+                    self.assertIn(f"`{exact_form}`", block)
+                for near_miss in PROMAX_NEAR_MISSES:
+                    self.assertIn(f"`{near_miss}`", block)
+
+    def test_runtime_route_contract_matches_suite_priority_matrix(self) -> None:
+        for form in EXACT_PROMAX_FORMS:
+            with self.subTest(exact=form):
+                routed = resolve_explicit_route(f"请使用 {form} 分析")
+                self.assertEqual(routed["requested_skill_names"], ["crossframe-promax"])
+                self.assertFalse(routed["routing_conflict"]["fallback_allowed"])
+        for near_miss in PROMAX_NEAR_MISSES:
+            with self.subTest(near_miss=near_miss):
+                with self.assertRaises(ExplicitRouteError):
+                    resolve_explicit_route(f"请使用 {near_miss} 分析")
+
+        both = resolve_explicit_route("请同时使用 crossframe-max 与 CrossFrame ProMax")
+        self.assertEqual(
+            both["requested_skill_names"],
+            ["crossframe-promax", "crossframe-max"],
+        )
+        self.assertEqual(
+            both["routing_conflict"],
+            {
+                "detected": True,
+                "conflicting_names": ["crossframe-promax", "crossframe-max"],
+                "resolved_to": "crossframe-promax",
+                "priority_rule": (
+                    "routing-priority-crossframe-promax-over-crossframe-max-no-fallback"
+                ),
+                "fallback_allowed": False,
+            },
+        )
+
+    def test_suite_smoke_and_openai_adapter_cover_promax_priority(self) -> None:
+        for relative in (
+            "skills/crossframe-suite/evals/crossframe-suite-smoke-tests.md",
+            "skills/crossframe-suite/agents/openai.yaml",
+        ):
+            text = (ROOT / relative).read_text(encoding="utf-8")
+            with self.subTest(path=relative):
+                for marker in ROUTING_REQUIRED_MARKERS:
+                    self.assertIn(marker, text)
+                self.assertIn("skills/crossframe-promax/SKILL.md", text)
+                for marker in FORBIDDEN_FALLBACK_MARKERS:
+                    self.assertNotIn(marker, text)
+                for pattern in FORBIDDEN_FALLBACK_PATTERNS:
+                    self.assertNotRegex(text, pattern)
 
     def test_generic_maximum_requests_still_route_to_max(self) -> None:
         text = (ROOT / "skills/crossframe-suite/SKILL.md").read_text(encoding="utf-8")
