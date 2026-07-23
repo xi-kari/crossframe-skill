@@ -701,6 +701,19 @@ class ProMaxOutputBundleTests(unittest.TestCase):
             {"V8-CANON-OBJECT", "V8-CANON-BOUNDARY"},
         )
 
+    def test_applied_concept_without_registered_misuses_does_not_require_fabrication(self) -> None:
+        bundle = valid_bundle()
+        object_record = bundle["concept_registry"]["concepts"][0]
+        object_record["common_misuses"] = []
+        object_record["forbidden_substitutions_or_generalizations"] = []
+        object_disposition = bundle["concept_disposition"]["dispositions"][0]
+        object_disposition["misuses_excluded"] = []
+
+        result = validate_output_bundle(**bundle)
+
+        self.assertEqual(result["status"], "valid")
+        self.assertIn("V8-CANON-OBJECT", result["covered_concept_ids"])
+
     def test_not_requested_recommendation_remains_closed_through_final_artifacts(self) -> None:
         bundle = valid_bundle()
         bundle["run_contract"]["recommendation_required"] = False

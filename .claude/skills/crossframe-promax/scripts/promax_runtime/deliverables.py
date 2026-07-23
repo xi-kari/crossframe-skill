@@ -532,6 +532,7 @@ def _validate_concept_semantics(
         misuses = _text_items(
             disposition.get("misuses_excluded"),
             field=f"concept disposition {concept_id}.misuses_excluded",
+            allow_empty=True,
         )
         if not all(item in section for item in misuses):
             raise ValueError(f"concept atlas omits misuse boundaries for {concept_id}")
