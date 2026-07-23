@@ -31,6 +31,23 @@ CURRENT_CROSSFRAME_SKILLS = [
     "crossframe-promax",
 ]
 
+PROMAX_POLICY_ALIASES = {
+    "v8-only": ("v8-only",),
+    "exact-name only": ("exact-name only", "仅在用户精确点名"),
+    "ProMax wins": ("ProMax wins", "ProMax 优先"),
+    "generic maximality remains Max": (
+        "generic maximality remains Max",
+        "泛化最大化请求仍由 Max",
+    ),
+    "suite never auto-upgrades": (
+        "suite never auto-upgrades",
+        "suite 不得自动升级",
+        "Suite 不得自动升级",
+    ),
+    "own audit": ("own audit", "独立审计"),
+    "no review chain": ("no review chain", "不串联 review"),
+}
+
 TECHNIQUE_FIELDS = [
     "原书操作要点（转述）",
     "段落动作",
@@ -359,33 +376,37 @@ def check_repo_adapters(repo: Path, label: str) -> None:
         return
 
     adapter_needles = {
-        "AGENTS.md": ["crossframe-history", "crossframe-inquiry", "crossframe-max", "局部世界", "完成态后继续追问", "纯致谢"],
+        "AGENTS.md": ["crossframe-history", "crossframe-inquiry", "crossframe-max", "crossframe-promax", "局部世界", "完成态后继续追问", "纯致谢"],
         "CLAUDE.md": [
             ".claude/skills/crossframe-inquiry/SKILL.md",
             ".claude/skills/crossframe-max/SKILL.md",
+            ".claude/skills/crossframe-promax/SKILL.md",
             ".claude/commands/crossframe-inquiry.md",
             ".claude/commands/crossframe-max.md",
+            ".claude/commands/crossframe-promax.md",
             "/crossframe-inquiry",
             "/crossframe-max",
+            "/crossframe-promax",
             "skills/crossframe-inquiry/SKILL.md",
             "skills/crossframe-max/SKILL.md",
+            "skills/crossframe-promax/SKILL.md",
             "纯致谢",
         ],
-        "GEMINI.md": ["crossframe-history", "crossframe-inquiry", "crossframe-max", "完成后追问", "纯致谢"],
-        "CONVENTIONS.md": ["crossframe-inquiry", "crossframe-max", "15 CrossFrame skills", "pure acknowledgments"],
-        "INTERFACES.md": ["skills/crossframe-inquiry/SKILL.md", "skills/crossframe-max/SKILL.md", "15 个 CrossFrame skill", "纯致谢"],
-        "llms.txt": ["History skill", "Inquiry skill", "Max skill", "crossframe-inquiry", "crossframe-max", "pure acknowledgments"],
-        ".github/copilot-instructions.md": ["crossframe-history", "crossframe-inquiry", "crossframe-max", "完成后追问", "纯致谢"],
-        ".cursor/rules/crossframe.mdc": ["crossframe-history", "crossframe-inquiry", "crossframe-max", "post-completion inquiry", "pure acknowledgment/thanks signal"],
-        ".cursor/rules/crossframe-suite.mdc": ["crossframe-history", "crossframe-inquiry", "crossframe-max", "post-completion inquiry", "pure acknowledgment/thanks signal"],
+        "GEMINI.md": ["crossframe-history", "crossframe-inquiry", "crossframe-max", "crossframe-promax", "完成后追问", "纯致谢"],
+        "CONVENTIONS.md": ["crossframe-inquiry", "crossframe-max", "crossframe-promax", "16 CrossFrame skills", "pure acknowledgments"],
+        "INTERFACES.md": ["skills/crossframe-inquiry/SKILL.md", "skills/crossframe-max/SKILL.md", "skills/crossframe-promax/SKILL.md", "16 个 CrossFrame skill", "纯致谢"],
+        "llms.txt": ["History skill", "Inquiry skill", "Max skill", "ProMax skill", "crossframe-inquiry", "crossframe-max", "crossframe-promax", "pure acknowledgments"],
+        ".github/copilot-instructions.md": ["crossframe-history", "crossframe-inquiry", "crossframe-max", "crossframe-promax", "完成后追问", "纯致谢"],
+        ".cursor/rules/crossframe.mdc": ["crossframe-history", "crossframe-inquiry", "crossframe-max", "crossframe-promax", "post-completion inquiry", "pure acknowledgment/thanks signal"],
+        ".cursor/rules/crossframe-suite.mdc": ["crossframe-history", "crossframe-inquiry", "crossframe-max", "crossframe-promax", "post-completion inquiry", "pure acknowledgment/thanks signal"],
         ".cursor/rules/crossframe-essay.mdc": ["skills/crossframe-essay/SKILL.md", "runtime-read-policy.md"],
-        ".continue/rules/crossframe.md": ["history research", "crossframe-inquiry", "crossframe-max", "post-completion inquiry", "pure acknowledgment/thanks signal"],
-        ".clinerules/crossframe.md": ["history research", "crossframe-inquiry", "crossframe-max", "post-completion inquiry", "pure acknowledgment/thanks signal"],
-        ".roo/rules/crossframe.md": ["history research", "crossframe-inquiry", "crossframe-max", "post-completion inquiry", "pure acknowledgment/thanks signal"],
-        ".windsurf/rules/crossframe.md": ["history research", "crossframe-inquiry", "crossframe-max", "post-completion inquiry", "pure acknowledgment/thanks signal"],
-        "docs/ADAPTERS.md": ["crossframe-history", "crossframe-inquiry", "crossframe-max", "15 个 `crossframe-*` skills", "纯致谢"],
-        "scripts/install-codex.ps1": ["skills/crossframe-history", "skills/crossframe-inquiry", "skills/crossframe-max", "Invoke-CodexSkillInstaller", "Get-Command python"],
-        "scripts/install-codex.sh": ["skills/crossframe-history", "skills/crossframe-inquiry", "skills/crossframe-max", "for skill_path in", "done"],
+        ".continue/rules/crossframe.md": ["history research", "crossframe-inquiry", "crossframe-max", "crossframe-promax", "post-completion inquiry", "pure acknowledgment/thanks signal"],
+        ".clinerules/crossframe.md": ["history research", "crossframe-inquiry", "crossframe-max", "crossframe-promax", "post-completion inquiry", "pure acknowledgment/thanks signal"],
+        ".roo/rules/crossframe.md": ["history research", "crossframe-inquiry", "crossframe-max", "crossframe-promax", "post-completion inquiry", "pure acknowledgment/thanks signal"],
+        ".windsurf/rules/crossframe.md": ["history research", "crossframe-inquiry", "crossframe-max", "crossframe-promax", "post-completion inquiry", "pure acknowledgment/thanks signal"],
+        "docs/ADAPTERS.md": ["crossframe-history", "crossframe-inquiry", "crossframe-max", "crossframe-promax", "16 个 `crossframe-*` skills", "纯致谢"],
+        "scripts/install-codex.ps1": ["skills/crossframe-history", "skills/crossframe-inquiry", "skills/crossframe-max", "skills/crossframe-promax", "Invoke-CodexSkillInstaller", "Get-Command python"],
+        "scripts/install-codex.sh": ["skills/crossframe-history", "skills/crossframe-inquiry", "skills/crossframe-max", "skills/crossframe-promax", "for skill_path in", "done"],
     }
     runtime_ref_adapters = set(adapter_needles) - {"docs/ADAPTERS.md", "scripts/install-codex.ps1", "scripts/install-codex.sh"}
     retired_adapter_refs = [
@@ -414,6 +435,44 @@ def check_repo_adapters(repo: Path, label: str) -> None:
                 "continuity-closure-map.md",
             ]:
                 require(needle in text, f"{label}: adapter {rel} missing runtime closure marker: {needle}")
+
+    promax_policy_files = [
+        "README.md",
+        "AGENTS.md",
+        "CLAUDE.md",
+        "GEMINI.md",
+        "CONVENTIONS.md",
+        "INTERFACES.md",
+        "llms.txt",
+        "docs/ADAPTERS.md",
+        "docs/WORKFLOWS.md",
+        "docs/QUICKSTART.md",
+        "docs/FAQ.md",
+        "docs/WHAT_IS_CROSSFRAME.md",
+        "CHANGELOG.md",
+        ".github/copilot-instructions.md",
+        ".cursor/rules/crossframe.mdc",
+        ".cursor/rules/crossframe-suite.mdc",
+        ".continue/rules/crossframe.md",
+        ".clinerules/crossframe.md",
+        ".roo/rules/crossframe.md",
+        ".windsurf/rules/crossframe.md",
+        "site/index.html",
+    ]
+    for rel in promax_policy_files:
+        path = repo / rel
+        require(path.exists(), f"{label}: missing ProMax policy adapter: {rel}")
+        text = read(path)
+        require(
+            "skills/crossframe-promax/SKILL.md" in text
+            or ".claude/skills/crossframe-promax/SKILL.md" in text,
+            f"{label}: ProMax policy adapter {rel} does not link the canonical skill",
+        )
+        for policy, aliases in PROMAX_POLICY_ALIASES.items():
+            require(
+                any(alias in text for alias in aliases),
+                f"{label}: ProMax policy adapter {rel} missing policy: {policy}",
+            )
 
     claude_command_dir = repo / ".claude" / "commands"
     require(claude_command_dir.is_dir(), f"{label}: missing Claude command directory")
@@ -541,7 +600,8 @@ def check_public_release_docs(repo: Path, label: str) -> None:
             "concept contract",
             "crossframe-inquiry",
             "crossframe-max",
-            "15 个 skills",
+            "crossframe-promax",
+            "16 个 skills",
             "https://xi-kari.github.io/crossframe-skill/assets/og-image.png",
             "twitter:image",
             "rel=\"canonical\"",
@@ -674,16 +734,16 @@ def check_public_release_docs(repo: Path, label: str) -> None:
         require(retired_demo_marker not in public_page_text, f"{label}: public page still has sensitive landing demo marker: {retired_demo_marker}")
 
     required_docs = {
-        "README.md": ["15 个 `crossframe-*` skills", "crossframe-max", "局部世界", "安全边界先行", "source_id -> claim_id", "docs/QUICKSTART.md", "framework-CrossFrame_v5.1.7", "review_%E2%86%92_inquiry", "https://xi-kari.github.io/crossframe-skill/", "网页介绍", "install-codex.sh", "validate_claim_ledger_schema_fixtures.py", "check_crossframe_max_v6_full_source.py", "check_crossframe_max_v6_registry_anchors.py", "validate_crossframe_max_route_ledger_fixtures.py", "validate_crossframe_max_repair_fixtures.py", "build_crossframe_max_repair_plan.py", "max-validator-report.json", "max-repair-plan.json", "v6 世界观前置 meta-runtime", "skill_design", "route-ledger gate", "max-artifact-run", "max-blocked/progress", "max-validation-failed:<profile>:<first-error-type>", "mark_artifact_incomplete", "sync_skill_mirrors.py --check", "bash -n scripts/install-codex.sh", "python -m py_compile scripts/*.py", "brief-visible", "standard-visible"],
-        "CHANGELOG.md": ["v5.1.7", "v5.1.6", "v5.1.5", "v5.1.4", "v5.1.3", "site/", "GitHub Pages", "v5.0.2", "crossframe-history", "crossframe-inquiry", "source_id", "max-validator-report.json", "max-repair-plan.json"],
-        "docs/WHAT_IS_CROSSFRAME.md": ["CrossFrame 是一组给 AI 使用的中文结构思考 skills", "一个一分钟例子", "它不是什么", "最推荐怎么用", "crossframe-inquiry", "crossframe-max"],
-        "docs/QUICKSTART.md": ["install-codex.ps1", "install-codex.sh", "--materials-only", "--source-docx", "validate_claim_ledger_schema_fixtures.py", "validate_v5_dlc_quantification_schema_fixtures.py", "check_v5_dlc_casebook_trials.py", "check_v5_dlc_publication_bundle.py", "check_crossframe_max_v6_full_source.py", "check_crossframe_max_v6_registry_anchors.py", "validate_crossframe_max_route_ledger_fixtures.py", "validate_crossframe_max_repair_fixtures.py", "max-validator-report.schema.json", "max-repair-plan.schema.json", "build_crossframe_max_repair_plan.py", "max-validator-report.json", "max-repair-plan.json", "build_v5_dlc_publication_bundle.py", "build_v5_dlc_docx.py", "sync_skill_mirrors.py --check", "bash -n scripts/install-codex.sh", "python -m py_compile scripts/*.py"],
+        "README.md": ["16 个 `crossframe-*` skills", "crossframe-max", "crossframe-promax", "局部世界", "安全边界先行", "source_id -> claim_id", "docs/QUICKSTART.md", "framework-CrossFrame_v5.1.7", "review_%E2%86%92_inquiry", "https://xi-kari.github.io/crossframe-skill/", "网页介绍", "install-codex.sh", "validate_claim_ledger_schema_fixtures.py", "check_crossframe_max_v6_full_source.py", "check_crossframe_max_v6_registry_anchors.py", "validate_crossframe_max_route_ledger_fixtures.py", "validate_crossframe_max_repair_fixtures.py", "build_crossframe_max_repair_plan.py", "max-validator-report.json", "max-repair-plan.json", "v6 世界观前置 meta-runtime", "skill_design", "route-ledger gate", "max-artifact-run", "max-blocked/progress", "max-validation-failed:<profile>:<first-error-type>", "mark_artifact_incomplete", "sync_skill_mirrors.py --check", "bash -n scripts/install-codex.sh", "python -m py_compile scripts/*.py", "brief-visible", "standard-visible"],
+        "CHANGELOG.md": ["v5.1.7", "v5.1.6", "v5.1.5", "v5.1.4", "v5.1.3", "site/", "GitHub Pages", "v5.0.2", "crossframe-history", "crossframe-inquiry", "crossframe-promax", "source_id", "max-validator-report.json", "max-repair-plan.json"],
+        "docs/WHAT_IS_CROSSFRAME.md": ["CrossFrame 是一组给 AI 使用的中文结构思考 skills", "一个一分钟例子", "它不是什么", "最推荐怎么用", "crossframe-inquiry", "crossframe-max", "crossframe-promax"],
+        "docs/QUICKSTART.md": ["install-codex.ps1", "install-codex.sh", "crossframe-promax", "--materials-only", "--source-docx", "validate_claim_ledger_schema_fixtures.py", "validate_v5_dlc_quantification_schema_fixtures.py", "check_v5_dlc_casebook_trials.py", "check_v5_dlc_publication_bundle.py", "check_crossframe_max_v6_full_source.py", "check_crossframe_max_v6_registry_anchors.py", "validate_crossframe_max_route_ledger_fixtures.py", "validate_crossframe_max_repair_fixtures.py", "max-validator-report.schema.json", "max-repair-plan.schema.json", "build_crossframe_max_repair_plan.py", "max-validator-report.json", "max-repair-plan.json", "build_v5_dlc_publication_bundle.py", "build_v5_dlc_docx.py", "sync_skill_mirrors.py --check", "bash -n scripts/install-codex.sh", "python -m py_compile scripts/*.py"],
         "docs/CONCEPTS.md": ["Claim Ledger", "source_id", "Concept Contract"],
-        "docs/WORKFLOWS.md": ["previous_context -> crossframe-inquiry", "crossframe-max -> crossframe-review", "claim ledger / claim-ledger-check", "纯致谢", "brief-visible", "standard-visible"],
+        "docs/WORKFLOWS.md": ["previous_context -> crossframe-inquiry", "crossframe-max -> crossframe-review", "crossframe-promax", "claim ledger / claim-ledger-check", "纯致谢", "brief-visible", "standard-visible"],
         "docs/EXAMPLES.md": ["首页只使用安全模拟样例", "真实/高敏主题", "source_id", "claim_id", "evidence grade", "withdrawal condition", "publish_boundary", "历史草稿档", "crossframe-inquiry", "mini 输出示例"],
-        "docs/ADAPTERS.md": ["sync_skill_mirrors.py", "install-codex.sh", "Codex", "Claude Code", "crossframe-history", "crossframe-inquiry", "crossframe-max", "纯致谢"],
+        "docs/ADAPTERS.md": ["sync_skill_mirrors.py", "install-codex.sh", "Codex", "Claude Code", "crossframe-history", "crossframe-inquiry", "crossframe-max", "crossframe-promax", "纯致谢"],
         "docs/SAFETY_AND_LIMITS.md": ["默认不展示内部 reasoning", "工具调用参数"],
-        "docs/FAQ.md": ["explicit-only", "--materials-only"],
+        "docs/FAQ.md": ["explicit-only", "crossframe-promax", "--materials-only"],
     }
     for rel, needles in required_docs.items():
         path = repo / rel
