@@ -236,6 +236,48 @@ class ProMaxFixtureFactoryTests(unittest.TestCase):
             validated["option_semantic_ranking"],
         )
 
+    def test_stance_flip_fixture_is_schema_valid_before_semantic_rejection(self) -> None:
+        run_id = "promax-fixture-stance-flip-unit"
+        graph = fixture_factory.build_claim_path_graph(
+            run_id=run_id,
+            updated_at="2026-07-23T16:00:00Z",
+        )
+        red_team = fixture_factory.build_red_team_report(
+            run_id=run_id,
+            completed_at="2026-07-23T16:30:00Z",
+        )
+        position = fixture_factory.build_position_lock(
+            run_id=run_id,
+            locked_at="2026-07-23T17:00:00Z",
+        )
+        recommendation = fixture_factory.build_recommendation_lock(
+            position,
+            run_id=run_id,
+            locked_at="2026-07-23T17:30:00Z",
+        )
+
+        fixture_factory._apply_pre_manifest_mutation(
+            "record_position_drift_without_new_evidence",
+            source_snapshot={},
+            read_events=[],
+            claim_graph=graph,
+            retrieval={},
+            red_team=red_team,
+            position=position,
+            recommendation=recommendation,
+            deliverables={},
+        )
+
+        validate_instance("promax-red-team-report.schema.json", red_team)
+        with self.assertRaisesRegex(ValueError, "after-relation"):
+            validate_position_semantics(
+                position,
+                red_team_report=red_team,
+                claim_path_graph=graph,
+                expected_run_id=run_id,
+                expected_source_snapshot_sha256=V8_SOURCE_SNAPSHOT_SHA256,
+            )
+
     def test_output_factory_traces_every_major_mechanism_and_applied_concept(self) -> None:
         plan = fixture_factory.build_output_plan(
             run_id="promax-fixture-factory-test",

@@ -84,6 +84,8 @@ def position() -> dict[str, object]:
         "run_id": RUN_ID,
         "source_snapshot_sha256": V8_SOURCE_SNAPSHOT_SHA256,
         "central_claim_id": "CLAIM-1",
+        "relation_to_proposition": "supports",
+        "proposition_verdict": "VERDICT[supports] 当前条件下，机制甲是最合理解释。",
         "position": "当前条件下，机制甲是最合理解释。",
         "judgment_strength": "moderate",
         "primary_reasons": ["当前结构最符合机制甲。"],

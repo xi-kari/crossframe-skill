@@ -1298,7 +1298,7 @@ def _apply_pre_manifest_mutation(
         ]
         return
     if mutation == "record_position_drift_without_new_evidence":
-        red_team["stability_checks"][0]["position_drift"] = "unjustified"
+        red_team["stability_checks"][0]["relation_to_proposition_after"] = "rejects"
         red_team["stability_checks"][0]["explanation"] = (
             "The position changed only because the user stance changed."
         )
