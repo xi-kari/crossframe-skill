@@ -37,6 +37,18 @@ class ProMaxPublicPolicyTests(unittest.TestCase):
             "no fallback",
         )
 
+    def test_contradictory_fallback_permission_is_rejected_even_with_no_fallback_marker(self) -> None:
+        self.assert_rejected(
+            VALID_POLICY + " 同时允许降级回 Max。",
+            "contradictory fallback",
+        )
+
+    def test_a_fifth_code_literal_trigger_name_is_rejected(self) -> None:
+        self.assert_rejected(
+            VALID_POLICY + " 此外，`ProMax` 也会触发。",
+            "unapproved trigger",
+        )
+
     def test_generated_claude_mirror_is_not_a_canonical_link(self) -> None:
         self.assert_rejected(
             VALID_POLICY.replace(

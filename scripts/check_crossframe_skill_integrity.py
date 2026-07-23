@@ -42,6 +42,15 @@ PROMAX_CANONICAL_SKILL_PATTERN = re.compile(
     r"(?<![A-Za-z0-9_./-])skills/crossframe-promax/SKILL\.md"
 )
 
+PROMAX_CONTRADICTORY_FALLBACK_PATTERNS = (
+    re.compile(r"(?:允许|可以|可)(?:模型)?(?:降级|回退)(?:回|到|至|为)?\s*Max", re.IGNORECASE),
+    re.compile(
+        r"(?:allow(?:s|ed)?|may|can)\b.{0,32}\b(?:fall\s*back|fallback|downgrade)\b.{0,24}\bMax\b",
+        re.IGNORECASE,
+    ),
+)
+PROMAX_TRIGGER_CONTEXT_MARKERS = ("触发", "点名", "trigger", "invoke")
+
 PROMAX_POLICY_ALIASES = {
     "v8-only": ("v8-only",),
     "exact-name only": ("exact-name only", "仅在用户精确点名"),
@@ -264,11 +273,32 @@ def check_promax_policy_text(text: str, rel: str, label: str) -> None:
             standalone.search(text) is not None,
             f"{label}: ProMax policy adapter {rel} missing exact trigger: {trigger}",
         )
+    allowed_literals = set(PROMAX_EXACT_TRIGGER_NAMES)
+    for match in re.finditer(r"`([^`\r\n]+)`", text):
+        literal = match.group(1).strip()
+        if literal in allowed_literals or "promax" not in literal.casefold():
+            continue
+        if (
+            literal.startswith("PROMAX-")
+            or "/" in literal
+            or "\\" in literal
+            or "." in literal
+        ):
+            continue
+        context = text[max(0, match.start() - 80) : min(len(text), match.end() + 80)]
+        require(
+            not any(marker.casefold() in context.casefold() for marker in PROMAX_TRIGGER_CONTEXT_MARKERS),
+            f"{label}: ProMax policy adapter {rel} contains an unapproved trigger literal: {literal}",
+        )
     for policy, aliases in PROMAX_POLICY_ALIASES.items():
         require(
             any(alias in text for alias in aliases),
             f"{label}: ProMax policy adapter {rel} missing policy: {policy}",
         )
+    require(
+        not any(pattern.search(text) for pattern in PROMAX_CONTRADICTORY_FALLBACK_PATTERNS),
+        f"{label}: ProMax policy adapter {rel} contains contradictory fallback permission",
+    )
 
 
 def file_sha256(path: Path) -> str:
