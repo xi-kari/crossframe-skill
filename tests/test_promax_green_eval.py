@@ -945,9 +945,33 @@ class ProMaxGreenRubricScopeTests(unittest.TestCase):
                 metric_id,
             )
 
+    def test_matrix_reduction_records_unexercised_scenario_specific_metrics(
+        self,
+    ) -> None:
+        rubric = json.loads(RUBRIC_PATH.read_text(encoding="utf-8"))
+        declared_scenarios = {
+            entry["scenario_id"] for entry in rubric["run_matrix"]
+        }
+        unexercised = {
+            metric["metric_id"]
+            for metric in rubric["metrics"]
+            if metric["applicable_scenarios"] != "all"
+            and not declared_scenarios.intersection(
+                metric["applicable_scenarios"]
+            )
+        }
+        self.assertEqual(
+            unexercised,
+            {
+                "honest_tool_failure_downgrade",
+                "exact_promax_routing",
+            },
+        )
+
     def test_paired_stability_compares_semantics_not_run_local_labels(self) -> None:
         rubric = json.loads(RUBRIC_PATH.read_text(encoding="utf-8"))
         paired = rubric["paired_stability"]
+        self.assertEqual(paired["required_model_ids"], ["gpt-5.6-sol"])
         self.assertEqual(
             paired["required_equal_fields"],
             [
@@ -1522,13 +1546,21 @@ class ProMaxGreenEvalTests(unittest.TestCase):
         cls.rubric = json.loads(RUBRIC_PATH.read_text(encoding="utf-8"))
         cls.results = json.loads(RESULTS_PATH.read_text(encoding="utf-8"))
 
-    def test_rubric_has_fixed_models_scenarios_and_metrics(self) -> None:
+    def test_rubric_has_fixed_models_scenarios_matrix_and_metrics(self) -> None:
         self.assertEqual(self.rubric["schema_id"], "crossframe.promax.green-rubric")
         self.assertEqual(self.rubric["schema_version"], 1)
         self.assertEqual(
             self.rubric["models"], ["gpt-5.6-sol", "gpt-5.6-terra"]
         )
         self.assertEqual(len(self.rubric["scenario_ids"]), 12)
+        self.assertEqual(
+            self.rubric["run_matrix"],
+            [
+                {"model_id": "gpt-5.6-sol", "scenario_id": "A1"},
+                {"model_id": "gpt-5.6-sol", "scenario_id": "A2"},
+                {"model_id": "gpt-5.6-terra", "scenario_id": "A1"},
+            ],
+        )
         metric_ids = [metric["metric_id"] for metric in self.rubric["metrics"]]
         self.assertEqual(len(metric_ids), len(set(metric_ids)))
         self.assertEqual(
@@ -1556,9 +1588,8 @@ class ProMaxGreenEvalTests(unittest.TestCase):
         self.assertEqual(self.results["schema_id"], "crossframe.promax.green-results")
         self.assertEqual(self.results["schema_version"], 1)
         expected_pairs = {
-            (model, scenario)
-            for model in self.rubric["models"]
-            for scenario in self.rubric["scenario_ids"]
+            (entry["model_id"], entry["scenario_id"])
+            for entry in self.rubric["run_matrix"]
         }
         runs = self.results["runs"]
         actual_pairs = {(run["model_id"], run["scenario_id"]) for run in runs}
@@ -1625,12 +1656,29 @@ class ProMaxGreenEvalTests(unittest.TestCase):
                     else:
                         self.assertTrue(record["failing_artifacts"])
 
-    def test_aggregate_thresholds_and_paired_stability_pass(self) -> None:
+    def test_aggregate_thresholds_record_unexercised_metrics_and_paired_stability(
+        self,
+    ) -> None:
         rubric_metrics = {
             metric["metric_id"]: metric for metric in self.rubric["metrics"]
         }
         aggregate = self.results["aggregate"]
         self.assertEqual(set(aggregate["metrics"]), set(rubric_metrics))
+        declared_scenarios = {
+            entry["scenario_id"] for entry in self.rubric["run_matrix"]
+        }
+        expected_unexercised = {
+            metric_id
+            for metric_id, rubric in rubric_metrics.items()
+            if rubric["applicable_scenarios"] != "all"
+            and not declared_scenarios.intersection(
+                rubric["applicable_scenarios"]
+            )
+        }
+        self.assertEqual(
+            set(aggregate["unexercised_metric_ids"]),
+            expected_unexercised,
+        )
         for metric_id, result in aggregate["metrics"].items():
             with self.subTest(metric=metric_id):
                 run_records = [
@@ -1640,22 +1688,33 @@ class ProMaxGreenEvalTests(unittest.TestCase):
                 numerator = sum(record["numerator"] for record in run_records)
                 self.assertEqual(result["denominator"], denominator)
                 self.assertEqual(result["numerator"], numerator)
-                self.assertGreater(denominator, 0)
                 self.assertGreaterEqual(numerator, 0)
                 self.assertLessEqual(numerator, denominator)
-                rate = numerator / denominator
-                self.assertEqual(result["rate"], rate)
                 rubric = rubric_metrics[metric_id]
                 self.assertEqual(result["threshold"], rubric["threshold"])
                 self.assertEqual(result["direction"], rubric["direction"])
-                if rubric["direction"] == "minimum":
-                    self.assertGreaterEqual(rate, rubric["threshold"])
+                if denominator == 0:
+                    self.assertIn(metric_id, expected_unexercised)
+                    self.assertEqual(result["rate"], None)
+                    self.assertEqual(result["status"], "not_exercised")
+                    self.assertIs(result["threshold_covered"], False)
+                    self.assertIs(result["passed"], False)
                 else:
-                    self.assertLessEqual(rate, rubric["threshold"])
+                    self.assertNotIn(metric_id, expected_unexercised)
+                    rate = numerator / denominator
+                    self.assertEqual(result["rate"], rate)
+                    self.assertEqual(result["status"], "passed")
+                    self.assertIs(result["threshold_covered"], True)
+                    self.assertIs(result["passed"], True)
+                    if rubric["direction"] == "minimum":
+                        self.assertGreaterEqual(rate, rubric["threshold"])
+                    else:
+                        self.assertLessEqual(rate, rubric["threshold"])
 
         stability = aggregate["paired_stability"]
         self.assertEqual(
-            {record["model_id"] for record in stability}, set(self.rubric["models"])
+            {record["model_id"] for record in stability},
+            set(self.rubric["paired_stability"]["required_model_ids"]),
         )
         run_by_pair = {
             (run["model_id"], run["scenario_id"]): run
@@ -1671,7 +1730,7 @@ class ProMaxGreenEvalTests(unittest.TestCase):
         )
         self.assertEqual(frozen_context["factual_material"], [])
 
-        for model_id in self.rubric["models"]:
+        for model_id in paired_rubric["required_model_ids"]:
             with self.subTest(model=model_id):
                 first_run = run_by_pair[(model_id, "A1")]
                 second_run = run_by_pair[(model_id, "A2")]
@@ -1742,7 +1801,11 @@ class ProMaxGreenEvalTests(unittest.TestCase):
                 }
                 self.assertEqual(record_by_model[model_id], recomputed_record)
                 self.assertIs(recomputed_record["passed"], True)
-        self.assertIs(aggregate["all_thresholds_passed"], True)
+        self.assertIs(
+            aggregate["all_thresholds_passed"],
+            not expected_unexercised,
+        )
+        self.assertIs(aggregate["all_exercised_thresholds_passed"], True)
         self.assertIs(aggregate["deterministic_regression_suite_passed"], True)
 
 

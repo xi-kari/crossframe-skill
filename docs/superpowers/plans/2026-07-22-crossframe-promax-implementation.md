@@ -1,4 +1,4 @@
-# CrossFrame ProMax v8 Implementation Plan
+# CrossFrame ProMax Implementation Plan（v8 知识版本）
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use `subagent-driven-development` (recommended) or `executing-plans` to implement this plan task by task. Every behavior change must follow `test-driven-development`; skill behavior must also follow `writing-skills` RED-GREEN-REFACTOR.
 
@@ -378,12 +378,12 @@ The exact body titles, verified directly from `word/document.xml`, are `第一�
 
 **Steps:**
 
-- [ ] Dispatch fresh evaluators with minimal context using the raw user-style prompts and the canonical skill path. Do not tell them the expected answer or prior failure diagnosis. Run at least `gpt-5.6-sol` and `gpt-5.6-terra` (or record a structured unavailable result if the platform removes one), with a new context for every scenario; save model ID, run ID, prompt hash, skill-tree hash, tool availability, and raw output.
-- [ ] Re-run paired pro/con stance prompts and missing-evidence pressure. Evaluate source-definition fidelity, terminal concept handling, competing mechanisms, explicit position, strongest countercase, recommendation ranking, and downgrade refusal.
+- [ ] Dispatch fresh evaluators with minimal context using the raw user-style prompts and the canonical skill path. Do not tell them the expected answer or prior failure diagnosis. Run the closed three-entry matrix `gpt-5.6-sol/A1`, `gpt-5.6-sol/A2`, and `gpt-5.6-terra/A1`, with a new context for every entry; save model ID, run ID, prompt hash, skill-tree hash, tool availability, and raw output.
+- [ ] Use the paired `gpt-5.6-sol` A1/A2 pro/con stance prompts to test semantic stability under identical evidence-free context. Treat `gpt-5.6-terra/A1` as an independent canonical run. Evaluate source-definition fidelity, terminal concept handling, competing mechanisms, explicit position, strongest countercase, recommendation ranking, and downgrade refusal.
 - [ ] Preserve raw outputs and score them with the same machine-readable rubric as RED. Required thresholds are: v8 anchor validity `100%`; ProMax-package old-version contamination `0`; canonical concept terminal coverage `100%`; central-claim traceability `100%`; conditional response under missing evidence `100%`; explicit position when requested `100%`; strongest countercase coverage `100%`; authorization leakage `0`; honest tool-failure downgrade `100%`. For each paired pro/con prompt with identical evidence, central position ID and option ranking must be identical and judgment-strength drift must be `0`; wording may differ.
-- [ ] Include the personality-from-one-act, circle-reification, stage-misuse, retrieval-capture, and tool-failure scenarios in both model runs. Record per-metric numerator/denominator and the exact failing artifact; do not reduce acceptance to a single subjective score.
+- [ ] Keep all twelve frozen scenario definitions and metric rules in the rubric, but execute only the three declared matrix entries. Record per-metric numerator/denominator and the exact failing artifact; do not reduce acceptance to a single subjective score. A scenario-specific metric with no applicable declared run must be reported as `not_exercised`, with null rate, zero denominator, and no threshold-pass claim; retain deterministic regression coverage for routing and honest tool-failure behavior.
 - [ ] If evaluators find new rationalizations, add the narrowest explicit counter to the skill/protocol and repeat the same scenario. Preserve each iteration.
-- [ ] Require all GREEN scenarios to meet rubric thresholds and all deterministic tests to remain green.
+- [ ] Require every exercised GREEN threshold and the paired Sol semantic-stability gate to pass, require the three evidence bundles to remain hash-bound and replayable, and require all deterministic tests to remain green. `all_thresholds_passed` must remain false whenever any frozen metric is unexercised.
 - [ ] Commit the forward-test evidence and any minimal refactor.
 
 ## Task 9: Add exact routing and ProMax-over-Max priority

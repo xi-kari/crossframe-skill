@@ -1,4 +1,4 @@
-# CrossFrame ProMax v8 原生运行时设计规格
+# CrossFrame ProMax 原生运行时设计规格（v8 知识版本）
 
 日期：2026-07-22
 

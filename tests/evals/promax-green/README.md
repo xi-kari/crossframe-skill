@@ -1,14 +1,27 @@
 # CrossFrame ProMax GREEN evidence protocol
 
 This directory is the commit-replayable GREEN gate for the 12 scenarios frozen in
-`scenarios.json`, executed once in a fresh context on each of
-`gpt-5.6-sol` and `gpt-5.6-terra`: 24 independent model-and-scenario runs.
+`scenarios.json`. Its closed `rubric.json.run_matrix` authorizes exactly three
+fresh, independent model-and-scenario runs:
+
+- `gpt-5.6-sol` / `A1`
+- `gpt-5.6-sol` / `A2`
+- `gpt-5.6-terra` / `A1`
+
 Each run must explicitly load CrossFrame ProMax. A run may not reuse another
 scenario's conversation, authoring directory, artifacts, or model output.
+`models` and `scenario_ids` remain the frozen registries for validation; they are
+not a Cartesian execution instruction. `run_matrix` entries contain exactly
+`model_id` and `scenario_id`, must resolve to those registries, and must be
+unique. The builder validates and iterates only those explicit pairs, so an
+unlisted bundle cannot add a run and no `gpt-5.6-terra` / `A2` run is inferred.
 
 `scenarios.json` keeps the exact 12 behavioral prompts and separately freezes the
 actual explicit-ProMax prompt sent to a fresh run. In particular, A1 and A2 retain
 opposite user stances while keeping the same evidence-free external context.
+Paired stability is required only for the declared `gpt-5.6-sol` A1/A2 pair;
+`gpt-5.6-terra` / `A1` is independently canonical and does not require a
+fabricated A2 counterpart.
 
 ## Committed layout
 
@@ -32,9 +45,10 @@ public evaluation evidence and must be committed. Temporary authoring material
 under `work/` is not evidence. `run/` must exist even when a tool-failure or
 write-boundary scenario legitimately produces no runtime artifacts; in that
 case its empty-tree hash is still recorded and the raw projection must carry
-the auditable behavior. A1 and A2 are different: their four required semantic
-artifacts and supporting run documents must be present because their paired
-stability is recomputed from files.
+the auditable behavior. The two `gpt-5.6-sol` A1/A2 bundles must contain their
+four required semantic artifacts and supporting run documents because their
+paired stability is recomputed from files. `gpt-5.6-terra` / `A1` is validated
+as its own canonical run.
 
 The assembler does not generate model output, repair artifacts, score prose, or
 copy files from `work/`. It only validates already committed evidence and, after
@@ -106,22 +120,31 @@ maximum metrics, absence of the prohibited behavior uses numerator `0`. This
 prevents the old ambiguity where a maximum metric could say “passed” while
 recording a violating numerator.
 
+When the closed matrix has no applicable run for a scenario-specific metric, the
+aggregate keeps it as `status=not_exercised` with numerator and denominator `0`,
+`rate=null`, `threshold_covered=false`, and `passed=false`. It is listed in
+`aggregate.unexercised_metric_ids`; this is not a threshold pass claim.
+`all_exercised_thresholds_passed` can be true only for metrics with evidence,
+while `all_thresholds_passed` remains false whenever any metric is unexercised.
+The dedicated metric rules remain in the rubric and are covered by deterministic
+regression rather than being silently removed or imputed from another scenario.
+
 ## Independent recomputation
 
 `build_results.py` independently checks:
 
-1. the complete model × scenario matrix and unique run IDs;
+1. the closed, unique explicit `run_matrix` and unique run IDs;
 2. prompt, raw-output, artifact-tree, metric-evidence, and ProMax skill-tree
    hashes;
 3. rubric applicability and every per-run and aggregate threshold;
-4. A1/A2 semantic equality for each model by calling
+4. A1/A2 semantic equality for the required `gpt-5.6-sol` pair by calling
    `load_artifact_semantics` from `tests.test_promax_green_eval`;
 5. the frozen pair context, normalized option semantics, exact no-action
    record, normative selection basis, and red-team before/after bindings
    enforced by that helper.
 
-The A1/A2 comparison reads the actual run files. Equal booleans copied from
-metadata are never treated as evidence.
+The required A1/A2 comparison reads the actual Sol run files. Equal booleans
+copied from metadata are never treated as evidence.
 
 The build is fail closed: one missing run, stale hash, unauditable metric
 evidence item, failed metric, changed pair semantic, or malformed record stops
@@ -130,7 +153,7 @@ finish before the temporary results file is atomically replaced.
 
 ## Commands
 
-After all 24 raw outputs and artifact/metadata bundles exist:
+After all three declared raw outputs and artifact/metadata bundles exist:
 
 ```powershell
 python -B tests/evals/promax-green/build_results.py --repo .
@@ -143,7 +166,7 @@ python -B -m unittest tests.test_promax_green_results_builder -v
 ```
 
 The existing final-results contract becomes runnable only after the canonical
-`results.json` and all 24 evidence bundles have been committed:
+`results.json` and all three declared evidence bundles have been committed:
 
 ```powershell
 python -B -m unittest tests.test_promax_green_eval.ProMaxGreenEvalTests -v

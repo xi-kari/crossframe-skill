@@ -180,6 +180,46 @@ def _metric_is_applicable(metric: dict[str, Any], scenario_id: str) -> bool:
     return scope == "all" or scenario_id in scope
 
 
+def _run_matrix(
+    rubric: dict[str, Any],
+    *,
+    models: list[str],
+    scenario_ids: list[str],
+) -> list[tuple[str, str]]:
+    raw_matrix = rubric.get("run_matrix")
+    if not isinstance(raw_matrix, list) or not raw_matrix:
+        raise GreenBuildError("rubric.run_matrix must be a non-empty array")
+    matrix: list[tuple[str, str]] = []
+    seen_pairs: set[tuple[str, str]] = set()
+    for index, raw_entry in enumerate(raw_matrix):
+        field = f"rubric.run_matrix[{index}]"
+        if not isinstance(raw_entry, dict):
+            raise GreenBuildError(f"{field} must be an object")
+        if set(raw_entry) != {"model_id", "scenario_id"}:
+            raise GreenBuildError(
+                f"{field} must contain exactly model_id and scenario_id"
+            )
+        model_id = _text(raw_entry.get("model_id"), field=f"{field}.model_id")
+        scenario_id = _text(
+            raw_entry.get("scenario_id"),
+            field=f"{field}.scenario_id",
+        )
+        if model_id not in models:
+            raise GreenBuildError(f"{field}.model_id is not in rubric.models")
+        if scenario_id not in scenario_ids:
+            raise GreenBuildError(
+                f"{field}.scenario_id is not in rubric.scenario_ids"
+            )
+        pair = (model_id, scenario_id)
+        if pair in seen_pairs:
+            raise GreenBuildError(
+                f"duplicate run_matrix pair: {model_id}/{scenario_id}"
+            )
+        seen_pairs.add(pair)
+        matrix.append(pair)
+    return matrix
+
+
 def _evidence_records(
     value: object,
     *,
@@ -488,20 +528,30 @@ def _canonical_run(
 def _aggregate_metrics(
     runs: list[dict[str, Any]],
     metric_rubrics: dict[str, dict[str, Any]],
-) -> tuple[dict[str, dict[str, Any]], bool]:
+) -> tuple[dict[str, dict[str, Any]], bool, list[str]]:
     aggregate: dict[str, dict[str, Any]] = {}
-    all_passed = True
+    all_exercised_passed = True
+    unexercised_metric_ids: list[str] = []
     for metric_id, rubric_metric in metric_rubrics.items():
         records = [run["metrics"][metric_id] for run in runs]
         numerator = sum(record["numerator"] for record in records)
         denominator = sum(record["denominator"] for record in records)
-        if denominator <= 0:
-            raise GreenBuildError(
-                f"aggregate metric {metric_id} has no applicable run"
-            )
-        rate = numerator / denominator
         direction = rubric_metric["direction"]
         threshold = rubric_metric["threshold"]
+        if denominator == 0:
+            aggregate[metric_id] = {
+                "direction": direction,
+                "threshold": threshold,
+                "numerator": 0,
+                "denominator": 0,
+                "rate": None,
+                "status": "not_exercised",
+                "threshold_covered": False,
+                "passed": False,
+            }
+            unexercised_metric_ids.append(metric_id)
+            continue
+        rate = numerator / denominator
         passed = metric_passes(direction, numerator, denominator, threshold)
         aggregate[metric_id] = {
             "direction": direction,
@@ -509,16 +559,18 @@ def _aggregate_metrics(
             "numerator": numerator,
             "denominator": denominator,
             "rate": rate,
+            "status": "passed" if passed else "failed",
+            "threshold_covered": True,
             "passed": passed,
         }
-        all_passed = all_passed and passed
-    return aggregate, all_passed
+        all_exercised_passed = all_exercised_passed and passed
+    return aggregate, all_exercised_passed, unexercised_metric_ids
 
 
 def _paired_stability(
     *,
     runs: list[dict[str, Any]],
-    models: list[str],
+    allowed_models: list[str],
     paired_rubric: object,
     eval_root: Path,
 ) -> list[dict[str, Any]]:
@@ -552,19 +604,38 @@ def _paired_stability(
     if paired_rubric.get("frozen_pair_context_sha256") != frozen_hash:
         raise GreenBuildError("paired stability frozen context SHA-256 mismatch")
 
+    required_model_ids = paired_rubric.get("required_model_ids")
+    if (
+        not isinstance(required_model_ids, list)
+        or not required_model_ids
+        or any(not isinstance(item, str) or not item.strip() for item in required_model_ids)
+        or len(required_model_ids) != len(set(required_model_ids))
+    ):
+        raise GreenBuildError(
+            "paired_stability.required_model_ids must contain unique model IDs"
+        )
+    for model_id in required_model_ids:
+        if model_id not in allowed_models:
+            raise GreenBuildError(
+                "paired_stability.required_model_ids contains a model outside "
+                "rubric.models"
+            )
+
     run_by_pair = {
         (run["model_id"], run["scenario_id"]): run for run in runs
     }
-    records: list[dict[str, Any]] = []
-    allowed_root = eval_root / "artifacts"
-    for model_id in models:
-        semantics: list[dict[str, Any]] = []
+    for model_id in required_model_ids:
         for scenario_id in scenario_pair:
-            run = run_by_pair.get((model_id, scenario_id))
-            if run is None:
+            if (model_id, scenario_id) not in run_by_pair:
                 raise GreenBuildError(
                     f"paired stability is missing {model_id}/{scenario_id}"
                 )
+    records: list[dict[str, Any]] = []
+    allowed_root = eval_root / "artifacts"
+    for model_id in required_model_ids:
+        semantics: list[dict[str, Any]] = []
+        for scenario_id in scenario_pair:
+            run = run_by_pair[(model_id, scenario_id)]
             artifact_dir = (
                 eval_root / "artifacts" / model_id / scenario_id / "run"
             )
@@ -660,46 +731,56 @@ def build_results(
         scenarios_path,
         rubric_scenario_ids=scenario_ids,
     )
+    run_matrix = _run_matrix(
+        rubric,
+        models=models,
+        scenario_ids=scenario_ids,
+    )
     metric_rubrics = _metric_rubrics(rubric)
     skill_tree_sha256 = canonical_skill_tree_sha256()
 
     runs: list[dict[str, Any]] = []
     run_ids: set[str] = set()
-    for model_id in models:
-        for scenario_id in scenario_ids:
-            metadata_path = (
-                evaluation
-                / "artifacts"
-                / model_id
-                / scenario_id
-                / "eval-metadata.json"
-            )
-            run = _canonical_run(
-                metadata_path,
-                model_id=model_id,
-                scenario_id=scenario_id,
-                scenario=scenarios[scenario_id],
-                metric_rubrics=metric_rubrics,
-                repo_root=repo,
-                eval_root=evaluation,
-                rubric_path=rubric_path,
-                scenarios_path=scenarios_path,
-                skill_tree_sha256=skill_tree_sha256,
-            )
-            if run["run_id"] in run_ids:
-                raise GreenBuildError(f"duplicate run_id: {run['run_id']}")
-            run_ids.add(run["run_id"])
-            runs.append(run)
+    for model_id, scenario_id in run_matrix:
+        metadata_path = (
+            evaluation
+            / "artifacts"
+            / model_id
+            / scenario_id
+            / "eval-metadata.json"
+        )
+        run = _canonical_run(
+            metadata_path,
+            model_id=model_id,
+            scenario_id=scenario_id,
+            scenario=scenarios[scenario_id],
+            metric_rubrics=metric_rubrics,
+            repo_root=repo,
+            eval_root=evaluation,
+            rubric_path=rubric_path,
+            scenarios_path=scenarios_path,
+            skill_tree_sha256=skill_tree_sha256,
+        )
+        if run["run_id"] in run_ids:
+            raise GreenBuildError(f"duplicate run_id: {run['run_id']}")
+        run_ids.add(run["run_id"])
+        runs.append(run)
 
-    aggregate_metrics, thresholds_passed = _aggregate_metrics(
+    (
+        aggregate_metrics,
+        exercised_thresholds_passed,
+        unexercised_metric_ids,
+    ) = _aggregate_metrics(
         runs,
         metric_rubrics,
     )
-    if not thresholds_passed:
-        raise GreenBuildError("one or more aggregate metric thresholds failed")
+    if not exercised_thresholds_passed:
+        raise GreenBuildError(
+            "one or more exercised aggregate metric thresholds failed"
+        )
     paired = _paired_stability(
         runs=runs,
-        models=models,
+        allowed_models=models,
         paired_rubric=rubric.get("paired_stability"),
         eval_root=evaluation,
     )
@@ -718,7 +799,9 @@ def build_results(
         "aggregate": {
             "metrics": aggregate_metrics,
             "paired_stability": paired,
-            "all_thresholds_passed": True,
+            "all_thresholds_passed": not unexercised_metric_ids,
+            "all_exercised_thresholds_passed": True,
+            "unexercised_metric_ids": unexercised_metric_ids,
             "deterministic_regression_suite_passed": True,
         },
     }

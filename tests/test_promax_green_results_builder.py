@@ -74,9 +74,10 @@ class ProMaxGreenScenarioManifestTests(unittest.TestCase):
     def test_readme_freezes_the_replay_and_fail_closed_protocol(self) -> None:
         text = README_PATH.read_text(encoding="utf-8")
         for marker in (
-            "24",
+            "3",
             "gpt-5.6-sol",
             "gpt-5.6-terra",
+            "run_matrix",
             "fresh",
             "eval-metadata.json",
             "artifact_tree_sha256",
@@ -90,6 +91,7 @@ class ProMaxGreenScenarioManifestTests(unittest.TestCase):
         ):
             with self.subTest(marker=marker):
                 self.assertIn(marker, text)
+        self.assertNotIn("24 independent model-and-scenario runs", text)
 
 
 class ProMaxGreenResultsBuilderTests(unittest.TestCase):
@@ -101,7 +103,12 @@ class ProMaxGreenResultsBuilderTests(unittest.TestCase):
         self.addCleanup(self.temporary.cleanup)
         self.eval_root = Path(self.temporary.name) / "promax-green"
         self.eval_root.mkdir()
-        self.models = ["model-one"]
+        self.models = ["model-one", "model-two"]
+        self.run_matrix = [
+            {"model_id": "model-one", "scenario_id": "A1"},
+            {"model_id": "model-one", "scenario_id": "A2"},
+            {"model_id": "model-two", "scenario_id": "A1"},
+        ]
         self.scenarios = [
             {
                 "id": "A1",
@@ -131,6 +138,7 @@ class ProMaxGreenResultsBuilderTests(unittest.TestCase):
             "schema_version": 1,
             "models": self.models,
             "scenario_ids": ["A1", "A2"],
+            "run_matrix": self.run_matrix,
             "scoring_unit": "one independently forked model-and-scenario run",
             "metrics": [
                 {
@@ -150,6 +158,7 @@ class ProMaxGreenResultsBuilderTests(unittest.TestCase):
             ],
             "paired_stability": {
                 "scenario_pair": ["A1", "A2"],
+                "required_model_ids": ["model-one"],
                 "required_equal_fields": [
                     "semantic_key_sha256",
                     "relation_to_proposition",
@@ -192,9 +201,11 @@ class ProMaxGreenResultsBuilderTests(unittest.TestCase):
         self,
         scenario_id: str,
         *,
+        model_id: str | None = None,
         failed_metric: str | None = None,
     ) -> Path:
-        model_id = self.models[0]
+        if model_id is None:
+            model_id = self.models[0]
         bundle = self.eval_root / "artifacts" / model_id / scenario_id
         run_dir = bundle / "run"
         raw_path = self.eval_root / "raw" / model_id / f"{scenario_id}.md"
@@ -220,23 +231,25 @@ class ProMaxGreenResultsBuilderTests(unittest.TestCase):
         metrics: dict[str, object] = {}
         for rubric_metric in self.rubric["metrics"]:
             metric_id = rubric_metric["metric_id"]
+            scope = rubric_metric["applicable_scenarios"]
+            applicable = scope == "all" or scenario_id in scope
             numerator = (
                 1
-                if rubric_metric["direction"] == "minimum"
+                if applicable and rubric_metric["direction"] == "minimum"
                 else 0
             )
             failing_artifacts: list[object] = []
-            if metric_id == failed_metric:
+            if metric_id == failed_metric and applicable:
                 numerator = 0 if rubric_metric["direction"] == "minimum" else 1
                 failing_artifacts = [*evidence]
             metrics[metric_id] = {
                 "metric_id": metric_id,
-                "applicable": True,
+                "applicable": applicable,
                 "direction": rubric_metric["direction"],
                 "threshold": rubric_metric["threshold"],
-                "passed": metric_id != failed_metric,
+                "passed": metric_id != failed_metric or not applicable,
                 "numerator": numerator,
-                "denominator": 1,
+                "denominator": int(applicable),
                 "evidence": evidence,
                 "failing_artifacts": failing_artifacts,
                 "untrusted_note": "must not be copied",
@@ -277,8 +290,11 @@ class ProMaxGreenResultsBuilderTests(unittest.TestCase):
         return metadata_path
 
     def _write_all_runs(self) -> None:
-        for scenario in self.rubric["scenario_ids"]:
-            self._write_run(scenario)
+        for run in self.rubric["run_matrix"]:
+            self._write_run(
+                run["scenario_id"],
+                model_id=run["model_id"],
+            )
 
     def test_builds_canonical_results_from_hash_bound_evidence(self) -> None:
         self._write_all_runs()
@@ -306,7 +322,18 @@ class ProMaxGreenResultsBuilderTests(unittest.TestCase):
                 "aggregate",
             },
         )
-        self.assertEqual(len(results["runs"]), 2)
+        self.assertEqual(len(results["runs"]), 3)
+        self.assertEqual(
+            [
+                (run["model_id"], run["scenario_id"])
+                for run in results["runs"]
+            ],
+            [
+                ("model-one", "A1"),
+                ("model-one", "A2"),
+                ("model-two", "A1"),
+            ],
+        )
         for run in results["runs"]:
             self.assertNotIn("untrusted_run_note", run)
             self.assertEqual(
@@ -328,7 +355,7 @@ class ProMaxGreenResultsBuilderTests(unittest.TestCase):
             )
         self.assertEqual(
             results["aggregate"]["metrics"]["minimum_metric"]["numerator"],
-            2,
+            3,
         )
         self.assertEqual(
             results["aggregate"]["metrics"]["maximum_metric"]["numerator"],
@@ -340,6 +367,19 @@ class ProMaxGreenResultsBuilderTests(unittest.TestCase):
         )
         self.assertTrue(
             results["aggregate"]["paired_stability"][0]["passed"]
+        )
+        self.assertEqual(
+            [record["model_id"] for record in results["aggregate"]["paired_stability"]],
+            ["model-one"],
+        )
+        self.assertFalse(
+            (
+                self.eval_root
+                / "artifacts"
+                / "model-two"
+                / "A2"
+                / "eval-metadata.json"
+            ).exists()
         )
 
     def test_missing_run_fails_without_creating_results(self) -> None:
@@ -359,6 +399,7 @@ class ProMaxGreenResultsBuilderTests(unittest.TestCase):
     def test_failed_metric_fails_without_creating_results(self) -> None:
         self._write_run("A1", failed_metric="minimum_metric")
         self._write_run("A2")
+        self._write_run("A1", model_id="model-two")
 
         with self.assertRaisesRegex(
             self.builder.GreenBuildError,
@@ -374,6 +415,7 @@ class ProMaxGreenResultsBuilderTests(unittest.TestCase):
     def test_tampered_raw_output_fails_without_creating_results(self) -> None:
         metadata_path = self._write_run("A1")
         self._write_run("A2")
+        self._write_run("A1", model_id="model-two")
         metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
         raw_path = ROOT / metadata["raw_output_path"]
         raw_path.write_text("tampered", encoding="utf-8")
@@ -392,6 +434,7 @@ class ProMaxGreenResultsBuilderTests(unittest.TestCase):
     def test_tampered_metric_evidence_fails_without_creating_results(self) -> None:
         metadata_path = self._write_run("A1")
         self._write_run("A2")
+        self._write_run("A1", model_id="model-two")
         metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
         metadata["metrics"]["minimum_metric"]["evidence"][0][
             "sha256"
@@ -415,6 +458,7 @@ class ProMaxGreenResultsBuilderTests(unittest.TestCase):
     def test_tampered_artifact_tree_fails_without_creating_results(self) -> None:
         metadata_path = self._write_run("A1")
         self._write_run("A2")
+        self._write_run("A1", model_id="model-two")
         metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
         metadata["artifact_tree_sha256"] = "0" * 64
         metadata_path.write_text(
@@ -445,7 +489,124 @@ class ProMaxGreenResultsBuilderTests(unittest.TestCase):
         finally:
             os.chdir(previous_cwd)
 
-        self.assertEqual(len(results["runs"]), 2)
+        self.assertEqual(len(results["runs"]), 3)
+
+    def test_closed_run_matrix_rejects_duplicate_pair_before_loading_evidence(
+        self,
+    ) -> None:
+        self.rubric["run_matrix"].append(
+            {"model_id": "model-one", "scenario_id": "A1"}
+        )
+        (self.eval_root / "rubric.json").write_text(
+            json.dumps(self.rubric, ensure_ascii=False),
+            encoding="utf-8",
+        )
+
+        with self.assertRaisesRegex(
+            self.builder.GreenBuildError,
+            "duplicate run_matrix pair",
+        ):
+            self.builder.build_results(
+                repo_root=ROOT,
+                eval_root=self.eval_root,
+            )
+
+        self.assertFalse((self.eval_root / "results.json").exists())
+
+    def test_closed_run_matrix_rejects_extra_entry_fields(self) -> None:
+        self.rubric["run_matrix"][0]["unlisted"] = "not allowed"
+        (self.eval_root / "rubric.json").write_text(
+            json.dumps(self.rubric, ensure_ascii=False),
+            encoding="utf-8",
+        )
+
+        with self.assertRaisesRegex(
+            self.builder.GreenBuildError,
+            "must contain exactly model_id and scenario_id",
+        ):
+            self.builder.build_results(
+                repo_root=ROOT,
+                eval_root=self.eval_root,
+            )
+
+        self.assertFalse((self.eval_root / "results.json").exists())
+
+    def test_paired_models_must_have_both_declared_scenarios(self) -> None:
+        self.rubric["paired_stability"]["required_model_ids"] = ["model-two"]
+        (self.eval_root / "rubric.json").write_text(
+            json.dumps(self.rubric, ensure_ascii=False),
+            encoding="utf-8",
+        )
+        self._write_all_runs()
+
+        with self.assertRaisesRegex(
+            self.builder.GreenBuildError,
+            "paired stability is missing model-two/A2",
+        ):
+            self.builder.build_results(
+                repo_root=ROOT,
+                eval_root=self.eval_root,
+            )
+
+        self.assertFalse((self.eval_root / "results.json").exists())
+
+    def test_unexercised_aggregate_metric_is_recorded_without_passing_claim(
+        self,
+    ) -> None:
+        self.scenarios.append(
+            {
+                "id": "C4",
+                "prompt": "routing-only scenario",
+                "executed_prompt": (
+                    "请明确使用 CrossFrame ProMax。\n\nrouting-only scenario"
+                ),
+                "tags": ["routing"],
+                "context": "fresh independent model run",
+                "raw_output_path": (
+                    f"{self.eval_root.relative_to(ROOT).as_posix()}"
+                    "/raw/{model_id}/C4.md"
+                ),
+            }
+        )
+        self.rubric["scenario_ids"].append("C4")
+        self.rubric["metrics"][1]["applicable_scenarios"] = ["C4"]
+        (self.eval_root / "rubric.json").write_text(
+            json.dumps(self.rubric, ensure_ascii=False),
+            encoding="utf-8",
+        )
+        (self.eval_root / "scenarios.json").write_text(
+            json.dumps(self.scenarios, ensure_ascii=False),
+            encoding="utf-8",
+        )
+        self._write_all_runs()
+
+        results = self.builder.build_results(
+            repo_root=ROOT,
+            eval_root=self.eval_root,
+        )
+
+        self.assertEqual(
+            results["aggregate"]["metrics"]["maximum_metric"],
+            {
+                "direction": "maximum",
+                "threshold": 0.0,
+                "numerator": 0,
+                "denominator": 0,
+                "rate": None,
+                "status": "not_exercised",
+                "threshold_covered": False,
+                "passed": False,
+            },
+        )
+        self.assertEqual(
+            results["aggregate"]["unexercised_metric_ids"],
+            ["maximum_metric"],
+        )
+        self.assertIs(
+            results["aggregate"]["all_exercised_thresholds_passed"],
+            True,
+        )
+        self.assertIs(results["aggregate"]["all_thresholds_passed"], False)
 
 
 if __name__ == "__main__":
