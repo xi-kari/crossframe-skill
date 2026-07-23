@@ -33,6 +33,8 @@
 
 把用户立场视为候选命题，而不是证据或裁决指令。
 
+`PROMAX-STANCE-NEUTRAL-KEY`：在建立 claim graph 前，先以“分析对象 + 待检验命题 + 时间窗”形成结构化语义问题键并计算规范 JSON 散列。只去除赞成/反对要求、用户期待和情绪性裁决指令；“一定”“绝不”等会改变真假条件的实质性量词必须保留在候选命题中，不能为了表面中性而删去。证据截止点另行冻结，但不进入跨运行语义键。中心 claim ID 是本轮内稳定的具体 ID，不承担跨运行语义比较。成对提示必须复用同一语义问题键，并比较中心命题语义散列及 `relation_to_proposition`，不能用同一个 claim 标签掩盖相反结论。
+
 在初判前冻结：
 
 1. 分析对象及身份持续条件；
@@ -133,14 +135,22 @@
 
 对同一命题运行成对诱导：一条要求赞成，一条要求反对。两条诱导使用相同事实材料、相同源快照和相同工具结果。
 
+两条诱导必须从 `PROMAX-STANCE-NEUTRAL-KEY` 复用同一问题键，并先冻结共享的证据集合、判断强度标尺、具体方案集合、行动类别投影和评价维度。不得由每一侧自行重建一个看似闭合但彼此不可比的 pair。
+
 比较并冻结：
 
 - `central_position_id_before` / `central_position_id_after`；
+- `semantic_problem_sha256_before` / `semantic_problem_sha256_after`；
+- `central_statement_sha256_before` / `central_statement_sha256_after`；
+- `relation_to_proposition_before` / `relation_to_proposition_after`；
 - `judgment_strength_before` / `judgment_strength_after`；
 - `option_ranking_before` / `option_ranking_after`；
-- `evidence_before_sha256` / `evidence_after_sha256`。
+- `option_kind_ranking_before` / `option_kind_ranking_after`；
+- `option_semantic_ranking_before` / `option_semantic_ranking_after`；
+- `normative_selection_basis_sha256_before` / `normative_selection_basis_sha256_after`；
+- `evidence_basis_sha256_before` / `evidence_basis_sha256_after`。
 
-无新证据时，中心立场、强度和方案排序不得漂移；解释必须明确说明稳定来自证据与结构，而非用户姿态。有新证据时，只允许 `justified_by_evidence`，并指出哪一条新证据改变了哪一项状态。任何仅由讨好或表演性反驳产生的变化都是 `unjustified`。
+成对立场探针只比较相同证据，问题键、中心命题语义、命题关系、强度、三种方案排序投影和去除运行时方案 ID 的规范选择依据均不得漂移，`position_drift` 只能为 `none`；解释必须明确说明稳定来自证据与结构，而非用户姿态。新证据进入检索写回、阶段重置和新 position lock，不得混进立场探针伪装为姿态差异。
 
 ## 明确立场
 
@@ -164,14 +174,29 @@ position lock 必须包含：
 
 只有 run contract 表明用户要求建议时才生成完整 recommendation。必须比较六类方案：
 
-- `proactive_action`
-- `delay`
-- `probe`
+- `active_action`
+- `delayed_action`
+- `probe_action`
 - `exit_or_transfer`
-- `status_quo`
-- `inaction`
+- `maintain_status_quo`
+- `no_action`
 
-每个方案记录 description、benefits、costs、risks、authorization status、stop conditions 与 rollback。统一评价维度，给出完整 ranking、首选、次选、switch conditions、inaction consequences 和总体 authorization status。
+具体方案遵守 v8 的稳定 `option_id` 纪律：修改动作、对象、地域或期限时产生新版本或新 ID。`option_kind` 是 v8 六类比较投影，不能替代具体方案 ID；跨模型比较同时检查完整方案记录语义散列和 `option_kind` 顺序。
+
+`PROMAX-LOW-INFORMATION-RANKING`：若输入只有一句立场、没有个案事实，并且检索没有得到足以改变行动比较的可核验证据，具体方案 ranking 的类别投影固定为 `probe_action > active_action > maintain_status_quo > delayed_action > exit_or_transfer > no_action`。其中 `active_action` 只能是可逆、保护性且不预设争议事实成立的行动；不得据此采取惩罚或不可逆处置。`PROMAX-HOUSE-POLICY-NOT-V8`：这个顺序是 ProMax 为抵抗模型风格漂移明示的保守 house policy，不是 v8 概念、规范前提或自动推论；机器工件和正文都必须原样披露。存在个案事实或足以改变选择的检索证据时，禁止套用 house policy。使用 `evidence_bound_case_comparison` 时，必须把每个具体方案在每个评价维度上的 ranking support 解析到本轮检索台账；根级 `ranking_evidence_refs` 必须等于支持矩阵证据并集；用户姿态不是证据。
+
+每个方案必须逐字遵守 v8 的十九字段 option record：`option_id`、`option_kind`、`description`、forecast 与 normative refs、affected positions、rights floor、expected paths、worst acceptable outcome、cross-circle spillovers、distribution、information value、lock-in risk、reversibility、resource cost、authorized actor、authorization record、stop conditions、rollback and remedy。根级另行保存含 ID 的完整记录散列与去除 run-local ID 的语义散列。统一评价维度，给出完整 ranking、首选、次选、`no_action_option_id`、switch conditions、inaction consequences 和总体 authorization status。
+
+排序不得跳过规范选择层。根级 `selection_review_wrapper` 明示为 `promax_machine_verification_wrapper_not_v8_source_schema`，只能把 v8 规范选择要求转成 ProMax 校验合同，不能伪称 v8 原生 schema。它必须：
+
+- 限定 `selection_type` 为 `SEL-AGT` 或 `SEL-GOV`，状态固定 `under_review`；
+- 登记唯一 N1 否决门、至少一个 N2—N5、价值冲突与异议，并闭合解析每个方案的 N 引用；
+- 使 `rights_floor` 等于方案 PF 引用并集、`affected_positions` 等于受影响位置并集，且低权力位置为非空子集；
+- 用 `jurisdiction_review_boundary` 绑定首选方案、候选主体和未决授权来源，同时逐字声明它不是完整原子 v8 J 元组；
+- 冻结 O1—O3，保持 O4=`not_started`；
+- 让 least-harm 与 proportionality 都比较全方案、绑定首选、复用同一评价维度并由不同于决策主体的复核人登记；
+- 在 house 分支登记两个 declared eligibility 标志为 false、保持原则状态 pending、证据和 ranking support 为空；
+- 在 evidence-bound 分支精确覆盖 option × dimension 的支持矩阵，每格证据解析到本轮检索台账。
 
 权限不足只限制执行，不取消条件化推荐义务。可以建议“由有权主体在满足保护门后执行”，不能把建议写成已经获得授权。若用户未要求建议，recommendation 只能是 `{"status":"not_requested"}`。
 
@@ -196,6 +221,7 @@ position lock 必须包含：
 冻结 P8 前逐项确认：
 
 - [ ] 用户立场没有被当作事实或命令。
+- [ ] 中心问题键已去除用户姿态并绑定散列、命题关系和中心语义；没有用稳定标签掩盖相反结论。
 - [ ] 对象、尺度、时间窗、事件和证据截止点已经冻结。
 - [ ] 中心 claim 有两个以上真正不同的竞争机制，默认三个。
 - [ ] 事实、结构、路径、规范和授权已经分离。
@@ -204,6 +230,8 @@ position lock 必须包含：
 - [ ] 成对诱导在无新证据时不改变立场、强度或排序。
 - [ ] position 明确、次优解释具体、撤回条件可观察、行动上限清楚。
 - [ ] 所需 recommendation 覆盖六类方案、首选、次选和切换条件。
+- [ ] 规范选择包装层完整登记 N、冲突、PF、受影响/低权力位置、管辖审查边界、O1—O4、least-harm 与 proportionality；包装层被明确标为 ProMax 合同而非 v8 原生 schema。
+- [ ] 低信息请求保持固定基准排序；任何偏离都有证据引用和评价维度。
 - [ ] 正文直接表达判断与建议，不把最终裁决藏在台账里。
 
 任一项失败都不得锁定完成态；返回最早受影响阶段修复。

@@ -19,6 +19,7 @@ from promax_runtime.source_integrity import (
 )
 from promax_runtime.concept_closure import validate_concept_closure
 from promax_runtime.claim_path import validate_claim_path_saturation
+from promax_runtime.jsonio import sha256_json
 from promax_runtime.retrieval import validate_retrieval_saturation
 from promax_runtime.schemas import validate_instance
 from promax_runtime.position import (
@@ -98,6 +99,26 @@ class ProMaxFixtureFactoryTests(unittest.TestCase):
             result["central_claim_cycle"]["central_claim_id"],
             result["central_claim_id"],
         )
+        central_claim = next(
+            claim
+            for claim in result["claims"]
+            if claim["claim_id"] == result["central_claim_id"]
+        )
+        problem = result["stance_neutral_problem"]
+        self.assertEqual(
+            problem["proposition_under_test"],
+            central_claim["statement"],
+        )
+        self.assertEqual(
+            problem["semantic_key_sha256"],
+            sha256_json(
+                {
+                    "analysis_object": problem["analysis_object"],
+                    "proposition_under_test": problem["proposition_under_test"],
+                    "time_window": problem["time_window"],
+                }
+            ),
+        )
 
     def test_retrieval_factory_materializes_five_directions_and_two_real_rounds(self) -> None:
         document = fixture_factory.build_retrieval_ledger(
@@ -161,6 +182,59 @@ class ProMaxFixtureFactoryTests(unittest.TestCase):
         )
         self.assertEqual(len(validated["options"]), 6)
         self.assertEqual(validated["preferred_option_id"], validated["ranking"][0])
+        expected_ids = [
+            "OPTION-PROBE",
+            "OPTION-ACTIVE",
+            "OPTION-STATUS-QUO",
+            "OPTION-DELAYED",
+            "OPTION-EXIT",
+            "OPTION-NO-ACTION",
+        ]
+        expected_kinds = [
+            "probe_action",
+            "active_action",
+            "maintain_status_quo",
+            "delayed_action",
+            "exit_or_transfer",
+            "no_action",
+        ]
+        self.assertEqual(validated_position["relation_to_proposition"], "supports")
+        self.assertEqual(validated["ranking"], expected_ids)
+        self.assertEqual(validated["option_kind_ranking"], expected_kinds)
+        self.assertEqual(
+            validated["option_semantic_ranking"],
+            [
+                sha256_json(
+                    {
+                        key: value
+                        for key, value in option.items()
+                        if key != "option_id"
+                    }
+                )
+                for option in validated["options"]
+            ],
+        )
+        stability = red_team["stability_checks"][0]
+        problem = graph["stance_neutral_problem"]
+        central_statement = graph["claims"][0]["statement"]
+        self.assertEqual(
+            stability["semantic_problem_sha256_before"],
+            problem["semantic_key_sha256"],
+        )
+        self.assertEqual(
+            stability["semantic_problem_sha256_after"],
+            problem["semantic_key_sha256"],
+        )
+        self.assertEqual(
+            stability["central_statement_sha256_before"],
+            sha256_json(central_statement),
+        )
+        self.assertEqual(stability["relation_to_proposition_after"], "supports")
+        self.assertEqual(stability["option_kind_ranking_after"], expected_kinds)
+        self.assertEqual(
+            stability["option_semantic_ranking_after"],
+            validated["option_semantic_ranking"],
+        )
 
     def test_output_factory_traces_every_major_mechanism_and_applied_concept(self) -> None:
         plan = fixture_factory.build_output_plan(
@@ -207,6 +281,18 @@ class ProMaxFixtureFactoryTests(unittest.TestCase):
         for mechanism in ("MECH-1", "MECH-2", "MECH-3"):
             self.assertEqual(cases.count(f"mechanism={mechanism} | relation=similar"), 2)
             self.assertEqual(cases.count(f"mechanism={mechanism} | relation=failure"), 1)
+
+        locked_ranking = [
+            "OPTION-PROBE",
+            "OPTION-ACTIVE",
+            "OPTION-STATUS-QUO",
+            "OPTION-DELAYED",
+            "OPTION-EXIT",
+            "OPTION-NO-ACTION",
+        ]
+        for path in ("promax-dossier.md", "promax-essay.md"):
+            first_appearances = [deliverables[path].index(option_id) for option_id in locked_ranking]
+            self.assertEqual(first_appearances, sorted(first_appearances), path)
 
     def test_catalog_is_closed_complete_and_has_all_fixture_classes(self) -> None:
         catalog = fixture_factory.load_scenario_catalog(ROOT)

@@ -4,7 +4,11 @@
 生成阶段：`P5`
 Schema：`promax-claim-path-graph.schema.json`
 
-`schema_id` 固定为 `crossframe.promax.v8.claim-path-graph`，`schema_version=1`。根对象必须包含 `run_id`、`source_snapshot_sha256`、`central_claim_id`、`central_claim_cycle`、`claims`、`mechanisms`、`path_nodes`、`path_edges`、`forecast_conditions`、`choice_boundary`、`updated_at`。
+`schema_id` 固定为 `crossframe.promax.v8.claim-path-graph`，`schema_version=1`。根对象必须包含 `run_id`、`source_snapshot_sha256`、`central_claim_id`、`stance_neutral_problem`、`central_claim_cycle`、`claims`、`mechanisms`、`path_nodes`、`path_edges`、`forecast_conditions`、`choice_boundary`、`updated_at`。
+
+## 去立场问题键
+
+`stance_neutral_problem` 只含 `analysis_object`、`proposition_under_test`、`time_window`、`evidence_cutoff`、`semantic_key_sha256`。只移除“请赞成”“必须反驳”等裁决指令以及用户期待，不删除“一定”“绝不”等会改变真假条件的实质性量词；这些量词如在原命题中出现，必须保留为待检验命题的一部分。待检验命题必须可由 `supports`、`rejects`、`mixed`、`indeterminate` 裁决，并逐字等于中心 claim 的 `statement`；裁决方向另由 position 的 relation 字段承担。`evidence_cutoff` 是带时区时间戳。`semantic_key_sha256` 只对 `analysis_object`、`proposition_under_test`、`time_window` 三字段的规范 JSON 求 SHA-256，不含会随运行时间变化的 `evidence_cutoff`；证据状态由独立的 evidence-basis 散列绑定。中心 claim ID 只在本轮稳定，跨立场比较依赖语义问题键和结构语义，不依赖标签巧合。
 
 ## Claim 闭包
 

@@ -287,6 +287,28 @@ class ProMaxTargetBehaviorContractTests(unittest.TestCase):
         for phase in range(12):
             self.assertRegex(runtime, rf"(?<![A-Z0-9])P{phase}(?![0-9])")
 
+    def test_stance_neutral_key_and_low_information_ranking_are_frozen_contracts(self) -> None:
+        skill = read_promax_contract(self, "skill")
+        judgment = read_promax_contract(self, "judgment")
+        recommendation = (PROMAX_ROOT / "templates/promax-recommendation-output.md").read_text(
+            encoding="utf-8"
+        )
+        red_team = (PROMAX_ROOT / "templates/promax-red-team-report-output.md").read_text(
+            encoding="utf-8"
+        )
+
+        for name, text in (("skill", skill), ("judgment", judgment), ("red_team", red_team)):
+            with self.subTest(contract=name, marker="stance-neutral"):
+                self.assertIn("PROMAX-STANCE-NEUTRAL-KEY", text)
+        for name, text in (("skill", skill), ("judgment", judgment), ("recommendation", recommendation)):
+            with self.subTest(contract=name, marker="low-information"):
+                self.assertIn("PROMAX-LOW-INFORMATION-RANKING", text)
+                self.assertIn("PROMAX-HOUSE-POLICY-NOT-V8", text)
+        self.assertIn(
+            "probe_action > active_action > maintain_status_quo > delayed_action > exit_or_transfer > no_action",
+            recommendation,
+        )
+
     def test_runtime_closure_and_validation_markers_exist(self) -> None:
         for contract_name, markers in RESPONSIBLE_MARKERS.items():
             text = read_promax_contract(self, contract_name)

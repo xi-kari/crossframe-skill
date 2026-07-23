@@ -11,6 +11,7 @@ RUNTIME_SCRIPTS = ROOT / "skills/crossframe-promax/scripts"
 sys.path.insert(0, str(RUNTIME_SCRIPTS))
 
 from promax_runtime.claim_path import validate_claim_path_saturation
+from promax_runtime.jsonio import sha256_json
 from promax_runtime.source_integrity import V8_SOURCE_SNAPSHOT_SHA256
 
 
@@ -18,16 +19,30 @@ RUN_ID = "promax-claim-path-run"
 CENTRAL_CLAIM = "CLAIM-CENTRAL"
 CONCEPT_ID = "V8-CANON-U01"
 STAMP = "2026-07-23T12:00:00Z"
+CENTRAL_STATEMENT = "A bounded transfer mechanism best explains the observed structural update."
 
 
 def graph(mechanism_count: int = 3) -> dict[str, object]:
     mechanism_ids = [f"MECH-{index}" for index in range(1, mechanism_count + 1)]
+    semantic_problem_payload = {
+        "analysis_object": "the observed structural update",
+        "proposition_under_test": CENTRAL_STATEMENT,
+        "time_window": "the registered observation horizon",
+    }
+    problem_payload = {
+        **semantic_problem_payload,
+        "evidence_cutoff": STAMP,
+    }
     return {
         "schema_id": "crossframe.promax.v8.claim-path-graph",
         "schema_version": 1,
         "run_id": RUN_ID,
         "source_snapshot_sha256": V8_SOURCE_SNAPSHOT_SHA256,
         "central_claim_id": CENTRAL_CLAIM,
+        "stance_neutral_problem": {
+            **problem_payload,
+            "semantic_key_sha256": sha256_json(semantic_problem_payload),
+        },
         "central_claim_cycle": {
             "central_claim_id": CENTRAL_CLAIM,
             "initial_judgment": "The structural mechanism is currently the leading conditional explanation.",
@@ -41,7 +56,7 @@ def graph(mechanism_count: int = 3) -> dict[str, object]:
         "claims": [
             {
                 "claim_id": CENTRAL_CLAIM,
-                "statement": "A bounded transfer mechanism best explains the observed structural update.",
+                "statement": CENTRAL_STATEMENT,
                 "claim_type": "mechanistic",
                 "evidence_refs": ["EVIDENCE-OBSERVED-01"],
                 "concept_ids": [CONCEPT_ID],

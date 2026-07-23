@@ -33,6 +33,7 @@ from promax_runtime.materialization import (
     CONCEPT_DECISIONS_ARTIFACT,
     MaterializationError,
     ROLE_ATTESTATIONS_ARTIFACT,
+    _bind_stability_control_fields,
     _build_concept_ledger,
     _rationale_template_fingerprint,
     _role_records,
@@ -193,9 +194,18 @@ def populate_authoring(
         completed_at="2026-07-23T10:06:00Z",
         network_available=network_available,
     )
+    evidence_basis_sha256 = sha256_json(
+        {
+            "request_sha256": contract["request_sha256"],
+            "source_snapshot_sha256": contract["source_snapshot_sha256"],
+            "local_world_model_sha256": sha256_json(local_world),
+            "retrieval_ledger_sha256": sha256_json(retrieval),
+        }
+    )
     red_team = fixture_factory.build_red_team_report(
         run_id=run_id,
         completed_at="2026-07-23T10:07:00Z",
+        evidence_basis_sha256=evidence_basis_sha256,
     )
     position = fixture_factory.build_position_lock(
         run_id=run_id,
@@ -222,7 +232,10 @@ def populate_authoring(
     for name, value in semantic_json.items():
         write_json(authoring_dir / name, value)
 
-    deliverables = fixture_factory.build_deliverables(ROOT)
+    deliverables = fixture_factory.build_deliverables(
+        ROOT,
+        recommendation=recommendation,
+    )
     deliverables["promax-concept-atlas.md"] = deliverables[
         "promax-concept-atlas.md"
     ].replace(
@@ -275,6 +288,78 @@ def populate_authoring(
                 record["completed_at"] = "2026-07-23T10:10:30Z"
         write_json(attestation_path, attestations)
 
+
+class ProMaxControlBindingTests(unittest.TestCase):
+    def test_control_plane_derives_semantic_problem_prompt_and_evidence_hashes(self) -> None:
+        contract = {
+            "request_sha256": "a" * 64,
+            "source_snapshot_sha256": "b" * 64,
+        }
+        documents = {
+            "promax-claim-path-graph.json": {
+                "stance_neutral_problem": {
+                    "analysis_object": "对象",
+                    "proposition_under_test": "对象一定会转型",
+                    "time_window": "未来一年",
+                    "evidence_cutoff": STAMP,
+                }
+            },
+            "promax-local-world-model.locked.json": {"known": ["事实"]},
+            "promax-retrieval-ledger.json": {"entries": []},
+            "promax-red-team-report.json": {
+                "stability_checks": [
+                    {
+                        "pro_prompt": "请赞成对象一定会转型",
+                        "anti_prompt": "请反对对象一定会转型",
+                    }
+                ]
+            },
+            "promax-position.locked.json": {
+                "relation_to_proposition": "mixed",
+                "position": "占位",
+            },
+        }
+
+        _bind_stability_control_fields(documents, contract)
+
+        problem = documents["promax-claim-path-graph.json"][
+            "stance_neutral_problem"
+        ]
+        expected_problem = sha256_json(
+            {
+                "analysis_object": "对象",
+                "proposition_under_test": "对象一定会转型",
+                "time_window": "未来一年",
+            }
+        )
+        self.assertEqual(problem["semantic_key_sha256"], expected_problem)
+        check = documents["promax-red-team-report.json"]["stability_checks"][0]
+        self.assertEqual(
+            check["pro_prompt_sha256"],
+            sha256_json("请赞成对象一定会转型"),
+        )
+        self.assertEqual(
+            check["semantic_problem_sha256_before"],
+            expected_problem,
+        )
+        self.assertEqual(
+            check["evidence_basis_sha256_before"],
+            check["evidence_basis_sha256_after"],
+        )
+        self.assertEqual(
+            documents["promax-position.locked.json"]["proposition_verdict"],
+            "VERDICT[mixed] 对象一定会转型",
+        )
+
+        forged = copy.deepcopy(documents)
+        forged["promax-red-team-report.json"]["stability_checks"][0][
+            "evidence_basis_sha256_after"
+        ] = "c" * 64
+        with self.assertRaisesRegex(
+            MaterializationError,
+            "semantic_fixed_field_mismatch",
+        ):
+            _bind_stability_control_fields(forged, contract)
 
 class ProMaxProductionMaterializerTests(unittest.TestCase):
     @classmethod

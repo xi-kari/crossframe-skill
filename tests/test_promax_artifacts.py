@@ -28,10 +28,75 @@ RUN_ID = "promax-output-test"
 STAMP = "2026-07-23T06:00:00Z"
 RUN_NONCE = "n" * 64
 REQUEST_SHA256 = hashlib.sha256(b"promax-output-request").hexdigest()
+CENTRAL_STATEMENT = "当前结构最符合机制甲。"
+OPTION_IDS_BY_OPTION_KIND = (
+    ("active_action", "OPTION-ACTIVE"),
+    ("delayed_action", "OPTION-DELAYED"),
+    ("probe_action", "OPTION-PROBE"),
+    ("exit_or_transfer", "OPTION-EXIT"),
+    ("maintain_status_quo", "OPTION-STATUS-QUO"),
+    ("no_action", "OPTION-NO-ACTION"),
+)
+LOW_INFORMATION_RANKING = (
+    "OPTION-PROBE",
+    "OPTION-ACTIVE",
+    "OPTION-STATUS-QUO",
+    "OPTION-DELAYED",
+    "OPTION-EXIT",
+    "OPTION-NO-ACTION",
+)
+SELECTION_SOURCE_REFS = (
+    "V8-P3561",
+    "V8-P3564",
+    "V8-P3569",
+    "V8-P3570",
+    "V8-P3571",
+    "V8-P3572",
+    "V8-P3574",
+    "V8-P3575",
+    "V8-P3580",
+    "V8-P3581",
+    "V8-P3584",
+    "V8-P3587",
+    "V8-P3588",
+    "V8-P3589",
+    "V8-P3596",
+    "V8-P3598",
+    "V8-P3599",
+    "V8-P3601",
+    "V8-P3602",
+)
 
 
 def text_sha(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
+def string_leaves(value: object) -> list[str]:
+    if isinstance(value, dict):
+        result: list[str] = []
+        for child in value.values():
+            result.extend(string_leaves(child))
+        return result
+    if isinstance(value, list):
+        result = []
+        for child in value:
+            result.extend(string_leaves(child))
+        return result
+    return [value] if isinstance(value, str) and value else []
+
+
+def stance_neutral_problem() -> dict[str, str]:
+    semantic_payload = {
+        "analysis_object": "当前结构",
+        "proposition_under_test": CENTRAL_STATEMENT,
+        "time_window": "本轮冻结时间窗",
+    }
+    return {
+        **semantic_payload,
+        "evidence_cutoff": "2026-07-23T02:00:00Z",
+        "semantic_key_sha256": sha256_json(semantic_payload),
+    }
 
 
 def run_contract(
@@ -91,8 +156,10 @@ def position() -> dict[str, object]:
         "schema_version": 1,
         "run_id": RUN_ID,
         "source_snapshot_sha256": V8_SOURCE_SNAPSHOT_SHA256,
-        "central_claim_id": "CLAIM-1",
-        "position": "当前条件下，机制甲是最合理解释。",
+        "central_claim_id": "CLAIM-CENTRAL",
+        "relation_to_proposition": "supports",
+        "proposition_verdict": f"VERDICT[supports] {CENTRAL_STATEMENT}",
+        "position": f"VERDICT[supports] {CENTRAL_STATEMENT} 当前条件下，机制甲是最合理解释。",
         "judgment_strength": "moderate",
         "primary_reasons": ["当前结构最符合机制甲。"],
         "runner_up_explanation": "机制乙在对象边界改变时成为次优解释。",
@@ -106,29 +173,119 @@ def position() -> dict[str, object]:
     }
 
 
+def selection_review_wrapper(
+    *,
+    option_ids: list[str],
+    evaluation_dimensions: list[str],
+) -> dict[str, object]:
+    base_review = {
+        "principle_version": "v8",
+        "selected_option_id": "OPTION-PROBE",
+        "compared_option_ids": [*option_ids],
+        "evaluation_dimensions": [*evaluation_dimensions],
+        "sufficient_reason": "低信息条件下只形成待复核的可逆探针偏好。",
+        "evidence_refs": [],
+        "reviewer_ref": "REVIEWER-INDEPENDENT-1",
+        "reviewed_at": "2026-07-23T04:30:00Z",
+        "status": "pending",
+    }
+    return {
+        "wrapper_schema_id": "crossframe.promax.selection-review-wrapper",
+        "wrapper_schema_version": 1,
+        "wrapper_role": "promax_machine_verification_wrapper_not_v8_source_schema",
+        "source_paragraph_refs": [*SELECTION_SOURCE_REFS],
+        "selection_type": "SEL-AGT",
+        "selection_status": "under_review",
+        "public_value_premises": [
+            {
+                "normative_principle_id": "N1",
+                "role": "veto_gate",
+                "statement": "解释不授权处置",
+            },
+            {
+                "normative_principle_id": "N2",
+                "role": "constraint",
+                "statement": "保护不得降级",
+            },
+        ],
+        "value_conflicts": [
+            {
+                "conflict_id": "VALUE-CONFLICT-1",
+                "premise_ids": ["N1", "N2"],
+                "affected_position_refs": ["POSITION-AFFECTED-1"],
+                "dissent_refs": ["DISSENT-1"],
+                "decision_rule": "保护条件未解决时继续审议。",
+                "status": "open",
+            }
+        ],
+        "unresolved_dissent_refs": ["DISSENT-1"],
+        "rights_floor": ["PF-1"],
+        "affected_positions": ["POSITION-AFFECTED-1"],
+        "low_power_position_ids": ["POSITION-AFFECTED-1"],
+        "jurisdiction_review_boundary": {
+            "boundary_role": "promax_review_boundary_not_atomic_v8_j_tuple",
+            "reviewed_option_id": "OPTION-PROBE",
+            "decision_actor_ref": "UNRESOLVED-DECISION-ACTOR",
+            "authorization_source_ref": "UNRESOLVED-AUTHORIZATION-SOURCE",
+            "jurisdiction_ref": "UNRESOLVED-JURISDICTION",
+            "scope": "analysis_only",
+            "valid_from": "2026-07-23T00:00:00Z",
+            "valid_until": "2026-07-24T00:00:00Z",
+            "authorization_status": "not_authorized",
+        },
+        "procedure_states": {
+            "O1": "complete",
+            "O2": "complete",
+            "O3": "in_review",
+            "O4": "not_started",
+        },
+        "least_harm": {
+            **base_review,
+            "principle_id": "NSP-LEAST-HARM",
+        },
+        "proportionality": {
+            **base_review,
+            "principle_id": "NSP-PROPORTIONALITY",
+        },
+        "declared_low_information_house_policy_eligibility": {
+            "case_specific_facts_present": False,
+            "choice_changing_retrieval_evidence_present": False,
+            "basis": "没有个案事实，也没有改变选择的检索证据。",
+        },
+        "ranking_support": [],
+    }
+
+
 def recommendation(position_record: dict[str, object]) -> dict[str, object]:
-    kinds = (
-        "proactive_action",
-        "delay",
-        "probe",
-        "exit_or_transfer",
-        "status_quo",
-        "inaction",
-    )
     options = [
         {
-            "option_id": f"OPTION-{index}",
-            "action_kind": kind,
+            "option_id": option_id,
+            "option_kind": kind,
             "description": f"方案{index}：{kind}",
-            "benefits": ["保留结构收益"],
-            "costs": ["承担可比较成本"],
-            "risks": ["存在条件性风险"],
-            "authorization_status": "requires_authorized_decision_maker",
+            "forecast_refs": ["FORECAST-1"],
+            "normative_premise_refs": ["N1", "N2"],
+            "affected_position_refs": ["POSITION-AFFECTED-1"],
+            "rights_floor_refs": ["PF-1"],
+            "expected_paths": [f"PATH-{index}"],
+            "worst_acceptable_outcome": "损害不越过冻结上限",
+            "cross_circle_spillovers": ["记录相邻圈层外溢"],
+            "distribution_of_costs_and_benefits": "逐位置登记成本与收益",
+            "information_value": "记录方案产生的辨识信息",
+            "lock_in_risk": "保持低锁定并登记升级条件",
+            "reversibility": "可停止并回到冻结状态",
+            "resource_cost": "需要受限资源投入",
+            "authorized_actor_ref": "UNRESOLVED-DECISION-ACTOR",
+            "authorization_record_ref": "UNRESOLVED-AUTHORIZATION-SOURCE",
             "stop_conditions": ["边界证据失效时停止"],
-            "rollback": ["回到冻结前状态"],
+            "rollback_and_remedy": ["回到冻结前状态并修复损害"],
         }
-        for index, kind in enumerate(kinds, start=1)
+        for index, (kind, option_id) in enumerate(
+            OPTION_IDS_BY_OPTION_KIND,
+            start=1,
+        )
     ]
+    options_by_id = {option["option_id"]: option for option in options}
+    evaluation_dimensions = ["结构解释力", "可逆性", "风险"]
     return {
         "schema_id": "crossframe.promax.v8.recommendation",
         "schema_version": 1,
@@ -136,11 +293,36 @@ def recommendation(position_record: dict[str, object]) -> dict[str, object]:
         "source_snapshot_sha256": V8_SOURCE_SNAPSHOT_SHA256,
         "position_sha256": sha256_json(position_record),
         "options": options,
-        "evaluation_dimensions": ["结构解释力", "可逆性", "风险"],
-        "ranking": [option["option_id"] for option in options],
-        "preferred_option_id": "OPTION-1",
-        "second_option_id": "OPTION-2",
-        "switch_conditions": ["对象边界改变时切换到 OPTION-2"],
+        "evaluation_dimensions": evaluation_dimensions,
+        "ranking": [*LOW_INFORMATION_RANKING],
+        "ranking_policy": "promax_low_information_house_policy_not_v8",
+        "ranking_evidence_refs": [],
+        "selection_review_wrapper": selection_review_wrapper(
+            option_ids=list(options_by_id),
+            evaluation_dimensions=evaluation_dimensions,
+        ),
+        "option_kind_ranking": [
+            options_by_id[option_id]["option_kind"]
+            for option_id in LOW_INFORMATION_RANKING
+        ],
+        "option_record_hashes": [
+            {"option_id": option_id, "record_sha256": sha256_json(option)}
+            for option_id, option in options_by_id.items()
+        ],
+        "option_semantic_ranking": [
+            sha256_json(
+                {
+                    key: value
+                    for key, value in options_by_id[option_id].items()
+                    if key != "option_id"
+                }
+            )
+            for option_id in LOW_INFORMATION_RANKING
+        ],
+        "preferred_option_id": "OPTION-PROBE",
+        "second_option_id": "OPTION-ACTIVE",
+        "no_action_option_id": "OPTION-NO-ACTION",
+        "switch_conditions": ["对象边界改变时切换到 OPTION-ACTIVE"],
         "inaction_consequences": ["不行动会继续累积机会成本"],
         "authorization_status": "conditional_recommendation_only",
         "locked_at": "2026-07-23T05:00:00Z",
@@ -204,11 +386,12 @@ def concept_disposition() -> dict[str, object]:
 
 def claim_graph() -> dict[str, object]:
     return {
-        "central_claim_id": "CLAIM-1",
+        "central_claim_id": "CLAIM-CENTRAL",
+        "stance_neutral_problem": stance_neutral_problem(),
         "claims": [
             {
-                "claim_id": "CLAIM-1",
-                "statement": "当前结构最符合机制甲。",
+                "claim_id": "CLAIM-CENTRAL",
+                "statement": CENTRAL_STATEMENT,
                 "concept_ids": ["V8-CANON-OBJECT"],
             }
         ],
@@ -216,13 +399,13 @@ def claim_graph() -> dict[str, object]:
             {
                 "mechanism_id": "MECH-1",
                 "label": "机制甲",
-                "claim_ids": ["CLAIM-1"],
+                "claim_ids": ["CLAIM-CENTRAL"],
                 "distinguishing_conditions": ["对象边界保持稳定"],
             },
             {
                 "mechanism_id": "MECH-2",
                 "label": "机制乙",
-                "claim_ids": ["CLAIM-1"],
+                "claim_ids": ["CLAIM-CENTRAL"],
                 "distinguishing_conditions": ["对象边界发生改变"],
             },
         ],
@@ -240,7 +423,7 @@ def output_plan(recommendation_required: bool = True) -> dict[str, object]:
                 "section_id": "SECTION-1",
                 "title": "中心判断与概念解释",
                 "concept_ids": ["V8-CANON-OBJECT", "V8-CANON-BOUNDARY"],
-                "claim_ids": ["CLAIM-1"],
+                "claim_ids": ["CLAIM-CENTRAL"],
                 "example_ids": [
                     "EX-M1-S1",
                     "EX-M1-S2",
@@ -296,10 +479,41 @@ def case_text() -> str:
 
 
 def deliverables() -> dict[str, str]:
-    dossier = """# 推演档案
-当前结构最符合机制甲。方案全集包括 OPTION-1、OPTION-2、OPTION-3、OPTION-4、OPTION-5、OPTION-6。
-方案1：proactive_action；方案2：delay；方案3：probe；方案4：exit_or_transfer；方案5：status_quo；方案6：inaction。
-"""
+    locked_position = position()
+    locked_recommendation = recommendation(locked_position)
+    options_by_id = {
+        option["option_id"]: option for option in locked_recommendation["options"]
+    }
+    ranking = locked_recommendation["ranking"]
+    wrapper = locked_recommendation["selection_review_wrapper"]
+    eligibility_line = (
+        "declared_low_information_house_policy_eligibility: "
+        "case_specific_facts_present=false; "
+        "choice_changing_retrieval_evidence_present=false"
+    )
+    dossier_wrapper_line = "；".join(
+        [
+            str(wrapper["wrapper_schema_id"]),
+            str(wrapper["wrapper_role"]),
+            *[str(item) for item in wrapper["source_paragraph_refs"]],
+            str(wrapper["selection_type"]),
+            str(wrapper["selection_status"]),
+            str(wrapper["jurisdiction_review_boundary"]["boundary_role"]),
+            str(wrapper["least_harm"]["principle_id"]),
+            str(wrapper["least_harm"]["status"]),
+            str(wrapper["proportionality"]["principle_id"]),
+            str(wrapper["proportionality"]["status"]),
+        ]
+    )
+    essay_wrapper_line = "；".join(dict.fromkeys(string_leaves(wrapper)))
+    dossier = (
+        "# 推演档案\n"
+        f"{CENTRAL_STATEMENT} 方案全集包括 {'、'.join(ranking)}。\n"
+        "ranking_policy=promax_low_information_house_policy_not_v8。\n"
+        "PROMAX-HOUSE-POLICY-NOT-V8：这是 ProMax 的低信息排序政策，不是 v8 概念、规范前提或 v8 自动结论；ranking_evidence_refs=[]。\n"
+        f"规范选择审查包装层：{dossier_wrapper_line}。\n"
+        f"{eligibility_line}\n"
+    )
     atlas = """# 概念图谱
 ## V8-CANON-OBJECT 对象边界
 对象由被分析关系与排除范围共同界定。对象边界直接决定本轮分析范围；它与边界约束相邻。误用边界：命名不等于实体存在。
@@ -308,23 +522,43 @@ def deliverables() -> dict[str, str]:
 边界约束说明对象何时需要重新冻结。边界约束决定何时重置对象；它与对象边界相邻。误用边界：边界不是永久不变。
 """
     option_details = "\n".join(
-        f"OPTION-{index} 方案{index}：{kind}；收益：保留结构收益；成本：承担可比较成本；"
-        "风险：存在条件性风险；授权：requires_authorized_decision_maker；"
-        "停止：边界证据失效时停止；回滚：回到冻结前状态。"
-        for index, kind in enumerate(
-            (
-                "proactive_action",
-                "delay",
-                "probe",
-                "exit_or_transfer",
-                "status_quo",
-                "inaction",
-            ),
-            start=1,
+        "；".join(
+            [
+                f"{option_id} {options_by_id[option_id]['description']}",
+                f"option_kind={options_by_id[option_id]['option_kind']}",
+                *[
+                    f"{field}="
+                    + "、".join(str(item) for item in options_by_id[option_id][field])
+                    for field in (
+                        "forecast_refs",
+                        "normative_premise_refs",
+                        "affected_position_refs",
+                        "rights_floor_refs",
+                        "expected_paths",
+                        "cross_circle_spillovers",
+                        "stop_conditions",
+                        "rollback_and_remedy",
+                    )
+                ],
+                *[
+                    f"{field}={options_by_id[option_id][field]}"
+                    for field in (
+                        "worst_acceptable_outcome",
+                        "distribution_of_costs_and_benefits",
+                        "information_value",
+                        "lock_in_risk",
+                        "reversibility",
+                        "resource_cost",
+                        "authorized_actor_ref",
+                        "authorization_record_ref",
+                    )
+                ],
+            ]
         )
+        for option_id in ranking
     )
     essay = f"""# 中心判断
-当前条件下，机制甲是最合理解释。判断强度：moderate。当前结构最符合机制甲。机制乙在对象边界改变时成为次优解释。
+{locked_position['position']} 判断强度：moderate。当前结构最符合机制甲。机制乙在对象边界改变时成为次优解释。
 
 对象边界是本轮判断的起点：对象由被分析关系与排除范围共同界定。对象边界直接决定本轮分析范围，并与边界约束共同工作；命名不等于实体存在。
 
@@ -334,7 +568,11 @@ def deliverables() -> dict[str, str]:
 
 评价维度包括结构解释力、可逆性、风险。
 {option_details}
-我明确首选 OPTION-1；次选 OPTION-2。对象边界改变时切换到 OPTION-2；不行动会继续累积机会成本；所有建议仅是 conditional_recommendation_only。
+ranking_policy=promax_low_information_house_policy_not_v8。PROMAX-HOUSE-POLICY-NOT-V8：这是 ProMax 的低信息排序政策，不是 v8 概念、规范前提或 v8 自动结论；ranking_evidence_refs=[]。
+selection_review_wrapper 完整公开语义：{essay_wrapper_line}。
+{eligibility_line}
+O1=complete；O2=complete；O3=in_review；O4=not_started。
+我明确首选 OPTION-PROBE；次选 OPTION-ACTIVE。对象边界改变时切换到 OPTION-ACTIVE；不行动会继续累积机会成本；所有建议仅是 conditional_recommendation_only。
 """
     return {
         "promax-dossier.md": dossier,
@@ -457,7 +695,7 @@ class ProMaxOutputBundleTests(unittest.TestCase):
     def test_semantically_complete_bundle_passes_with_length_only_as_anomaly(self) -> None:
         result = validate_output_bundle(**valid_bundle())
         self.assertEqual(result["status"], "valid")
-        self.assertIn("essay_length_below_advisory", result["anomalies"])
+        self.assertEqual(result["anomalies"], [])
         self.assertEqual(
             set(result["covered_concept_ids"]),
             {"V8-CANON-OBJECT", "V8-CANON-BOUNDARY"},
@@ -478,7 +716,7 @@ class ProMaxOutputBundleTests(unittest.TestCase):
         self.assertEqual(validate_output_bundle(**bundle)["status"], "valid")
 
         fabricated = copy.deepcopy(bundle)
-        fabricated["deliverables"]["promax-essay.md"] += "我建议优先选择 OPTION-1。"
+        fabricated["deliverables"]["promax-essay.md"] += "我建议优先选择 OPTION-PROBE。"
         fabricated["manifest"] = manifest(
             fabricated["deliverables"], fabricated["run_contract"]
         )
@@ -553,9 +791,9 @@ class ProMaxOutputBundleTests(unittest.TestCase):
         cases.append(no_dimension)
 
         unique_option_field = valid_bundle()
-        unique_option_field["recommendation"]["options"][0]["benefits"] = [
-            "OPTION-1 独有收益"
-        ]
+        unique_option_field["recommendation"]["options"][0]["information_value"] = (
+            "OPTION-ACTIVE 独有信息价值"
+        )
         cases.append(unique_option_field)
 
         for bundle in cases:
@@ -598,7 +836,7 @@ class ProMaxOutputBundleTests(unittest.TestCase):
     def test_marker_stuffing_and_long_repetition_cannot_replace_semantics(self) -> None:
         bundle = valid_bundle()
         bundle["deliverables"]["promax-essay.md"] = (
-            "V8-CANON-OBJECT V8-CANON-BOUNDARY CLAIM-1 MECH-1 POSITION-LOCK "
+            "V8-CANON-OBJECT V8-CANON-BOUNDARY CLAIM-CENTRAL MECH-1 POSITION-LOCK "
             * 1000
         )
         bundle["manifest"] = manifest(bundle["deliverables"], bundle["run_contract"])
@@ -623,30 +861,33 @@ V8-CANON-OBJECT:对象边界
 definition:对象由被分析关系与排除范围共同界定。
 V8-CANON-BOUNDARY:边界约束
 definition:边界约束说明对象何时需要重新冻结。
-CLAIM-1:当前结构最符合机制甲。
+CLAIM-CENTRAL:当前结构最符合机制甲。
 dimensions:结构解释力|可逆性|风险
-OPTION-1:方案1：proactive_action
-OPTION-2:方案2：delay
-OPTION-3:方案3：probe
-OPTION-4:方案4：exit_or_transfer
-OPTION-5:方案5：status_quo
-OPTION-6:方案6：inaction
+OPTION-PROBE:方案3：probe
+OPTION-PROACTIVE:方案1：proactive_action
+OPTION-STATUS-QUO:方案5：status_quo
+OPTION-DELAY:方案2：delay
+OPTION-EXIT:方案4：exit_or_transfer
+OPTION-INACTION:方案6：inaction
 benefits:保留结构收益
 costs:承担可比较成本
 risks:存在条件性风险
 authorization:requires_authorized_decision_maker
 stop:边界证据失效时停止
 rollback:回到冻结前状态
-preferred:首选 OPTION-1
-second:次选 OPTION-2
-switch:对象边界改变时切换到 OPTION-2
+preferred:首选 OPTION-PROBE
+second:次选 OPTION-PROACTIVE
+switch:对象边界改变时切换到 OPTION-PROACTIVE
 inaction:不行动会继续累积机会成本
 authorization:conditional_recommendation_only
 """
         self.assertGreaterEqual(len(bundle["deliverables"]["promax-essay.md"]), 750)
         self.assertLessEqual(len(bundle["deliverables"]["promax-essay.md"]), 1_000)
         refresh_delivery_bindings(bundle)
-        with self.assertRaisesRegex(ValueError, "continuous semantic paragraph"):
+        with self.assertRaisesRegex(
+            ValueError,
+            "locked position field|continuous semantic paragraph",
+        ):
             validate_output_bundle(**bundle)
 
     def test_every_applied_concept_requires_definition_role_misuse_and_neighbor_semantics(self) -> None:

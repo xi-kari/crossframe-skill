@@ -62,15 +62,49 @@ _POSITIVE_DRIFT_CLAIMS = (
     "different position",
     "different ranking",
 )
-_REQUIRED_ACTION_KINDS = frozenset(
+_REQUIRED_OPTION_KINDS = frozenset(
     {
-        "proactive_action",
-        "delay",
-        "probe",
+        "maintain_status_quo",
+        "active_action",
+        "delayed_action",
+        "probe_action",
         "exit_or_transfer",
-        "status_quo",
-        "inaction",
+        "no_action",
     }
+)
+_HOUSE_OPTION_KIND_RANKING = (
+    "probe_action",
+    "active_action",
+    "maintain_status_quo",
+    "delayed_action",
+    "exit_or_transfer",
+    "no_action",
+)
+_STANCE_NEUTRAL_PROBLEM_FIELDS = (
+    "analysis_object",
+    "proposition_under_test",
+    "time_window",
+)
+_SELECTION_REVIEW_SOURCE_PARAGRAPHS = (
+    "V8-P3561",
+    "V8-P3564",
+    "V8-P3569",
+    "V8-P3570",
+    "V8-P3571",
+    "V8-P3572",
+    "V8-P3574",
+    "V8-P3575",
+    "V8-P3580",
+    "V8-P3581",
+    "V8-P3584",
+    "V8-P3587",
+    "V8-P3588",
+    "V8-P3589",
+    "V8-P3596",
+    "V8-P3598",
+    "V8-P3599",
+    "V8-P3601",
+    "V8-P3602",
 )
 
 
@@ -141,6 +175,432 @@ def _semantic_tokens(text: str) -> set[str]:
                 for index in range(max(0, len(run) - width + 1))
             )
     return tokens
+
+
+def _option_semantic_payload(option: Mapping[str, object]) -> dict[str, object]:
+    return {
+        key: copy.deepcopy(value)
+        for key, value in option.items()
+        if key != "option_id"
+    }
+
+
+def _validate_selection_review_wrapper(
+    recommendation: Mapping[str, object],
+    *,
+    options: Sequence[Mapping[str, object]],
+    option_ids: Sequence[str],
+    evaluation_dimensions: Sequence[str],
+    preferred_option_id: str,
+    ranking_policy: object,
+    ranking_evidence_refs: Sequence[str],
+) -> str:
+    wrapper = recommendation.get("selection_review_wrapper")
+    if not isinstance(wrapper, Mapping):
+        raise ValueError("recommendation is missing the ProMax selection-review wrapper")
+    if tuple(wrapper.get("source_paragraph_refs", ())) != _SELECTION_REVIEW_SOURCE_PARAGRAPHS:
+        raise ValueError("selection-review wrapper is not bound to its exact v8 paragraph basis")
+
+    premises = _mapping_items(
+        wrapper.get("public_value_premises"),
+        field="selection_review_wrapper.public_value_premises",
+    )
+    premise_ids = [
+        premise.get("normative_principle_id") for premise in premises
+    ]
+    if (
+        any(not isinstance(premise_id, str) for premise_id in premise_ids)
+        or len(set(premise_ids)) != len(premise_ids)
+        or "N1" not in premise_ids
+        or not any(premise_id in {"N2", "N3", "N4", "N5"} for premise_id in premise_ids)
+    ):
+        raise ValueError(
+            "selection-review wrapper requires unique N1 plus at least one positive N2-N5 premise"
+        )
+    n1_records = [
+        premise
+        for premise in premises
+        if premise.get("normative_principle_id") == "N1"
+    ]
+    if len(n1_records) != 1 or n1_records[0].get("role") != "veto_gate":
+        raise ValueError("N1 must be the unique veto gate in public_value_premises")
+
+    option_premise_refs: set[str] = set()
+    option_rights_floor: set[str] = set()
+    option_affected_positions: set[str] = set()
+    options_by_id = {
+        str(option.get("option_id")): option
+        for option in options
+        if isinstance(option.get("option_id"), str)
+    }
+    for index, option in enumerate(options):
+        refs = _text_items(
+            option.get("normative_premise_refs"),
+            field=f"recommendation.options[{index}].normative_premise_refs",
+        )
+        if not set(refs).issubset(set(premise_ids)):
+            raise ValueError("an option cites an unregistered public value premise")
+        option_premise_refs.update(refs)
+        option_rights_floor.update(
+            _text_items(
+                option.get("rights_floor_refs"),
+                field=f"recommendation.options[{index}].rights_floor_refs",
+            )
+        )
+        option_affected_positions.update(
+            _text_items(
+                option.get("affected_position_refs"),
+                field=f"recommendation.options[{index}].affected_position_refs",
+            )
+        )
+    if option_premise_refs != set(premise_ids):
+        raise ValueError(
+            "public_value_premises must equal the normative premises used by the options"
+        )
+
+    rights_floor = set(
+        _text_items(
+            wrapper.get("rights_floor"),
+            field="selection_review_wrapper.rights_floor",
+        )
+    )
+    affected_positions = set(
+        _text_items(
+            wrapper.get("affected_positions"),
+            field="selection_review_wrapper.affected_positions",
+        )
+    )
+    low_power_positions = set(
+        _text_items(
+            wrapper.get("low_power_position_ids"),
+            field="selection_review_wrapper.low_power_position_ids",
+        )
+    )
+    if rights_floor != option_rights_floor:
+        raise ValueError("selection-review rights_floor is not closed over option records")
+    if not rights_floor.issubset({f"PF-{index}" for index in range(1, 11)}):
+        raise ValueError("selection-review rights_floor may contain only PF-1 through PF-10")
+    if affected_positions != option_affected_positions:
+        raise ValueError(
+            "selection-review affected_positions is not closed over option records"
+        )
+    if not low_power_positions.issubset(affected_positions):
+        raise ValueError("low_power_position_ids must be a subset of affected_positions")
+
+    conflicts = _mapping_items(
+        wrapper.get("value_conflicts"),
+        field="selection_review_wrapper.value_conflicts",
+    )
+    conflict_ids = [conflict.get("conflict_id") for conflict in conflicts]
+    if len(set(conflict_ids)) != len(conflict_ids):
+        raise ValueError("selection-review value-conflict IDs must be unique")
+    expected_unresolved_dissent: set[str] = set()
+    for conflict in conflicts:
+        if not set(
+            _text_items(
+                conflict.get("premise_ids"),
+                field="selection_review_wrapper.value_conflicts.premise_ids",
+            )
+        ).issubset(set(premise_ids)):
+            raise ValueError("a value conflict cites an unregistered normative premise")
+        if not set(
+            _text_items(
+                conflict.get("affected_position_refs"),
+                field="selection_review_wrapper.value_conflicts.affected_position_refs",
+            )
+        ).issubset(affected_positions):
+            raise ValueError("a value conflict cites an unregistered affected position")
+        dissent_refs = set(
+            _text_items(
+                conflict.get("dissent_refs"),
+                field="selection_review_wrapper.value_conflicts.dissent_refs",
+            )
+        )
+        if conflict.get("status") in {"open", "paused"}:
+            expected_unresolved_dissent.update(dissent_refs)
+    unresolved_dissent = set(
+        _text_items(
+            wrapper.get("unresolved_dissent_refs"),
+            field="selection_review_wrapper.unresolved_dissent_refs",
+        )
+    )
+    if unresolved_dissent != expected_unresolved_dissent:
+        raise ValueError(
+            "unresolved_dissent_refs must equal dissent preserved by open or paused conflicts"
+        )
+
+    jurisdiction = wrapper.get("jurisdiction_review_boundary")
+    if not isinstance(jurisdiction, Mapping):
+        raise ValueError("selection-review jurisdiction_review_boundary must be structured")
+    valid_from = _timestamp(
+        jurisdiction.get("valid_from"),
+        field="selection_review_wrapper.jurisdiction_review_boundary.valid_from",
+    )
+    valid_until = _timestamp(
+        jurisdiction.get("valid_until"),
+        field="selection_review_wrapper.jurisdiction_review_boundary.valid_until",
+    )
+    if valid_until <= valid_from:
+        raise ValueError("selection-review jurisdiction validity must have positive duration")
+    decision_actor_ref = jurisdiction.get("decision_actor_ref")
+    if jurisdiction.get("reviewed_option_id") != preferred_option_id:
+        raise ValueError(
+            "jurisdiction review boundary is not bound to the preferred option"
+        )
+    preferred_options = [
+        option for option in options if option.get("option_id") == preferred_option_id
+    ]
+    if len(preferred_options) != 1:
+        raise ValueError("preferred option is not uniquely resolvable")
+    preferred_option = preferred_options[0]
+    if preferred_option.get("authorized_actor_ref") != decision_actor_ref:
+        raise ValueError(
+            "jurisdiction review actor differs from the preferred option actor reference"
+        )
+    if (
+        preferred_option.get("authorization_record_ref")
+        != jurisdiction.get("authorization_source_ref")
+    ):
+        raise ValueError(
+            "jurisdiction authorization source differs from the preferred option record reference"
+        )
+
+    recommendation_locked_at = _timestamp(
+        recommendation.get("locked_at"),
+        field="recommendation.locked_at",
+    )
+    normalized_reviews: dict[str, object] = {}
+    preferred_semantic_sha256 = sha256_json(
+        _option_semantic_payload(preferred_option)
+    )
+    for review_name in ("least_harm", "proportionality"):
+        review = wrapper.get(review_name)
+        if not isinstance(review, Mapping):
+            raise ValueError(f"selection-review {review_name} must be structured")
+        compared = _text_items(
+            review.get("compared_option_ids"),
+            field=f"selection_review_wrapper.{review_name}.compared_option_ids",
+        )
+        if len(compared) != len(option_ids) or set(compared) != set(option_ids):
+            raise ValueError(
+                f"selection-review {review_name} must compare every option including no_action"
+            )
+        if review.get("selected_option_id") != preferred_option_id:
+            raise ValueError(
+                f"selection-review {review_name} is not bound to the preferred option"
+            )
+        dimensions = _text_items(
+            review.get("evaluation_dimensions"),
+            field=f"selection_review_wrapper.{review_name}.evaluation_dimensions",
+        )
+        if list(dimensions) != list(evaluation_dimensions):
+            raise ValueError(
+                f"selection-review {review_name} dimensions differ from the recommendation"
+            )
+        if review.get("reviewer_ref") == decision_actor_ref:
+            raise ValueError(
+                f"selection-review {review_name} reviewer must be independent of the decision actor"
+            )
+        if _timestamp(
+            review.get("reviewed_at"),
+            field=f"selection_review_wrapper.{review_name}.reviewed_at",
+        ) > recommendation_locked_at:
+            raise ValueError(
+                f"selection-review {review_name} cannot postdate the recommendation lock"
+            )
+        review_evidence_refs = set(
+            _text_items(
+                review.get("evidence_refs"),
+                field=f"selection_review_wrapper.{review_name}.evidence_refs",
+            )
+        )
+        if not review_evidence_refs.issubset(set(ranking_evidence_refs)):
+            raise ValueError(
+                f"selection-review {review_name} cites evidence outside ranking_evidence_refs"
+            )
+        if review.get("status") == "passed" and not review_evidence_refs:
+            raise ValueError(
+                f"selection-review {review_name} cannot pass without evidence"
+            )
+        normalized_reviews[review_name] = {
+            "principle_id": review.get("principle_id"),
+            "principle_version": review.get("principle_version"),
+            "selected_option_semantic_sha256": preferred_semantic_sha256,
+            "compared_option_semantic_sha256": sorted(
+                sha256_json(
+                    _option_semantic_payload(options_by_id[option_id])
+                )
+                for option_id in compared
+            ),
+            "evaluation_dimensions": list(dimensions),
+            "status": review.get("status"),
+        }
+
+    eligibility = wrapper.get(
+        "declared_low_information_house_policy_eligibility"
+    )
+    if not isinstance(eligibility, Mapping):
+        raise ValueError("selection-review house-policy eligibility must be structured")
+    case_facts_present = eligibility.get("case_specific_facts_present")
+    choice_evidence_present = eligibility.get(
+        "choice_changing_retrieval_evidence_present"
+    )
+    if type(case_facts_present) is not bool or type(choice_evidence_present) is not bool:
+        raise ValueError("selection-review house-policy eligibility flags must be booleans")
+    supports = _mapping_items(
+        wrapper.get("ranking_support"),
+        field="selection_review_wrapper.ranking_support",
+    )
+
+    if ranking_policy == "promax_low_information_house_policy_not_v8":
+        if case_facts_present or choice_evidence_present or supports:
+            raise ValueError(
+                "the low-information house policy is ineligible when case facts, choice-changing evidence, or ranking support exists"
+            )
+    elif ranking_policy == "evidence_bound_case_comparison":
+        if not (case_facts_present or choice_evidence_present):
+            raise ValueError(
+                "evidence-bound comparison requires case facts or choice-changing retrieval evidence"
+            )
+        expected_cells = {
+            (option_id, dimension)
+            for option_id in option_ids
+            for dimension in evaluation_dimensions
+        }
+        observed_cells: set[tuple[str, str]] = set()
+        support_evidence_refs: set[str] = set()
+        for support in supports:
+            option_id = _text_items(
+                [support.get("option_id")],
+                field="selection_review_wrapper.ranking_support.option_id",
+            )[0]
+            dimension = _text_items(
+                [support.get("evaluation_dimension")],
+                field="selection_review_wrapper.ranking_support.evaluation_dimension",
+            )[0]
+            cell = (option_id, dimension)
+            if cell in observed_cells:
+                raise ValueError("ranking-support matrix contains a duplicate cell")
+            observed_cells.add(cell)
+            support_evidence_refs.update(
+                _text_items(
+                    support.get("evidence_refs"),
+                    field="selection_review_wrapper.ranking_support.evidence_refs",
+                )
+            )
+        if observed_cells != expected_cells:
+            raise ValueError(
+                "evidence-bound ranking support must cover the complete option-by-dimension matrix"
+            )
+        if support_evidence_refs != set(ranking_evidence_refs):
+            raise ValueError(
+                "ranking_evidence_refs must equal the evidence used by the ranking-support matrix"
+            )
+    basis = {
+        "wrapper_role": wrapper.get("wrapper_role"),
+        "source_paragraph_refs": list(_SELECTION_REVIEW_SOURCE_PARAGRAPHS),
+        "selection_type": wrapper.get("selection_type"),
+        "selection_status": wrapper.get("selection_status"),
+        "public_value_premises": sorted(
+            (
+                str(premise.get("normative_principle_id")),
+                str(premise.get("role")),
+                str(premise.get("statement")),
+            )
+            for premise in premises
+        ),
+        "value_conflicts": sorted(
+            (
+                tuple(
+                    sorted(
+                        _text_items(
+                            conflict.get("premise_ids"),
+                            field="selection_review_wrapper.value_conflicts.premise_ids",
+                        )
+                    )
+                ),
+                len(
+                    _text_items(
+                        conflict.get("affected_position_refs"),
+                        field="selection_review_wrapper.value_conflicts.affected_position_refs",
+                    )
+                ),
+                len(
+                    _text_items(
+                        conflict.get("dissent_refs"),
+                        field="selection_review_wrapper.value_conflicts.dissent_refs",
+                    )
+                ),
+                str(conflict.get("status")),
+            )
+            for conflict in conflicts
+        ),
+        "rights_floor": sorted(rights_floor),
+        "affected_position_count": len(affected_positions),
+        "low_power_position_count": len(low_power_positions),
+        "procedure_states": copy.deepcopy(wrapper.get("procedure_states")),
+        "jurisdiction_review_boundary": {
+            "boundary_role": jurisdiction.get("boundary_role"),
+            "reviewed_option_semantic_sha256": preferred_semantic_sha256,
+            "scope": jurisdiction.get("scope"),
+            "authorization_status": jurisdiction.get("authorization_status"),
+        },
+        "principle_reviews": normalized_reviews,
+        "ranking_policy": ranking_policy,
+        "declared_eligibility": {
+            "case_specific_facts_present": case_facts_present,
+            "choice_changing_retrieval_evidence_present": choice_evidence_present,
+        },
+    }
+    return sha256_json(basis)
+
+
+def selection_review_basis_sha256(
+    recommendation: Mapping[str, object],
+) -> str:
+    options = _mapping_items(
+        recommendation.get("options"),
+        field="recommendation.options",
+    )
+    option_ids = _text_items(
+        [option.get("option_id") for option in options],
+        field="recommendation option IDs",
+    )
+    evaluation_dimensions = _text_items(
+        recommendation.get("evaluation_dimensions"),
+        field="recommendation.evaluation_dimensions",
+    )
+    preferred_option_id = recommendation.get("preferred_option_id")
+    if not isinstance(preferred_option_id, str) or not preferred_option_id:
+        raise ValueError("recommendation preferred_option_id must be text")
+    ranking_evidence_refs = _text_items(
+        recommendation.get("ranking_evidence_refs"),
+        field="recommendation.ranking_evidence_refs",
+    )
+    return _validate_selection_review_wrapper(
+        recommendation,
+        options=options,
+        option_ids=option_ids,
+        evaluation_dimensions=evaluation_dimensions,
+        preferred_option_id=preferred_option_id,
+        ranking_policy=recommendation.get("ranking_policy"),
+        ranking_evidence_refs=ranking_evidence_refs,
+    )
+
+
+def _validate_stance_neutral_problem(graph: Mapping[str, object]) -> str:
+    problem = graph.get("stance_neutral_problem")
+    if not isinstance(problem, Mapping):
+        raise ValueError("claim graph is missing the stance-neutral problem key")
+    payload = {
+        field: copy.deepcopy(problem.get(field))
+        for field in _STANCE_NEUTRAL_PROBLEM_FIELDS
+    }
+    expected = sha256_json(payload)
+    actual = problem.get("semantic_key_sha256")
+    if actual != expected:
+        raise ValueError("stance-neutral problem key does not match its structured fields")
+    return expected
 
 
 def validate_position_lock(
@@ -225,6 +685,25 @@ def validate_position_semantics(
         raise ValueError("central claim statement is missing")
     if statement not in "\n".join([position_text, *reasons]):
         raise ValueError("locked position does not carry its central claim statement")
+    expected_verdict = (
+        f"VERDICT[{position.get('relation_to_proposition')}] {statement}"
+    )
+    if position.get("proposition_verdict") != expected_verdict:
+        raise ValueError(
+            "proposition_verdict must exactly bind relation_to_proposition and the central statement"
+        )
+    if not position_text.startswith(expected_verdict):
+        raise ValueError("position must begin with the complete proposition_verdict")
+    problem_key_sha256 = _validate_stance_neutral_problem(graph)
+    stance_neutral_problem = graph.get("stance_neutral_problem")
+    if (
+        not isinstance(stance_neutral_problem, Mapping)
+        or stance_neutral_problem.get("proposition_under_test") != statement
+    ):
+        raise ValueError(
+            "stance-neutral proposition under test must equal the central claim statement"
+        )
+    central_statement_sha256 = sha256_json(statement)
 
     attacks = _mapping_items(red_team.get("attacks"), field="red_team_report.attacks")
     if not attacks:
@@ -307,15 +786,32 @@ def validate_position_semantics(
         field="red_team_report.stability_checks",
     )
     for index, check in enumerate(checks):
-        if check.get("pro_prompt_sha256") == check.get("anti_prompt_sha256"):
+        pro_prompt = check.get("pro_prompt")
+        anti_prompt = check.get("anti_prompt")
+        if not isinstance(pro_prompt, str) or not isinstance(anti_prompt, str):
+            raise ValueError(f"stability check {index} must preserve both prompt texts")
+        if (
+            check.get("pro_prompt_sha256") != sha256_json(pro_prompt)
+            or check.get("anti_prompt_sha256") != sha256_json(anti_prompt)
+        ):
+            raise ValueError(
+                f"stability check {index} prompt hashes are not derived from prompt text"
+            )
+        if pro_prompt == anti_prompt:
             raise ValueError(
                 f"stability check {index} must use distinct pro and anti prompts"
             )
-        before = check.get("evidence_before_sha256")
-        after = check.get("evidence_after_sha256")
+        before = check.get("evidence_basis_sha256_before")
+        after = check.get("evidence_basis_sha256_after")
         drift = check.get("position_drift")
+        before_problem_key = check.get("semantic_problem_sha256_before")
+        after_problem_key = check.get("semantic_problem_sha256_after")
         before_position = check.get("central_position_id_before")
         after_position = check.get("central_position_id_after")
+        before_statement = check.get("central_statement_sha256_before")
+        after_statement = check.get("central_statement_sha256_after")
+        before_relation = check.get("relation_to_proposition_before")
+        after_relation = check.get("relation_to_proposition_after")
         before_strength = check.get("judgment_strength_before")
         after_strength = check.get("judgment_strength_after")
         before_ranking = _text_items(
@@ -326,35 +822,67 @@ def validate_position_semantics(
             check.get("option_ranking_after"),
             field=f"red_team_report.stability_checks[{index}].option_ranking_after",
         )
-        if after_position != position.get("central_claim_id"):
-            raise ValueError(
-                f"stability check {index} after-position does not bind the locked position"
-            )
-        if after_strength != position.get("judgment_strength"):
-            raise ValueError(
-                f"stability check {index} after-strength does not bind the locked position"
-            )
-        state_changed = (
-            before_position != after_position
-            or before_strength != after_strength
-            or before_ranking != after_ranking
+        before_option_kind_ranking = _text_items(
+            check.get("option_kind_ranking_before"),
+            field=f"red_team_report.stability_checks[{index}].option_kind_ranking_before",
         )
-        if drift == "unjustified":
-            raise ValueError(f"stability check {index} records unjustified position drift")
-        if before == after and (drift != "none" or state_changed):
+        after_option_kind_ranking = _text_items(
+            check.get("option_kind_ranking_after"),
+            field=f"red_team_report.stability_checks[{index}].option_kind_ranking_after",
+        )
+        before_semantic_ranking = _text_items(
+            check.get("option_semantic_ranking_before"),
+            field=f"red_team_report.stability_checks[{index}].option_semantic_ranking_before",
+        )
+        after_semantic_ranking = _text_items(
+            check.get("option_semantic_ranking_after"),
+            field=f"red_team_report.stability_checks[{index}].option_semantic_ranking_after",
+        )
+        before_selection_basis = check.get(
+            "normative_selection_basis_sha256_before"
+        )
+        after_selection_basis = check.get(
+            "normative_selection_basis_sha256_after"
+        )
+        if before != after:
             raise ValueError(
-                f"stability check {index} changes position without changed evidence"
+                f"stability check {index} must compare opposed prompts over identical evidence"
             )
-        if drift == "none" and state_changed:
+        expected_bindings = (
+            (before_problem_key, problem_key_sha256, "before-problem key"),
+            (after_problem_key, problem_key_sha256, "after-problem key"),
+            (before_position, position.get("central_claim_id"), "before-position"),
+            (after_position, position.get("central_claim_id"), "after-position"),
+            (before_statement, central_statement_sha256, "before-statement"),
+            (after_statement, central_statement_sha256, "after-statement"),
+            (
+                before_relation,
+                position.get("relation_to_proposition"),
+                "before-relation",
+            ),
+            (
+                after_relation,
+                position.get("relation_to_proposition"),
+                "after-relation",
+            ),
+            (before_strength, position.get("judgment_strength"), "before-strength"),
+            (after_strength, position.get("judgment_strength"), "after-strength"),
+        )
+        for observed, expected, label in expected_bindings:
+            if observed != expected:
+                raise ValueError(
+                    f"stability check {index} {label} does not bind the frozen judgment"
+                )
+        state_changed = (
+            before_ranking != after_ranking
+            or before_option_kind_ranking != after_option_kind_ranking
+            or before_semantic_ranking != after_semantic_ranking
+            or before_selection_basis != after_selection_basis
+        )
+        if drift != "none" or state_changed:
             raise ValueError(
-                f"stability check {index} self-reports no drift but changes locked state"
+                f"stability check {index} changes state inside a same-evidence stance probe"
             )
-        if drift == "justified_by_evidence" and not state_changed:
-            raise ValueError(
-                f"stability check {index} reports evidence-driven drift without a state change"
-            )
-        if before != after and drift not in {"none", "justified_by_evidence"}:
-            raise ValueError(f"stability check {index} has an invalid evidence-bound drift")
         explanation = str(check.get("explanation", ""))
         if not state_changed and _contains_any(explanation, _POSITIVE_DRIFT_CLAIMS):
             raise ValueError(
@@ -416,17 +944,100 @@ def validate_recommendation_semantics(
     option_ids = [item.get("option_id") for item in options]
     if any(not isinstance(item, str) for item in option_ids) or len(set(option_ids)) != len(option_ids):
         raise ValueError("recommendation option IDs must be unique text")
-    action_kinds = {item.get("action_kind") for item in options}
-    if action_kinds != _REQUIRED_ACTION_KINDS:
-        raise ValueError("recommendation must cover all six action kinds")
+    option_kinds = {item.get("option_kind") for item in options}
+    if option_kinds != _REQUIRED_OPTION_KINDS:
+        raise ValueError("recommendation must cover all six canonical v8 option kinds")
 
     ranking = _text_items(normalized.get("ranking"), field="recommendation.ranking")
     if len(ranking) != len(option_ids) or set(ranking) != set(option_ids):
         raise ValueError("recommendation ranking must be a permutation of every option")
+    evaluation_dimensions = _text_items(
+        normalized.get("evaluation_dimensions"),
+        field="recommendation.evaluation_dimensions",
+    )
+    if len(set(evaluation_dimensions)) != len(evaluation_dimensions):
+        raise ValueError("recommendation evaluation dimensions must be unique")
+    options_by_id = {str(item["option_id"]): item for item in options}
+    expected_option_kind_ranking = [
+        str(options_by_id[option_id].get("option_kind")) for option_id in ranking
+    ]
+    option_kind_ranking = _text_items(
+        normalized.get("option_kind_ranking"),
+        field="recommendation.option_kind_ranking",
+    )
+    if option_kind_ranking != expected_option_kind_ranking:
+        raise ValueError("recommendation option-kind ranking is not a projection of ranking")
+    raw_record_hashes = _mapping_items(
+        normalized.get("option_record_hashes"),
+        field="recommendation.option_record_hashes",
+    )
+    record_hashes = {
+        record.get("option_id"): record.get("record_sha256")
+        for record in raw_record_hashes
+        if isinstance(record.get("option_id"), str)
+    }
+    if (
+        len(record_hashes) != len(raw_record_hashes)
+        or set(record_hashes) != set(options_by_id)
+    ):
+        raise ValueError("recommendation option-record hash map is not closed over options")
+    for option_id, option in options_by_id.items():
+        if record_hashes.get(option_id) != sha256_json(option):
+            raise ValueError(
+                f"recommendation option-record hash is stale for {option_id}"
+            )
+    expected_semantic_ranking = [
+        sha256_json(_option_semantic_payload(options_by_id[option_id]))
+        for option_id in ranking
+    ]
+    semantic_ranking = _text_items(
+        normalized.get("option_semantic_ranking"),
+        field="recommendation.option_semantic_ranking",
+    )
+    if semantic_ranking != expected_semantic_ranking:
+        raise ValueError("recommendation semantic ranking is not a projection of ranking")
+
+    ranking_policy = normalized.get("ranking_policy")
+    ranking_evidence_refs = _text_items(
+        normalized.get("ranking_evidence_refs"),
+        field="recommendation.ranking_evidence_refs",
+    )
+    if ranking_policy == "promax_low_information_house_policy_not_v8":
+        if len(options) != 6 or tuple(option_kind_ranking) != _HOUSE_OPTION_KIND_RANKING:
+            raise ValueError(
+                "ProMax low-information house policy requires exactly six options in its declared option-kind order"
+            )
+        if ranking_evidence_refs:
+            raise ValueError(
+                "ProMax low-information house policy cannot claim case-specific ranking evidence"
+            )
+    elif ranking_policy == "evidence_bound_case_comparison":
+        if not ranking_evidence_refs:
+            raise ValueError("evidence-bound ranking requires evidence references")
+    else:
+        raise ValueError("recommendation ranking policy is invalid")
     preferred = normalized.get("preferred_option_id")
     second = normalized.get("second_option_id")
     if preferred != ranking[0] or second != ranking[1] or preferred == second:
         raise ValueError("preferred and second options must match ranking positions one and two")
+    no_action_ids = [
+        str(option["option_id"])
+        for option in options
+        if option.get("option_kind") == "no_action"
+    ]
+    if len(no_action_ids) != 1 or normalized.get("no_action_option_id") != no_action_ids[0]:
+        raise ValueError(
+            "no_action_option_id must uniquely identify the canonical no_action option"
+        )
+    _validate_selection_review_wrapper(
+        normalized,
+        options=options,
+        option_ids=[str(option_id) for option_id in option_ids],
+        evaluation_dimensions=evaluation_dimensions,
+        preferred_option_id=str(preferred),
+        ranking_policy=ranking_policy,
+        ranking_evidence_refs=ranking_evidence_refs,
+    )
 
     switch_conditions = _text_items(
         normalized.get("switch_conditions"), field="recommendation.switch_conditions"
@@ -442,9 +1053,10 @@ def validate_recommendation_semantics(
         raise ValueError("analysis cannot grant recommendation authorization")
     for option in options:
         _text_items(option.get("stop_conditions"), field="recommendation option stop_conditions")
-        _text_items(option.get("rollback"), field="recommendation option rollback")
-        if option.get("authorization_status") == "authorized":
-            raise ValueError("an option cannot self-grant real-world authorization")
+        _text_items(
+            option.get("rollback_and_remedy"),
+            field="recommendation option rollback_and_remedy",
+        )
     joined_text = "\n".join(_all_text(normalized))
     if _contains_any(joined_text, _ACTION_GRANT_MARKERS):
         raise ValueError("recommendation text leaks real-world authorization")

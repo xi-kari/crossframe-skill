@@ -165,6 +165,20 @@ def _contains_any(text: str, markers: Sequence[str]) -> bool:
     return any(marker.casefold() in folded for marker in markers)
 
 
+def _string_leaves(value: object) -> list[str]:
+    if isinstance(value, Mapping):
+        result: list[str] = []
+        for child in value.values():
+            result.extend(_string_leaves(child))
+        return result
+    if isinstance(value, Sequence) and not isinstance(value, (str, bytes)):
+        result = []
+        for child in value:
+            result.extend(_string_leaves(child))
+        return result
+    return [value] if isinstance(value, str) and value.strip() else []
+
+
 def _contains_semantic_phrase(text: str, phrase: str) -> bool:
     normalized = phrase.strip().rstrip("。；;，,：:！？!?、")
     return bool(normalized) and normalized in text
@@ -682,23 +696,44 @@ def _validate_recommendation_output(
     option_ids: list[str] = []
     for option in options:
         option_id = option.get("option_id")
+        option_kind = option.get("option_kind")
         description = option.get("description")
-        if not isinstance(option_id, str) or not isinstance(description, str):
-            raise ValueError("recommendation option lacks an ID or description")
-        if option_id not in essay or description not in essay:
+        if not all(
+            isinstance(value, str) and value
+            for value in (option_id, option_kind, description)
+        ):
+            raise ValueError("recommendation option lacks an ID, v8 kind, or description")
+        if option_id not in essay or option_kind not in essay or description not in essay:
             raise ValueError(f"essay omits recommendation option {option_id}")
-        for field in ("benefits", "costs", "risks", "stop_conditions", "rollback"):
+        for field in (
+            "forecast_refs",
+            "normative_premise_refs",
+            "affected_position_refs",
+            "rights_floor_refs",
+            "expected_paths",
+            "cross_circle_spillovers",
+            "stop_conditions",
+            "rollback_and_remedy",
+        ):
             values = _text_items(
                 option.get(field),
                 field=f"recommendation option {option_id}.{field}",
             )
             if not all(value in essay for value in values):
                 raise ValueError(f"essay omits {field} for recommendation option {option_id}")
-        option_authorization = option.get("authorization_status")
-        if not isinstance(option_authorization, str) or option_authorization not in essay:
-            raise ValueError(
-                f"essay omits authorization_status for recommendation option {option_id}"
-            )
+        for field in (
+            "worst_acceptable_outcome",
+            "distribution_of_costs_and_benefits",
+            "information_value",
+            "lock_in_risk",
+            "reversibility",
+            "resource_cost",
+            "authorized_actor_ref",
+            "authorization_record_ref",
+        ):
+            value = option.get(field)
+            if not isinstance(value, str) or value not in essay:
+                raise ValueError(f"essay omits {field} for recommendation option {option_id}")
         option_ids.append(option_id)
     dimensions = _text_items(
         recommendation.get("evaluation_dimensions"),
@@ -723,6 +758,86 @@ def _validate_recommendation_output(
     authorization = recommendation.get("authorization_status")
     if not isinstance(authorization, str) or authorization not in essay:
         raise ValueError("essay omits the recommendation authorization boundary")
+    ranking_policy = recommendation.get("ranking_policy")
+    if not isinstance(ranking_policy, str) or any(
+        ranking_policy not in document for document in (essay, dossier)
+    ):
+        raise ValueError("essay and dossier must disclose the exact ranking_policy")
+    evidence_refs = _text_items(
+        recommendation.get("ranking_evidence_refs"),
+        field="recommendation.ranking_evidence_refs",
+        allow_empty=True,
+    )
+    wrapper = recommendation.get("selection_review_wrapper")
+    if not isinstance(wrapper, Mapping):
+        raise ValueError("recommendation output lacks the selection-review wrapper")
+    for value in set(_string_leaves(wrapper)):
+        if value not in essay:
+            raise ValueError(
+                f"essay omits selection-review wrapper semantics: {value}"
+            )
+    dossier_markers = [
+        wrapper.get("wrapper_schema_id"),
+        wrapper.get("wrapper_role"),
+        wrapper.get("selection_type"),
+        wrapper.get("selection_status"),
+        *(
+            wrapper.get("source_paragraph_refs")
+            if isinstance(wrapper.get("source_paragraph_refs"), list)
+            else []
+        ),
+    ]
+    jurisdiction = wrapper.get("jurisdiction_review_boundary")
+    if isinstance(jurisdiction, Mapping):
+        dossier_markers.append(jurisdiction.get("boundary_role"))
+    for review_name in ("least_harm", "proportionality"):
+        review = wrapper.get(review_name)
+        if isinstance(review, Mapping):
+            dossier_markers.extend(
+                [review.get("principle_id"), review.get("status")]
+            )
+    if any(
+        not isinstance(marker, str) or marker not in dossier
+        for marker in dossier_markers
+    ):
+        raise ValueError(
+            "dossier omits the selection-review identity, v8 anchors, boundary, or principle status"
+        )
+    eligibility = wrapper.get(
+        "declared_low_information_house_policy_eligibility"
+    )
+    if not isinstance(eligibility, Mapping):
+        raise ValueError("recommendation output lacks declared house-policy eligibility")
+    eligibility_line = (
+        "declared_low_information_house_policy_eligibility: "
+        f"case_specific_facts_present={str(eligibility.get('case_specific_facts_present')).lower()}; "
+        "choice_changing_retrieval_evidence_present="
+        f"{str(eligibility.get('choice_changing_retrieval_evidence_present')).lower()}"
+    )
+    if eligibility_line not in essay or eligibility_line not in dossier:
+        raise ValueError(
+            "essay and dossier must disclose the declared house-policy eligibility flags"
+        )
+    procedure_states = wrapper.get("procedure_states")
+    if not isinstance(procedure_states, Mapping) or any(
+        f"{procedure_id}={procedure_states.get(procedure_id)}" not in essay
+        for procedure_id in ("O1", "O2", "O3", "O4")
+    ):
+        raise ValueError("essay omits the O1-O4 selection-review states")
+    if ranking_policy == "promax_low_information_house_policy_not_v8":
+        for document in (essay, dossier):
+            if (
+                "PROMAX-HOUSE-POLICY-NOT-V8" not in document
+                or not _contains_any(document, ("不是 v8", "非 v8", "not v8"))
+                or "ranking_evidence_refs=[]" not in document
+            ):
+                raise ValueError(
+                    "house ranking must be disclosed in essay and dossier as ProMax policy, not v8"
+                )
+    elif not all(ref in essay and ref in dossier for ref in evidence_refs):
+        raise ValueError(
+            "evidence-bound ranking refs must be disclosed in essay and dossier"
+        )
 
 
 def _validate_continuation_structure(

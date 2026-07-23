@@ -54,6 +54,7 @@ class VerifyWorkflowContractTests(unittest.TestCase):
             ".claude/commands/crossframe-promax.md",
             ".claude/skills/crossframe-promax/SKILL.md",
             "skills/crossframe-promax/SKILL.md",
+            "skills/crossframe-promax/references/v8-full-source/00-index.md",
             "skills/crossframe-promax/schemas/promax-run-contract.schema.json",
             "skills/crossframe-promax/scripts/check_crossframe_promax_artifacts.py",
             "skills/crossframe-promax/templates/promax-artifact-manifest-output.md",

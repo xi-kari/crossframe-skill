@@ -34,6 +34,8 @@ python skills/crossframe-promax/scripts/crossframe_promax_runtime.py route --req
 - `PROMAX-NO-EARLY-FINAL`：`init`/`P0` 后禁止给出最终聊天、完成或未完成状态；必须继续推进可执行阶段，不能把“尚未运行验证器”改写成 `promax-artifact-incomplete:validation-failed`。
 - `PROMAX-MATERIALIZE-BEFORE-INCOMPLETE`：文件与相应能力可用时，先生成所有可生成的 P1–P10 工件，尤其是完整 P10 长文与控制面，再运行验证器；某项能力缺失只限制依赖该能力的内容，不许可跳过其余可生成工件。
 - 材料不足时继续做条件分支、竞争机制、敏感性分析、当前排序和补证设计；降低结论强度，不取消分析。
+- `PROMAX-STANCE-NEUTRAL-KEY`：P5 前先冻结对象、只去除裁决指令而保留实质性量词的待检验命题、时间窗和独立证据截止点；语义键只由前三者计算。中心 claim ID 只要求在本轮稳定，成对检验比较语义键、命题关系和语义散列，禁止用相同标签掩盖相反结论。
+- `PROMAX-LOW-INFORMATION-RANKING`：只有一句立场、没有个案事实且没有改变选择的可核验证据时，具体方案仍保留各自稳定 ID，但 v8 `option_kind` 投影固定为 `probe_action > active_action > maintain_status_quo > delayed_action > exit_or_transfer > no_action`。`PROMAX-HOUSE-POLICY-NOT-V8`：这是 ProMax 的保守低信息裁决偏好，不是 v8 概念或由 v8 自动推出的结论；有证据的偏离必须解析到检索台账。每次建议都必须生成 `selection_review_wrapper`，逐字标为 `promax_machine_verification_wrapper_not_v8_source_schema`，闭合 N1—N5、冲突/异议、PF、受影响与低权力位置、管辖审查边界、O1—O4、least-harm、proportionality 以及完整 option × dimension 证据支持；不得把这个 ProMax 校验包装层伪装成 v8 原生 schema 或完整原子 J 授权。
 - 不公开隐藏思维链、英文自我规划、工具试错或逐步私有推理。用事实边界、v8 锚点、概念处置、claim-path、反证、判断理由、撤回条件和验证报告提供可审计性。
 - 不用术语数量、篇幅、marker 或概念 ID 堆积冒充理解。每个概念和案例都必须承担可验证的结构作用。
 

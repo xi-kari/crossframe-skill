@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import json
 import os
 from pathlib import Path
@@ -244,6 +245,62 @@ class ProMaxCheckerContractTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             checker._validate_source_independence(ledger)
 
+    def test_stance_probe_hashes_are_recomputed_from_prompts_and_actual_evidence_artifacts(self) -> None:
+        run_contract = {
+            "request_sha256": "a" * 64,
+            "source_snapshot_sha256": "b" * 64,
+        }
+        local_world = {"known": ["fact"]}
+        retrieval = {"entries": [{"retrieval_id": "RETRIEVAL-1"}]}
+        expected = checker._evidence_basis_sha256(
+            run_contract,
+            local_world,
+            retrieval,
+        )
+        report = {
+            "stability_checks": [
+                {
+                    "pro_prompt": "请赞成这个命题",
+                    "anti_prompt": "请反对这个命题",
+                    "pro_prompt_sha256": checker.sha256_json("请赞成这个命题"),
+                    "anti_prompt_sha256": checker.sha256_json("请反对这个命题"),
+                    "evidence_basis_sha256_before": expected,
+                    "evidence_basis_sha256_after": expected,
+                }
+            ]
+        }
+        self.assertEqual(
+            checker._validate_stability_evidence_binding(
+                run_contract,
+                local_world,
+                retrieval,
+                report,
+            ),
+            expected,
+        )
+
+        forged_prompt = copy.deepcopy(report)
+        forged_prompt["stability_checks"][0]["pro_prompt"] += "（改写）"
+        with self.assertRaisesRegex(ValueError, "prompt hash is not derived"):
+            checker._validate_stability_evidence_binding(
+                run_contract,
+                local_world,
+                retrieval,
+                forged_prompt,
+            )
+
+        forged_evidence = copy.deepcopy(report)
+        forged_evidence["stability_checks"][0][
+            "evidence_basis_sha256_after"
+        ] = "c" * 64
+        with self.assertRaisesRegex(ValueError, "not bound to actual run artifacts"):
+            checker._validate_stability_evidence_binding(
+                run_contract,
+                local_world,
+                retrieval,
+                forged_evidence,
+            )
+
     def test_atomic_report_write_rejects_output_aliasing_an_input(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             workspace = Path(temp_dir)
@@ -331,30 +388,92 @@ class ProMaxCheckerContractTests(unittest.TestCase):
 
     def test_red_team_after_ranking_is_bound_to_locked_recommendation(self) -> None:
         run_contract = {"recommendation_required": True}
-        recommendation = {"ranking": ["OPTION-1", "OPTION-2"]}
-        red_team = {
-            "stability_checks": [
-                {
-                    "option_ranking_before": ["OPTION-1", "OPTION-2"],
-                    "option_ranking_after": ["OPTION-1", "OPTION-2"],
-                }
-            ]
-        }
+        position = fixture_factory.build_position_lock(
+            run_id="promax-checker-binding",
+            locked_at="2026-07-23T01:00:00Z",
+        )
+        recommendation = fixture_factory.build_recommendation_lock(
+            position,
+            run_id="promax-checker-binding",
+            locked_at="2026-07-23T01:30:00Z",
+        )
+        red_team = fixture_factory.build_red_team_report(
+            run_id="promax-checker-binding",
+            completed_at="2026-07-23T00:30:00Z",
+        )
         checker._validate_stability_ranking_binding(
             run_contract, red_team, recommendation
         )
-        red_team["stability_checks"][0]["option_ranking_after"] = [
-            "OPTION-2",
-            "OPTION-1",
-        ]
+        red_team["stability_checks"][0]["option_ranking_after"][0:2] = (
+            reversed(red_team["stability_checks"][0]["option_ranking_after"][0:2])
+        )
         with self.assertRaises(ValueError):
             checker._validate_stability_ranking_binding(
                 run_contract, red_team, recommendation
             )
 
+        false_before_projection = copy.deepcopy(red_team)
+        false_before_projection["stability_checks"][0]["option_ranking_after"] = [
+            *recommendation["ranking"]
+        ]
+        false_before_projection["stability_checks"][0][
+            "option_kind_ranking_before"
+        ][0:2] = ["active_action", "probe_action"]
+        with self.assertRaises(ValueError):
+            checker._validate_stability_ranking_binding(
+                run_contract,
+                false_before_projection,
+                recommendation,
+            )
+
+        ghost_evidence = copy.deepcopy(recommendation)
+        ghost_evidence["ranking_policy"] = "evidence_bound_case_comparison"
+        ghost_evidence["ranking_evidence_refs"] = ["RETRIEVAL-GHOST"]
+        ghost_evidence["selection_review_wrapper"][
+            "declared_low_information_house_policy_eligibility"
+        ]["case_specific_facts_present"] = True
+        ghost_evidence["selection_review_wrapper"]["ranking_support"] = [
+            {
+                "option_id": option_id,
+                "evaluation_dimension": dimension,
+                "evidence_refs": ["RETRIEVAL-GHOST"],
+                "support_reason": "Fixture support cell.",
+            }
+            for option_id in ghost_evidence["ranking"]
+            for dimension in ghost_evidence["evaluation_dimensions"]
+        ]
+        ghost_basis = checker.selection_review_basis_sha256(ghost_evidence)
+        ghost_red_team = copy.deepcopy(
+            fixture_factory.build_red_team_report(
+                run_id="promax-checker-binding",
+                completed_at="2026-07-23T00:30:00Z",
+            )
+        )
+        for side in ("before", "after"):
+            ghost_red_team["stability_checks"][0][
+                f"normative_selection_basis_sha256_{side}"
+            ] = ghost_basis
+        with self.assertRaisesRegex(ValueError, "do not resolve"):
+            checker._validate_stability_ranking_binding(
+                run_contract,
+                ghost_red_team,
+                ghost_evidence,
+                {"entries": [{"retrieval_id": "RETRIEVAL-REAL"}]},
+            )
+
+        not_requested_basis = checker.sha256_json({"status": "not_requested"})
         not_requested = {
             "stability_checks": [
-                {"option_ranking_before": [], "option_ranking_after": []}
+                {
+                    "option_ranking_before": [],
+                    "option_ranking_after": [],
+                    "option_kind_ranking_before": [],
+                    "option_kind_ranking_after": [],
+                    "option_semantic_ranking_before": [],
+                    "option_semantic_ranking_after": [],
+                    "normative_selection_basis_sha256_before": not_requested_basis,
+                    "normative_selection_basis_sha256_after": not_requested_basis,
+                }
             ]
         }
         checker._validate_stability_ranking_binding(

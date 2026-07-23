@@ -22,6 +22,7 @@ from promax_runtime.deliverables import (
 from promax_runtime.jsonio import canonical_json_bytes, load_json_bytes, sha256_json
 from promax_runtime.pollution import validate_version_isolation
 from promax_runtime.position import (
+    selection_review_basis_sha256,
     validate_position_semantics,
     validate_recommendation_semantics,
 )
@@ -434,33 +435,235 @@ def _validate_source_independence(retrieval: Mapping[str, object]) -> None:
             origins[identity] = url
 
 
+def _evidence_basis_sha256(
+    run_contract: Mapping[str, object],
+    local_world_model: Mapping[str, object],
+    retrieval_ledger: Mapping[str, object],
+) -> str:
+    """Bind a stance probe to the evidence artifacts the checker actually read."""
+
+    request_sha256 = run_contract.get("request_sha256")
+    source_snapshot_sha256 = run_contract.get("source_snapshot_sha256")
+    if not isinstance(request_sha256, str) or not isinstance(
+        source_snapshot_sha256, str
+    ):
+        raise ValueError("stability evidence-basis lacks immutable run bindings")
+    return sha256_json(
+        {
+            "request_sha256": request_sha256,
+            "source_snapshot_sha256": source_snapshot_sha256,
+            "local_world_model_sha256": sha256_json(local_world_model),
+            "retrieval_ledger_sha256": sha256_json(retrieval_ledger),
+        }
+    )
+
+
+def _validate_stability_evidence_binding(
+    run_contract: Mapping[str, object],
+    local_world_model: Mapping[str, object],
+    retrieval_ledger: Mapping[str, object],
+    red_team_report: Mapping[str, object],
+) -> str:
+    """Reject self-reported prompt or evidence hashes not tied to run artifacts."""
+
+    expected_basis = _evidence_basis_sha256(
+        run_contract,
+        local_world_model,
+        retrieval_ledger,
+    )
+    checks = red_team_report.get("stability_checks")
+    if not isinstance(checks, list) or not checks:
+        raise ValueError("stability evidence-basis has no closed probe records")
+    for index, check in enumerate(checks):
+        if not isinstance(check, Mapping):
+            raise ValueError(f"stability check {index} is not structured")
+        pro_prompt = check.get("pro_prompt")
+        anti_prompt = check.get("anti_prompt")
+        if (
+            not isinstance(pro_prompt, str)
+            or not pro_prompt.strip()
+            or not isinstance(anti_prompt, str)
+            or not anti_prompt.strip()
+        ):
+            raise ValueError(f"stability check {index} lacks actual prompt text")
+        if pro_prompt == anti_prompt:
+            raise ValueError(f"stability check {index} reuses one prompt on both sides")
+        if check.get("pro_prompt_sha256") != sha256_json(pro_prompt):
+            raise ValueError(f"stability check {index} pro prompt hash is not derived")
+        if check.get("anti_prompt_sha256") != sha256_json(anti_prompt):
+            raise ValueError(f"stability check {index} anti prompt hash is not derived")
+        for side in ("before", "after"):
+            if check.get(f"evidence_basis_sha256_{side}") != expected_basis:
+                raise ValueError(
+                    f"stability {side} evidence-basis is not bound to actual run artifacts"
+                )
+    return expected_basis
+
+
 def _validate_stability_ranking_binding(
     run_contract: Mapping[str, object],
     red_team_report: Mapping[str, object],
     recommendation: Mapping[str, object],
+    retrieval_ledger: Mapping[str, object] | None = None,
 ) -> None:
     required = run_contract.get("recommendation_required")
     checks = red_team_report.get("stability_checks")
     if type(required) is not bool or not isinstance(checks, list) or not checks:
         raise ValueError("stability ranking binding lacks a closed run/check contract")
     if required:
+        normative_selection_basis_sha256 = selection_review_basis_sha256(
+            recommendation
+        )
         ranking = recommendation.get("ranking")
+        option_kind_ranking = recommendation.get("option_kind_ranking")
+        option_semantic_ranking = recommendation.get("option_semantic_ranking")
         if not isinstance(ranking, list) or not ranking:
             raise ValueError("required recommendation has no ranking to bind")
+        options = recommendation.get("options")
+        if not isinstance(options, list) or not options:
+            raise ValueError("required recommendation has no concrete options to bind")
+        options_by_id = {
+            option.get("option_id"): option
+            for option in options
+            if isinstance(option, Mapping)
+            and isinstance(option.get("option_id"), str)
+        }
+        if len(options_by_id) != len(options):
+            raise ValueError("recommendation concrete option IDs are not closed")
         for check in checks:
-            if not isinstance(check, Mapping) or check.get(
-                "option_ranking_after"
-            ) != ranking:
+            if not isinstance(check, Mapping):
+                raise ValueError("stability ranking check is not structured")
+            for side in ("before", "after"):
+                ids = check.get(f"option_ranking_{side}")
+                if (
+                    not isinstance(ids, list)
+                    or len(ids) != len(options_by_id)
+                    or set(ids) != set(options_by_id)
+                ):
+                    raise ValueError(
+                        f"stability {side} ranking is not a permutation of concrete options"
+                    )
+                expected_option_kinds = [
+                    options_by_id[option_id].get("option_kind") for option_id in ids
+                ]
+                expected_semantics = [
+                    sha256_json(
+                        {
+                            key: copy.deepcopy(value)
+                            for key, value in options_by_id[option_id].items()
+                            if key != "option_id"
+                        }
+                    )
+                    for option_id in ids
+                ]
+                if (
+                    check.get(f"option_kind_ranking_{side}")
+                    != expected_option_kinds
+                    or check.get(f"option_semantic_ranking_{side}")
+                    != expected_semantics
+                ):
+                    raise ValueError(
+                        f"stability {side} ranking projections are not derived from concrete options"
+                    )
+            if (
+                check.get("option_ranking_after") != ranking
+                or check.get("option_kind_ranking_after") != option_kind_ranking
+                or check.get("option_semantic_ranking_after") != option_semantic_ranking
+            ):
                 raise ValueError(
-                    "same-evidence stability option_ranking_after differs from the locked recommendation"
+                    "same-evidence stability ranking projections differ from the locked recommendation"
+                )
+            if any(
+                check.get(
+                    f"normative_selection_basis_sha256_{side}"
+                )
+                != normative_selection_basis_sha256
+                for side in ("before", "after")
+            ):
+                raise ValueError(
+                    "same-evidence normative selection basis differs from the locked recommendation"
+                )
+        if recommendation.get("ranking_policy") == "evidence_bound_case_comparison":
+            entries = (
+                retrieval_ledger.get("entries")
+                if isinstance(retrieval_ledger, Mapping)
+                else None
+            )
+            if not isinstance(entries, list):
+                raise ValueError("evidence-bound ranking lacks a retrieval ledger")
+            retrieval_ids = {
+                entry.get("retrieval_id")
+                for entry in entries
+                if isinstance(entry, Mapping)
+                and isinstance(entry.get("retrieval_id"), str)
+            }
+            evidence_refs = recommendation.get("ranking_evidence_refs")
+            if (
+                not isinstance(evidence_refs, list)
+                or not evidence_refs
+                or any(ref not in retrieval_ids for ref in evidence_refs)
+            ):
+                raise ValueError(
+                    "evidence-bound ranking references do not resolve to retrieval entries"
+                )
+            wrapper = recommendation.get("selection_review_wrapper")
+            supports = (
+                wrapper.get("ranking_support")
+                if isinstance(wrapper, Mapping)
+                else None
+            )
+            if not isinstance(supports, list) or not supports:
+                raise ValueError(
+                    "evidence-bound ranking lacks a structured ranking-support matrix"
+                )
+            support_refs: set[str] = set()
+            for support in supports:
+                if not isinstance(support, Mapping):
+                    raise ValueError(
+                        "evidence-bound ranking-support matrix contains an unstructured cell"
+                    )
+                refs = support.get("evidence_refs")
+                if (
+                    not isinstance(refs, list)
+                    or not refs
+                    or any(ref not in retrieval_ids for ref in refs)
+                ):
+                    raise ValueError(
+                        "evidence-bound ranking-support evidence does not resolve to retrieval entries"
+                    )
+                support_refs.update(
+                    ref for ref in refs if isinstance(ref, str)
+                )
+            if support_refs != set(evidence_refs):
+                raise ValueError(
+                    "ranking evidence is not closed over the ranking-support matrix"
                 )
     else:
+        not_requested_basis_sha256 = sha256_json({"status": "not_requested"})
         for check in checks:
-            if not isinstance(check, Mapping) or check.get(
-                "option_ranking_before"
-            ) != [] or check.get("option_ranking_after") != []:
+            if not isinstance(check, Mapping) or any(
+                check.get(field) != []
+                for field in (
+                    "option_ranking_before",
+                    "option_ranking_after",
+                    "option_kind_ranking_before",
+                    "option_kind_ranking_after",
+                    "option_semantic_ranking_before",
+                    "option_semantic_ranking_after",
+                )
+            ):
                 raise ValueError(
                     "not-requested recommendation stability rankings must remain empty"
+                )
+            if any(
+                check.get(
+                    f"normative_selection_basis_sha256_{side}"
+                )
+                != not_requested_basis_sha256
+                for side in ("before", "after")
+            ):
+                raise ValueError(
+                    "not-requested recommendation stability selection basis is not closed"
                 )
 
 
@@ -1112,8 +1315,18 @@ def validate_workspace(
 
     position = documents.get("position")
     red_team = documents.get("red_team_report")
-    if all(isinstance(item, Mapping) for item in (position, red_team, claim_graph)) and bindings_valid:
+    local_world = documents.get("local_world_model")
+    if all(
+        isinstance(item, Mapping)
+        for item in (position, red_team, claim_graph, local_world, retrieval)
+    ) and bindings_valid:
         try:
+            _validate_stability_evidence_binding(
+                run_contract,
+                local_world,
+                retrieval,
+                red_team,
+            )
             validate_position_semantics(
                 position,
                 red_team_report=red_team,
@@ -1147,7 +1360,7 @@ def validate_workspace(
             if not isinstance(red_team, Mapping):
                 raise ValueError("recommendation stability binding requires red-team state")
             _validate_stability_ranking_binding(
-                run_contract, red_team, recommendation
+                run_contract, red_team, recommendation, retrieval
             )
         except Exception as error:
             if "stability" in str(error).casefold():

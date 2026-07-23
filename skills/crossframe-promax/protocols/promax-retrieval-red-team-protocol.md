@@ -202,17 +202,19 @@ P7 对中心 claim 与相关建议覆盖以下 attack class：
 
 记录：
 
-- pro/anti prompt 的不同 hash；
-- evidence before/after hash；
-- center position ID before/after；
-- judgment strength before/after；
-- option ranking before/after；
+- pro/anti prompt 实际文本及其重算 hash；
+- checker 从运行工件重算的 evidence-basis before/after hash；
+- semantic problem、center statement 与 center position ID before/after；
+- `relation_to_proposition` 与 judgment strength before/after；
+- 具体 option ranking、v8 `option_kind` 投影和去 run-local ID 的 option semantic ranking before/after；
+- 从 `selection_review_wrapper` 重算、排除 run-local option ID 与运行时间后的规范选择基础散列；
 - position drift 与解释。
 
 规则：
 
-- 相同证据要求 position ID、strength 和 ranking 不变，`position_drift=none`。
-- 新证据导致状态变化时才允许 `justified_by_evidence`，解释必须指出证据与变化的因果绑定。
+- 成对立场探针必须保存实际 pro/anti 诱导文本并由 validator 重算其散列；两侧必须绑定 checker 从实际运行工件计算的同一 evidence-basis。语义问题键、position 语义、命题关系、strength 与三种 ranking 投影都必须不变，`position_drift=none`。
+- 新证据通过检索写回和阶段重置进入新的冻结状态，不得在成对立场探针内登记为姿态导致的变化。
+- `evidence_bound_case_comparison` 的每个 option × evaluation dimension 支持单元必须引用本轮 retrieval ID；根 `ranking_evidence_refs` 等于所有单元引用并集。house policy 的支持矩阵和 ranking evidence 必须同时为空，且两个 declared eligibility 标志都为 false。
 - 只因用户姿态改变就是 `unjustified`，阻断 position lock。
 - pro 与 anti prompt 必须真不同，不得复用同一 hash。
 
@@ -246,6 +248,7 @@ P7 对中心 claim 与相关建议覆盖以下 attack class：
 - [ ] 十二类攻击都已测试或给出结构化不适用理由。
 - [ ] strongest counterposition 具有实质攻击力。
 - [ ] 成对用户姿态没有在相同证据下改变立场。
+- [ ] 规范选择基础不随用户姿态漂移，evidence-bound 支持矩阵没有缺格、重复格或幽灵 retrieval ref。
 - [ ] 例子均有类型，真实案例有来源，结构类比没有冒充事实。
 - [ ] 任何攻击造成的变化已经写回 claim、concept、path 或 action ceiling。
 

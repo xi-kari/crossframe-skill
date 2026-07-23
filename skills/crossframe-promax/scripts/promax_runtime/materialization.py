@@ -14,6 +14,7 @@ import unicodedata
 
 from .artifacts import build_artifact_manifest, inventory_artifacts
 from .jsonio import canonical_json_bytes, load_json_bytes, sha256_json
+from .position import selection_review_basis_sha256
 from .safe_files import read_stable_regular_file
 from .schemas import validate_instance
 from .source_integrity import (
@@ -910,9 +911,137 @@ def _load_semantic_json(
             artifact="promax-recommendation.locked.json",
         )
         normalized["promax-recommendation.locked.json"] = recommendation
+    _bind_stability_control_fields(normalized, contract)
     for artifact, document in normalized.items():
         validate_instance(str(_SEMANTIC_BINDINGS[artifact]["schema"]), document)
     return normalized
+
+
+def _set_control_field(
+    record: dict[str, object],
+    field: str,
+    expected: object,
+    *,
+    artifact: str,
+) -> None:
+    actual = record.get(field)
+    if field in record and actual != expected:
+        raise MaterializationError(f"semantic_fixed_field_mismatch:{artifact}:{field}")
+    record[field] = copy.deepcopy(expected)
+
+
+def _bind_stability_control_fields(
+    documents: dict[str, dict[str, object]],
+    contract: Mapping[str, object],
+) -> None:
+    """Derive hashes and verdict prefixes owned by the deterministic control plane."""
+
+    claim_graph = documents["promax-claim-path-graph.json"]
+    problem = claim_graph.get("stance_neutral_problem")
+    if not isinstance(problem, dict):
+        raise MaterializationError("semantic_problem_missing:promax-claim-path-graph.json")
+    semantic_payload: dict[str, object] = {}
+    for field in ("analysis_object", "proposition_under_test", "time_window"):
+        value = problem.get(field)
+        if not isinstance(value, str) or not value.strip():
+            raise MaterializationError(f"semantic_problem_field_invalid:{field}")
+        semantic_payload[field] = value
+    semantic_key = sha256_json(semantic_payload)
+    _set_control_field(
+        problem,
+        "semantic_key_sha256",
+        semantic_key,
+        artifact="promax-claim-path-graph.json",
+    )
+
+    local_world = documents["promax-local-world-model.locked.json"]
+    retrieval = documents["promax-retrieval-ledger.json"]
+    evidence_basis = sha256_json(
+        {
+            "request_sha256": contract["request_sha256"],
+            "source_snapshot_sha256": contract["source_snapshot_sha256"],
+            "local_world_model_sha256": sha256_json(local_world),
+            "retrieval_ledger_sha256": sha256_json(retrieval),
+        }
+    )
+    red_team = documents["promax-red-team-report.json"]
+    recommendation = documents.get(
+        "promax-recommendation.locked.json",
+        {"status": "not_requested"},
+    )
+    try:
+        normative_selection_basis = (
+            sha256_json({"status": "not_requested"})
+            if recommendation == {"status": "not_requested"}
+            else selection_review_basis_sha256(recommendation)
+        )
+    except ValueError as error:
+        raise MaterializationError(
+            f"selection_review_basis_invalid:{error}"
+        ) from error
+    checks = red_team.get("stability_checks")
+    if not isinstance(checks, list) or not checks:
+        raise MaterializationError("stability_checks_missing:promax-red-team-report.json")
+    for index, raw_check in enumerate(checks):
+        if not isinstance(raw_check, dict):
+            raise MaterializationError(f"stability_check_invalid:{index}")
+        for prompt_field, hash_field in (
+            ("pro_prompt", "pro_prompt_sha256"),
+            ("anti_prompt", "anti_prompt_sha256"),
+        ):
+            prompt = raw_check.get(prompt_field)
+            if not isinstance(prompt, str) or not prompt.strip():
+                raise MaterializationError(
+                    f"stability_prompt_missing:{index}:{prompt_field}"
+                )
+            _set_control_field(
+                raw_check,
+                hash_field,
+                sha256_json(prompt),
+                artifact="promax-red-team-report.json",
+            )
+        for field in (
+            "evidence_basis_sha256_before",
+            "evidence_basis_sha256_after",
+        ):
+            _set_control_field(
+                raw_check,
+                field,
+                evidence_basis,
+                artifact="promax-red-team-report.json",
+            )
+        for field in (
+            "semantic_problem_sha256_before",
+            "semantic_problem_sha256_after",
+        ):
+            _set_control_field(
+                raw_check,
+                field,
+                semantic_key,
+                artifact="promax-red-team-report.json",
+            )
+        for field in (
+            "normative_selection_basis_sha256_before",
+            "normative_selection_basis_sha256_after",
+        ):
+            _set_control_field(
+                raw_check,
+                field,
+                normative_selection_basis,
+                artifact="promax-red-team-report.json",
+            )
+
+    proposition = semantic_payload["proposition_under_test"]
+    position = documents["promax-position.locked.json"]
+    relation = position.get("relation_to_proposition")
+    if not isinstance(relation, str) or not relation:
+        raise MaterializationError("position_relation_missing")
+    _set_control_field(
+        position,
+        "proposition_verdict",
+        f"VERDICT[{relation}] {proposition}",
+        artifact="promax-position.locked.json",
+    )
 
 
 def _load_semantic_text(authoring: Path) -> dict[str, str]:

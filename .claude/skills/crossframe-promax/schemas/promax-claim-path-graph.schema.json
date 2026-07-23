@@ -10,6 +10,7 @@
     "run_id",
     "source_snapshot_sha256",
     "central_claim_id",
+    "stance_neutral_problem",
     "central_claim_cycle",
     "claims",
     "mechanisms",
@@ -25,6 +26,7 @@
     "run_id": {"$ref": "promax-common.schema.json#/$defs/runId"},
     "source_snapshot_sha256": {"$ref": "promax-common.schema.json#/$defs/v8SnapshotSha256"},
     "central_claim_id": {"$ref": "promax-common.schema.json#/$defs/claimId"},
+    "stance_neutral_problem": {"$ref": "#/$defs/stanceNeutralProblem"},
     "central_claim_cycle": {"$ref": "#/$defs/centralClaimCycle"},
     "claims": {
       "type": "array",
@@ -54,6 +56,18 @@
     "updated_at": {"$ref": "promax-common.schema.json#/$defs/timestamp"}
   },
   "$defs": {
+    "stanceNeutralProblem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["analysis_object", "proposition_under_test", "time_window", "evidence_cutoff", "semantic_key_sha256"],
+      "properties": {
+        "analysis_object": {"$ref": "promax-common.schema.json#/$defs/nonemptyString"},
+        "proposition_under_test": {"$ref": "promax-common.schema.json#/$defs/nonemptyString"},
+        "time_window": {"$ref": "promax-common.schema.json#/$defs/nonemptyString"},
+        "evidence_cutoff": {"$ref": "promax-common.schema.json#/$defs/timestamp"},
+        "semantic_key_sha256": {"$ref": "promax-common.schema.json#/$defs/sha256"}
+      }
+    },
     "centralClaimCycle": {
       "type": "object",
       "additionalProperties": false,

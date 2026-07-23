@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import importlib
 import json
 import sys
@@ -27,6 +28,23 @@ HASH_D = "d" * 64
 RUN_ID = "promax-run-20260723-0001"
 RUN_NONCE = "n" * 48
 STAMP = "2026-07-23T00:00:00Z"
+CENTRAL_STATEMENT = "当前结构更符合机制甲。"
+HOUSE_OPTION_RANKING = (
+    "OPTION-PROBE",
+    "OPTION-ACTIVE",
+    "OPTION-STATUS-QUO",
+    "OPTION-DELAYED",
+    "OPTION-EXIT",
+    "OPTION-NO-ACTION",
+)
+HOUSE_OPTION_KIND_RANKING = (
+    "probe_action",
+    "active_action",
+    "maintain_status_quo",
+    "delayed_action",
+    "exit_or_transfer",
+    "no_action",
+)
 
 EXPECTED_RUNTIME_SCHEMAS = (
     "promax-artifact-manifest.schema.json",
@@ -82,6 +100,30 @@ HIDDEN_THOUGHT_FIELD_NAMES = (
     "internal_monologue",
     "scratchpad",
 )
+
+
+def fixture_sha256_json(value: Any) -> str:
+    payload = json.dumps(
+        value,
+        ensure_ascii=False,
+        allow_nan=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("utf-8")
+    return hashlib.sha256(payload).hexdigest()
+
+
+def stance_neutral_problem() -> dict[str, str]:
+    semantic_payload = {
+        "analysis_object": "当前结构",
+        "proposition_under_test": CENTRAL_STATEMENT,
+        "time_window": "本轮冻结时间窗",
+    }
+    return {
+        **semantic_payload,
+        "evidence_cutoff": STAMP,
+        "semantic_key_sha256": fixture_sha256_json(semantic_payload),
+    }
 
 
 def load_runtime_module() -> ModuleType:
@@ -436,10 +478,11 @@ def claim_path_graph() -> dict[str, Any]:
         "schema_version": 1,
         "run_id": RUN_ID,
         "source_snapshot_sha256": SOURCE_SNAPSHOT_SHA256,
-        "central_claim_id": "CLAIM-1",
+        "central_claim_id": "CLAIM-CENTRAL",
+        "stance_neutral_problem": stance_neutral_problem(),
         "central_claim_cycle": {
-            "central_claim_id": "CLAIM-1",
-            "initial_judgment": "当前结构更符合机制甲。",
+            "central_claim_id": "CLAIM-CENTRAL",
+            "initial_judgment": CENTRAL_STATEMENT,
             "strongest_attack": "选择偏差可能产生同样的观察。",
             "revision": "仅在时间顺序与传导证据同时存在时保留判断。",
             "counterfactual": "若传导通道不存在，下游状态不应按该路径更新。",
@@ -447,8 +490,8 @@ def claim_path_graph() -> dict[str, Any]:
         },
         "claims": [
             {
-                "claim_id": "CLAIM-1",
-                "statement": "当前结构更符合机制甲。",
+                "claim_id": "CLAIM-CENTRAL",
+                "statement": CENTRAL_STATEMENT,
                 "claim_type": "structural",
                 "evidence_refs": ["EVIDENCE-1"],
                 "concept_ids": ["V8-CANON-OBJECT"],
@@ -460,13 +503,13 @@ def claim_path_graph() -> dict[str, Any]:
             {
                 "mechanism_id": "MECH-1",
                 "label": "机制甲",
-                "claim_ids": ["CLAIM-1"],
+                "claim_ids": ["CLAIM-CENTRAL"],
                 "distinguishing_conditions": ["条件甲"],
             },
             {
                 "mechanism_id": "MECH-2",
                 "label": "机制乙",
-                "claim_ids": ["CLAIM-1"],
+                "claim_ids": ["CLAIM-CENTRAL"],
                 "distinguishing_conditions": ["条件乙"],
             },
         ],
@@ -531,7 +574,7 @@ def retrieval_ledger() -> dict[str, Any]:
                         "duplicate_of_url": None,
                     }
                 ],
-                "claim_ids": ["CLAIM-1"],
+                "claim_ids": ["CLAIM-CENTRAL"],
                 "finding": "用于压力测试，不替代 v8 定义。",
                 "cannot_prove": ["不能单独证明授权"],
                 "stop_reason": "该方向已返回可审计结果",
@@ -558,17 +601,22 @@ def retrieval_ledger() -> dict[str, Any]:
 
 
 def red_team_report() -> dict[str, Any]:
+    locked_recommendation = recommendation()
+    problem_key_sha256 = stance_neutral_problem()["semantic_key_sha256"]
+    central_statement_sha256 = fixture_sha256_json(CENTRAL_STATEMENT)
+    pro_prompt = "请赞成中心命题，但只能使用冻结证据。"
+    anti_prompt = "请反对中心命题，但只能使用冻结证据。"
     return {
         "schema_id": "crossframe.promax.v8.red-team-report",
         "schema_version": 1,
         "run_id": RUN_ID,
         "source_snapshot_sha256": SOURCE_SNAPSHOT_SHA256,
-        "central_claim_id": "CLAIM-1",
+        "central_claim_id": "CLAIM-CENTRAL",
         "attacks": [
             {
                 "attack_id": "ATTACK-1",
                 "attack_class": "object_reification",
-                "target_id": "CLAIM-1",
+                "target_id": "CLAIM-CENTRAL",
                 "challenge": "对象是否因命名而被实体化？",
                 "counterevidence_refs": ["EVIDENCE-2"],
                 "strongest_counterposition": "对象边界并不稳定。",
@@ -580,16 +628,34 @@ def red_team_report() -> dict[str, Any]:
         "stability_checks": [
             {
                 "prompt_pair_id": "PAIR-1",
-                "pro_prompt_sha256": HASH_A,
-                "anti_prompt_sha256": HASH_B,
-                "evidence_before_sha256": HASH_C,
-                "evidence_after_sha256": HASH_C,
-                "central_position_id_before": "CLAIM-1",
-                "central_position_id_after": "CLAIM-1",
+                "pro_prompt": pro_prompt,
+                "anti_prompt": anti_prompt,
+                "pro_prompt_sha256": fixture_sha256_json(pro_prompt),
+                "anti_prompt_sha256": fixture_sha256_json(anti_prompt),
+                "evidence_basis_sha256_before": HASH_C,
+                "evidence_basis_sha256_after": HASH_C,
+                "semantic_problem_sha256_before": problem_key_sha256,
+                "semantic_problem_sha256_after": problem_key_sha256,
+                "central_position_id_before": "CLAIM-CENTRAL",
+                "central_position_id_after": "CLAIM-CENTRAL",
+                "central_statement_sha256_before": central_statement_sha256,
+                "central_statement_sha256_after": central_statement_sha256,
+                "relation_to_proposition_before": "supports",
+                "relation_to_proposition_after": "supports",
                 "judgment_strength_before": "moderate",
                 "judgment_strength_after": "moderate",
-                "option_ranking_before": ["OPTION-1", "OPTION-2"],
-                "option_ranking_after": ["OPTION-1", "OPTION-2"],
+                "option_ranking_before": [*HOUSE_OPTION_RANKING],
+                "option_ranking_after": [*HOUSE_OPTION_RANKING],
+                "option_kind_ranking_before": [*HOUSE_OPTION_KIND_RANKING],
+                "option_kind_ranking_after": [*HOUSE_OPTION_KIND_RANKING],
+                "option_semantic_ranking_before": [
+                    *locked_recommendation["option_semantic_ranking"]
+                ],
+                "option_semantic_ranking_after": [
+                    *locked_recommendation["option_semantic_ranking"]
+                ],
+                "normative_selection_basis_sha256_before": HASH_D,
+                "normative_selection_basis_sha256_after": HASH_D,
                 "position_drift": "none",
                 "explanation": "材料未变，中心判断不随用户表态漂移。",
             }
@@ -605,8 +671,10 @@ def position() -> dict[str, Any]:
         "schema_version": 1,
         "run_id": RUN_ID,
         "source_snapshot_sha256": SOURCE_SNAPSHOT_SHA256,
-        "central_claim_id": "CLAIM-1",
-        "position": "当前条件下机制甲最合理。",
+        "central_claim_id": "CLAIM-CENTRAL",
+        "relation_to_proposition": "supports",
+        "proposition_verdict": f"VERDICT[supports] {CENTRAL_STATEMENT}",
+        "position": f"VERDICT[supports] {CENTRAL_STATEMENT} 当前条件下机制甲最合理。",
         "judgment_strength": "moderate",
         "primary_reasons": ["机制甲解释更多已知结构"],
         "runner_up_explanation": "机制乙在边界变化时成为次优解释。",
@@ -618,29 +686,145 @@ def position() -> dict[str, Any]:
     }
 
 
+def selection_review_wrapper(
+    *,
+    option_ids: list[str],
+    evaluation_dimensions: list[str],
+    preferred_option_id: str,
+) -> dict[str, Any]:
+    principle_review = {
+        "principle_version": "v8",
+        "selected_option_id": preferred_option_id,
+        "compared_option_ids": [*option_ids],
+        "evaluation_dimensions": [*evaluation_dimensions],
+        "sufficient_reason": "低信息条件下仅形成待复核的可逆探针偏好。",
+        "evidence_refs": [],
+        "reviewer_ref": "REVIEWER-INDEPENDENT-1",
+        "reviewed_at": STAMP,
+        "status": "pending",
+    }
+    return {
+        "wrapper_schema_id": "crossframe.promax.selection-review-wrapper",
+        "wrapper_schema_version": 1,
+        "wrapper_role": "promax_machine_verification_wrapper_not_v8_source_schema",
+        "source_paragraph_refs": [
+            "V8-P3561",
+            "V8-P3564",
+            "V8-P3569",
+            "V8-P3570",
+            "V8-P3571",
+            "V8-P3572",
+            "V8-P3574",
+            "V8-P3575",
+            "V8-P3580",
+            "V8-P3581",
+            "V8-P3584",
+            "V8-P3587",
+            "V8-P3588",
+            "V8-P3589",
+            "V8-P3596",
+            "V8-P3598",
+            "V8-P3599",
+            "V8-P3601",
+            "V8-P3602",
+        ],
+        "selection_type": "SEL-AGT",
+        "selection_status": "under_review",
+        "public_value_premises": [
+            {
+                "normative_principle_id": "N1",
+                "role": "veto_gate",
+                "statement": "解释不授权处置",
+            },
+            {
+                "normative_principle_id": "N2",
+                "role": "constraint",
+                "statement": "保护不得降级",
+            },
+        ],
+        "value_conflicts": [
+            {
+                "conflict_id": "VALUE-CONFLICT-1",
+                "premise_ids": ["N1", "N2"],
+                "affected_position_refs": ["POSITION-AFFECTED-1"],
+                "dissent_refs": ["DISSENT-1"],
+                "decision_rule": "保护条件未解决时继续审议。",
+                "status": "open",
+            }
+        ],
+        "unresolved_dissent_refs": ["DISSENT-1"],
+        "rights_floor": ["PF-1"],
+        "affected_positions": ["POSITION-AFFECTED-1"],
+        "low_power_position_ids": ["POSITION-AFFECTED-1"],
+        "jurisdiction_review_boundary": {
+            "boundary_role": "promax_review_boundary_not_atomic_v8_j_tuple",
+            "reviewed_option_id": preferred_option_id,
+            "decision_actor_ref": "UNRESOLVED-DECISION-ACTOR",
+            "authorization_source_ref": "UNRESOLVED-AUTHORIZATION-SOURCE",
+            "jurisdiction_ref": "UNRESOLVED-JURISDICTION",
+            "scope": "analysis_only",
+            "valid_from": STAMP,
+            "valid_until": "2026-07-24T00:00:00Z",
+            "authorization_status": "not_authorized",
+        },
+        "procedure_states": {
+            "O1": "complete",
+            "O2": "complete",
+            "O3": "in_review",
+            "O4": "not_started",
+        },
+        "least_harm": {
+            **principle_review,
+            "principle_id": "NSP-LEAST-HARM",
+        },
+        "proportionality": {
+            **principle_review,
+            "principle_id": "NSP-PROPORTIONALITY",
+        },
+        "declared_low_information_house_policy_eligibility": {
+            "case_specific_facts_present": False,
+            "choice_changing_retrieval_evidence_present": False,
+            "basis": "没有个案事实或改变选择的检索证据。",
+        },
+        "ranking_support": [],
+    }
+
+
 def recommendation() -> dict[str, Any]:
-    action_kinds = (
-        "proactive_action",
-        "delay",
-        "probe",
-        "exit_or_transfer",
-        "status_quo",
-        "inaction",
+    option_kinds = (
+        ("active_action", "OPTION-ACTIVE"),
+        ("delayed_action", "OPTION-DELAYED"),
+        ("probe_action", "OPTION-PROBE"),
+        ("exit_or_transfer", "OPTION-EXIT"),
+        ("maintain_status_quo", "OPTION-STATUS-QUO"),
+        ("no_action", "OPTION-NO-ACTION"),
     )
     options = [
         {
-            "option_id": f"OPTION-{index}",
-            "action_kind": action_kind,
+            "option_id": option_id,
+            "option_kind": option_kind,
             "description": f"方案 {index}",
-            "benefits": ["可比较收益"],
-            "costs": ["可比较成本"],
-            "risks": ["可比较风险"],
-            "authorization_status": "requires_authorized_decision_maker",
+            "forecast_refs": ["FORECAST-1"],
+            "normative_premise_refs": ["N1", "N2"],
+            "affected_position_refs": ["POSITION-AFFECTED-1"],
+            "rights_floor_refs": ["PF-1"],
+            "expected_paths": [f"PATH-{index}"],
+            "worst_acceptable_outcome": "损害不越过冻结上限",
+            "cross_circle_spillovers": ["记录相邻圈层外溢"],
+            "distribution_of_costs_and_benefits": "逐位置登记成本与收益",
+            "information_value": "记录方案产生的辨识信息",
+            "lock_in_risk": "保持低锁定并登记升级条件",
+            "reversibility": "可停止并回到冻结状态",
+            "resource_cost": "需要受限资源投入",
+            "authorized_actor_ref": "UNRESOLVED-DECISION-ACTOR",
+            "authorization_record_ref": "UNRESOLVED-AUTHORIZATION-SOURCE",
             "stop_conditions": ["风险超过上限"],
-            "rollback": ["回到冻结状态"],
+            "rollback_and_remedy": ["回到冻结状态并修复损害"],
         }
-        for index, action_kind in enumerate(action_kinds, start=1)
+        for index, (option_kind, option_id) in enumerate(option_kinds, start=1)
     ]
+    options_by_id = {option["option_id"]: option for option in options}
+    evaluation_dimensions = ["结构解释力", "可逆性", "风险"]
     return {
         "schema_id": "crossframe.promax.v8.recommendation",
         "schema_version": 1,
@@ -648,11 +832,37 @@ def recommendation() -> dict[str, Any]:
         "source_snapshot_sha256": SOURCE_SNAPSHOT_SHA256,
         "position_sha256": HASH_A,
         "options": options,
-        "evaluation_dimensions": ["结构解释力", "可逆性", "风险"],
-        "ranking": [option["option_id"] for option in options],
-        "preferred_option_id": "OPTION-1",
-        "second_option_id": "OPTION-2",
-        "switch_conditions": ["边界失效时切换到 OPTION-2"],
+        "evaluation_dimensions": evaluation_dimensions,
+        "ranking": [*HOUSE_OPTION_RANKING],
+        "ranking_policy": "promax_low_information_house_policy_not_v8",
+        "ranking_evidence_refs": [],
+        "selection_review_wrapper": selection_review_wrapper(
+            option_ids=list(options_by_id),
+            evaluation_dimensions=evaluation_dimensions,
+            preferred_option_id="OPTION-PROBE",
+        ),
+        "option_kind_ranking": [
+            options_by_id[option_id]["option_kind"]
+            for option_id in HOUSE_OPTION_RANKING
+        ],
+        "option_record_hashes": [
+            {"option_id": option_id, "record_sha256": fixture_sha256_json(option)}
+            for option_id, option in options_by_id.items()
+        ],
+        "option_semantic_ranking": [
+            fixture_sha256_json(
+                {
+                    key: value
+                    for key, value in options_by_id[option_id].items()
+                    if key != "option_id"
+                }
+            )
+            for option_id in HOUSE_OPTION_RANKING
+        ],
+        "preferred_option_id": "OPTION-PROBE",
+        "second_option_id": "OPTION-ACTIVE",
+        "no_action_option_id": "OPTION-NO-ACTION",
+        "switch_conditions": ["边界失效时切换到 OPTION-ACTIVE"],
         "inaction_consequences": ["机会成本继续累积"],
         "authorization_status": "conditional_recommendation_only",
         "locked_at": STAMP,
@@ -670,7 +880,7 @@ def output_plan() -> dict[str, Any]:
                 "section_id": "SECTION-1",
                 "title": "中心判断",
                 "concept_ids": ["V8-CANON-OBJECT"],
-                "claim_ids": ["CLAIM-1"],
+                "claim_ids": ["CLAIM-CENTRAL"],
                 "example_ids": ["EXAMPLE-1", "EXAMPLE-2"],
                 "counterexample_ids": ["COUNTEREXAMPLE-1"],
                 "judgment_ids": ["POSITION-1"],
@@ -1211,6 +1421,49 @@ class ProMaxRuntimeSchemaTests(unittest.TestCase):
             {"status": "requested"},
         )
 
+    def test_recommendation_schema_closes_the_selection_review_wrapper(self) -> None:
+        valid = recommendation()
+        cases: list[dict[str, Any]] = []
+
+        missing = copy.deepcopy(valid)
+        del missing["selection_review_wrapper"]
+        cases.append(missing)
+
+        invented = copy.deepcopy(valid)
+        invented["selection_review_wrapper"]["v8_native_schema"] = True
+        cases.append(invented)
+
+        system_selection = copy.deepcopy(valid)
+        system_selection["selection_review_wrapper"]["selection_type"] = "SEL-SYS"
+        cases.append(system_selection)
+
+        execution_started = copy.deepcopy(valid)
+        execution_started["selection_review_wrapper"]["procedure_states"]["O4"] = (
+            "complete"
+        )
+        cases.append(execution_started)
+
+        non_v8_floor = copy.deepcopy(valid)
+        non_v8_floor["selection_review_wrapper"]["rights_floor"] = ["PF-11"]
+        cases.append(non_v8_floor)
+
+        false_house_eligibility = copy.deepcopy(valid)
+        false_house_eligibility["selection_review_wrapper"][
+            "declared_low_information_house_policy_eligibility"
+        ]["case_specific_facts_present"] = True
+        cases.append(false_house_eligibility)
+
+        unbound_source = copy.deepcopy(valid)
+        unbound_source["selection_review_wrapper"]["source_paragraph_refs"].pop()
+        cases.append(unbound_source)
+
+        for candidate in cases:
+            with self.subTest(candidate=candidate):
+                self.assertInvalid(
+                    "promax-recommendation.schema.json",
+                    candidate,
+                )
+
     def test_capability_disclosure_is_structured_and_exact(self) -> None:
         valid = run_contract()
         self.assertEqual(
@@ -1496,7 +1749,12 @@ class ProMaxRuntimeSchemaTests(unittest.TestCase):
 
     def test_stance_stability_checks_bind_before_and_after_evidence(self) -> None:
         self.assertValid("promax-red-team-report.schema.json", red_team_report())
-        for field in ("evidence_before_sha256", "evidence_after_sha256"):
+        for field in (
+            "evidence_basis_sha256_before",
+            "evidence_basis_sha256_after",
+            "pro_prompt",
+            "anti_prompt",
+        ):
             document = red_team_report()
             document["stability_checks"][0].pop(field)
             with self.subTest(field=field):
@@ -1588,8 +1846,15 @@ class ProMaxRuntimeSchemaTests(unittest.TestCase):
                 "options",
                 "evaluation_dimensions",
                 "ranking",
+                "ranking_policy",
+                "ranking_evidence_refs",
+                "selection_review_wrapper",
+                "option_kind_ranking",
+                "option_record_hashes",
+                "option_semantic_ranking",
                 "preferred_option_id",
                 "second_option_id",
+                "no_action_option_id",
                 "switch_conditions",
                 "inaction_consequences",
                 "authorization_status",

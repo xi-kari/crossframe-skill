@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import copy
+from datetime import datetime, timedelta, timezone
 import hashlib
 import json
 from pathlib import Path
@@ -16,6 +17,7 @@ from promax_runtime.artifacts import (
     inventory_artifacts,
 )
 from promax_runtime.jsonio import canonical_json_bytes, load_json, sha256_json
+from promax_runtime.position import selection_review_basis_sha256
 from promax_runtime.schemas import validate_instance
 from promax_runtime.source_integrity import (
     V8_SOURCE_SNAPSHOT_SHA256,
@@ -33,6 +35,33 @@ from promax_runtime.state_machine import (
 FIXTURE_CATALOG = Path("tests/fixtures/promax-runtime/scenarios.json")
 FIXTURE_CLASSES = {"positive", "incomplete", "adversarial"}
 FIXTURE_CONCEPT_ID = "V8-CANON-ACTOR-STATE"
+CENTRAL_CLAIM_STATEMENT = (
+    "A bounded transfer mechanism best explains the observed structural update."
+)
+STANCE_NEUTRAL_SEMANTIC_PAYLOAD = {
+    "analysis_object": "Fixture analysis object",
+    "proposition_under_test": CENTRAL_CLAIM_STATEMENT,
+    "time_window": "P90D",
+}
+OPTION_IDS_BY_OPTION_KIND = (
+    ("probe_action", "OPTION-PROBE"),
+    ("active_action", "OPTION-ACTIVE"),
+    ("maintain_status_quo", "OPTION-STATUS-QUO"),
+    ("delayed_action", "OPTION-DELAYED"),
+    ("exit_or_transfer", "OPTION-EXIT"),
+    ("no_action", "OPTION-NO-ACTION"),
+)
+LOW_INFORMATION_RANKING = tuple(
+    option_id for _option_kind, option_id in OPTION_IDS_BY_OPTION_KIND
+)
+HOUSE_OPTION_KIND_RANKING = tuple(
+    option_kind for option_kind, _option_id in OPTION_IDS_BY_OPTION_KIND
+)
+LOW_INFORMATION_EVALUATION_DIMENSIONS = (
+    "structural explanatory power",
+    "reversibility",
+    "risk",
+)
 VALIDATOR_VERSIONS = {
     "schema": "1.0.0",
     "source-integrity": "1.0.0",
@@ -46,6 +75,184 @@ VALIDATOR_VERSIONS = {
     "state-machine": "1.0.0",
     "continuation": "1.0.0",
 }
+
+
+def _shift_iso_timestamp(value: str, *, seconds: int) -> str:
+    normalized = value[:-1] + "+00:00" if value.endswith("Z") else value
+    parsed = datetime.fromisoformat(normalized)
+    if parsed.tzinfo is None:
+        raise ValueError("fixture timestamps must include a timezone")
+    shifted = parsed.astimezone(timezone.utc) + timedelta(seconds=seconds)
+    return shifted.isoformat(timespec="seconds").replace("+00:00", "Z")
+
+
+def _build_stance_neutral_problem() -> dict[str, object]:
+    payload = copy.deepcopy(STANCE_NEUTRAL_SEMANTIC_PAYLOAD)
+    return {
+        **payload,
+        "evidence_cutoff": "2026-07-23T00:00:00Z",
+        "semantic_key_sha256": sha256_json(payload),
+    }
+
+
+def _build_recommendation_options() -> list[dict[str, object]]:
+    options: list[dict[str, object]] = []
+    for index, (option_kind, option_id) in enumerate(
+        OPTION_IDS_BY_OPTION_KIND,
+        start=1,
+    ):
+        option: dict[str, object] = {
+            "option_id": option_id,
+            "option_kind": option_kind,
+            "description": f"Fixture option {index}: {option_kind}",
+            "forecast_refs": ["FORECAST-FIXTURE-1"],
+            "normative_premise_refs": ["N1", "N2"],
+            "affected_position_refs": ["POSITION-AFFECTED-1"],
+            "rights_floor_refs": ["PF-1"],
+            "expected_paths": [f"PATH-FIXTURE-{index}"],
+            "worst_acceptable_outcome": "Damage remains below the frozen ceiling",
+            "cross_circle_spillovers": ["Record adjacent-circle spillovers"],
+            "distribution_of_costs_and_benefits": "Record costs and benefits by affected position",
+            "information_value": "Produces discriminating evidence for the next review",
+            "lock_in_risk": "Low lock-in with explicit escalation conditions",
+            "reversibility": "Can stop and return to the frozen state",
+            "resource_cost": "Requires bounded resources",
+            "authorized_actor_ref": "UNRESOLVED-DECISION-ACTOR",
+            "authorization_record_ref": "UNRESOLVED-AUTHORIZATION-SOURCE",
+            "stop_conditions": ["Stop when the registered boundary evidence fails"],
+            "rollback_and_remedy": ["Return to the frozen pre-action state and remedy harm"],
+        }
+        options.append(option)
+    return options
+
+
+def _build_selection_review_wrapper(
+    *,
+    option_ids: Sequence[str],
+    evaluation_dimensions: Sequence[str],
+    preferred_option_id: str,
+    reviewed_at: str,
+) -> dict[str, object]:
+    return {
+        "wrapper_schema_id": "crossframe.promax.selection-review-wrapper",
+        "wrapper_schema_version": 1,
+        "wrapper_role": "promax_machine_verification_wrapper_not_v8_source_schema",
+        "source_paragraph_refs": [
+            "V8-P3561",
+            "V8-P3564",
+            "V8-P3569",
+            "V8-P3570",
+            "V8-P3571",
+            "V8-P3572",
+            "V8-P3574",
+            "V8-P3575",
+            "V8-P3580",
+            "V8-P3581",
+            "V8-P3584",
+            "V8-P3587",
+            "V8-P3588",
+            "V8-P3589",
+            "V8-P3596",
+            "V8-P3598",
+            "V8-P3599",
+            "V8-P3601",
+            "V8-P3602",
+        ],
+        "selection_type": "SEL-AGT",
+        "selection_status": "under_review",
+        "public_value_premises": [
+            {
+                "normative_principle_id": "N1",
+                "role": "veto_gate",
+                "statement": "解释不授权处置",
+            },
+            {
+                "normative_principle_id": "N2",
+                "role": "constraint",
+                "statement": "保护不得降级",
+            },
+        ],
+        "value_conflicts": [
+            {
+                "conflict_id": "VALUE-CONFLICT-FIXTURE-1",
+                "premise_ids": ["N1", "N2"],
+                "affected_position_refs": ["POSITION-AFFECTED-1"],
+                "dissent_refs": ["DISSENT-FIXTURE-1"],
+                "decision_rule": "Keep the choice under review while protection remains unresolved.",
+                "status": "open",
+            }
+        ],
+        "unresolved_dissent_refs": ["DISSENT-FIXTURE-1"],
+        "rights_floor": ["PF-1"],
+        "affected_positions": ["POSITION-AFFECTED-1"],
+        "low_power_position_ids": ["POSITION-AFFECTED-1"],
+        "jurisdiction_review_boundary": {
+            "boundary_role": "promax_review_boundary_not_atomic_v8_j_tuple",
+            "reviewed_option_id": preferred_option_id,
+            "decision_actor_ref": "UNRESOLVED-DECISION-ACTOR",
+            "authorization_source_ref": "UNRESOLVED-AUTHORIZATION-SOURCE",
+            "jurisdiction_ref": "UNRESOLVED-JURISDICTION",
+            "scope": "analysis_only",
+            "valid_from": "2026-07-23T00:00:00Z",
+            "valid_until": "2026-07-24T00:00:00Z",
+            "authorization_status": "not_authorized",
+        },
+        "procedure_states": {
+            "O1": "complete",
+            "O2": "complete",
+            "O3": "in_review",
+            "O4": "not_started",
+        },
+        "least_harm": {
+            "principle_id": "NSP-LEAST-HARM",
+            "principle_version": "v8",
+            "selected_option_id": preferred_option_id,
+            "compared_option_ids": list(option_ids),
+            "evaluation_dimensions": list(evaluation_dimensions),
+            "sufficient_reason": "The low-information result is only a pending preference for the narrow reversible probe.",
+            "evidence_refs": [],
+            "reviewer_ref": "REVIEWER-INDEPENDENT-1",
+            "reviewed_at": reviewed_at,
+            "status": "pending",
+        },
+        "proportionality": {
+            "principle_id": "NSP-PROPORTIONALITY",
+            "principle_version": "v8",
+            "selected_option_id": preferred_option_id,
+            "compared_option_ids": list(option_ids),
+            "evaluation_dimensions": list(evaluation_dimensions),
+            "sufficient_reason": "Suitability, necessity, rights cost, intensity, scope, and duration remain pending review.",
+            "evidence_refs": [],
+            "reviewer_ref": "REVIEWER-INDEPENDENT-1",
+            "reviewed_at": reviewed_at,
+            "status": "pending",
+        },
+        "declared_low_information_house_policy_eligibility": {
+            "case_specific_facts_present": False,
+            "choice_changing_retrieval_evidence_present": False,
+            "basis": "The fixture supplies neither case facts nor choice-changing retrieval evidence.",
+        },
+        "ranking_support": [],
+    }
+
+
+def _recommendation_ranking_projections(
+    options: Sequence[Mapping[str, object]],
+) -> tuple[list[str], list[str]]:
+    options_by_id = {str(option["option_id"]): option for option in options}
+    return (
+        [str(options_by_id[option_id]["option_kind"]) for option_id in LOW_INFORMATION_RANKING],
+        [
+            sha256_json(
+                {
+                    key: copy.deepcopy(value)
+                    for key, value in options_by_id[option_id].items()
+                    if key != "option_id"
+                }
+            )
+            for option_id in LOW_INFORMATION_RANKING
+        ],
+    )
 
 
 def build_read_events(
@@ -89,6 +296,20 @@ def _unique_strings(*values: object) -> list[str]:
             if item not in result:
                 result.append(item)
     return result
+
+
+def _string_leaves(value: object) -> list[str]:
+    if isinstance(value, Mapping):
+        result: list[str] = []
+        for child in value.values():
+            result.extend(_string_leaves(child))
+        return result
+    if isinstance(value, Sequence) and not isinstance(value, (str, bytes)):
+        result = []
+        for child in value:
+            result.extend(_string_leaves(child))
+        return result
+    return [value] if isinstance(value, str) and value.strip() else []
 
 
 def build_concept_disposition(
@@ -212,6 +433,7 @@ def build_claim_path_graph(
         "run_id": run_id,
         "source_snapshot_sha256": V8_SOURCE_SNAPSHOT_SHA256,
         "central_claim_id": central_claim_id,
+        "stance_neutral_problem": _build_stance_neutral_problem(),
         "central_claim_cycle": {
             "central_claim_id": central_claim_id,
             "initial_judgment": "The bounded transfer mechanism is the leading conditional explanation.",
@@ -225,7 +447,7 @@ def build_claim_path_graph(
         "claims": [
             {
                 "claim_id": central_claim_id,
-                "statement": "A bounded transfer mechanism best explains the observed structural update.",
+                "statement": CENTRAL_CLAIM_STATEMENT,
                 "claim_type": "mechanistic",
                 "evidence_refs": ["EVIDENCE-FIXTURE-1"],
                 "concept_ids": list(concept_ids),
@@ -480,9 +702,43 @@ def build_red_team_report(
     *,
     run_id: str,
     completed_at: str,
+    recommendation_locked_at: str | None = None,
     central_claim_id: str = "CLAIM-CENTRAL",
+    evidence_basis_sha256: str | None = None,
 ) -> dict[str, object]:
-    evidence_hash = sha256_json({"evidence": "fixture-evidence-set"})
+    evidence_hash = evidence_basis_sha256 or sha256_json(
+        {"evidence": "fixture-evidence-set"}
+    )
+    problem_key_sha256 = _build_stance_neutral_problem()["semantic_key_sha256"]
+    central_statement_sha256 = sha256_json(CENTRAL_CLAIM_STATEMENT)
+    options = _build_recommendation_options()
+    option_kind_ranking, option_semantic_ranking = (
+        _recommendation_ranking_projections(options)
+    )
+    evaluation_dimensions = [*LOW_INFORMATION_EVALUATION_DIMENSIONS]
+    selection_basis_sha256 = selection_review_basis_sha256(
+        {
+            "options": options,
+            "evaluation_dimensions": evaluation_dimensions,
+            "preferred_option_id": "OPTION-PROBE",
+            "ranking_policy": "promax_low_information_house_policy_not_v8",
+            "ranking_evidence_refs": [],
+            "locked_at": (
+                recommendation_locked_at
+                or _shift_iso_timestamp(completed_at, seconds=1)
+            ),
+            "selection_review_wrapper": _build_selection_review_wrapper(
+                option_ids=[
+                    str(option["option_id"]) for option in options
+                ],
+                evaluation_dimensions=evaluation_dimensions,
+                preferred_option_id="OPTION-PROBE",
+                reviewed_at=completed_at,
+            ),
+        }
+    )
+    pro_prompt = "fixture-pro-prompt"
+    anti_prompt = "fixture-anti-prompt"
     return {
         "schema_id": "crossframe.promax.v8.red-team-report",
         "schema_version": 1,
@@ -516,30 +772,34 @@ def build_red_team_report(
         "stability_checks": [
             {
                 "prompt_pair_id": "PAIR-FIXTURE-1",
-                "pro_prompt_sha256": sha256_json("fixture-pro-prompt"),
-                "anti_prompt_sha256": sha256_json("fixture-anti-prompt"),
-                "evidence_before_sha256": evidence_hash,
-                "evidence_after_sha256": evidence_hash,
+                "pro_prompt": pro_prompt,
+                "anti_prompt": anti_prompt,
+                "pro_prompt_sha256": sha256_json(pro_prompt),
+                "anti_prompt_sha256": sha256_json(anti_prompt),
+                "evidence_basis_sha256_before": evidence_hash,
+                "evidence_basis_sha256_after": evidence_hash,
+                "semantic_problem_sha256_before": problem_key_sha256,
+                "semantic_problem_sha256_after": problem_key_sha256,
                 "central_position_id_before": central_claim_id,
                 "central_position_id_after": central_claim_id,
+                "central_statement_sha256_before": central_statement_sha256,
+                "central_statement_sha256_after": central_statement_sha256,
+                "relation_to_proposition_before": "supports",
+                "relation_to_proposition_after": "supports",
                 "judgment_strength_before": "moderate",
                 "judgment_strength_after": "moderate",
                 "option_ranking_before": [
-                    "OPTION-1",
-                    "OPTION-2",
-                    "OPTION-3",
-                    "OPTION-4",
-                    "OPTION-5",
-                    "OPTION-6",
+                    *LOW_INFORMATION_RANKING,
                 ],
                 "option_ranking_after": [
-                    "OPTION-1",
-                    "OPTION-2",
-                    "OPTION-3",
-                    "OPTION-4",
-                    "OPTION-5",
-                    "OPTION-6",
+                    *LOW_INFORMATION_RANKING,
                 ],
+                "option_kind_ranking_before": [*option_kind_ranking],
+                "option_kind_ranking_after": [*option_kind_ranking],
+                "option_semantic_ranking_before": [*option_semantic_ranking],
+                "option_semantic_ranking_after": [*option_semantic_ranking],
+                "normative_selection_basis_sha256_before": selection_basis_sha256,
+                "normative_selection_basis_sha256_after": selection_basis_sha256,
                 "position_drift": "none",
                 "explanation": "The evidence did not change, so user stance did not change the position.",
             }
@@ -563,10 +823,12 @@ def build_position_lock(
         "run_id": run_id,
         "source_snapshot_sha256": V8_SOURCE_SNAPSHOT_SHA256,
         "central_claim_id": central_claim_id,
-        "position": "A bounded transfer mechanism best explains the observed structural update.",
+        "relation_to_proposition": "supports",
+        "proposition_verdict": f"VERDICT[supports] {CENTRAL_CLAIM_STATEMENT}",
+        "position": f"VERDICT[supports] {CENTRAL_CLAIM_STATEMENT} Current evidence favors the bounded transfer mechanism.",
         "judgment_strength": "moderate",
         "primary_reasons": [
-            "A bounded transfer mechanism best explains the observed structural update.",
+            CENTRAL_CLAIM_STATEMENT,
             "Reduce judgment strength and refreeze the object if its boundary changes.",
         ],
         "runner_up_explanation": "Competing mechanism 2 becomes the runner-up when the object boundary changes.",
@@ -588,28 +850,12 @@ def build_recommendation_lock(
     run_id: str,
     locked_at: str,
 ) -> dict[str, object]:
-    action_kinds = (
-        "proactive_action",
-        "delay",
-        "probe",
-        "exit_or_transfer",
-        "status_quo",
-        "inaction",
+    options = _build_recommendation_options()
+    option_kind_ranking, option_semantic_ranking = (
+        _recommendation_ranking_projections(options)
     )
-    options = [
-        {
-            "option_id": f"OPTION-{index}",
-            "action_kind": action_kind,
-            "description": f"Fixture option {index}: {action_kind}",
-            "benefits": ["Retains a comparable structural benefit"],
-            "costs": ["Carries a comparable cost"],
-            "risks": ["Carries a conditional risk"],
-            "authorization_status": "requires_authorized_decision_maker",
-            "stop_conditions": ["Stop when the registered boundary evidence fails"],
-            "rollback": ["Return to the frozen pre-action state"],
-        }
-        for index, action_kind in enumerate(action_kinds, start=1)
-    ]
+    options_by_id = {str(option["option_id"]): option for option in options}
+    evaluation_dimensions = [*LOW_INFORMATION_EVALUATION_DIMENSIONS]
     return {
         "schema_id": "crossframe.promax.v8.recommendation",
         "schema_version": 1,
@@ -617,12 +863,27 @@ def build_recommendation_lock(
         "source_snapshot_sha256": V8_SOURCE_SNAPSHOT_SHA256,
         "position_sha256": sha256_json(dict(position)),
         "options": options,
-        "evaluation_dimensions": ["structural explanatory power", "reversibility", "risk"],
-        "ranking": [option["option_id"] for option in options],
-        "preferred_option_id": "OPTION-1",
-        "second_option_id": "OPTION-2",
+        "evaluation_dimensions": evaluation_dimensions,
+        "ranking": [*LOW_INFORMATION_RANKING],
+        "ranking_policy": "promax_low_information_house_policy_not_v8",
+        "ranking_evidence_refs": [],
+        "selection_review_wrapper": _build_selection_review_wrapper(
+            option_ids=list(options_by_id),
+            evaluation_dimensions=evaluation_dimensions,
+            preferred_option_id="OPTION-PROBE",
+            reviewed_at=_shift_iso_timestamp(locked_at, seconds=-60),
+        ),
+        "option_kind_ranking": option_kind_ranking,
+        "option_record_hashes": [
+            {"option_id": option_id, "record_sha256": sha256_json(option)}
+            for option_id, option in options_by_id.items()
+        ],
+        "option_semantic_ranking": option_semantic_ranking,
+        "preferred_option_id": "OPTION-PROBE",
+        "second_option_id": "OPTION-ACTIVE",
+        "no_action_option_id": "OPTION-NO-ACTION",
         "switch_conditions": [
-            "Switch to OPTION-2 when the object boundary changes."
+            "Switch to OPTION-ACTIVE when the object boundary changes."
         ],
         "inaction_consequences": ["Inaction continues to accumulate opportunity cost"],
         "authorization_status": "conditional_recommendation_only",
@@ -704,6 +965,7 @@ def build_deliverables(
     repo: Path | str,
     *,
     concept_id: str = FIXTURE_CONCEPT_ID,
+    recommendation: Mapping[str, object] | None = None,
 ) -> dict[str, str]:
     concept = _canonical_concept(repo, concept_id)
     name = str(concept["authoritative_name_zh"])
@@ -766,19 +1028,97 @@ def build_deliverables(
         )
     cases = "\n".join(case_sections)
 
-    claim = "A bounded transfer mechanism best explains the observed structural update."
-    option_kinds = (
-        "proactive_action",
-        "delay",
-        "probe",
-        "exit_or_transfer",
-        "status_quo",
-        "inaction",
+    claim = CENTRAL_CLAIM_STATEMENT
+    if recommendation is None:
+        recommendation_options = _build_recommendation_options()
+        recommendation_dimensions = [*LOW_INFORMATION_EVALUATION_DIMENSIONS]
+        selection_review = _build_selection_review_wrapper(
+            option_ids=[
+                str(option["option_id"]) for option in recommendation_options
+            ],
+            evaluation_dimensions=recommendation_dimensions,
+            preferred_option_id="OPTION-PROBE",
+            reviewed_at="2026-07-23T01:15:00Z",
+        )
+    else:
+        raw_options = recommendation.get("options")
+        raw_selection_review = recommendation.get("selection_review_wrapper")
+        if not isinstance(raw_options, list) or not all(
+            isinstance(option, Mapping) for option in raw_options
+        ):
+            raise ValueError("fixture recommendation options are malformed")
+        if not isinstance(raw_selection_review, Mapping):
+            raise ValueError("fixture recommendation selection review is malformed")
+        recommendation_options = [
+            copy.deepcopy(dict(option)) for option in raw_options
+        ]
+        selection_review = copy.deepcopy(dict(raw_selection_review))
+    eligibility_line = (
+        "declared_low_information_house_policy_eligibility: "
+        "case_specific_facts_present=false; "
+        "choice_changing_retrieval_evidence_present=false"
     )
-    option_descriptions = [
-        f"Fixture option {index}: {kind}"
-        for index, kind in enumerate(option_kinds, start=1)
-    ]
+    dossier_selection_line = "；".join(
+        [
+            str(selection_review["wrapper_schema_id"]),
+            str(selection_review["wrapper_role"]),
+            *[
+                str(item)
+                for item in selection_review["source_paragraph_refs"]
+            ],
+            str(selection_review["selection_type"]),
+            str(selection_review["selection_status"]),
+            str(
+                selection_review["jurisdiction_review_boundary"][
+                    "boundary_role"
+                ]
+            ),
+            str(selection_review["least_harm"]["principle_id"]),
+            str(selection_review["least_harm"]["status"]),
+            str(selection_review["proportionality"]["principle_id"]),
+            str(selection_review["proportionality"]["status"]),
+        ]
+    )
+    essay_selection_line = "；".join(
+        dict.fromkeys(_string_leaves(selection_review))
+    )
+    option_descriptions = [str(option["description"]) for option in recommendation_options]
+    option_detail_lines: list[str] = []
+    for option in recommendation_options:
+        option_detail_lines.append(
+            "；".join(
+                [
+                    f"{option['option_id']} — {option['description']}",
+                    f"option_kind={option['option_kind']}",
+                    *[
+                        f"{field}=" + "、".join(str(item) for item in option[field])
+                        for field in (
+                            "forecast_refs",
+                            "normative_premise_refs",
+                            "affected_position_refs",
+                            "rights_floor_refs",
+                            "expected_paths",
+                            "cross_circle_spillovers",
+                            "stop_conditions",
+                            "rollback_and_remedy",
+                        )
+                    ],
+                    *[
+                        f"{field}={option[field]}"
+                        for field in (
+                            "worst_acceptable_outcome",
+                            "distribution_of_costs_and_benefits",
+                            "information_value",
+                            "lock_in_risk",
+                            "reversibility",
+                            "resource_cost",
+                            "authorized_actor_ref",
+                            "authorization_record_ref",
+                        )
+                    ],
+                ]
+            )
+        )
     dossier = "\n".join(
         [
             "# CrossFrame ProMax v8 推演档案",
@@ -787,10 +1127,18 @@ def build_deliverables(
             "本档案登记三个竞争机制、五向检索、两轮无新颖性收敛、最强反驳与撤回条件。",
             "建议全集："
             + "；".join(
-                f"OPTION-{index} {description}"
-                for index, description in enumerate(option_descriptions, start=1)
+                f"{option_id} {description}"
+                for (_kind, option_id), description in zip(
+                    OPTION_IDS_BY_OPTION_KIND,
+                    option_descriptions,
+                    strict=True,
+                )
             )
             + "。",
+            "ranking_policy=promax_low_information_house_policy_not_v8。",
+            "PROMAX-HOUSE-POLICY-NOT-V8：这是 ProMax 的低信息排序政策，不是 v8 概念、规范前提或 v8 自动结论；ranking_evidence_refs=[]。",
+            f"规范选择审查包装层：{dossier_selection_line}。",
+            eligibility_line,
             "",
         ]
     )
@@ -799,7 +1147,7 @@ def build_deliverables(
             "# CrossFrame ProMax v8 完整推演",
             "",
             "## 明确判断",
-            "A bounded transfer mechanism best explains the observed structural update.",
+            f"VERDICT[supports] {CENTRAL_CLAIM_STATEMENT} Current evidence favors the bounded transfer mechanism.",
             "判断强度：moderate。",
             "The bounded transfer mechanism is the leading conditional explanation.",
             "Retain the claim only where temporal order and transfer evidence are observed.",
@@ -819,14 +1167,15 @@ def build_deliverables(
             "",
             "## 建议排序",
             "评价维度：structural explanatory power、reversibility、risk。",
-            *[
-                f"OPTION-{index} — {description}"
-                for index, description in enumerate(option_descriptions, start=1)
-            ],
-            "各方案共同逐项登记：Retains a comparable structural benefit；Carries a comparable cost；Carries a conditional risk。",
-            "各方案授权状态均为 requires_authorized_decision_maker；停止条件是 Stop when the registered boundary evidence fails；回滚方案是 Return to the frozen pre-action state。",
-            "首选 OPTION-1；次选 OPTION-2。",
-            "Switch to OPTION-2 when the object boundary changes.",
+            *option_detail_lines,
+            "ranking_policy=promax_low_information_house_policy_not_v8。",
+            "PROMAX-HOUSE-POLICY-NOT-V8：本轮仅因低信息条件采用 ProMax 保守排序，它不是 v8 概念、规范前提或 v8 自动结论；ranking_evidence_refs=[]。",
+            f"selection_review_wrapper 完整公开语义：{essay_selection_line}。",
+            eligibility_line,
+            "O1=complete；O2=complete；O3=in_review；O4=not_started。",
+            "完整排序：OPTION-PROBE、OPTION-ACTIVE、OPTION-STATUS-QUO、OPTION-DELAYED、OPTION-EXIT、OPTION-NO-ACTION。",
+            "首选 OPTION-PROBE；次选 OPTION-ACTIVE。",
+            "Switch to OPTION-ACTIVE when the object boundary changes.",
             "Inaction continues to accumulate opportunity cost",
             "conditional_recommendation_only",
             "",
@@ -940,12 +1289,12 @@ def _apply_pre_manifest_mutation(
         recommendation["options"] = [
             option
             for option in recommendation["options"]
-            if option["action_kind"] != "inaction"
+            if option["option_kind"] != "no_action"
         ]
         recommendation["ranking"] = [
             option_id
             for option_id in recommendation["ranking"]
-            if option_id != "OPTION-6"
+            if option_id != "OPTION-NO-ACTION"
         ]
         return
     if mutation == "record_position_drift_without_new_evidence":
@@ -1029,7 +1378,20 @@ def _materialize_into(
         completed_at=stamps["retrieval"],
         network_available=not incomplete,
     )
-    red_team = build_red_team_report(run_id=run_id, completed_at=stamps["red_team"])
+    evidence_basis_sha256 = sha256_json(
+        {
+            "request_sha256": run_contract["request_sha256"],
+            "source_snapshot_sha256": run_contract["source_snapshot_sha256"],
+            "local_world_model_sha256": sha256_json(local_world),
+            "retrieval_ledger_sha256": sha256_json(retrieval),
+        }
+    )
+    red_team = build_red_team_report(
+        run_id=run_id,
+        completed_at=stamps["red_team"],
+        recommendation_locked_at=stamps["recommendation"],
+        evidence_basis_sha256=evidence_basis_sha256,
+    )
     position = build_position_lock(run_id=run_id, locked_at=stamps["position"])
     recommendation = build_recommendation_lock(
         position,
@@ -1037,7 +1399,7 @@ def _materialize_into(
         locked_at=stamps["recommendation"],
     )
     output_plan = build_output_plan(run_id=run_id, locked_at=stamps["plan"])
-    deliverables = build_deliverables(repo)
+    deliverables = build_deliverables(repo, recommendation=recommendation)
 
     _apply_pre_manifest_mutation(
         mutation if isinstance(mutation, str) else None,
