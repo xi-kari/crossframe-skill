@@ -31,6 +31,17 @@ CURRENT_CROSSFRAME_SKILLS = [
     "crossframe-promax",
 ]
 
+PROMAX_EXACT_TRIGGER_NAMES = (
+    "crossframe-promax",
+    "CrossFrame ProMax",
+    "$crossframe-promax",
+    "/crossframe-promax",
+)
+
+PROMAX_CANONICAL_SKILL_PATTERN = re.compile(
+    r"(?<![A-Za-z0-9_./-])skills/crossframe-promax/SKILL\.md"
+)
+
 PROMAX_POLICY_ALIASES = {
     "v8-only": ("v8-only",),
     "exact-name only": ("exact-name only", "仅在用户精确点名"),
@@ -46,6 +57,12 @@ PROMAX_POLICY_ALIASES = {
     ),
     "own audit": ("own audit", "独立审计"),
     "no review chain": ("no review chain", "不串联 review"),
+    "no fallback to Max": (
+        "no fallback to Max",
+        "never falls back to Max",
+        "不得降级回 Max",
+        "不得回退 Max",
+    ),
 }
 
 TECHNIQUE_FIELDS = [
@@ -231,6 +248,27 @@ def require(condition: bool, message: str) -> None:
 
 def read(path: Path) -> str:
     return path.read_text(encoding="utf-8")
+
+
+def check_promax_policy_text(text: str, rel: str, label: str) -> None:
+    require(
+        PROMAX_CANONICAL_SKILL_PATTERN.search(text) is not None,
+        f"{label}: ProMax policy adapter {rel} does not link the canonical skill",
+    )
+    for trigger in PROMAX_EXACT_TRIGGER_NAMES:
+        escaped = re.escape(trigger)
+        standalone = re.compile(
+            rf"(?<![A-Za-z0-9_./$-]){escaped}(?![A-Za-z0-9_/-])"
+        )
+        require(
+            standalone.search(text) is not None,
+            f"{label}: ProMax policy adapter {rel} missing exact trigger: {trigger}",
+        )
+    for policy, aliases in PROMAX_POLICY_ALIASES.items():
+        require(
+            any(alias in text for alias in aliases),
+            f"{label}: ProMax policy adapter {rel} missing policy: {policy}",
+        )
 
 
 def file_sha256(path: Path) -> str:
@@ -463,16 +501,7 @@ def check_repo_adapters(repo: Path, label: str) -> None:
         path = repo / rel
         require(path.exists(), f"{label}: missing ProMax policy adapter: {rel}")
         text = read(path)
-        require(
-            "skills/crossframe-promax/SKILL.md" in text
-            or ".claude/skills/crossframe-promax/SKILL.md" in text,
-            f"{label}: ProMax policy adapter {rel} does not link the canonical skill",
-        )
-        for policy, aliases in PROMAX_POLICY_ALIASES.items():
-            require(
-                any(alias in text for alias in aliases),
-                f"{label}: ProMax policy adapter {rel} missing policy: {policy}",
-            )
+        check_promax_policy_text(text, rel, label)
 
     claude_command_dir = repo / ".claude" / "commands"
     require(claude_command_dir.is_dir(), f"{label}: missing Claude command directory")

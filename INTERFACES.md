@@ -19,7 +19,7 @@
 - `skills/crossframe-debate/SKILL.md`
 - `skills/crossframe-notebook/SKILL.md`
 
-`crossframe-suite` 负责复杂任务的连续调度；`crossframe` 负责结构诊断；`crossframe-essay` 负责把结构诊断转成中文批判性洞察文章；`crossframe-critical` 是只允许点名触发的结构批判长文 skill，不接入 suite 默认链路；`crossframe-max` 是最大化结构推演入口；`crossframe-promax` 是精确点名的 v8 独立 runtime；其它 `crossframe-*` 负责评审、答复、案例、历史研究、追问、公共议题、组织修复、教学、辩论和研究笔记。其他接口文件只是薄适配层，用来告诉不同 AI 工具如何读取与调用这些 skill。不要把完整协议复制成多份，以免内容漂移。
+`crossframe-suite` 负责复杂任务的连续调度；`crossframe` 负责结构诊断；`crossframe-essay` 负责把结构诊断转成中文批判性洞察文章；`crossframe-critical` 是只允许点名触发的结构批判长文 skill，不接入 suite 默认链路；`crossframe-max` 是只允许显式点名触发的最大化结构推演入口，把一件事当作局部世界展开世界观、运行规律、问题结构、处理路径和演化分支；`crossframe-promax` 是精确点名的 v8 独立 runtime；其它 `crossframe-*` 负责评审、答复、案例、历史研究、追问、公共议题、组织修复、教学、辩论和研究笔记。其他接口文件只是薄适配层，用来告诉不同 AI 工具如何读取与调用这些 skill。不要把完整协议复制成多份，以免内容漂移。
 
 ## 适配原则
 
