@@ -17,7 +17,6 @@ from promax_runtime import (
 )
 from promax_runtime.jsonio import canonical_json_bytes
 from promax_runtime.materialization import materialize_run, prepare_run
-from promax_runtime.pollution import resolve_explicit_route
 from promax_runtime.source_integrity import build_source_snapshot
 from promax_runtime.state_machine import (
     RunBinding,
@@ -95,9 +94,6 @@ def _parser() -> argparse.ArgumentParser:
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
 
-    route = subparsers.add_parser("route", help="resolve an explicit ProMax name")
-    route.add_argument("--request", required=True)
-
     snapshot = subparsers.add_parser(
         "snapshot", help="print the canonical v8 source snapshot binding"
     )
@@ -155,9 +151,6 @@ def _parser() -> argparse.ArgumentParser:
 
 def main(argv: Sequence[str] | None = None) -> int:
     args = _parser().parse_args(argv)
-    if args.command == "route":
-        print(json.dumps(resolve_explicit_route(args.request), ensure_ascii=False))
-        return 0
     if args.command == "snapshot":
         snapshot = build_source_snapshot(
             args.repo,

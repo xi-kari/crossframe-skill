@@ -280,6 +280,39 @@ class ProMaxTargetBehaviorContractTests(unittest.TestCase):
         self.assertIn("PROMAX-NO-FALLBACK-TO-MAX", skill)
         self.assertIn("PROMAX-PRIORITY-OVER-MAX", skill)
 
+    def test_loaded_skill_does_not_repeat_the_activation_gate(self) -> None:
+        skill = read_promax_contract(self, "skill")
+        routing_map = (
+            PROMAX_ROOT / "references/runtime-routing-map.md"
+        ).read_text(encoding="utf-8")
+        runtime = read_promax_contract(self, "runtime")
+        repair = read_promax_contract(self, "repair")
+        command = (
+            ROOT / ".claude/commands/crossframe-promax.md"
+        ).read_text(encoding="utf-8")
+        cli = (
+            PROMAX_ROOT / "scripts/crossframe_promax_runtime.py"
+        ).read_text(encoding="utf-8")
+
+        self.assertIn("宿主已经加载本 skill", skill)
+        self.assertIn("不得再次解析用户请求来决定是否退出", skill)
+        for path, text in (
+            ("skill", skill),
+            ("routing-map", routing_map),
+            ("runtime", runtime),
+            ("command", command),
+            ("cli", cli),
+        ):
+            with self.subTest(path=path):
+                self.assertNotIn("route --request", text)
+                self.assertNotIn("没有命中四种名称时立即退出", text)
+                self.assertNotIn("路由检查失败即不使用本 skill", text)
+                self.assertNotIn("先执行 `route`", text)
+                self.assertNotIn("确定性路由", text)
+                self.assertNotIn("resolve_explicit_route", text)
+                self.assertNotIn('add_parser("route"', text)
+        self.assertNotIn("路由、run binding", repair)
+
     def test_judgment_charter_and_all_twelve_phases_exist(self) -> None:
         judgment = read_promax_contract(self, "judgment")
         runtime = read_promax_contract(self, "runtime")

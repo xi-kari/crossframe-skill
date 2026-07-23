@@ -93,7 +93,7 @@ python skills/crossframe-promax/scripts/crossframe_promax_runtime.py materialize
 
 执行：
 
-1. 用路由器确认原始请求命中明确名称。
+1. 接受宿主已经完成的 ProMax 选择，不再从问题正文判定激活。
 2. 冻结原始请求 hash、源快照、运行档位、建议需求、能力矩阵、编排模式、角色计划、预算与六项完成标准。
 3. 能力缺口只写入 `capabilities.limitations`；只有允许的硬阻断才写 `blocker`。
 4. 让 `init` 原子创建 run 目录、run contract、source snapshot 和 P0 phase event。
@@ -105,7 +105,7 @@ python skills/crossframe-promax/scripts/crossframe_promax_runtime.py materialize
 - `promax-source-snapshot.json`
 - `promax-phase-events.jsonl` 的 P0 事件
 
-闸门：P0 绑定字段不一致、路由不明确或新目录未原子创建时不得进入 P1。
+闸门：P0 绑定字段不一致或新目录未原子创建时不得进入 P1。
 
 ## P1：source integrity
 

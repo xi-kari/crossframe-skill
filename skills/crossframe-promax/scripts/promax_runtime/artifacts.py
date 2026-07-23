@@ -12,7 +12,7 @@ from typing import Iterable, Mapping, Sequence
 from .errors import RunBindingError
 from .jsonio import sha256_json
 from .paths import validate_relative_artifact_path
-from .pollution import resolve_explicit_route
+from .pollution import platform_selected_promax_route
 from .schemas import validate_instance
 from .source_integrity import V8_SOURCE_SNAPSHOT_SHA256, build_source_snapshot
 from .state_machine import PHASES, RunBinding
@@ -246,7 +246,7 @@ def initialize_run(
     blocker: Mapping[str, object] | None = None,
     recommendation_required: bool = False,
 ) -> dict[str, dict[str, object]]:
-    route = resolve_explicit_route(request_text)
+    route = platform_selected_promax_route()
     if mode not in ALLOWED_MODES:
         raise ValueError(f"unsupported ProMax mode: {mode!r}")
     if type(recommendation_required) is not bool:

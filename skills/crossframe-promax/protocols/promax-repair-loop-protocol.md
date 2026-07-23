@@ -113,7 +113,7 @@ repair plan 必须符合 `promax-repair-plan.schema.json`，并包含：
 
 | 失败 | 最早责任阶段 |
 | --- | --- |
-| 路由、run binding、能力合同错误 | `P0` |
+| run binding、能力合同错误 | `P0` |
 | source snapshot、read coverage、内容 hash 错误 | `P1` |
 | worldview capsule 未绑定完整读取 | `P2` |
 | 对象、事件、证据或授权边界错误 | `P3` |

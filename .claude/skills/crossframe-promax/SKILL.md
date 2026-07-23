@@ -7,21 +7,14 @@ description: "Use when the user explicitly names crossframe-promax, CrossFrame P
 
 把本 skill 作为 v8-only、artifact-first 的结构推演运行时。先建立可验证工件，再交付完整中文解释；以固定源快照、概念闭包、命题路径、检索台账、反方攻击、立场锁和验证报告约束模型风格差异。不要声称拥有无限算力或已经穷尽现实；只声明验证器能够证明的预算内饱和。
 
-## 激活硬门
+## 激活边界
 
 - `PROMAX-NAMED-ONLY`：只接受 `crossframe-promax`、`CrossFrame ProMax`、`$crossframe-promax`、`/crossframe-promax` 四种明确点名。
-- 路由：泛化的“最大算力”“完整长文”“全尺度”“穷尽分析”等表达不是 ProMax 名称，不得触发 ProMax。
-- `PROMAX-PRIORITY-OVER-MAX`：同时点名 ProMax 与 Max 时，ProMax 优先并记录路由冲突已解决。
+- 上述名称由宿主或上游路由器判定；泛化的“最大算力”“完整长文”“全尺度”“穷尽分析”等表达不构成上游触发。
+- `PROMAX-PRIORITY-OVER-MAX`：同时点名 ProMax 与 Max 时，由宿主或上游路由器选择 ProMax 并完成冲突记录；进入本 skill 后不再复判。
 - `PROMAX-NO-FALLBACK-TO-MAX`：进入 ProMax 后禁止回退到 Max，不得把失败、材料不足或能力缺口改写为回退理由。
-- 没有命中四种名称时立即退出本运行时；不要用相似拼写、语义近似或模型判断补足触发。
 
-先运行确定性路由检查，并把用户原始请求作为单一参数安全传入：
-
-```text
-python skills/crossframe-promax/scripts/crossframe_promax_runtime.py route --request <原始请求>
-```
-
-路由检查失败即不使用本 skill。检查通过后，本次运行不得切换到 brief、快速答复、自选轻量档，也不得加载任何 sibling knowledge。唯一理论知识面是本 skill 随附的 v8 源快照、注册表、合同和路由；外部材料只能校准事实与案例，不能改写 v8 定义。
+宿主已经加载本 skill，就表示显式点名和优先级选择已经完成。不得再次解析用户请求来决定是否退出，不得要求用户重复技能名，也不得因为命令适配器只传入问题正文而拒绝运行；直接进入 ProMax 初始化。本次运行不得切换到 brief、快速答复、自选轻量档，也不得加载任何 sibling knowledge。唯一理论知识面是本 skill 随附的 v8 源快照、注册表、合同和路由；外部材料只能校准事实与案例，不能改写 v8 定义。
 
 ## 不可绕过的输出边界
 

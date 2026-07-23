@@ -29,6 +29,7 @@ fabricated A2 counterpart.
 tests/evals/promax-green/
   rubric.json
   scenarios.json
+  evaluated-skill-tree.json
   raw/
     <model_id>/<scenario_id>.md
   artifacts/
@@ -53,6 +54,14 @@ as its own canonical run.
 The assembler does not generate model output, repair artifacts, score prose, or
 copy files from `work/`. It only validates already committed evidence and, after
 every gate succeeds, writes canonical `results.json`.
+
+`evaluated-skill-tree.json` freezes the exact skill-tree hash loaded by the
+three model runs. A later activation-boundary-only release change must not
+rewrite those runs as if the models had loaded the new tree. Instead, the record
+keeps the historical hash, enumerates the bounded changed paths, and names the
+deterministic regression tests for the current release. The assembler validates
+model metadata against that evaluated hash. This preserves the model evidence
+without claiming a fresh model rerun.
 
 ## One-run metadata contract
 
@@ -134,8 +143,8 @@ regression rather than being silently removed or imputed from another scenario.
 `build_results.py` independently checks:
 
 1. the closed, unique explicit `run_matrix` and unique run IDs;
-2. prompt, raw-output, artifact-tree, metric-evidence, and ProMax skill-tree
-   hashes;
+2. prompt, raw-output, artifact-tree, metric-evidence, and the declared
+   evaluated ProMax skill-tree hash;
 3. rubric applicability and every per-run and aggregate threshold;
 4. A1/A2 semantic equality for the required `gpt-5.6-sol` pair by calling
    `load_artifact_semantics` from `tests.test_promax_green_eval`;

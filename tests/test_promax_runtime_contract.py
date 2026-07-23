@@ -33,7 +33,6 @@ from promax_runtime.artifacts import (
 from promax_runtime.claim_path import validate_claim_path_graph
 from promax_runtime.concept_closure import validate_concept_disposition
 from promax_runtime.jsonio import sha256_json
-from promax_runtime.pollution import ExplicitRouteError, resolve_explicit_route
 from promax_runtime.position import validate_position_lock
 from promax_runtime.repair import build_repair_plan
 from promax_runtime.retrieval import validate_retrieval_ledger
@@ -132,73 +131,33 @@ def initialized(
     )
 
 
-class ProMaxExplicitRoutingTests(unittest.TestCase):
-    def test_only_an_explicit_promax_name_activates_the_runtime(self) -> None:
+class ProMaxRunInitializationTests(unittest.TestCase):
+    def test_platform_selected_runtime_does_not_reparse_the_request_for_activation(
+        self,
+    ) -> None:
         for request in (
-            "请用 CrossFrame ProMax 分析。",
-            "run crossframe-promax",
-            "$crossframe-promax",
-            "/crossframe-promax",
+            "分析这个具体问题，直接进入完整推演。",
+            "比较这个方案与 crossframe-max 的差异。",
         ):
             with self.subTest(request=request):
-                route = resolve_explicit_route(request)
-                self.assertEqual(route["requested_skill_names"], ["crossframe-promax"])
-                self.assertFalse(route["routing_conflict"]["detected"])
+                contract = initialized(request=request)["run_contract"]
                 self.assertEqual(
-                    route["routing_conflict"]["resolved_to"], "crossframe-promax"
+                    contract["requested_skill_names"], ["crossframe-promax"]
                 )
-                self.assertFalse(route["routing_conflict"]["fallback_allowed"])
-
-        for request in (
-            "请穷尽算力完整分析",
-            "最大算力、全尺度、长文",
-            "ProMax，请开始。",
-            "PROMAX，请开始。",
-            "CrossFrameProMax",
-            "CrossFrame ProMax_extra",
-            "CrossFrame ProMax-other",
-            "prefix-CrossFrame ProMax",
-            "CrossFrame ProMax-suffix",
-            "请用 CrossFrame Max",
-            "/crossframe-max",
-            "普通 CrossFrame 就行",
-            "",
-        ):
-            with self.subTest(rejected=request):
-                with self.assertRaises(ExplicitRouteError):
-                    resolve_explicit_route(request)
-
-    def test_both_names_resolve_to_promax_with_immutable_no_fallback_priority(self) -> None:
-        route = resolve_explicit_route(
-            "同时调用 CrossFrame Max 与 CrossFrame ProMax；若冲突按 ProMax。"
-        )
-        self.assertEqual(
-            route["requested_skill_names"],
-            ["crossframe-promax", "crossframe-max"],
-        )
-        self.assertEqual(
-            route["routing_conflict"],
-            {
-                "detected": True,
-                "conflicting_names": ["crossframe-promax", "crossframe-max"],
-                "resolved_to": "crossframe-promax",
-                "priority_rule": (
-                    "routing-priority-crossframe-promax-over-"
-                    "crossframe-max-no-fallback"
-                ),
-                "fallback_allowed": False,
-            },
-        )
-
-        for near_miss in ("CrossFrame Max_extra", "CrossFrame Max-other"):
-            with self.subTest(near_miss=near_miss):
-                no_conflict = resolve_explicit_route(
-                    f"请用 CrossFrame ProMax；不要把 {near_miss} 当成技能名。"
+                self.assertEqual(
+                    contract["routing_conflict"],
+                    {
+                        "detected": False,
+                        "conflicting_names": [],
+                        "resolved_to": "crossframe-promax",
+                        "priority_rule": (
+                            "routing-priority-crossframe-promax-over-"
+                            "crossframe-max-no-fallback"
+                        ),
+                        "fallback_allowed": False,
+                    },
                 )
-                self.assertFalse(no_conflict["routing_conflict"]["detected"])
 
-
-class ProMaxRunInitializationTests(unittest.TestCase):
     def test_initialization_freezes_the_recommendation_request_switch(self) -> None:
         capabilities = build_capability_disclosure(
             subagents_available=True,
@@ -301,20 +260,18 @@ class ProMaxRunInitializationTests(unittest.TestCase):
             single_contract["orchestration_mode"], "single-agent-separated"
         )
 
-    def test_initialization_rejects_non_promax_and_self_downgrade_modes(self) -> None:
+    def test_initialization_rejects_self_downgrade_modes(self) -> None:
         capabilities = build_capability_disclosure(
             subagents_available=False,
             max_parallelism=0,
             validator_ids=("schema",),
         )
         for request, mode in (
-            ("use crossframe-max", "promax-artifact-run"),
-            ("do a deep analysis", "promax-artifact-run"),
-            ("use crossframe-promax", "brief"),
-            ("use crossframe-promax", "promax-lite"),
+            ("do a deep analysis", "brief"),
+            ("use crossframe-max", "promax-lite"),
         ):
             with self.subTest(request=request, mode=mode):
-                with self.assertRaises((ExplicitRouteError, ValueError)):
+                with self.assertRaises(ValueError):
                     initialize_run(
                         ROOT,
                         request,
@@ -1134,18 +1091,13 @@ class ProMaxSchemaBoundHelperTests(unittest.TestCase):
 
 
 class ProMaxRuntimeCLITests(unittest.TestCase):
-    def test_canonical_cli_routes_and_root_entrypoint_is_thin(self) -> None:
-        output = io.StringIO()
-        with mock.patch("sys.stdout", output):
-            exit_code = crossframe_promax_runtime.main(
-                ["route", "--request", "use CrossFrame ProMax and CrossFrame Max"]
-            )
-        self.assertEqual(exit_code, 0)
-        routed = json.loads(output.getvalue())
-        self.assertTrue(routed["routing_conflict"]["detected"])
-        self.assertEqual(
-            routed["routing_conflict"]["resolved_to"], "crossframe-promax"
-        )
+    def test_cli_has_no_activation_subcommand_and_root_entrypoint_is_thin(self) -> None:
+        with mock.patch("sys.stderr", io.StringIO()):
+            with self.assertRaises(SystemExit) as raised:
+                crossframe_promax_runtime.main(
+                    ["route", "--request", "use CrossFrame ProMax"]
+                )
+        self.assertEqual(raised.exception.code, 2)
 
         root_entry = ROOT / "scripts/crossframe_promax_runtime.py"
         self.assertTrue(root_entry.is_file())

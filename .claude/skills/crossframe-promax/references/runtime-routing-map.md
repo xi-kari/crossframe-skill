@@ -39,7 +39,7 @@
 
 ## 固定依赖
 
-1. 先执行 `route`，再对全新 run 目录执行 `init`。
+1. 宿主完成 ProMax 选择后，直接对全新 run 目录执行 `init`；运行时不重新判定激活。
 2. 每一阶段只读取 run contract 允许的冻结输入；角色交换协议固定为 `structured-artifacts-only`。
 3. `P4` 的 applied 概念集合必须与 `P9` 的 concept IDs 双向相等。
 4. `P5` 的全部 claim IDs 必须与 `P9` 双向相等；案例 ID、反例 ID 和判断 ID 也必须闭合。
@@ -51,7 +51,6 @@
 ## 可执行入口
 
 ```text
-python skills/crossframe-promax/scripts/crossframe_promax_runtime.py route --request <原始请求>
 python skills/crossframe-promax/scripts/crossframe_promax_runtime.py init --repo <仓库根目录> --run-dir <新工件目录> --request <原始请求> --mode promax-artifact-run
 python skills/crossframe-promax/scripts/check_crossframe_promax_artifacts.py --workspace <工件目录> --repo <仓库根目录> --write-report --json
 ```

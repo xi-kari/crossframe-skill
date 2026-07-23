@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 EVAL_ROOT = ROOT / "tests" / "evals" / "promax-green"
 RUBRIC_PATH = EVAL_ROOT / "rubric.json"
 RESULTS_PATH = EVAL_ROOT / "results.json"
+EVALUATED_SKILL_TREE_PATH = EVAL_ROOT / "evaluated-skill-tree.json"
 PROMAX_ROOT = ROOT / "skills" / "crossframe-promax"
 RUNTIME_SCRIPTS = PROMAX_ROOT / "scripts"
 sys.path.insert(0, str(RUNTIME_SCRIPTS))
@@ -893,17 +894,34 @@ def load_artifact_semantics(
     }
 
 
-def canonical_skill_tree_sha256() -> str:
+def canonical_skill_tree_sha256(skill_root: Path | None = None) -> str:
+    root = PROMAX_ROOT if skill_root is None else Path(skill_root)
     digest = hashlib.sha256()
-    for path in sorted(PROMAX_ROOT.rglob("*")):
+    for path in sorted(root.rglob("*")):
         if not path.is_file() or "__pycache__" in path.parts or path.suffix == ".pyc":
             continue
-        relative = path.relative_to(PROMAX_ROOT).as_posix().encode("utf-8")
-        digest.update(relative)
+        relative = path.relative_to(root).as_posix()
+        if relative == "references/.v8-full-source.lock":
+            continue
+        digest.update(relative.encode("utf-8"))
         digest.update(b"\0")
         digest.update(hashlib.sha256(path.read_bytes()).digest())
         digest.update(b"\0")
     return digest.hexdigest()
+
+
+def evaluated_skill_tree_record() -> dict[str, object]:
+    value = json.loads(EVALUATED_SKILL_TREE_PATH.read_text(encoding="utf-8"))
+    if not isinstance(value, dict):
+        raise ValueError("evaluated skill tree record must be an object")
+    return value
+
+
+def evaluated_skill_tree_sha256() -> str:
+    value = evaluated_skill_tree_record().get("evaluated_skill_tree_sha256")
+    if not isinstance(value, str) or len(value) != 64:
+        raise ValueError("evaluated skill tree hash must be SHA-256 text")
+    return value
 
 
 def metric_passes(
@@ -923,6 +941,21 @@ def metric_passes(
 
 
 class ProMaxGreenRubricScopeTests(unittest.TestCase):
+    def test_skill_tree_hash_excludes_runtime_cache_and_coordination_lock(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            skill_root = Path(directory)
+            (skill_root / "references").mkdir()
+            (skill_root / "scripts/__pycache__").mkdir(parents=True)
+            (skill_root / "SKILL.md").write_text("stable", encoding="utf-8")
+            expected = canonical_skill_tree_sha256(skill_root)
+
+            (skill_root / "references/.v8-full-source.lock").write_bytes(b"\x00")
+            (skill_root / "scripts/__pycache__/module.pyc").write_bytes(b"cache")
+
+            self.assertEqual(canonical_skill_tree_sha256(skill_root), expected)
+
     def test_green_artifacts_are_commit_replayable(self) -> None:
         self.assertEqual(ARTIFACT_WORKSPACE, EVAL_ROOT / "artifacts")
         self.assertFalse(
@@ -1597,7 +1630,7 @@ class ProMaxGreenEvalTests(unittest.TestCase):
         self.assertEqual(len(runs), len(expected_pairs))
         self.assertEqual(len({run["run_id"] for run in runs}), len(runs))
 
-        tree_hash = canonical_skill_tree_sha256()
+        tree_hash = evaluated_skill_tree_sha256()
         self.assertEqual(self.results["skill_tree_sha256"], tree_hash)
         for run in runs:
             with self.subTest(model=run["model_id"], scenario=run["scenario_id"]):
@@ -1612,6 +1645,54 @@ class ProMaxGreenEvalTests(unittest.TestCase):
                 self.assertTrue(raw_path.is_file(), raw_path.as_posix())
                 self.assertEqual(run["raw_output_sha256"], sha256_bytes(raw_path.read_bytes()))
                 self.assertTrue(run["artifact_dir"].strip())
+
+    def test_historical_model_evidence_is_not_relabelled_as_the_current_tree(
+        self,
+    ) -> None:
+        record = evaluated_skill_tree_record()
+        self.assertEqual(
+            record["schema_id"],
+            "crossframe.promax.green-evaluated-skill-tree",
+        )
+        self.assertEqual(record["schema_version"], 1)
+        self.assertEqual(
+            record["evaluated_skill_tree_sha256"],
+            self.results["skill_tree_sha256"],
+        )
+        self.assertNotEqual(
+            record["evaluated_skill_tree_sha256"],
+            canonical_skill_tree_sha256(),
+        )
+        compatibility = record["current_release_compatibility"]
+        self.assertEqual(
+            compatibility["scope"],
+            "activation-boundary-only",
+        )
+        self.assertEqual(
+            set(compatibility["deterministic_tests"]),
+            {
+                (
+                    "tests.test_promax_behavioral_contract."
+                    "ProMaxTargetBehaviorContractTests."
+                    "test_loaded_skill_does_not_repeat_the_activation_gate"
+                ),
+                (
+                    "tests.test_promax_runtime_contract."
+                    "ProMaxRunInitializationTests."
+                    "test_platform_selected_runtime_does_not_reparse_the_request_for_activation"
+                ),
+                (
+                    "tests.test_promax_runtime_contract."
+                    "ProMaxRuntimeCLITests."
+                    "test_cli_has_no_activation_subcommand_and_root_entrypoint_is_thin"
+                ),
+                (
+                    "tests.test_promax_repository_integration."
+                    "ProMaxRepositoryTargetTests."
+                    "test_promax_runtime_does_not_reimplement_suite_activation"
+                ),
+            },
+        )
 
     def test_per_run_metric_records_are_complete_and_auditable(self) -> None:
         rubric_metrics = {

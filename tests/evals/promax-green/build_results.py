@@ -63,6 +63,59 @@ def _sha256(value: object, *, field: str) -> str:
     return digest
 
 
+def _evaluated_skill_tree_sha256(evaluation: Path) -> str:
+    declaration_path = evaluation / "evaluated-skill-tree.json"
+    if not declaration_path.is_file():
+        return canonical_skill_tree_sha256()
+    declaration = _json_object(
+        declaration_path,
+        label="GREEN evaluated skill tree declaration",
+    )
+    if set(declaration) != {
+        "schema_id",
+        "schema_version",
+        "evaluated_skill_tree_sha256",
+        "current_release_compatibility",
+    }:
+        raise GreenBuildError(
+            "evaluated skill tree declaration has unexpected fields"
+        )
+    if (
+        declaration.get("schema_id")
+        != "crossframe.promax.green-evaluated-skill-tree"
+        or declaration.get("schema_version") != 1
+    ):
+        raise GreenBuildError("evaluated skill tree declaration identity mismatch")
+    compatibility = declaration.get("current_release_compatibility")
+    if not isinstance(compatibility, dict) or set(compatibility) != {
+        "scope",
+        "changed_paths",
+        "deterministic_tests",
+    }:
+        raise GreenBuildError(
+            "evaluated skill tree compatibility record is malformed"
+        )
+    if compatibility.get("scope") != "activation-boundary-only":
+        raise GreenBuildError(
+            "evaluated skill tree compatibility scope is unsupported"
+        )
+    for field in ("changed_paths", "deterministic_tests"):
+        values = compatibility.get(field)
+        if (
+            not isinstance(values, list)
+            or not values
+            or any(not isinstance(value, str) or not value.strip() for value in values)
+            or len(set(values)) != len(values)
+        ):
+            raise GreenBuildError(
+                f"evaluated skill tree compatibility {field} must be unique text"
+            )
+    return _sha256(
+        declaration.get("evaluated_skill_tree_sha256"),
+        field="evaluated_skill_tree_sha256",
+    )
+
+
 def _repo_relative_path(
     value: object,
     *,
@@ -737,7 +790,7 @@ def build_results(
         scenario_ids=scenario_ids,
     )
     metric_rubrics = _metric_rubrics(rubric)
-    skill_tree_sha256 = canonical_skill_tree_sha256()
+    skill_tree_sha256 = _evaluated_skill_tree_sha256(evaluation)
 
     runs: list[dict[str, Any]] = []
     run_ids: set[str] = set()

@@ -4,15 +4,11 @@ import hashlib
 import json
 import re
 import subprocess
-import sys
 import unittest
 from pathlib import Path, PurePosixPath
 
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "skills/crossframe-promax/scripts"))
-
-from promax_runtime.pollution import ExplicitRouteError, resolve_explicit_route
 
 
 BASE_COMMIT = "e2e0965"
@@ -441,34 +437,22 @@ class ProMaxRepositoryTargetTests(unittest.TestCase):
                 for near_miss in PROMAX_NEAR_MISSES:
                     self.assertIn(f"`{near_miss}`", block)
 
-    def test_runtime_route_contract_matches_suite_priority_matrix(self) -> None:
-        for form in EXACT_PROMAX_FORMS:
-            with self.subTest(exact=form):
-                routed = resolve_explicit_route(f"请使用 {form} 分析")
-                self.assertEqual(routed["requested_skill_names"], ["crossframe-promax"])
-                self.assertFalse(routed["routing_conflict"]["fallback_allowed"])
-        for near_miss in PROMAX_NEAR_MISSES:
-            with self.subTest(near_miss=near_miss):
-                with self.assertRaises(ExplicitRouteError):
-                    resolve_explicit_route(f"请使用 {near_miss} 分析")
+    def test_promax_runtime_does_not_reimplement_suite_activation(self) -> None:
+        runtime_cli = (
+            ROOT / "skills/crossframe-promax/scripts/crossframe_promax_runtime.py"
+        ).read_text(encoding="utf-8")
+        pollution = (
+            ROOT / "skills/crossframe-promax/scripts/promax_runtime/pollution.py"
+        ).read_text(encoding="utf-8")
+        artifacts = (
+            ROOT / "skills/crossframe-promax/scripts/promax_runtime/artifacts.py"
+        ).read_text(encoding="utf-8")
 
-        both = resolve_explicit_route("请同时使用 crossframe-max 与 CrossFrame ProMax")
-        self.assertEqual(
-            both["requested_skill_names"],
-            ["crossframe-promax", "crossframe-max"],
-        )
-        self.assertEqual(
-            both["routing_conflict"],
-            {
-                "detected": True,
-                "conflicting_names": ["crossframe-promax", "crossframe-max"],
-                "resolved_to": "crossframe-promax",
-                "priority_rule": (
-                    "routing-priority-crossframe-promax-over-crossframe-max-no-fallback"
-                ),
-                "fallback_allowed": False,
-            },
-        )
+        self.assertNotIn('add_parser("route"', runtime_cli)
+        self.assertNotIn("resolve_explicit_route", runtime_cli)
+        self.assertNotIn("resolve_explicit_route", pollution)
+        self.assertNotIn("ExplicitRouteError", pollution)
+        self.assertIn("platform_selected_promax_route()", artifacts)
 
     def test_suite_smoke_and_openai_adapter_cover_promax_priority(self) -> None:
         for relative in (

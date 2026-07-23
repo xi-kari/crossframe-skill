@@ -88,6 +88,7 @@ class ProMaxGreenScenarioManifestTests(unittest.TestCase):
             "does not generate model output",
             "build_results.py",
             "results.json",
+            "evaluated-skill-tree.json",
         ):
             with self.subTest(marker=marker):
                 self.assertIn(marker, text)
@@ -381,6 +382,35 @@ class ProMaxGreenResultsBuilderTests(unittest.TestCase):
                 / "eval-metadata.json"
             ).exists()
         )
+
+    def test_declared_evaluated_tree_hash_is_enforced_without_relabelling(
+        self,
+    ) -> None:
+        self._write_all_runs()
+        (self.eval_root / "evaluated-skill-tree.json").write_text(
+            json.dumps(
+                {
+                    "schema_id": "crossframe.promax.green-evaluated-skill-tree",
+                    "schema_version": 1,
+                    "evaluated_skill_tree_sha256": "f" * 64,
+                    "current_release_compatibility": {
+                        "scope": "activation-boundary-only",
+                        "changed_paths": ["skills/crossframe-promax/SKILL.md"],
+                        "deterministic_tests": ["tests.example.test_activation"],
+                    },
+                }
+            ),
+            encoding="utf-8",
+        )
+
+        with self.assertRaisesRegex(
+            self.builder.GreenBuildError,
+            "skill tree SHA-256 mismatch",
+        ):
+            self.builder.build_results(
+                repo_root=ROOT,
+                eval_root=self.eval_root,
+            )
 
     def test_missing_run_fails_without_creating_results(self) -> None:
         self._write_run("A1")

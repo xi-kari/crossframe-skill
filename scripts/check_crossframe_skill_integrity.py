@@ -3163,7 +3163,7 @@ def check_crossframe_promax_runtime_tests(repo: Path, label: str) -> None:
     required_tests = {
         "tests/test_promax_behavioral_contract.py": "PROMAX-MATERIALIZE-BEFORE-INCOMPLETE",
         "tests/test_promax_materializer.py": "test_multi_agent_attestation_must_bind_canonical_published_bytes",
-        "tests/test_promax_repository_integration.py": "test_runtime_route_contract_matches_suite_priority_matrix",
+        "tests/test_promax_repository_integration.py": "test_promax_runtime_does_not_reimplement_suite_activation",
         "tests/test_promax_v8_version_isolation.py": "crossframe-promax",
     }
     for relative, marker in required_tests.items():
